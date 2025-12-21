@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* @import "tailwindcss"; */
+
+
+html, body, #__next, main { height: 100%; }
+/* body { @apply bg-[#B0DCFF]; } */

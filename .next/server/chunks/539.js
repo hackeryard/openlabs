@@ -1,0 +1,1 @@
+"use strict";exports.id=539,exports.ids=[539],exports.modules={6539:(e,s,t)=>{t.r(s),t.d(s,{default:()=>r});let r=(0,t(8570).createProxy)(String.raw`C:\Users\rahul\OneDrive\Desktop\Full Stack\NextJS\OpenLabs\app\components\physics\SpeedOfLightLab.jsx#default`)}};

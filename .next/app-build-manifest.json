@@ -1,0 +1,181 @@
+{
+  "pages": {
+    "/_not-found/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/app/_not-found/page-9cabc67233b4f281.js"
+    ],
+    "/layout": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/css/685170f704528b62.css",
+      "static/chunks/972-609900b8eb9228c3.js",
+      "static/chunks/app/layout-07460b4acf76a8e1.js"
+    ],
+    "/biology/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/app/biology/page-d7be28e0ccf768ed.js"
+    ],
+    "/chemistry/periodictable/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/307-bcaa89e277352c85.js",
+      "static/chunks/app/chemistry/periodictable/page-b00d57e56583b4e7.js"
+    ],
+    "/chemistry/electronic-configuration/[atomicNumber]/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/307-bcaa89e277352c85.js",
+      "static/chunks/app/chemistry/electronic-configuration/[atomicNumber]/page-75ae153f52d7352e.js"
+    ],
+    "/chemistry/chemicalbonds/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/b536a0f1-667e06fa850c522a.js",
+      "static/chunks/652-37542aa520941994.js",
+      "static/chunks/app/chemistry/chemicalbonds/page-37549a252bc1be2f.js"
+    ],
+    "/chemistry/reaction-simulation/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/app/chemistry/reaction-simulation/page-36563bf2fa124c10.js"
+    ],
+    "/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/972-609900b8eb9228c3.js",
+      "static/chunks/878-8d64a33ee89018a6.js",
+      "static/chunks/app/page-ea1ec79dd1901a32.js"
+    ],
+    "/chemistry/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/972-609900b8eb9228c3.js",
+      "static/chunks/app/chemistry/page-d0e87d22187d033b.js"
+    ],
+    "/chemistry/periodictable/atom/[atomicNumber]/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/b536a0f1-667e06fa850c522a.js",
+      "static/chunks/652-37542aa520941994.js",
+      "static/chunks/580-123c4c7ecff7d190.js",
+      "static/chunks/307-bcaa89e277352c85.js",
+      "static/chunks/app/chemistry/periodictable/atom/[atomicNumber]/page-f2e0f3e04e746051.js"
+    ],
+    "/physics/energyconservation/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/app/physics/energyconservation/page-3c605dd347f62463.js"
+    ],
+    "/physics/ohmslaw/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/app/physics/ohmslaw/page-a7dda79543dd1c97.js"
+    ],
+    "/physics/projectilemotion/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/app/physics/projectilemotion/page-1091d14899e255ee.js"
+    ],
+    "/physics/freefall/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/app/physics/freefall/page-5d0a57ebb4fa977c.js"
+    ],
+    "/physics/rclab/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/app/physics/rclab/page-fd10b56558c0b6a4.js"
+    ],
+    "/physics/simplependulum/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/app/physics/simplependulum/page-2f053f1c0b5c67f5.js"
+    ],
+    "/physics/speedoflight/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/app/physics/speedoflight/page-2ec6277c118ecb69.js"
+    ],
+    "/physics/uniformmotionlab/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/app/physics/uniformmotionlab/page-1f4b4aca6c07fae8.js"
+    ],
+    "/physics/waveoptics/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/app/physics/waveoptics/page-cc9ccf55a80bf00b.js"
+    ],
+    "/physics/hookelaw/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/app/physics/hookelaw/page-4ef086d32bc7f53a.js"
+    ],
+    "/login/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/972-609900b8eb9228c3.js",
+      "static/chunks/app/login/page-6f7a934d217174b9.js"
+    ],
+    "/physics/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/972-609900b8eb9228c3.js",
+      "static/chunks/app/physics/page-ea5c474e50d61ab5.js"
+    ],
+    "/signup/page": [
+      "static/chunks/webpack-ebb8dbf3e05a510a.js",
+      "static/chunks/fd9d1056-3fd1a6c0d3460a1b.js",
+      "static/chunks/117-2351ff8896848a29.js",
+      "static/chunks/main-app-78bf4d151a5c757d.js",
+      "static/chunks/972-609900b8eb9228c3.js",
+      "static/chunks/app/signup/page-f1afdf60eedd6d39.js"
+    ]
+  }
+}

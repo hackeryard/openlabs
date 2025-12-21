@@ -1,0 +1,1 @@
+"use strict";exports.id=40,exports.ids=[40],exports.modules={8040:(e,t,s)=>{s.r(t),s.d(t,{default:()=>r});let r=(0,s(8570).createProxy)(String.raw`C:\Users\rahul\OneDrive\Desktop\Full Stack\NextJS\OpenLabs\app\components\physics\ProjectileMotion.jsx#default`)}};

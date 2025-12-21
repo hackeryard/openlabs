@@ -1,0 +1,19 @@
+{
+  "app\\components\\chemistry\\ElementModal.jsx -> ./AtomicModel3D": {
+    "id": 3665,
+    "files": [
+      "static/chunks/b536a0f1-667e06fa850c522a.js",
+      "static/chunks/652-37542aa520941994.js",
+      "static/chunks/580-123c4c7ecff7d190.js",
+      "static/chunks/665.4eda82fafe2d0e4c.js"
+    ]
+  },
+  "node_modules\\@react-three\\drei\\core\\FaceLandmarker.js -> @mediapipe/tasks-vision": {
+    "id": null,
+    "files": []
+  },
+  "node_modules\\@react-three\\drei\\core\\Text.js -> troika-three-text": {
+    "id": null,
+    "files": []
+  }
+}

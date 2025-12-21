@@ -1,0 +1,1 @@
+"use strict";exports.id=381,exports.ids=[381],exports.modules={3381:(e,t,r)=>{r.r(t),r.d(t,{default:()=>s});let s=(0,r(8570).createProxy)(String.raw`C:\Users\rahul\OneDrive\Desktop\Full Stack\NextJS\OpenLabs\app\components\chemistry\PeriodicTable.jsx#default`)}};

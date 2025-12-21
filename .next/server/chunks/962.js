@@ -1,0 +1,1 @@
+"use strict";exports.id=962,exports.ids=[962],exports.modules={3962:(e,s,t)=>{t.r(s),t.d(s,{default:()=>r});let r=(0,t(8570).createProxy)(String.raw`C:\Users\rahul\OneDrive\Desktop\Full Stack\NextJS\OpenLabs\app\components\physics\SimplePendulum.jsx#default`)}};

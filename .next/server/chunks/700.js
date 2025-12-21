@@ -1,0 +1,1 @@
+"use strict";exports.id=700,exports.ids=[700],exports.modules={1700:(e,t,r)=>{r.r(t),r.d(t,{default:()=>s});let s=(0,r(8570).createProxy)(String.raw`C:\Users\rahul\OneDrive\Desktop\Full Stack\NextJS\OpenLabs\app\components\Navbar.tsx#default`)}};
