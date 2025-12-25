@@ -1,180 +1,223 @@
-# OpenLabs 🔬⚡️
+# OpenLabs 🔬⚡
 
-**OpenLabs** is an interactive educational web app built with **Next.js**, **React**, and **Tailwind CSS**. It provides hands-on virtual labs and visualizations across **Chemistry** and **Physics** to help students explore core concepts through simulations and interactive content.
+[![Status](https://img.shields.io/badge/status-active-brightgreen)](https://github.com/rahulra3621/openlabs)
+[![Repo](https://img.shields.io/badge/repo-GitHub-181717?style=flat&logo=github)](https://github.com/rahulra3621/openlabs)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Next.js](https://img.shields.io/badge/next-%3E%3D14-000000?style=flat&logo=next.js)](https://nextjs.org/)
 
----
-
-[![Project Status](https://img.shields.io/badge/status-active-brightgreen)](https://github.com/)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+A modern, interactive collection of in-browser science labs and visualizations for **Chemistry** and **Physics** built with **Next.js**, **React**, and **Tailwind CSS**. OpenLabs is designed for students, educators, and curious learners who want hands-on experiments without the need for physical lab equipment.
 
 ---
 
 ## Table of Contents
 
-- 🚀 [About](#about)
-- 🧩 [Features](#features)
+- 🎯 [Quick Start](#quick-start)
+- ✨ [Highlights & Features](#highlights--features)
 - 🛠️ [Tech Stack](#tech-stack)
-- ⚙️ [Getting Started](#getting-started)
+- ⚙️ [Scripts & Local Development](#scripts--local-development)
 - 🗂️ [Project Structure](#project-structure)
-- 🧭 [Usage & Routes](#usage--routes)
+- 🧭 [Routes & How to Explore](#routes--how-to-explore)
+- 🧩 [How to Add a New Lab](#how-to-add-a-new-lab)
 - 🤝 [Contributing](#contributing)
-- ✅ [Development & Styling Guidelines](#development--styling-guidelines)
 - 🚀 [Deployment](#deployment)
-- 📸 [Screenshots](#screenshots)
+- 🖼️ [Screenshots & Media](#screenshots--media)
 - 📄 [License](#license)
-- 📬 [Contact](#contact)
+- 📬 [Contact & Maintainers](#contact--maintainers)
 
 ---
 
-## About
+## Quick Start 🚀
 
-OpenLabs aims to make learning science more visual and interactive by providing small, focused labs and components (e.g., periodic table, electronic configuration viewer, physics experiment simulations). It targets students and educators who want accessible, in-browser experiments.
+Prerequisites:
+
+- Node.js 18+ (recommended)
+- yarn (v1) or npm
+
+Clone and run locally:
+
+```bash
+# clone
+git clone https://github.com/rahulra3621/openlabs.git
+cd OpenLabs
+
+# install (yarn preferred for this repo)
+yarn install
+
+# dev server
+yarn dev
+# opens: http://localhost:3000
+```
+
+If you prefer npm:
+
+```bash
+npm install
+npm run dev
+```
+
+Build for production:
+
+```bash
+yarn build && yarn start
+# or with npm
+npm run build && npm run start
+```
 
 ---
 
-## Features ✨
+## Highlights & Features ✨
 
-- Interactive chemistry labs: Periodic Table, Electronic Configuration, Chemical Bond Visualizations
-- Physics experiments: Free Fall, Projectile Motion, Ohm's Law, Simple Pendulum, and more
-- Dynamic routes for atoms and simulations (e.g., `/chemistry/periodictable`, `/physics/freefall`)
-- Reusable React components for experiments and visualizations
-- Responsive UI built with Tailwind CSS
+- Interactive Periodic Table with element pages and visual assets
+- Electronic configuration visualizer and per-atom pages
+- Chemistry visualizations: chemical bond types, 3D atomic models (Three.js)
+- Physics simulations: Free Fall, Projectile Motion, Hooke's Law, Ohm's Law, and more
+- Reusable component library for building experiments quickly
+- Responsive UI using Tailwind CSS; accessible-first layout practices
 
 ---
 
 ## Tech Stack 🔧
 
-- Next.js (App Router)
-- React
+- Next.js 14 (App Router)
+- React 18
 - TypeScript
 - Tailwind CSS
-- Vercel (recommended for deployment)
+- three.js + @react-three/fiber for 3D models
+- p5.js for visual simulations
 
 ---
 
-## Getting Started
+## Scripts & Local Development ⚙️
 
-### Prerequisites
+Key npm/yarn scripts (see `package.json`):
 
-- Node.js 18+ (or latest LTS)
-- npm or yarn
+- `dev` — starts the Next.js dev server (hot reload)
+- `build` — production build
+- `start` — start the built app
+- `lint` — run Next.js linting
+- `preview` — start preview server
 
-### Install
-
-```bash
-# install dependencies
-npm install
-# or
-# yarn
-```
-
-### Run locally
+Example:
 
 ```bash
-# Start dev server
-npm run dev
-# Open http://localhost:3000
+# dev
+yarn dev
+# build
+yarn build
+# run production
+yarn start
 ```
 
-### Build & Start (production)
+Tips:
 
-```bash
-npm run build
-npm run start
-```
+- Use TypeScript for new components and keep files under `app/components/`.
+- Follow Tailwind utility-first conventions for styling.
 
 ---
 
 ## Project Structure 🗂️
 
-Important files and directories:
+A quick overview of the important folders:
 
-- `app/` — Next.js app routes and pages
-  - `app/chemistry/` — chemistry pages and dynamic atom routes
-  - `app/physics/` — physics labs and experiment pages
-  - `app/components/` — shared components and chemistry/physics subcomponents
-- `components/` — reusable UI and lab components (JSX files used by pages)
-- `src/data/elements.js` — element dataset used by the Periodic Table and visualization components
-- `public/images/` — images and assets
+- `app/` — Next.js App Router routes & pages
+  - `app/chemistry/` — periodic table, element pages, electronic-configuration
+  - `app/physics/` — physics experiment pages
+  - `app/components/` — shared components and experiment-specific UI
+- `app/components/` — reusable UI / labs (TSX/JSX)
+- `app/src/data/elements.js` — element metadata used across chemistry features
+- `public/images/elements/` — element images and media
 
-> Tip: The project uses the Next.js App Router. Dynamic pages like `app/chemistry/electronic-configuration/[atomicNumber]/page.tsx` map directly to dynamic URLs.
+> Note: Dynamic routes such as `app/chemistry/electronic-configuration/[atomicNumber]/page.tsx` map directly to URL paths like `/chemistry/electronic-configuration/8`.
 
 ---
 
-## Usage & Routes 🧭
+## Routes & How to Explore 🧭
 
-Examples:
+A few key routes to try locally:
 
-- Chemistry: `/chemistry/periodictable`, `/chemistry/chemicalbonds`, `/chemistry/electronic-configuration/[atomicNumber]`
-- Physics: `/physics/freefall`, `/physics/projectilemotion`, `/physics/ohmslaw`
+- `/` — home / landing page
+- `/chemistry/periodictable` — interactive periodic table
+- `/chemistry/chemicalbonds` — bond visualizations
+- `/chemistry/electronic-configuration/[atomicNumber]` — per-atom electronic configuration
+- `/physics/freefall` — free fall experiment
+- `/physics/projectilemotion` — projectile motion lab
 
-Explore components in `components/chemistry/` and `components/physics/` for building new experiments.
+Open the `app/components/` folder to find corresponding pages and UI components to extend.
+
+---
+
+## How to Add a New Lab 🧩
+
+1. Create a route under `app/` (e.g., `app/physics/newlab/page.tsx`).
+2. Add the interactive UI as a component in `app/components/physics/`.
+3. Add any static assets to `public/` and data to `app/src/data/` if needed.
+4. Export small, testable components and document props via JSDoc or TypeScript interfaces.
+5. Add an entry to the navigation (`app/layout.tsx` or `app/components/Navbar.tsx`) so users can find it.
 
 ---
 
 ## Contributing 🤝
 
-We welcome contributions! Please follow these steps:
+We welcome improvements, bug fixes, and new labs!
 
-1. Fork the repo and create a feature branch: `git checkout -b feat/your-feature`
-2. Make changes and add clear commit messages
-3. Run linters and formatters (if configured): `npm run lint` / `npm run format`
-4. Open a Pull Request with a clear description of changes
+1. Fork the repository
+2. Create a branch: `git checkout -b feat/your-feature`
+3. Make changes, commit, and push
+4. Submit a Pull Request with a clear description and screenshots/videos
 
-Please include tests for new components or critical logic where possible.
+Guidelines:
 
----
-
-## Development & Styling Guidelines ✅
-
-- Use TypeScript for new code where practical.
-- Keep UI consistent with Tailwind utility classes.
-- Prefer small, focused components with clear props and docs.
-- Add or update `src/data/elements.js` when new element-related features need data.
+- Keep changes focused and small
+- Add or update tests where relevant (future improvement)
+- Follow consistent formatting and lint rules
 
 ---
 
 ## Deployment 🚀
 
-This project is well-suited to Vercel. Connect the repository to Vercel and deploy — Next.js App Router is supported out-of-the-box.
+The app deploys easily to Vercel (recommended):
+
+1. Push your repository to GitHub
+2. Import the project on Vercel and set the build command to `yarn build` and the output directory to `.`
+3. Add any environment variables in the Vercel dashboard if needed
+
+Other hosts (Netlify, Fly) should also work with a compatible Node 18+ environment.
 
 ---
 
-## Screenshots 📸
+## Screenshots & Media 🖼️
 
-Include screenshots in `public/images/` and reference them here for visually rich README content.
+Add screenshots under `public/images/` and reference them here to make the README visually rich.
 
 Example:
 
 ```markdown
-![Periodic Table](/images/elements/periodic-table.png)
+![Periodic Table](/images/elements/placeholder.jpg)
 ```
 
 ---
 
 ## Roadmap & Ideas 💡
 
-- Add unit/integration tests
-- Accessibility audit & improvements
-- More interactive labs (optics, thermodynamics)
-- Internationalization
+- Unit & integration tests (Jest / React Testing Library)
+- Accessibility audit and improvements (a11y)
+- More advanced labs (optics, thermodynamics, circuits)
+- Internationalization (i18n)
 
 ---
 
 ## License
 
-This repository does not include a LICENSE by default — consider adding one. A common option:
-
-```
-MIT License
-```
+This project is released under the **MIT License** — see the `LICENSE` file for details.
 
 ---
 
-## Contact 📬
+## Maintainers & Contact 📬
 
-If you'd like help or want to contribute, open an issue or a PR. Feel free to add me as a maintainer in the repo settings.
+- Maintainer: [@rahulra3621](https://github.com/rahulra3621)
+
+If you need help or want to contribute, open an issue or submit a PR — we welcome collaborators!
 
 ---
 
-Thanks for using **OpenLabs** — educational labs made interactive! 🎉
+Thank you for checking out **OpenLabs** — built for curious minds! 🎉
