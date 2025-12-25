@@ -1,1 +1,0 @@
-"use strict";exports.id=390,exports.ids=[390],exports.modules={9390:(e,s,t)=>{t.r(s),t.d(s,{default:()=>r});let r=(0,t(8570).createProxy)(String.raw`C:\Users\rahul\OneDrive\Desktop\Full Stack\NextJS\OpenLabs\app\components\physics\FreeFallLab.jsx#default`)}};

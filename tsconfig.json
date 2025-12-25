@@ -28,7 +28,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "app/components/physics/SimplePendulum.jsx"  ],
   "exclude": [
     "node_modules"
   ]

@@ -10,7 +10,7 @@ export default function PeriodicTablePage() {
   return (
     <main className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-bold">Periodic Table</h1>
+        <h1 className="text-3xl font-bold">Periodic Table</h1>
         <p className="text-gray-600 mb-4">Interactive periodic table.</p>
         <PeriodicTable />
       </div>

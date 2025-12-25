@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo, useRef, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import elements from "../../src/data/elements";
 import ElementCard from "./ElementCard";
 import ElementModal from "./ElementModal";
@@ -52,6 +53,7 @@ export default function PeriodicTable() {
 
   useEffect(() => {
     const onKeyDown = (e) => {
+      
       if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) return;
 
       const active = document.activeElement;
@@ -121,6 +123,19 @@ export default function PeriodicTable() {
   };
 
   /* ---------------- Render Helpers ---------------- */
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.01 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 12 },
+    show: { opacity: 1, y: 0 }
+  };
+
   const renderGridCells = () => {
     const cells = [];
     for (let p = 1; p <= 7; p++) {
@@ -128,7 +143,12 @@ export default function PeriodicTable() {
         const el = elementMap.get(`${p}-${g}`);
         cells.push(
           el ? (
-            <ElementCard key={`${p}-${g}`} element={el} onOpen={setSelected} />
+            <motion.div
+              key={`${p}-${g}`}
+              variants={itemVariants}
+            >
+              <ElementCard element={el} onOpen={setSelected} />
+            </motion.div>
           ) : (
             <div key={`${p}-${g}`} />
           )
@@ -138,35 +158,46 @@ export default function PeriodicTable() {
     return cells;
   };
 
+
   const renderFBlock = (type) => {
     const items = filtered.filter(el => el.category === type);
     if (!items.length) return null;
 
     return (
       <div className="flex justify-center mt-4">
-        <div
-          className="grid gap-2 origin-top"
-          style={{
-            gridTemplateColumns: "repeat(18, minmax(44px, 1fr))",
-            transform: "scale(min(1, (100vw - 32px) / 900))",
-          }}
+        <motion.div
+          layout
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className="grid gap-2"
+          style={{ gridTemplateColumns: "repeat(18, minmax(42px, 1fr))" }}
         >
           {[...Array(2)].map((_, i) => <div key={`spacer-${i}`} />)}
+
           {items.map(el => (
-            <ElementCard key={el.symbol} element={el} onOpen={setSelected} />
+            <motion.div key={el.symbol} variants={itemVariants}>
+              <ElementCard element={el} onOpen={setSelected} />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     );
   };
 
+
   /* ---------------- UI ---------------- */
   return (
-    <section className="max-w-[1600px] mx-auto px-4 py-6 space-y-6">
+    <section className="max-w-[1600px] mx-auto px-3 sm:px-4 py-6 space-y-6">
       {/* Header */}
-      <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <motion.div
+        className="rounded-2xl border bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-2 sm:p-4 shadow-inner"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">
+          <h1 className="text-xl font-extrabold tracking-tight">
             Interactive Periodic Table
           </h1>
           <p className="text-sm text-gray-600 mt-1">
@@ -174,10 +205,14 @@ export default function PeriodicTable() {
           </p>
         </div>
         <SearchBar elements={elements} onSelect={setQuerySelected} />
-      </header>
+      </motion.div>
 
       {/* Controls */}
-      <div className="sticky top-2 z-10 bg-white/80 backdrop-blur border rounded-xl p-4 shadow-sm space-y-3">
+      <motion.div
+        className="sticky top-2 z-10 bg-white/80 backdrop-blur border rounded-xl p-4 shadow-sm space-y-3"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
         <Filters categories={categories} active={activeCategories} onToggle={onToggleCategory} />
 
         <div className="flex flex-wrap gap-3 text-xs">
@@ -203,31 +238,50 @@ export default function PeriodicTable() {
             Export CSV
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Main Grid */}
-      <div className="rounded-2xl border bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4 shadow-inner overflow-hidden">
-        <div className="flex justify-center">
-          <div
-            ref={gridRef}
-            role="grid"
-            tabIndex={0}
-            className="grid gap-2 origin-top"
-            style={{
-              gridTemplateColumns: "repeat(18, minmax(44px, 1fr))",
-              transform: "scale(min(1, (100vw - 32px) / 900))",
-            }}
-          >
-            {renderGridCells()}
+      <motion.div
+        className="rounded-2xl border bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-2 sm:p-4 shadow-inner"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        <div className="overflow-x-auto w-full">
+          <div className="flex justify-center min-w-[760px] lg:min-w-0">
+            <div className="overflow-x-auto w-full">
+              <div className="min-w-[900px] md:min-w-0 mx-auto">
+                <motion.div
+                  ref={gridRef}
+                  role="grid"
+                  tabIndex={0}
+                  layout
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="show"
+                  className="grid gap-2"
+                  style={{
+                    gridTemplateColumns: "repeat(18, minmax(36px, 1fr))",
+                  }}
+                >
+                  {renderGridCells()}
+                </motion.div>
+              </div>
+            </div>
+
+
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* f-block */}
       {renderFBlock("lanthanide")}
       {renderFBlock("actinide")}
 
-      <ElementModal element={selected} onClose={() => setSelected(null)} />
+      <AnimatePresence>
+        {selected && (
+          <ElementModal element={selected} onClose={() => setSelected(null)} />
+        )}
+      </AnimatePresence>
     </section>
   );
 }

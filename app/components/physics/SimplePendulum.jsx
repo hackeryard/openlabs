@@ -175,7 +175,7 @@ export default function SimplePendulum({
       window.removeEventListener("resize", resizeCanvas);
     };
     // re-run when physics parameters or running change; effect depends on them in signature below
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [running, length, gravity, damping, initAngleDeg]);
 
   // draw helper
@@ -606,9 +606,9 @@ export default function SimplePendulum({
       <p>Theoretical period: <strong>${theoreticalPeriod.toFixed(4)} s</strong></p>
       <p>Measured period: <strong>${measured}</strong> s</p>
       <h3>Manual measurements</h3>
-      <pre>${manualMeasurements.map(m=>m.time + " s  " + (m.note||"")).join("\n")}</pre>
+      <pre>${manualMeasurements.map(m => m.time + " s  " + (m.note || "")).join("\n")}</pre>
       <h3>Sweep results (last ${sweepResults.length}):</h3>
-      <pre>${sweepResults.map(r=>`L=${r.L.toFixed(3)} m  T=${r.T.toFixed(4)} s`).join("\n")}</pre>
+      <pre>${sweepResults.map(r => `L=${r.L.toFixed(3)} m  T=${r.T.toFixed(4)} s`).join("\n")}</pre>
       <p>Fit: ${fit ? `T ≈ ${fit.a.toFixed(4)}√L + ${fit.b.toFixed(4)}` : "—"}</p>
       <h3>Time vs Angle (last 200 points)</h3>
       <pre>time_s,angle_deg\n${csvSnippet}</pre>
@@ -654,45 +654,55 @@ export default function SimplePendulum({
     // if sweepResults change, update tiny plot canvas if exists
     const el = document.getElementById("sweep-plot-canvas");
     if (el) renderSweepPlot(el);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sweepResults]);
 
   // UI
   return (
-    <div className="max-w-6xl mx-auto p-4 space-y-4">
-      <header className="flex items-center justify-between">
+    <div className="max-w-6xl mx-auto p-3 sm:p-4 space-y-4">
+      <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-2xl font-semibold">Simple Pendulum — Virtual Lab</h2>
         <div className="text-sm text-gray-600">Do the experiment like in a real lab: drag the bob, time oscillations, sweep lengths, export reports.</div>
       </header>
 
-      <div className="grid md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Controls */}
         <div className="md:col-span-1 bg-white p-4 rounded shadow space-y-3">
           <h3 className="font-semibold">Experiment Controls</h3>
 
           <label className="block text-sm">Length (m)</label>
-          <input type="range" min="0.2" max="5" step="0.01" value={length} onChange={(e) => setLength(Number(e.target.value))} />
-          <input type="number" value={length} onChange={(e) => setLength(Number(e.target.value))} className="mt-1 w-full border rounded px-2 py-1" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input type="range" min="0.2" max="5" step="0.01" value={length} onChange={(e) => setLength(Number(e.target.value))} />
+            <input type="number" value={length} onChange={(e) => setLength(Number(e.target.value))} className="w-full border rounded px-2 py-1" />
+          </div>
 
           <label className="block text-sm">Gravity (m/s²)</label>
-          <input type="range" min="0.1" max="20" step="0.01" value={gravity} onChange={(e) => setGravity(Number(e.target.value))} />
-          <input type="number" value={gravity} onChange={(e) => setGravity(Number(e.target.value))} className="mt-1 w-full border rounded px-2 py-1" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input type="range" min="0.1" max="20" step="0.01" value={gravity} onChange={(e) => setGravity(Number(e.target.value))} />
+            <input type="number" value={gravity} onChange={(e) => setGravity(Number(e.target.value))} className="w-full border rounded px-2 py-1" />
+          </div>
 
           <label className="block text-sm">Damping (viscous)</label>
-          <input type="range" min="0" max="0.2" step="0.001" value={damping} onChange={(e) => setDamping(Number(e.target.value))} />
-          <input type="number" value={damping} onChange={(e) => setDamping(Number(e.target.value))} className="mt-1 w-full border rounded px-2 py-1" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input type="range" min="0" max="0.2" step="0.001" value={damping} onChange={(e) => setDamping(Number(e.target.value))} />
+            <input type="number" value={damping} onChange={(e) => setDamping(Number(e.target.value))} className="w-full border rounded px-2 py-1" />
+          </div>
 
           <label className="block text-sm">Initial angle (°) — drag bob or change</label>
-          <input type="range" min="-90" max="90" step="0.1" value={initAngleDeg} onChange={(e) => { setInitAngleDeg(Number(e.target.value)); thetaRef.current = (Number(e.target.value) * Math.PI) / 180; thetaVelRef.current = 0; dataRef.current = []; crossingsRef.current = []; setMeasuredPeriod(null); }} />
-          <input type="number" value={initAngleDeg} onChange={(e) => { setInitAngleDeg(Number(e.target.value)); thetaRef.current = (Number(e.target.value) * Math.PI) / 180; thetaVelRef.current = 0; }} className="mt-1 w-full border rounded px-2 py-1" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input type="range" min="-90" max="90" step="0.1" value={initAngleDeg} onChange={(e) => { setInitAngleDeg(Number(e.target.value)); thetaRef.current = (Number(e.target.value) * Math.PI) / 180; thetaVelRef.current = 0; dataRef.current = []; crossingsRef.current = []; setMeasuredPeriod(null); }} />
+            <input type="number" value={initAngleDeg} onChange={(e) => { setInitAngleDeg(Number(e.target.value)); thetaRef.current = (Number(e.target.value) * Math.PI) / 180; thetaVelRef.current = 0; }} className="w-full border rounded px-2 py-1" />
+          </div>
 
-          <div className="flex gap-2 mt-2">
+          <div className="flex flex-col sm:flex-row gap-2 mt-2">
             <button onClick={() => { setRunning((r) => !r); setStatusMsg(running ? "Paused" : "Running..."); }} className="flex-1 py-2 rounded bg-blue-600 text-white">{running ? "Pause" : "Start"}</button>
             <button onClick={() => { thetaRef.current = (initAngleDeg * Math.PI) / 180; thetaVelRef.current = 0; dataRef.current = []; crossingsRef.current = []; setMeasuredPeriod(null); setSimTime(0); }} className="flex-1 py-2 rounded bg-gray-200">Reset</button>
           </div>
 
           <label className="block text-sm mt-2">Measurement uncertainty (s)</label>
-          <input type="number" step="0.001" value={uncertainty} onChange={(e) => setUncertainty(Number(e.target.value))} className="w-full border rounded px-2 py-1" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input type="number" step="0.001" value={uncertainty} onChange={(e) => setUncertainty(Number(e.target.value))} className="w-full border rounded px-2 py-1" />
+          </div>
 
           <div className="mt-2 text-sm">
             <div>Theoretical period: <strong>{theoreticalPeriod.toFixed(4)} s</strong></div>
@@ -703,10 +713,10 @@ export default function SimplePendulum({
 
           <div className="mt-3 space-y-1">
             <label className="inline-flex items-center">
-              <input type="checkbox" checked={showRuler} onChange={(e)=>setShowRuler(e.target.checked)} className="mr-2" /> Show ruler
+              <input type="checkbox" checked={showRuler} onChange={(e) => setShowRuler(e.target.checked)} className="mr-2" /> Show ruler
             </label>
             <label className="inline-flex items-center">
-              <input type="checkbox" checked={showProtractor} onChange={(e)=>setShowProtractor(e.target.checked)} className="mr-2" /> Show protractor
+              <input type="checkbox" checked={showProtractor} onChange={(e) => setShowProtractor(e.target.checked)} className="mr-2" /> Show protractor
             </label>
           </div>
         </div>
@@ -718,19 +728,20 @@ export default function SimplePendulum({
               <strong>Interactive Pendulum</strong>
               <div className="text-xs text-gray-500">Drag bob to set initial angle. Click play/pause to run.</div>
             </div>
-            <div className="text-sm">
+            <div className="flex flex-wrap gap-2 justify-end">
               <button onClick={exportCSVAll} className="mr-2 px-3 py-1 bg-green-600 text-white rounded">Export CSV</button>
               <button onClick={exportJSON} className="mr-2 px-3 py-1 bg-yellow-400 rounded">Export JSON</button>
               <button onClick={exportReport} className="px-3 py-1 bg-indigo-600 text-white rounded">Printable Report</button>
             </div>
           </div>
 
-          <div className="w-full min-h-[260px] md:min-h-[360px]">
-            <canvas ref={canvasRef} className="w-full rounded-md" />
+          <div className="w-full min-h-[260px] sm:min-h-[320px] md:min-h-[360px] lg:min-h-[420px]">
+            <canvas ref={canvasRef} className="w-full h-full rounded-md" />
           </div>
 
+
           {/* stopwatch + manual measurement */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             <div className="bg-gray-50 p-3 rounded">
               <div className="text-sm font-medium">Stopwatch (manual timing)</div>
               <div className="text-2xl font-mono my-2">{stopwatchDisplay}s</div>
@@ -741,7 +752,7 @@ export default function SimplePendulum({
               </div>
               <div className="mt-2 text-xs">Laps: {laps.length}</div>
               <div className="mt-2">
-                <button onClick={()=>recordManualMeasurement()} className="w-full py-1 rounded bg-green-600 text-white">Record Manual Measurement</button>
+                <button onClick={() => recordManualMeasurement()} className="w-full py-1 rounded bg-green-600 text-white">Record Manual Measurement</button>
               </div>
             </div>
 
@@ -749,21 +760,21 @@ export default function SimplePendulum({
               <div className="text-sm font-medium">Manual Measurements</div>
               <div className="text-xs text-gray-500">Times recorded by stopwatch</div>
               <ul className="mt-2 max-h-36 overflow-auto text-sm">
-                {laps.concat(manualMeasurements.map(m=>m.time)).map((t,i)=>(
-                  <li key={i} className="flex justify-between"><span>#{i+1}</span><span>{(typeof t === 'object' ? t.time : t).toFixed(3)} s</span></li>
+                {laps.concat(manualMeasurements.map(m => m.time)).map((t, i) => (
+                  <li key={i} className="flex justify-between"><span>#{i + 1}</span><span>{(typeof t === 'object' ? t.time : t).toFixed(3)} s</span></li>
                 ))}
               </ul>
               <div className="mt-2">
-                <button onClick={()=>{ setManualMeasurements(m=>{ const t=Number(stopwatchDisplay); if(!t) return m; return [...m,{time:t,note:"manual"}] })}} className="w-full py-1 rounded bg-indigo-600 text-white">Add stopwatch value</button>
+                <button onClick={() => { setManualMeasurements(m => { const t = Number(stopwatchDisplay); if (!t) return m; return [...m, { time: t, note: "manual" }] }) }} className="w-full py-1 rounded bg-indigo-600 text-white">Add stopwatch value</button>
               </div>
             </div>
 
             <div className="bg-gray-50 p-3 rounded">
               <div className="text-sm font-medium">Saved Runs</div>
               <div className="mt-2">
-                <button onClick={()=>saveRun()} className="w-full py-1 rounded bg-orange-500 text-white mb-2">Save Current Run</button>
-                <button onClick={()=>{ const runs=loadRuns(); if(runs.length===0) alert('No saved runs'); else alert('Saved runs: \\n' + runs.map(r=>r.name + ' - ' + r.date).join('\\n')) }} className="w-full py-1 rounded bg-gray-200 mb-2">List Saved Runs</button>
-                <button onClick={()=>clearSavedRuns()} className="w-full py-1 rounded bg-red-500 text-white">Clear Saved Runs</button>
+                <button onClick={() => saveRun()} className="w-full py-1 rounded bg-orange-500 text-white mb-2">Save Current Run</button>
+                <button onClick={() => { const runs = loadRuns(); if (runs.length === 0) alert('No saved runs'); else alert('Saved runs: \\n' + runs.map(r => r.name + ' - ' + r.date).join('\\n')) }} className="w-full py-1 rounded bg-gray-200 mb-2">List Saved Runs</button>
+                <button onClick={() => clearSavedRuns()} className="w-full py-1 rounded bg-red-500 text-white">Clear Saved Runs</button>
               </div>
             </div>
           </div>
@@ -776,33 +787,33 @@ export default function SimplePendulum({
         <div className="grid md:grid-cols-6 gap-2 items-end">
           <div>
             <label className="block text-xs">Start L (m)</label>
-            <input type="number" step="0.01" value={sweepStart} onChange={(e)=>setSweepStart(Number(e.target.value))} className="w-full border rounded px-2 py-1" />
+            <input type="number" step="0.01" value={sweepStart} onChange={(e) => setSweepStart(Number(e.target.value))} className="w-full border rounded px-2 py-1" />
           </div>
           <div>
             <label className="block text-xs">End L (m)</label>
-            <input type="number" step="0.01" value={sweepEnd} onChange={(e)=>setSweepEnd(Number(e.target.value))} className="w-full border rounded px-2 py-1" />
+            <input type="number" step="0.01" value={sweepEnd} onChange={(e) => setSweepEnd(Number(e.target.value))} className="w-full border rounded px-2 py-1" />
           </div>
           <div>
             <label className="block text-xs">Steps</label>
-            <input type="number" min="2" step="1" value={sweepSteps} onChange={(e)=>setSweepSteps(Number(e.target.value))} className="w-full border rounded px-2 py-1" />
+            <input type="number" min="2" step="1" value={sweepSteps} onChange={(e) => setSweepSteps(Number(e.target.value))} className="w-full border rounded px-2 py-1" />
           </div>
           <div>
             <label className="block text-xs">Init angle (°)</label>
-            <input type="number" step="0.1" value={initAngleDeg} onChange={(e)=>setInitAngleDeg(Number(e.target.value))} className="w-full border rounded px-2 py-1" />
+            <input type="number" step="0.1" value={initAngleDeg} onChange={(e) => setInitAngleDeg(Number(e.target.value))} className="w-full border rounded px-2 py-1" />
           </div>
           <div>
-            <button onClick={()=>{ setSweepResults([]); runSweep(); }} disabled={sweepRunning} className="w-full py-2 rounded bg-indigo-600 text-white">{sweepRunning ? "Running..." : "Run Sweep"}</button>
+            <button onClick={() => { setSweepResults([]); runSweep(); }} disabled={sweepRunning} className="w-full py-2 rounded bg-indigo-600 text-white">{sweepRunning ? "Running..." : "Run Sweep"}</button>
           </div>
           <div>
-            <button onClick={()=>{ setSweepResults([]); }} className="w-full py-2 rounded bg-gray-200">Clear</button>
+            <button onClick={() => { setSweepResults([]); }} className="w-full py-2 rounded bg-gray-200">Clear</button>
           </div>
         </div>
 
-        <div className="mt-4 grid md:grid-cols-2 gap-4">
+        <div className="mt-2 max-h-40 overflow-auto text-sm overflow-x-auto">
           <div>
             <div className="text-sm">Sweep Results</div>
             <div className="mt-2 max-h-40 overflow-auto text-sm">
-              {sweepResults.length===0 ? (
+              {sweepResults.length === 0 ? (
                 <div className="text-xs text-gray-500">No results yet</div>
               ) : (
                 <table className="w-full border-collapse">
@@ -827,7 +838,7 @@ export default function SimplePendulum({
 
           <div>
             <div className="text-sm">Sweep Plot (T vs √L)</div>
-            <div className="mt-2 h-48">
+            <div className="mt-2 h-48 sm:h-56 md:h-64">
               <canvas id="sweep-plot-canvas" className="w-full h-full border border-gray-200 rounded-md" />
             </div>
             <div className="mt-2 text-xs text-gray-500">

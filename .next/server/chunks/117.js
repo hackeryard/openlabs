@@ -1,1 +1,0 @@
-"use strict";exports.id=117,exports.ids=[117],exports.modules={9117:(e,s,t)=>{t.r(s),t.d(s,{default:()=>r});let r=(0,t(8570).createProxy)(String.raw`C:\Users\rahul\OneDrive\Desktop\Full Stack\NextJS\OpenLabs\app\components\physics\UniformMotionLab.jsx#default`)}};

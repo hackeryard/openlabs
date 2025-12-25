@@ -1,1 +1,0 @@
-"use strict";exports.id=91,exports.ids=[91],exports.modules={5091:(e,s,t)=>{t.r(s),t.d(s,{default:()=>r});let r=(0,t(8570).createProxy)(String.raw`C:\Users\rahul\OneDrive\Desktop\Full Stack\NextJS\OpenLabs\app\components\physics\RCLab.jsx#default`)}};

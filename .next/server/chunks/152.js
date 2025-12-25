@@ -1,1 +1,0 @@
-"use strict";exports.id=152,exports.ids=[152],exports.modules={6152:(e,s,t)=>{t.r(s),t.d(s,{default:()=>r});let r=(0,t(8570).createProxy)(String.raw`C:\Users\rahul\OneDrive\Desktop\Full Stack\NextJS\OpenLabs\app\components\physics\OhmsLaw.jsx#default`)}};
