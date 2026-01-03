@@ -18,6 +18,7 @@ A modern, interactive collection of in-browser science labs and visualizations f
 - 🗂️ [Project Structure](#project-structure)
 - 🧭 [Routes & How to Explore](#routes--how-to-explore)
 - 🧩 [How to Add a New Lab](#how-to-add-a-new-lab)
+- 🔐 [Authentication (Demo)](#authentication-demo)
 - 🤝 [Contributing](#contributing)
 - 🚀 [Deployment](#deployment)
 - 🖼️ [Screenshots & Media](#screenshots--media)
@@ -70,8 +71,10 @@ npm run build && npm run start
 - Interactive Periodic Table with element pages and visual assets
 - Electronic configuration visualizer and per-atom pages
 - Chemistry visualizations: chemical bond types, 3D atomic models (Three.js)
+- Chemical Reactions simulation: interactive visual reaction builder and dynamics
 - Physics simulations: Free Fall, Projectile Motion, Hooke's Law, Ohm's Law, and more
 - Reusable component library for building experiments quickly
+- Demo signup/login flows (client-side stubbed) for testing interactions
 - Responsive UI using Tailwind CSS; accessible-first layout practices
 
 ---
@@ -120,10 +123,13 @@ Tips:
 A quick overview of the important folders:
 
 - `app/` — Next.js App Router routes & pages
-  - `app/chemistry/` — periodic table, element pages, electronic-configuration
+  - `app/chemistry/` — periodic table, element pages, electronic-configuration, reaction-simulation
+  - `app/chemistry/reaction-simulation/` — chemical reactions simulator route (client component)
   - `app/physics/` — physics experiment pages
   - `app/components/` — shared components and experiment-specific UI
+  - `app/signup/` & `app/login/` — demo authentication pages
 - `app/components/` — reusable UI / labs (TSX/JSX)
+- `app/components/chemistry/reactions/` — reaction simulation components and data (`reactionData.js`, `reactionDetails.js`, `ReactionSimulation.jsx`)
 - `app/src/data/elements.js` — element metadata used across chemistry features
 - `public/images/elements/` — element images and media
 
@@ -139,10 +145,22 @@ A few key routes to try locally:
 - `/chemistry/periodictable` — interactive periodic table
 - `/chemistry/chemicalbonds` — bond visualizations
 - `/chemistry/electronic-configuration/[atomicNumber]` — per-atom electronic configuration
+- `/chemistry/reaction-simulation` — chemical reactions simulator (interactive)
 - `/physics/freefall` — free fall experiment
 - `/physics/projectilemotion` — projectile motion lab
+- `/login` — demo login page (client-side stubbed)
+- `/signup` — demo signup page (client-side stubbed)
 
 Open the `app/components/` folder to find corresponding pages and UI components to extend.
+
+---
+
+## Authentication (Demo) 🔐
+
+The project contains simple, client-side demo authentication for testing UI flows. These pages are not connected to a real backend — they simulate signups and logins.
+
+- Demo credentials for quick testing: **`demo@site.com` / `password`** (use on `/login`)
+- Files: `app/login/page.tsx`, `app/signup/page.tsx` — behavior is stubbed in the client for demo purposes.
 
 ---
 
