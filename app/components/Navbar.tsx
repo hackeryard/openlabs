@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 
 /* ---------------- Animations ---------------- */
@@ -30,6 +31,33 @@ const menuVariants: Variants = {
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    // Check if user is logged in by checking for token cookie
+    const checkAuth = async () => {
+      try {
+        const res = await fetch("/api/auth/check", { method: "GET" });
+        setIsLoggedIn(res.ok);
+      } catch {
+        setIsLoggedIn(false);
+      }
+    };
+    checkAuth();
+  }, [pathname]);
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      setIsLoggedIn(false);
+      setOpen(false);
+      router.push("/");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
 
   return (
     <motion.nav
@@ -85,14 +113,26 @@ export default function Navbar() {
               </Link>
             </li>
           ))}
-          <li>
-            <Link
-              href="/login"
-              className="px-4 py-2 rounded bg-white text-indigo-700 font-semibold shadow-sm hover:shadow-md transition"
-            >
-              Log In
-            </Link>
-          </li>
+          {!isLoggedIn && (
+            <li>
+              <Link
+                href="/login"
+                className="px-4 py-2 rounded bg-white text-indigo-700 font-semibold shadow-sm hover:shadow-md transition"
+              >
+                Log In
+              </Link>
+            </li>
+          )}
+          {isLoggedIn && (
+            <li>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 rounded bg-white/20 text-white font-semibold shadow-sm hover:bg-white/30 transition"
+              >
+                Log Out
+              </button>
+            </li>
+          )}
         </ul>
       </div>
 
@@ -117,15 +157,27 @@ export default function Navbar() {
                 </Link>
               </li>
             ))}
-            <li>
-              <Link
-                href="/login"
-                className="block px-3 py-2 rounded bg-indigo-600 text-white font-semibold text-center shadow-sm hover:shadow-md transition"
-                onClick={() => setOpen(false)}
-              >
-                Log In
-              </Link>
-            </li>
+            {!isLoggedIn && (
+              <li>
+                <Link
+                  href="/login"
+                  className="block px-3 py-2 rounded bg-indigo-600 text-white font-semibold text-center shadow-sm hover:shadow-md transition"
+                  onClick={() => setOpen(false)}
+                >
+                  Log In
+                </Link>
+              </li>
+            )}
+            {isLoggedIn && (
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="w-full px-3 py-2 rounded bg-indigo-600 text-white font-semibold text-center shadow-sm hover:shadow-md transition"
+                >
+                  Log Out
+                </button>
+              </li>
+            )}
           </motion.ul>
         )}
       </AnimatePresence>

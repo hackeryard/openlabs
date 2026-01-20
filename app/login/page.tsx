@@ -1,7 +1,9 @@
-"use client"
+"use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from "lucide-react";
 
 /* ================= TYPES ================= */
 
@@ -10,21 +12,22 @@ type FormErrors = {
   password?: string;
 };
 
-type LoginResult = {
-  token: string;
-};
-
 type LoginPageProps = {
-  onSuccess?: (result: LoginResult) => void;
+  onSuccess?: () => void;
 };
 
 /* ================= COMPONENT ================= */
 
 export default function LoginPage({ onSuccess }: LoginPageProps) {
+  const router = useRouter();
+  
+  // State
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  
+  // Status
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [serverError, setServerError] = useState("");
@@ -37,35 +40,29 @@ export default function LoginPage({ onSuccess }: LoginPageProps) {
     const e: FormErrors = {};
 
     if (!email.trim()) e.email = "Email is required.";
-    else if (!emailRegex.test(email))
-      e.email = "Please enter a valid email.";
+    else if (!emailRegex.test(email)) e.email = "Please enter a valid email address.";
 
     if (!password) e.password = "Password is required.";
-    else if (password.length < 6)
-      e.password = "Password must be at least 6 characters.";
+    else if (password.length < 6) e.password = "Password must be at least 6 characters.";
 
     setErrors(e);
     return Object.keys(e).length === 0;
   }
 
-  /* ================= MOCK API ================= */
+  /* ================= LOGIN API ================= */
 
-  function mockSignIn({
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-  }): Promise<LoginResult> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (email === "demo@site.com" && password === "password") {
-          resolve({ token: "demo-token" });
-        } else {
-          reject(new Error("Invalid credentials"));
-        }
-      }, 900);
+  async function login(payload: { email: string; password: string }): Promise<void> {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Login failed");
+    }
   }
 
   /* ================= SUBMIT ================= */
@@ -78,19 +75,11 @@ export default function LoginPage({ onSuccess }: LoginPageProps) {
 
     setLoading(true);
     try {
-      const result = await mockSignIn({ email, password });
-
-      if (remember) {
-        localStorage.setItem("auth_token", result.token);
-      } else {
-        sessionStorage.setItem("auth_token", result.token);
-      }
-
-      onSuccess?.(result);
+      await login({ email, password });
+      onSuccess?.();
+      router.push("/");
     } catch (err) {
-      setServerError(
-        err instanceof Error ? err.message : "Failed to sign in"
-      );
+      setServerError(err instanceof Error ? err.message : "Failed to sign in");
     } finally {
       setLoading(false);
     }
@@ -99,113 +88,163 @@ export default function LoginPage({ onSuccess }: LoginPageProps) {
   /* ================= UI ================= */
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6">
-      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4 font-sans text-slate-900">
+      {/* Card Container */}
+      <div className="w-full max-w-[400px] bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden">
+        
+        {/* Header Section */}
+        <div className="p-8 pb-6 text-center">
+          <div className="mb-2 flex justify-center">
+            <div className="h-10 w-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center">
+                <Lock size={20} />
+            </div>
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             Welcome back
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-300">
-            Sign in to continue to your account
+          <p className="mt-2 text-sm text-slate-500">
+            Enter your credentials to access your account
           </p>
         </div>
 
+        {/* Server Error Alert */}
         {serverError && (
-          <div className="mb-4 rounded-md bg-red-50 text-red-700 px-4 py-2 text-sm">
-            {serverError}
+          <div className="mx-8 mb-4 flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-600 border border-red-100">
+            <AlertCircle size={16} />
+            <span>{serverError}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-          {/* Email */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+        {/* Form Section */}
+        <form onSubmit={handleSubmit} className="px-8 pb-8 space-y-5" noValidate>
+          
+          {/* Email Input */}
+          <div className="space-y-1.5">
+            <label className="block text-sm font-semibold text-slate-700">
               Email
             </label>
-            <input
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={`mt-1 w-full rounded-lg border px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-500 dark:bg-gray-900 dark:text-white ${
-                errors.email ? "border-red-300" : "border-gray-200"
-              }`}
-              aria-invalid={!!errors.email}
-            />
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <Mail size={18} />
+              </div>
+              <input
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (errors.email) setErrors({...errors, email: undefined});
+                }}
+                className={`block w-full rounded-lg border pl-10 pr-3 py-2.5 text-sm transition-all duration-200 outline-none
+                  ${errors.email 
+                    ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-50" 
+                    : "border-slate-200 hover:border-slate-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50"
+                  }
+                `}
+                placeholder="name@company.com"
+              />
+            </div>
             {errors.email && (
-              <p className="mt-1 text-xs text-red-600">{errors.email}</p>
+              <p className="text-xs font-medium text-red-500 animate-pulse">
+                {errors.email}
+              </p>
             )}
           </div>
 
-          {/* Password */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
-              Password
-            </label>
-            <div className="relative mt-1">
+          {/* Password Input */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <label className="block text-sm font-semibold text-slate-700">
+                Password
+              </label>
+            </div>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <Lock size={18} />
+              </div>
               <input
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className={`w-full rounded-lg border px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-500 dark:bg-gray-900 dark:text-white ${
-                  errors.password ? "border-red-300" : "border-gray-200"
-                }`}
-                aria-invalid={!!errors.password}
+                onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (errors.password) setErrors({...errors, password: undefined});
+                }}
+                className={`block w-full rounded-lg border pl-10 pr-10 py-2.5 text-sm transition-all duration-200 outline-none
+                  ${errors.password 
+                    ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-50" 
+                    : "border-slate-200 hover:border-slate-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50"
+                  }
+                `}
+                placeholder="••••••••"
               />
               <button
                 type="button"
-                onClick={() => setShowPassword((s) => !s)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-indigo-600"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
               >
-                {showPassword ? "Hide" : "Show"}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
             {errors.password && (
-              <p className="mt-1 text-xs text-red-600">
+              <p className="text-xs font-medium text-red-500 animate-pulse">
                 {errors.password}
               </p>
             )}
           </div>
 
-          {/* Remember / Forgot */}
-          <div className="flex items-center justify-between">
-            <label className="flex items-center text-sm">
+          {/* Remember & Forgot */}
+          <div className="flex items-center justify-between pt-1">
+            <label className="flex items-center gap-2 text-sm cursor-pointer group">
               <input
                 type="checkbox"
                 checked={remember}
                 onChange={(e) => setRemember(e.target.checked)}
-                className="h-4 w-4 text-indigo-600"
+                className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
               />
-              <span className="ml-2 text-gray-700 dark:text-gray-200">
+              <span className="text-slate-600 group-hover:text-slate-900 transition-colors">
                 Remember me
               </span>
             </label>
 
             <Link
               href="/forgotpassword"
-              className="text-sm text-indigo-600 hover:underline"
+              className="text-sm font-medium text-indigo-600 hover:text-indigo-700 hover:underline"
             >
               Forgot password?
             </Link>
           </div>
 
-          {/* Submit */}
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-60"
+            className="w-full flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed transition-all"
           >
-            {loading ? "Signing in..." : "Sign in"}
+            {loading ? (
+                <>
+                <span className="animate-spin h-4 w-4 border-2 border-white/30 border-t-white rounded-full"></span>
+                <span>Signing in...</span>
+                </>
+            ) : (
+                <>
+                Sign in
+                <ArrowRight size={16} />
+                </>
+            )}
           </button>
-        </form>
 
-        <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-          Don’t have an account?{" "}
-          <Link href="/signup" className="font-medium text-indigo-600 hover:underline">
-            Sign up
-          </Link>
-        </p>
+          {/* Footer */}
+          <p className="text-center text-sm text-slate-500">
+            Don’t have an account?{" "}
+            <Link 
+              href="/signup" 
+              className="font-semibold text-indigo-600 hover:text-indigo-700 hover:underline"
+            >
+              Sign up
+            </Link>
+          </p>
+        </form>
       </div>
     </div>
   );

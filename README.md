@@ -74,8 +74,17 @@ npm run build && npm run start
 - Chemical Reactions simulation: interactive visual reaction builder and dynamics
 - Physics simulations: Free Fall, Projectile Motion, Hooke's Law, Ohm's Law, and more
 - Reusable component library for building experiments quickly
-- Demo signup/login flows (client-side stubbed) for testing interactions
+- **Full Authentication System:**
+  - ✓ User signup with email verification via OTP
+  - ✓ Login with JWT token-based authentication
+  - ✓ Email verification before account activation
+  - ✓ Forgot password with OTP reset flow
+  - ✓ Password reset functionality
+  - ✓ Automatic login after email verification
+  - ✓ Persistent authentication with httpOnly cookies
+  - ✓ Real-time navbar login/logout state updates
 - Responsive UI using Tailwind CSS; accessible-first layout practices
+- Cloud database (MongoDB Atlas) for secure data storage
 
 ---
 
@@ -87,6 +96,14 @@ npm run build && npm run start
 - Tailwind CSS
 - three.js + @react-three/fiber for 3D models
 - p5.js for visual simulations
+- **Authentication & Database:**
+  - MongoDB Atlas (Cloud Database)
+  - Mongoose (ODM)
+  - JWT (jsonwebtoken) for authentication
+  - bcryptjs for password hashing
+  - Nodemailer for email delivery
+- Lucide React for icons
+- Framer Motion for animations
 
 ---
 
@@ -127,13 +144,27 @@ A quick overview of the important folders:
   - `app/chemistry/reaction-simulation/` — chemical reactions simulator route (client component)
   - `app/physics/` — physics experiment pages
   - `app/components/` — shared components and experiment-specific UI
-  - `app/signup/` & `app/login/` — demo authentication pages
+  - **Authentication Pages:**
+    - `app/signup/page.tsx` — user registration
+    - `app/login/page.tsx` — user login
+    - `app/verify-email/page.tsx` — email OTP verification
+    - `app/forgotpassword/page.tsx` — password reset request
+    - `app/reset-password/page.tsx` — password reset form
+  - **API Routes:**
+    - `app/api/auth/` — authentication endpoints (signup, login, logout, verify-otp, etc.)
+  - **Models:**
+    - `app/models/User.js` — user schema with email verification flag
+    - `app/models/OTP.js` — OTP storage with auto-expiry
+  - **Utilities:**
+    - `app/lib/auth.js` — JWT token generation and verification
+    - `app/lib/mongodb.js` — MongoDB connection management
+    - `app/lib/email.js` — email sending via SMTP
 - `app/components/` — reusable UI / labs (TSX/JSX)
-- `app/components/chemistry/reactions/` — reaction simulation components and data (`reactionData.js`, `reactionDetails.js`, `ReactionSimulation.jsx`)
-- `app/src/data/elements.js` — element metadata used across chemistry features
+- `app/components/chemistry/reactions/` — reaction simulation components and data
+- `app/components/Navbar.tsx` — navigation with real-time auth state
+- `app/src/data/elements.js` — element metadata
 - `public/images/elements/` — element images and media
-
-> Note: Dynamic routes such as `app/chemistry/electronic-configuration/[atomicNumber]/page.tsx` map directly to URL paths like `/chemistry/electronic-configuration/8`.
+- `.env.local` — environment variables (JWT_SECRET, MONGO_URI, EMAIL credentials)
 
 ---
 
@@ -148,19 +179,98 @@ A few key routes to try locally:
 - `/chemistry/reaction-simulation` — chemical reactions simulator (interactive)
 - `/physics/freefall` — free fall experiment
 - `/physics/projectilemotion` — projectile motion lab
-- `/login` — demo login page (client-side stubbed)
-- `/signup` — demo signup page (client-side stubbed)
+- **Authentication Routes:**
+  - `/signup` — user registration with email verification
+  - `/login` — user login
+  - `/verify-email` — email OTP verification
+  - `/forgotpassword` — password reset request
+  - `/reset-password` — password reset form with OTP
 
 Open the `app/components/` folder to find corresponding pages and UI components to extend.
 
 ---
 
-## Authentication (Demo) 🔐
+## Authentication System 🔐
 
-The project contains simple, client-side demo authentication for testing UI flows. These pages are not connected to a real backend — they simulate signups and logins.
+OpenLabs now includes a **complete, production-ready authentication system** with the following features:
 
-- Demo credentials for quick testing: **`demo@site.com` / `password`** (use on `/login`)
-- Files: `app/login/page.tsx`, `app/signup/page.tsx` — behavior is stubbed in the client for demo purposes.
+### Features
+- ✅ **Email Verification OTP** - 6-digit codes sent via Gmail SMTP (10-minute expiry)
+- ✅ **Secure Password Storage** - bcryptjs hashing with salt rounds
+- ✅ **JWT Tokens** - Stateless authentication with token-based sessions (24-hour expiry)
+- ✅ **Password Reset** - Forgot password flow with OTP verification (15-minute expiry)
+- ✅ **Cloud Database** - All data stored securely in MongoDB Atlas
+
+### Setup Instructions
+
+1. **Environment Variables** (`.env.local`):
+   ```env
+   # JWT Configuration
+   JWT_SECRET=your_secret_key_here
+
+   # MongoDB Atlas
+   MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/OpenLabs?retryWrites=true&w=majority
+
+   # Email Configuration (Gmail)
+   EMAIL_USER=your_email@gmail.com
+   EMAIL_PASSWORD=your_app_specific_password
+   
+   # Website
+   WEBSITE_NAME=OpenLabs
+   WEBSITE_URL=https://yourdomain.com
+   ```
+
+2. **Gmail Setup**:
+   - Enable 2-Factor Authentication on your Google account
+   - Generate an "App Password" at https://myaccount.google.com/apppasswords
+   - Use the 16-character password in `EMAIL_PASSWORD`
+
+3. **MongoDB Atlas**:
+   - Create a free cluster at https://www.mongodb.com/cloud/atlas
+   - Copy your connection string and update `MONGO_URI`
+
+### User Flow
+
+**Signup:**
+1. User creates account with name, email, password
+2. OTP sent to email (10-minute validity)
+3. User enters OTP on verification page
+4. Email marked as verified
+5. User automatically logged in and redirected to home
+
+**Login:**
+1. User enters email and password
+2. Credentials verified against database
+3. JWT token issued as httpOnly cookie
+4. User redirected to home page
+
+**Forgot Password:**
+1. User enters email on forgot password page
+2. System checks if email exists and is verified
+3. OTP sent to email (15-minute validity)
+4. User enters OTP and new password on reset page
+5. Password updated in database
+6. User redirected to login
+
+### API Endpoints
+
+- `POST /api/auth/signup` - Create new user account
+- `POST /api/auth/login` - Authenticate user and issue token
+- `POST /api/auth/logout` - Clear authentication cookie
+- `POST /api/auth/verify-otp` - Verify email OTP and auto-login
+- `POST /api/auth/send-otp` - Send OTP email
+- `POST /api/auth/forgot-password` - Send password reset OTP
+- `POST /api/auth/reset-password` - Reset password with OTP
+- `GET /api/auth/check` - Check if user is authenticated
+
+### Security Features
+
+- ✓ **Password Hashing** - bcryptjs with 10 salt rounds
+- ✓ **JWT Tokens** - Signed with secret key, 24-hour expiration
+- ✓ **HttpOnly Cookies** - Token stored securely, not accessible via JavaScript
+- ✓ **OTP Expiration** - Auto-delete after 10-15 minutes
+- ✓ **Email Verification** - Prevents dummy accounts
+- ✓ **Verified User Check** - Must verify email before password reset
 
 ---
 
@@ -221,6 +331,10 @@ Example:
 - Accessibility audit and improvements (a11y)
 - More advanced labs (optics, thermodynamics, circuits)
 - Internationalization (i18n)
+- OAuth2 integration (Google, GitHub login)
+- User profile dashboard
+- Progress tracking and certificates
+- Discussion forums for students
 
 ---
 
