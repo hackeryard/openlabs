@@ -30,9 +30,19 @@ const item: Variants = {
 
 const cards = [
   {
-    href: "/biology/cellstructure",
-    title: "Cell Structure (Coming Soon)",
-    desc: "Explore the structure of plant and animal cells using interactive visuals.",
+    href: "/biology/human",
+    title: "Human Anatomy",
+    desc: "Explore the structure of human body using interactive visuals.",
+  },
+  {
+    href: "/biology/cell/animal",
+    title: "Animal Cell Structure",
+    desc: "Explore the structure of animal cells using interactive visuals.",
+  },
+  {
+    href: "/biology/cell/plant",
+    title: "Plant Cell Structure",
+    desc: "Explore the structure of plant cells using interactive visuals.",
   },
 ];
 
@@ -73,8 +83,8 @@ export default function BiologyPage() {
             >
               <Link
                 href={card.href}
-                className="block h-full bg-white rounded-xl border-2 border-dashed border-gray-200 shadow-sm p-5 cursor-default"
-                onClick={(e) => e.preventDefault()}
+                className="block h-full bg-white rounded-xl border-2 border-gray-200 shadow-sm p-5 cursor-default"
+              
               >
                 <h3 className="text-lg font-semibold">{card.title}</h3>
                 <p className="text-sm text-gray-500 mt-2">

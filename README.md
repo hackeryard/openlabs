@@ -70,9 +70,12 @@ npm run build && npm run start
 
 - Interactive Periodic Table with element pages and visual assets
 - Electronic configuration visualizer and per-atom pages
+- **Biology Labs:**
+  - Interactive 3D animal cell visualization with organelle details
+  - Human anatomy visualization with anatomical information
 - Chemistry visualizations: chemical bond types, 3D atomic models (Three.js)
-- Chemical Reactions simulation: interactive visual reaction builder and dynamics
-- Physics simulations: Free Fall, Projectile Motion, Hooke's Law, Ohm's Law, and more
+- Chemical Reactions simulation: interactive visual reaction builder with 3D dynamics and post-processing effects
+- Physics simulations: Free Fall, Projectile Motion, Hooke's Law, Ohm's Law, Energy Conservation, RC Circuits, Simple Pendulum, Speed of Light, Wave Optics, and more
 - Reusable component library for building experiments quickly
 - **Full Authentication System:**
   - ✓ User signup with email verification via OTP
@@ -90,20 +93,23 @@ npm run build && npm run start
 
 ## Tech Stack 🔧
 
-- Next.js 14 (App Router)
-- React 18
+- Next.js 14.2.35 (App Router)
+- React 18.2.0
 - TypeScript
 - Tailwind CSS
-- three.js + @react-three/fiber for 3D models
-- p5.js for visual simulations
+- three.js 0.182.0 + @react-three/fiber 8.17.0 + @react-three/drei 9.108.0 for 3D models and visualizations
+- @react-three/postprocessing 2.19.1 for post-processing effects
+- postprocessing 6.30.1 for advanced rendering
+- p5.js 2.1.1 for visual simulations
 - **Authentication & Database:**
   - MongoDB Atlas (Cloud Database)
-  - Mongoose (ODM)
-  - JWT (jsonwebtoken) for authentication
-  - bcryptjs for password hashing
-  - Nodemailer for email delivery
-- Lucide React for icons
-- Framer Motion for animations
+  - Mongoose 9.1.4 (ODM)
+  - JWT (jsonwebtoken 9.0.3) for authentication
+  - bcryptjs 3.0.3 for password hashing
+  - Nodemailer 7.0.12 for email delivery
+- Lucide React 0.562.0 for icons
+- Framer Motion 12.29.0 for animations
+- Axios 1.13.2 for HTTP requests
 
 ---
 
@@ -173,12 +179,21 @@ A quick overview of the important folders:
 A few key routes to try locally:
 
 - `/` — home / landing page
+- `/biology/cell/animal` — interactive 3D animal cell visualization (client-side rendered)
 - `/chemistry/periodictable` — interactive periodic table
 - `/chemistry/chemicalbonds` — bond visualizations
 - `/chemistry/electronic-configuration/[atomicNumber]` — per-atom electronic configuration
-- `/chemistry/reaction-simulation` — chemical reactions simulator (interactive)
+- `/chemistry/reaction-simulation` — chemical reactions simulator (interactive with 3D visualizations)
 - `/physics/freefall` — free fall experiment
 - `/physics/projectilemotion` — projectile motion lab
+- `/physics/hookelaw` — Hooke's Law experiment
+- `/physics/ohmslaw` — Ohm's Law simulation
+- `/physics/energyconservation` — energy conservation lab
+- `/physics/rclab` — RC circuit simulator
+- `/physics/simplependulum` — simple pendulum simulation
+- `/physics/speedoflight` — speed of light experiment
+- `/physics/uniformmotionlab` — uniform motion visualization
+- `/physics/waveoptics` — wave optics lab
 - **Authentication Routes:**
   - `/signup` — user registration with email verification
   - `/login` — user login
@@ -278,9 +293,12 @@ OpenLabs now includes a **complete, production-ready authentication system** wit
 
 1. Create a route under `app/` (e.g., `app/physics/newlab/page.tsx`).
 2. Add the interactive UI as a component in `app/components/physics/`.
-3. Add any static assets to `public/` and data to `app/src/data/` if needed.
-4. Export small, testable components and document props via JSDoc or TypeScript interfaces.
-5. Add an entry to the navigation (`app/layout.tsx` or `app/components/Navbar.tsx`) so users can find it.
+3. **For 3D Labs using Three.js/React Three Fiber:**
+   - Use `dynamic` import with `ssr: false` in your page component to prevent server-side rendering errors
+   - Example: `const MyComponent = dynamic(() => import("@/app/components/..."), { ssr: false })`
+4. Add any static assets to `public/` and data to `app/src/data/` if needed.
+5. Export small, testable components and document props via JSDoc or TypeScript interfaces.
+6. Add an entry to the navigation (`app/layout.tsx` or `app/components/Navbar.tsx`) so users can find it.
 
 ---
 
