@@ -4,10 +4,10 @@ import { useGLTF } from "@react-three/drei"
 import { useEffect } from "react"
 
 // Preload the model
-useGLTF.preload("/models/human.glb")
+useGLTF.preload("/models/skeleton.glb")
 
 export default function Model({ type, onSelect }: any) {
-  const path = "/models/human.glb"
+  const path = "/models/skeleton.glb"
 
   try {
     const gltf = useGLTF(path)
