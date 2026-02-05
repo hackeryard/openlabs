@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Next.js](https://img.shields.io/badge/next-%3E%3D14-000000?style=flat&logo=next.js)](https://nextjs.org/)
 
-A modern, interactive collection of in-browser science labs and visualizations for **Chemistry** and **Physics** built with **Next.js**, **React**, and **Tailwind CSS**. OpenLabs is designed for students, educators, and curious learners who want hands-on experiments without the need for physical lab equipment.
+A modern, interactive collection of in-browser science labs and visualizations for **Chemistry**, **Physics**, and **Computer Science** built with **Next.js**, **React**, and **Tailwind CSS**. OpenLabs is designed for students, educators, and curious learners who want hands-on experiments without the need for physical lab equipment.
 
 ---
 
@@ -76,6 +76,10 @@ npm run build && npm run start
 - Chemistry visualizations: chemical bond types, 3D atomic models (Three.js)
 - Chemical Reactions simulation: interactive visual reaction builder with 3D dynamics and post-processing effects
 - Physics simulations: Free Fall, Projectile Motion, Hooke's Law, Ohm's Law, Energy Conservation, RC Circuits, Simple Pendulum, Speed of Light, Wave Optics, and more
+- **Computer Science Labs:**
+  - HTML/CSS/JS Code Editor with live preview and console
+  - Project management with save/load functionality
+  - User-specific project storage with type-based filtering
 - Reusable component library for building experiments quickly
 - **Full Authentication System:**
   - ✓ User signup with email verification via OTP
@@ -107,6 +111,7 @@ npm run build && npm run start
   - JWT (jsonwebtoken 9.0.3) for authentication
   - bcryptjs 3.0.3 for password hashing
   - Nodemailer 7.0.12 for email delivery
+- @monaco-editor/react 4.7.0 for code editing in computer science labs
 - Lucide React 0.562.0 for icons
 - Framer Motion 12.29.0 for animations
 - Axios 1.13.2 for HTTP requests
@@ -149,6 +154,8 @@ A quick overview of the important folders:
   - `app/chemistry/` — periodic table, element pages, electronic-configuration, reaction-simulation
   - `app/chemistry/reaction-simulation/` — chemical reactions simulator route (client component)
   - `app/physics/` — physics experiment pages
+  - `app/computer-science/` — computer science lab pages
+  - `app/computer-science/code-lab/html-css-js/` — HTML/CSS/JS code editor lab
   - `app/components/` — shared components and experiment-specific UI
   - **Authentication Pages:**
     - `app/signup/page.tsx` — user registration
@@ -158,15 +165,19 @@ A quick overview of the important folders:
     - `app/reset-password/page.tsx` — password reset form
   - **API Routes:**
     - `app/api/auth/` — authentication endpoints (signup, login, logout, verify-otp, etc.)
+    - `app/api/projects/` — project management endpoints (create, read, update, delete projects)
   - **Models:**
     - `app/models/User.js` — user schema with email verification flag
     - `app/models/OTP.js` — OTP storage with auto-expiry
+    - `app/models/Project.ts` — project schema with type-based filtering
   - **Utilities:**
     - `app/lib/auth.js` — JWT token generation and verification
     - `app/lib/mongodb.js` — MongoDB connection management
     - `app/lib/email.js` — email sending via SMTP
+    - `app/hooks/useProjects.ts` — custom hook for project management
 - `app/components/` — reusable UI / labs (TSX/JSX)
 - `app/components/chemistry/reactions/` — reaction simulation components and data
+- `app/components/computer-science/code-lab/` — code editor components (EditorPanel, PreviewPanel, ConsolePanel)
 - `app/components/Navbar.tsx` — navigation with real-time auth state
 - `app/src/data/elements.js` — element metadata
 - `public/images/elements/` — element images and media
@@ -194,6 +205,8 @@ A few key routes to try locally:
 - `/physics/speedoflight` — speed of light experiment
 - `/physics/uniformmotionlab` — uniform motion visualization
 - `/physics/waveoptics` — wave optics lab
+- **Computer Science Labs:**
+  - `/computer-science/code-lab/html-css-js` — interactive HTML/CSS/JS code editor with live preview
 - **Authentication Routes:**
   - `/signup` — user registration with email verification
   - `/login` — user login
@@ -277,7 +290,9 @@ OpenLabs now includes a **complete, production-ready authentication system** wit
 - `POST /api/auth/forgot-password` - Send password reset OTP
 - `POST /api/auth/reset-password` - Reset password with OTP
 - `GET /api/auth/check` - Check if user is authenticated
-
+- `GET /api/projects` — Fetch user projects (filtered by type)
+- `POST /api/projects` — Create or update a project
+- `DELETE /api/projects` — Delete a project
 ### Security Features
 
 - ✓ **Password Hashing** - bcryptjs with 10 salt rounds

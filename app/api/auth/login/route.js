@@ -19,7 +19,7 @@ export async function POST(req) {
 
   return new Response(JSON.stringify({ message: "Login success" }), {
     headers: {
-      "Set-Cookie": serialize("token", token, {
+      "Set-Cookie": serialize("auth-token", token, {
         httpOnly: true,
         path: "/",
         maxAge: 60 * 60 * 24,
