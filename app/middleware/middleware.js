@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { verifyToken } from "./lib/auth"
 
 export function middleware(req) {
-  const token = req.cookies.get("token")?.value
+  const token = req.cookies.get("auth-token")?.value
 
   if (!token || !verifyToken(token)) {
     return NextResponse.redirect(new URL("/login", req.url))

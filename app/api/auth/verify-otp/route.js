@@ -65,7 +65,7 @@ export async function POST(req) {
         status: 200,
         headers: {
           "Content-Type": "application/json",
-          "Set-Cookie": serialize("token", token, {
+          "Set-Cookie": serialize("auth-token", token, {
             httpOnly: true,
             path: "/",
             maxAge: 60 * 60 * 24,
