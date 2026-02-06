@@ -76,6 +76,11 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.57.1.tgz#de633db3ec2ef6a3c89e2f19038063e8a122e2c2"
   integrity sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==
 
+"@hackeryard/mandatory-guard@^1.0.3":
+  version "1.0.3"
+  resolved "https://npm.pkg.github.com/download/@hackeryard/mandatory-guard/1.0.3/d0d410c0a816ed514a751873fdaf054c8c2a8458#d0d410c0a816ed514a751873fdaf054c8c2a8458"
+  integrity sha512-0zyRKO9rKT76l9uFWHY+b2YQ9y5YcPApyhaXU/GGHE3JOPaQPQapABGUr6h9719Eiu9Aa83TjWr8BWy8DHoLaw==
+
 "@humanwhocodes/config-array@^0.13.0":
   version "0.13.0"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.13.0.tgz#fb907624df3256d04b9aa2df50d7aa97ec648748"
@@ -1266,6 +1271,11 @@ doctrine@^3.0.0:
   integrity sha512-yS+Q5i3hBf7GBkd4KG8a7eBNNWNGLTaEwwYWUijIYM7zrlYDM0BFXHjjPWlWZ1Rg7UaddZeIDmi9jF3HmqiQ2w==
   dependencies:
     esutils "^2.0.2"
+
+dotenv@^17.2.4:
+  version "17.2.4"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-17.2.4.tgz#b5a0e2f015e0be287a5330a90bf0e804606504c2"
+  integrity sha512-mudtfb4zRB4bVvdj0xRo+e6duH1csJRM8IukBqfTRvHotn9+LBXB8ynAidP9zHqoRC/fsllXgk4kCKlR21fIhw==
 
 draco3d@^1.4.1:
   version "1.5.7"
