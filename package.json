@@ -7,13 +7,17 @@
   "packageManager": "yarn@1.22.22",
   "proxy": "http://localhost:5000",
   "scripts": {
+    "predev": "node -e \"require('dotenv').config(); require('dotenv').config({ path: '.env.local' }); require('@hackeryard/mandatory-guard').initGuard()\"",
     "dev": "next dev",
+    "prebuild": "node -e \"require('dotenv').config(); require('dotenv').config({ path: '.env.local' }); require('@hackeryard/mandatory-guard').initGuard()\"",
     "build": "next build",
+    "prestart": "node -e \"require('dotenv').config(); require('dotenv').config({ path: '.env.local' }); require('@hackeryard/mandatory-guard').initGuard()\"",
     "start": "next start",
     "lint": "next lint",
     "preview": "next start"
   },
   "dependencies": {
+    "@hackeryard/mandatory-guard": "^1.0.3",
     "@monaco-editor/react": "^4.7.0",
     "@react-three/drei": "^9.108.0",
     "@react-three/fiber": "^8.17.0",
@@ -21,6 +25,7 @@
     "axios": "^1.13.2",
     "bcryptjs": "^3.0.3",
     "cookie": "^1.1.1",
+    "dotenv": "^17.2.4",
     "framer-motion": "^12.29.0",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.562.0",
