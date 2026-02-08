@@ -373,7 +373,16 @@ Example:
 
 ## License
 
-This project is released under the **MIT License** — see the `LICENSE` file for details.
+This project is released under the **Proprietary License** — see the `LICENSE` file for details.
+
+---
+
+## Trademark & Brand Notice
+
+OpenLabs™ is a name, concept, and brand owned by Rahul Rajput.
+
+The OpenLabs name, logo, and branding may not be used in any derivative
+projects, products, or services without prior written permission.
 
 ---
 
