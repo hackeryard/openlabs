@@ -2,396 +2,864 @@
 
 [![Status](https://img.shields.io/badge/status-active-brightgreen)](https://github.com/rahulra3621/openlabs)
 [![Repo](https://img.shields.io/badge/repo-GitHub-181717?style=flat&logo=github)](https://github.com/rahulra3621/openlabs)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Next.js](https://img.shields.io/badge/next-%3E%3D14-000000?style=flat&logo=next.js)](https://nextjs.org/)
+[![License: Proprietary](https://img.shields.io/badge/license-Proprietary-blue.svg)](LICENSE)
+[![Next.js](https://img.shields.io/badge/next-14.2.35-000000?style=flat&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/react-18.2.0-61dafb?style=flat&logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/typescript-5.4.0-3178c6?style=flat&logo=typescript)](https://www.typescriptlang.org/)
 
-A modern, interactive collection of in-browser science labs and visualizations for **Chemistry**, **Physics**, and **Computer Science** built with **Next.js**, **React**, and **Tailwind CSS**. OpenLabs is designed for students, educators, and curious learners who want hands-on experiments without the need for physical lab equipment.
+**OpenLabs** is a comprehensive, interactive platform providing in-browser science labs and visualizations across **Chemistry**, **Physics**, **Biology**, and **Computer Science**. Built with modern web technologies, it enables students, educators, and enthusiasts to conduct hands-on experiments and explore scientific concepts without requiring physical lab equipment.
 
 ---
 
 ## Table of Contents
 
-- 🎯 [Quick Start](#quick-start)
-- ✨ [Highlights & Features](#highlights--features)
-- 🛠️ [Tech Stack](#tech-stack)
-- ⚙️ [Scripts & Local Development](#scripts--local-development)
-- 🗂️ [Project Structure](#project-structure)
-- 🧭 [Routes & How to Explore](#routes--how-to-explore)
-- 🧩 [How to Add a New Lab](#how-to-add-a-new-lab)
-- 🔐 [Authentication (Demo)](#authentication-demo)
-- 🤝 [Contributing](#contributing)
-- 🚀 [Deployment](#deployment)
-- 🖼️ [Screenshots & Media](#screenshots--media)
-- 📄 [License](#license)
-- 📬 [Contact & Maintainers](#contact--maintainers)
+- 🚀 [Quick Start](#quick-start-)
+- ✨ [Features](#features-)
+- 🔧 [Technology Stack](#technology-stack-)
+- ⚙️ [Development Scripts](#development-scripts-)
+- 🗂️ [Project Structure](#project-structure-)
+- 🧭 [Routes & Navigation](#routes--navigation-)
+- 🔐 [Authentication System](#authentication-system-)
+- 🚨 [Error Handling & Custom Error Pages](#error-handling--custom-error-pages-)
+- 🧩 [Creating New Labs](#creating-new-labs-)
+- 🤝 [Contributing](#contributing-)
+- 🚀 [Deployment](#deployment-)
+- 🖼️ [Screenshots & Media](#screenshots--media-)
+- 💡 [Future Roadmap](#future-roadmap-)
+- 📄 [License & Legal](#license--legal-)
+- 📬 [Contact & Support](#contact--support-)
 
 ---
 
 ## Quick Start 🚀
 
-Prerequisites:
+### Prerequisites
 
-- Node.js 18+ (recommended)
-- yarn (v1) or npm
+- **Node.js** 18.0.0 or higher
+- **Yarn** 1.22.22 (recommended) or npm
 
-Clone and run locally:
+### Installation & Development
 
 ```bash
-# clone
+# Clone repository
 git clone https://github.com/rahulra3621/openlabs.git
 cd OpenLabs
 
-# install (yarn preferred for this repo)
+# Install dependencies (yarn is optimal for this project)
 yarn install
 
-# dev server
+# Start development server with hot-reload
 yarn dev
-# opens: http://localhost:3000
+# Opens at: http://localhost:3000
 ```
 
-If you prefer npm:
+### Alternative with npm
 
 ```bash
 npm install
 npm run dev
 ```
 
-Build for production:
+### Production Build
 
 ```bash
-yarn build && yarn start
-# or with npm
-npm run build && npm run start
-```
-
----
-
-## Highlights & Features ✨
-
-- Interactive Periodic Table with element pages and visual assets
-- Electronic configuration visualizer and per-atom pages
-- **Biology Labs:**
-  - Interactive 3D animal cell visualization with organelle details
-  - Human anatomy visualization with anatomical information
-- Chemistry visualizations: chemical bond types, 3D atomic models (Three.js)
-- Chemical Reactions simulation: interactive visual reaction builder with 3D dynamics and post-processing effects
-- Physics simulations: Free Fall, Projectile Motion, Hooke's Law, Ohm's Law, Energy Conservation, RC Circuits, Simple Pendulum, Speed of Light, Wave Optics, and more
-- **Computer Science Labs:**
-  - HTML/CSS/JS Code Editor with live preview and console
-  - Project management with save/load functionality
-  - User-specific project storage with type-based filtering
-- Reusable component library for building experiments quickly
-- **Full Authentication System:**
-  - ✓ User signup with email verification via OTP
-  - ✓ Login with JWT token-based authentication
-  - ✓ Email verification before account activation
-  - ✓ Forgot password with OTP reset flow
-  - ✓ Password reset functionality
-  - ✓ Automatic login after email verification
-  - ✓ Persistent authentication with httpOnly cookies
-  - ✓ Real-time navbar login/logout state updates
-- Responsive UI using Tailwind CSS; accessible-first layout practices
-- Cloud database (MongoDB Atlas) for secure data storage
-
----
-
-## Tech Stack 🔧
-
-- Next.js 14.2.35 (App Router)
-- React 18.2.0
-- TypeScript
-- Tailwind CSS
-- three.js 0.182.0 + @react-three/fiber 8.17.0 + @react-three/drei 9.108.0 for 3D models and visualizations
-- @react-three/postprocessing 2.19.1 for post-processing effects
-- postprocessing 6.30.1 for advanced rendering
-- p5.js 2.1.1 for visual simulations
-- **Authentication & Database:**
-  - MongoDB Atlas (Cloud Database)
-  - Mongoose 9.1.4 (ODM)
-  - JWT (jsonwebtoken 9.0.3) for authentication
-  - bcryptjs 3.0.3 for password hashing
-  - Nodemailer 7.0.12 for email delivery
-- @monaco-editor/react 4.7.0 for code editing in computer science labs
-- Lucide React 0.562.0 for icons
-- Framer Motion 12.29.0 for animations
-- Axios 1.13.2 for HTTP requests
-
----
-
-## Scripts & Local Development ⚙️
-
-Key npm/yarn scripts (see `package.json`):
-
-- `dev` — starts the Next.js dev server (hot reload)
-- `build` — production build
-- `start` — start the built app
-- `lint` — run Next.js linting
-- `preview` — start preview server
-
-Example:
-
-```bash
-# dev
-yarn dev
-# build
+# Build for production
 yarn build
-# run production
+
+# Start production server
 yarn start
 ```
 
-Tips:
+---
 
-- Use TypeScript for new components and keep files under `app/components/`.
-- Follow Tailwind utility-first conventions for styling.
+## Features ✨
+
+### Chemistry Labs
+- **Interactive Periodic Table** — Comprehensive element explorer with visual assets and detailed atomic information
+- **Electronic Configuration Visualizer** — Atomic structure visualization with per-element interactive pages
+- **Chemical Bond Types** — Visual demonstrations of ionic, covalent, and metallic bonding
+- **3D Atomic Models** — Three.js-based molecular visualization with interactive controls
+- **Chemical Reaction Simulator** — Real-time reaction builder with 3D dynamics and post-processing effects
+
+### Physics Labs
+- **Mechanics** — Free Fall, Projectile Motion, Uniform Motion simulations
+- **Waves & Optics** — Wave Optics, Speed of Light, Optical Lenses experiments
+- **Oscillations** — Simple Pendulum with adjustable parameters and real-time visualization
+- **Energy & Forces** — Hooke's Law, Energy Conservation experiments
+- **Electronics** — RC Circuit simulator with interactive component controls and analysis
+
+### Biology Labs
+- **3D Cell Visualization** — Interactive animal and plant cell models with organelle details
+- **Human Anatomy** — Anatomical structure explorer with biological information
+
+### Computer Science Labs
+- **HTML/CSS/JS Code Editor** — Live code editor with real-time preview and console output
+- **Project Management** — Save, load, and manage projects with type-based filtering and persistent storage
+
+### Authentication & Security
+- ✅ **Email verification** with 6-digit OTP (10-minute expiry)
+- ✅ **Secure password storage** using bcryptjs (10 salt rounds)
+- ✅ **JWT-based authentication** with 24-hour token expiry
+- ✅ **Password reset flow** with OTP verification (15-minute expiry)
+- ✅ **Persistent sessions** via httpOnly cookies
+- ✅ **Database-backed user management** with MongoDB Atlas
+
+### UI/UX Features
+- **Responsive Design** — Mobile-friendly layouts with Tailwind CSS
+- **Accessibility-First** — WCAG-compliant accessible components
+- **Smooth Animations** — Framer Motion transitions and interactions
+- **Modern Icon Library** — Lucide React icons throughout the interface
+- **Professional Layout** — Clean, organized navigation and visual hierarchy
+- **Enhanced Navigation** — Navbar includes all subject categories (Chemistry, Physics, Biology, Computer Science)
+- **Mobile-Optimized Dropdown** — Z-index fixed mobile menu stays above content
+- **Lab Discovery Hub** — Homepage "Explore All Labs" section with 16+ labs organized by category
+- **Branded Error Pages** — Custom 404, 500, and error boundaries with helpful navigation
+
+---
+
+## Technology Stack 🔧
+
+### Core Framework
+- **Next.js** 14.2.35 (App Router, server & client components)
+- **React** 18.2.0 (frontend library)
+- **TypeScript** 5.4.0 (type safety)
+- **Tailwind CSS** 3.4.17 (utility-first styling)
+
+### 3D Graphics & Visualization
+- **Three.js** 0.182.0 (3D graphics engine)
+- **@react-three/fiber** 8.17.0 (React renderer for Three.js)
+- **@react-three/drei** 9.108.0 (useful Three.js helpers)
+- **@react-three/postprocessing** 2.16.0 (post-processing effects)
+- **postprocessing** 6.30.1 (advanced rendering techniques)
+- **p5.js** 2.1.1 (creative coding visualizations)
+
+### Code Editing & Interactive Labs
+- **@monaco-editor/react** 4.7.0 (vs-code powered editor)
+
+### Authentication & Database
+- **MongoDB Atlas** (cloud database)
+- **Mongoose** 9.1.4 (MongoDB object modeling)
+- **jsonwebtoken** 9.0.3 (JWT token generation & verification)
+- **bcryptjs** 3.0.3 (password hashing)
+- **Nodemailer** 7.0.12 (email delivery)
+
+### UI & Animation
+- **Framer Motion** 12.29.0 (declarative animations)
+- **Lucide React** 0.562.0 (icon library)
+- **Axios** 1.13.2 (HTTP client)
+
+### Development & Build
+- **ESLint** 8.57.1 (code linting)
+- **Autoprefixer** 10.4.23 (CSS vendor prefixes)
+- **PostCSS** 8.5.6 (CSS transformations)
+
+---
+
+## Development Scripts ⚙️
+
+Available npm/yarn scripts in [package.json](package.json):
+
+| Script | Purpose |
+|--------|---------|
+| `yarn dev` | Start Next.js development server (hot-reload on port 3000) |
+| `yarn build` | Create optimized production build |
+| `yarn start` | Start production server |
+| `yarn lint` | Run ESLint to check code quality |
+| `yarn preview` | Preview production build locally |
+
+### Development Tips
+
+- **TypeScript** — Type annotations are enforced; use TypeScript for new components
+- **Code Splitting** — Dynamic imports with `ssr: false` for 3D WebGL components to prevent server-side rendering errors
+- **Styling** — Follow Tailwind's utility-first approach for consistent, maintainable CSS
+- **Reusable Components** — Store shared UI components in `app/components/` organized by subject
+- **API Routes** — Use Next.js API routes under `app/api/` for backend logic
 
 ---
 
 ## Project Structure 🗂️
 
-A quick overview of the important folders:
-
-- `app/` — Next.js App Router routes & pages
-  - `app/chemistry/` — periodic table, element pages, electronic-configuration, reaction-simulation
-  - `app/chemistry/reaction-simulation/` — chemical reactions simulator route (client component)
-  - `app/physics/` — physics experiment pages
-  - `app/computer-science/` — computer science lab pages
-  - `app/computer-science/code-lab/html-css-js/` — HTML/CSS/JS code editor lab
-  - `app/components/` — shared components and experiment-specific UI
-  - **Authentication Pages:**
-    - `app/signup/page.tsx` — user registration
-    - `app/login/page.tsx` — user login
-    - `app/verify-email/page.tsx` — email OTP verification
-    - `app/forgotpassword/page.tsx` — password reset request
-    - `app/reset-password/page.tsx` — password reset form
-  - **API Routes:**
-    - `app/api/auth/` — authentication endpoints (signup, login, logout, verify-otp, etc.)
-    - `app/api/projects/` — project management endpoints (create, read, update, delete projects)
-  - **Models:**
-    - `app/models/User.js` — user schema with email verification flag
-    - `app/models/OTP.js` — OTP storage with auto-expiry
-    - `app/models/Project.ts` — project schema with type-based filtering
-  - **Utilities:**
-    - `app/lib/auth.js` — JWT token generation and verification
-    - `app/lib/mongodb.js` — MongoDB connection management
-    - `app/lib/email.js` — email sending via SMTP
-    - `app/hooks/useProjects.ts` — custom hook for project management
-- `app/components/` — reusable UI / labs (TSX/JSX)
-- `app/components/chemistry/reactions/` — reaction simulation components and data
-- `app/components/computer-science/code-lab/` — code editor components (EditorPanel, PreviewPanel, ConsolePanel)
-- `app/components/Navbar.tsx` — navigation with real-time auth state
-- `app/src/data/elements.js` — element metadata
-- `public/images/elements/` — element images and media
-- `.env.local` — environment variables (JWT_SECRET, MONGO_URI, EMAIL credentials)
+```
+OpenLabs/
+├── app/                              # Next.js App Router
+│   ├── api/                          # Backend API routes
+│   │   ├── auth/                     # Authentication endpoints
+│   │   │   ├── signup/               # User registration
+│   │   │   ├── login/                # User login
+│   │   │   ├── verify-otp/           # Email OTP verification
+│   │   │   ├── send-otp/             # Send OTP email
+│   │   │   ├── forgot-password/      # Password reset request
+│   │   │   ├── reset-password/       # Password reset form
+│   │   │   ├── logout/               # User logout
+│   │   │   └── check/                # Auth status check
+│   │   └── projects/                 # Project management API
+│   │
+│   ├── (maths)/                      # Math labs (algebra, etc.)
+│   ├── biology/                      # Biology labs & visualizations
+│   ├── chemistry/                    # Chemistry labs & periodic table
+│   ├── physics/                      # Physics experiments & simulations
+│   ├── computer-science/             # CS labs (code editor, etc.)
+│   │
+│   ├── components/                   # Reusable UI components
+│   │   ├── biology/                  # Cell & anatomy components
+│   │   ├── chemistry/                # Chemistry-specific components
+│   │   ├── physics/                  # Physics lab components
+│   │   ├── computer-science/         # Code editor & CS components
+│   │   ├── Footer.tsx                # Footer component
+│   │   ├── Navbar.tsx                # Navigation bar (includes Computer Science)
+│   │   └── Hero.tsx                  # Hero section with labs exploration
+│   │
+│   ├── models/                       # MongoDB Mongoose schemas
+│   │   ├── User.js                   # User model with auth fields
+│   │   ├── OTP.js                    # OTP storage with expiry
+│   │   └── Project.ts                # Project data model
+│   │
+│   ├── lib/                          # Utility libraries
+│   │   ├── auth.js                   # JWT utilities
+│   │   ├── email.js                  # Email sending logic
+│   │   ├── mongodb.ts                # Database connection
+│   │   └── getUserFromToken.ts       # Token parsing
+│   │
+│   ├── hooks/                        # Custom React hooks
+│   │   ├── useLocalStorage.ts        # Local storage management
+│   │   └── useProjects.ts            # Project management hook
+│   │
+│   ├── layout.tsx                    # Root layout (Navbar, Footer)
+│   ├── page.tsx                      # Home/landing page
+│   ├── not-found.tsx                 # Custom 404 error page
+│   ├── error.tsx                     # Custom error boundary page
+│   ├── global-error.tsx              # Global error boundary page
+│   ├── globals.css                   # Global Tailwind styles
+│   └── favicon.ico                   # Favicon
+│
+├── src/
+│   └── data/
+│       └── elements.js               # Periodic table element data
+│
+├── public/                           # Static assets
+│   ├── images/                       # Images (logos, element visuals)
+│   │   └── scientist.png             # Hero section illustration
+│   └── models/                       # 3D model files
+│
+├── scripts/
+│   └── guard.cjs                     # Pre-build/pre-dev guard
+│
+├── configuration files
+│   ├── next.config.js                # Next.js configuration
+│   ├── tsconfig.json                 # TypeScript configuration
+│   ├── tailwind.config.js            # Tailwind CSS setup
+│   ├── postcss.config.js             # PostCSS configuration
+│   ├── eslint.config.js              # ESLint rules
+│   ├── package.json                  # Dependencies & scripts
+│   └── README.md                     # Project documentation
+│
+└── .env.local                        # Environment variables (not in git)
+```
 
 ---
 
-## Routes & How to Explore 🧭
+## Routes & Navigation 🧭
 
-A few key routes to try locally:
+### Home & Authentication
 
-- `/` — home / landing page
-- `/biology/cell/animal` — interactive 3D animal cell visualization (client-side rendered)
-- `/chemistry/periodictable` — interactive periodic table
-- `/chemistry/chemicalbonds` — bond visualizations
-- `/chemistry/electronic-configuration/[atomicNumber]` — per-atom electronic configuration
-- `/chemistry/reaction-simulation` — chemical reactions simulator (interactive with 3D visualizations)
-- `/physics/freefall` — free fall experiment
-- `/physics/projectilemotion` — projectile motion lab
-- `/physics/hookelaw` — Hooke's Law experiment
-- `/physics/ohmslaw` — Ohm's Law simulation
-- `/physics/energyconservation` — energy conservation lab
-- `/physics/rclab` — RC circuit simulator
-- `/physics/simplependulum` — simple pendulum simulation
-- `/physics/speedoflight` — speed of light experiment
-- `/physics/uniformmotionlab` — uniform motion visualization
-- `/physics/waveoptics` — wave optics lab
-- **Computer Science Labs:**
-  - `/computer-science/code-lab/html-css-js` — interactive HTML/CSS/JS code editor with live preview
-- **Authentication Routes:**
-  - `/signup` — user registration with email verification
-  - `/login` — user login
-  - `/verify-email` — email OTP verification
-  - `/forgotpassword` — password reset request
-  - `/reset-password` — password reset form with OTP
+| Route | Purpose |
+|-------|---------|
+| `/` | Landing page with navigation |
+| `/signup` | User registration with email verification |
+| `/login` | User login |
+| `/verify-email` | Email OTP verification |
+| `/forgotpassword` | Password reset request |
+| `/reset-password` | Password reset with OTP |
 
-Open the `app/components/` folder to find corresponding pages and UI components to extend.
+### Chemistry Labs
+
+| Route | Experiment |
+|-------|-----------|
+| `/chemistry/periodictable` | Interactive periodic table with element details |
+| `/chemistry/chemicalbonds` | Chemical bond type visualizations |
+| `/chemistry/electronic-configuration/[atomicNumber]` | Per-atom electronic configuration viewer |
+| `/chemistry/reaction-simulation` | Interactive reaction simulator with 3D dynamics |
+
+### Physics Labs
+
+| Route | Experiment |
+|-------|-----------|
+| `/physics/freefall` | Free fall motion simulation |
+| `/physics/projectilemotion` | Projectile motion analysis |
+| `/physics/hookelaw` | Hooke's Law spring experiments |
+| `/physics/ohmslaw` | Ohm's Law circuit simulations |
+| `/physics/energyconservation` | Energy conservation demonstrations |
+| `/physics/rclab` | RC circuit simulator |
+| `/physics/simplependulum` | Simple pendulum oscillations |
+| `/physics/speedoflight` | Speed of light experiments |
+| `/physics/uniformmotionlab` | Uniform motion visualizations |
+| `/physics/waveoptics` | Wave optics and diffraction |
+
+### Biology Labs
+
+| Route | Experiment |
+|-------|-----------|
+| `/biology/cell/animal` | 3D interactive animal cell visualization |
+| `/biology/cell/plant` | 3D interactive plant cell visualization |
+| `/biology/human` | Human anatomy explorer |
+
+### Computer Science Labs
+
+| Route | Tool |
+|-------|------|
+| `/computer-science/code-lab/html-css-js` | Live HTML/CSS/JS code editor with preview |
+
+### API Endpoints
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| POST | `/api/auth/signup` | Create new user account |
+| POST | `/api/auth/login` | Authenticate user |
+| POST | `/api/auth/verify-otp` | Verify email OTP and auto-login |
+| POST | `/api/auth/send-otp` | Send OTP email |
+| POST | `/api/auth/forgot-password` | Send password reset OTP |
+| POST | `/api/auth/reset-password` | Reset password with OTP |
+| POST | `/api/auth/logout` | Clear authentication cookie |
+| GET | `/api/auth/check` | Check authentication status |
+| GET | `/api/projects` | Fetch user projects (filtered by type) |
+| POST | `/api/projects` | Create or update project |
+| DELETE | `/api/projects` | Delete project |
 
 ---
 
 ## Authentication System 🔐
 
-OpenLabs now includes a **complete, production-ready authentication system** with the following features:
+OpenLabs includes a **production-ready authentication system** with email verification, secure password management, and JWT-based sessions.
 
-### Features
-- ✅ **Email Verification OTP** - 6-digit codes sent via Gmail SMTP (10-minute expiry)
-- ✅ **Secure Password Storage** - bcryptjs hashing with salt rounds
-- ✅ **JWT Tokens** - Stateless authentication with token-based sessions (24-hour expiry)
-- ✅ **Password Reset** - Forgot password flow with OTP verification (15-minute expiry)
-- ✅ **Cloud Database** - All data stored securely in MongoDB Atlas
+### Key Features
 
-### Setup Instructions
+| Feature | Details |
+|---------|---------|
+| **Email Verification** | 6-digit OTP sent via Gmail SMTP, 10-minute expiry |
+| **Password Security** | bcryptjs hashing with 10 salt rounds |
+| **JWT Authentication** | Stateless tokens with 24-hour expiry |
+| **Password Reset** | Forgot password flow with OTP verification (15-minute expiry) |
+| **Session Management** | HttpOnly cookies for secure token storage |
+| **Database Backend** | MongoDB Atlas for user and OTP storage |
 
-1. **Environment Variables** (`.env.local`):
-   ```env
-   # JWT Configuration
-   JWT_SECRET=your_secret_key_here
+### User Authentication Flow
 
-   # MongoDB Atlas
-   MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/OpenLabs?retryWrites=true&w=majority
+**Registration Process:**
+1. User creates account (name, email, password)
+2. 6-digit OTP sent to email (10-minute validity)
+3. User verifies OTP on verification page
+4. Account activated and user auto-logged in
 
-   # Email Configuration (Gmail)
-   EMAIL_USER=your_email@gmail.com
-   EMAIL_PASSWORD=your_app_specific_password
-   
-   # Website
-   WEBSITE_NAME=OpenLabs
-   WEBSITE_URL=https://yourdomain.com
-   ```
-
-2. **Gmail Setup**:
-   - Enable 2-Factor Authentication on your Google account
-   - Generate an "App Password" at https://myaccount.google.com/apppasswords
-   - Use the 16-character password in `EMAIL_PASSWORD`
-
-3. **MongoDB Atlas**:
-   - Create a free cluster at https://www.mongodb.com/cloud/atlas
-   - Copy your connection string and update `MONGO_URI`
-
-### User Flow
-
-**Signup:**
-1. User creates account with name, email, password
-2. OTP sent to email (10-minute validity)
-3. User enters OTP on verification page
-4. Email marked as verified
-5. User automatically logged in and redirected to home
-
-**Login:**
-1. User enters email and password
-2. Credentials verified against database
+**Login Process:**
+1. User enters credentials
+2. Password verified against bcrypt hash
 3. JWT token issued as httpOnly cookie
-4. User redirected to home page
+4. Session established with 24-hour expiry
 
-**Forgot Password:**
-1. User enters email on forgot password page
-2. System checks if email exists and is verified
-3. OTP sent to email (15-minute validity)
-4. User enters OTP and new password on reset page
-5. Password updated in database
-6. User redirected to login
+**Password Recovery:**
+1. User initiates password reset request
+2. OTP sent to registered email (15-minute validity)
+3. User enters OTP and new password
+4. Password updated securely in database
 
-### API Endpoints
+### Environment Configuration
 
-- `POST /api/auth/signup` - Create new user account
-- `POST /api/auth/login` - Authenticate user and issue token
-- `POST /api/auth/logout` - Clear authentication cookie
-- `POST /api/auth/verify-otp` - Verify email OTP and auto-login
-- `POST /api/auth/send-otp` - Send OTP email
-- `POST /api/auth/forgot-password` - Send password reset OTP
-- `POST /api/auth/reset-password` - Reset password with OTP
-- `GET /api/auth/check` - Check if user is authenticated
-- `GET /api/projects` — Fetch user projects (filtered by type)
-- `POST /api/projects` — Create or update a project
-- `DELETE /api/projects` — Delete a project
-### Security Features
+Create `.env.local` with the following variables:
 
-- ✓ **Password Hashing** - bcryptjs with 10 salt rounds
-- ✓ **JWT Tokens** - Signed with secret key, 24-hour expiration
-- ✓ **HttpOnly Cookies** - Token stored securely, not accessible via JavaScript
-- ✓ **OTP Expiration** - Auto-delete after 10-15 minutes
-- ✓ **Email Verification** - Prevents dummy accounts
-- ✓ **Verified User Check** - Must verify email before password reset
+```env
+# JWT Configuration
+JWT_SECRET=your_secure_random_secret
+
+# MongoDB Atlas
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/OpenLabs?retryWrites=true&w=majority
+
+# Email Service (Gmail SMTP)
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASSWORD=your_app_specific_password
+
+# Website Information
+WEBSITE_NAME=OpenLabs
+WEBSITE_URL=https://yourdomain.com
+```
+
+### Gmail Setup Instructions
+
+1. Enable 2-Factor Authentication on your Google account
+2. Generate "App Password" at https://myaccount.google.com/apppasswords
+3. Use the 16-character password in `EMAIL_PASSWORD`
+
+### MongoDB Atlas Setup
+
+1. Create free cluster at https://www.mongodb.com/cloud/atlas
+2. Copy connection string
+3. Update `MONGO_URI` with your credentials
+
+### Security Measures
+
+- ✅ **Salted Password Hashing** — bcryptjs prevents rainbow table attacks
+- ✅ **Signed JWT Tokens** — Cryptographically verified, signed with secret key
+- ✅ **HttpOnly Cookies** — Tokens inaccessible to client-side JavaScript
+- ✅ **OTP Expiration** — Automatic cleanup of expired verification codes
+- ✅ **Email Verification** — Prevents dummy account creation
+- ✅ **Verified User Requirement** — Email verification mandatory before password reset
 
 ---
 
-## How to Add a New Lab 🧩
+## Troubleshooting 🔧
 
-1. Create a route under `app/` (e.g., `app/physics/newlab/page.tsx`).
-2. Add the interactive UI as a component in `app/components/physics/`.
-3. **For 3D Labs using Three.js/React Three Fiber:**
-   - Use `dynamic` import with `ssr: false` in your page component to prevent server-side rendering errors
-   - Example: `const MyComponent = dynamic(() => import("@/app/components/..."), { ssr: false })`
-4. Add any static assets to `public/` and data to `app/src/data/` if needed.
-5. Export small, testable components and document props via JSDoc or TypeScript interfaces.
-6. Add an entry to the navigation (`app/layout.tsx` or `app/components/Navbar.tsx`) so users can find it.
+### Common Issues & Solutions
+
+#### WebGL/3D Component Errors
+**Problem:** "WebGL not supported" or blank 3D canvas
+
+**Solutions:**
+- Ensure you're using a modern browser (Chrome, Firefox, Safari, Edge)
+- Check browser hardware acceleration is enabled
+- Disable browser extensions that block WebGL
+- Try a different browser
+- Update GPU drivers
+
+**Code Fix:** Components already use `dynamic()` with `ssr: false` to prevent SSR errors.
+
+#### Authentication Issues
+**Problem:** Token expiration or login not persisting
+
+**Solution:**
+- Check `.env.local` has correct `JWT_SECRET`
+- Verify MongoDB connection string in `MONGO_URI`
+- Check browser cookies are enabled
+- Clear browser cache and cookies, then re-login
+- Ensure email is verified before password reset
+
+#### Email Not Sending
+**Problem:** OTP emails not received
+
+**Checklist:**
+- ✅ Gmail 2FA is enabled on your account
+- ✅ App password is correct (16 characters from Google Account)
+- ✅ `EMAIL_USER` and `EMAIL_PASSWORD` are in `.env.local`
+- ✅ Check email spam folder
+- ✅ Verify MongoDB `OTP` collection entries
+- ✅ Ensure `WEBSITE_URL` is correctly set
+
+#### Slow Performance
+**Problem:** Application feels sluggish
+
+**Optimizations:**
+- Use production build: `yarn build && yarn start`
+- Enable browser DevTools and check Network tab for slow resources
+- Reduce 3D model complexity or implement LOD (Level of Detail)
+- Check MongoDB indexes are created
+- Use CDN for static assets
+
+#### Environment Variable Issues
+**Problem:** "process.env.[VAR] is undefined"
+
+**Solution:**
+- Ensure `.env.local` exists in root directory (same level as package.json)
+- Restart dev server after adding `.env.local`: `Ctrl+C` then `yarn dev`
+- Variable names must be exact (case-sensitive)
+- Never commit `.env.local` to git
+
+---
+
+## Error Handling & Custom Error Pages 🚨
+
+OpenLabs includes professionally designed, branded error pages that provide excellent user experience during failures.
+
+### Error Pages Overview
+
+#### 1. **404 Not Found** (`app/not-found.tsx`)
+Displayed when users navigate to non-existent routes.
+
+**Features:**
+- 🎨 Animated gradient 404 heading with rotation effect
+- 💡 Helpful message explaining the missing page
+- 🔗 Quick links to popular labs (Periodic Table, Free Fall, Animal Cell, Code Editor)
+- 🎯 Two CTA buttons: "Back to Home" and "Explore Labs"
+- ✨ Animated science emojis and smooth transitions
+
+**When Used:**
+```typescript
+// Automatically triggered by Next.js for undefined routes
+// e.g., /invalid-path or /nonexistent-lab
+```
+
+**Example Response:**
+- Status Code: 404
+- Custom Hero Animation
+- Lab Suggestions
+- Navigation Options
+
+#### 2. **Error Boundary** (`app/error.tsx`)
+Route-level error handler for caught exceptions and runtime errors.
+
+**Features:**
+- 🔴 Alert icon with pulse animation in error gradient
+- 📋 Displays actual error message for debugging
+- 🆔 Error ID (digest) for support reference
+- 📝 **Recovery suggestions:**
+  - Refresh the page
+  - Clear browser cache
+  - Navigate to home page
+  - Report issue to GitHub
+- 🔧 Three action buttons: "Try Again", "Go Home", "Report Issue"
+- 💬 Help section with support links
+- 🔗 Links to GitHub issues and maintainer profile
+
+**When Used:**
+```typescript
+// Automatically triggered when route component throws error
+// e.g., API failures, Component rendering errors, State errors
+export default function ErrorBoundary() {
+  return <Error />
+}
+```
+
+**Example:**
+```javascript
+// If any lab component has an error
+throw new Error("Failed to load 3D model");
+// → Automatically caught and displayed with error.tsx
+```
+
+#### 3. **Global Error Boundary** (`app/global-error.tsx`)
+Root-level error handler for critical system-wide failures.
+
+**Features:**
+- 🌐 System-level error handling
+- ⚠️ Critical error notification
+- 🔄 Recovery attempt button
+- 📊 Error logging and tracking capability
+- 🏠 Root navigation option
+- ⚙️ Spinning gear animation
+
+**When Used:**
+```typescript
+// Catches errors that occur at root layout level
+// e.g., Layout rendering errors, Global middleware errors
+```
+
+**Key Differences:**
+| Page | Scope | Triggered By |
+|------|-------|--------------|
+| **404** | Single route | Non-existent path |
+| **error.tsx** | Route segment | Component errors |
+| **global-error.tsx** | Entire app | Layout/global errors |
+
+### Error Recovery Options
+
+Each error page provides multiple recovery paths:
+
+1. **Immediate Recovery** — "Try Again" button attempts to recover state
+2. **Home Navigation** — Quick return to safe landing page
+3. **Lab Exploration** — Quick links to popular labs
+4. **Issue Reporting** — GitHub issue creation link for support
+
+### Error Logging
+
+The error pages are designed to support error tracking services:
+
+```typescript
+// In error.tsx
+useEffect(() => {
+  // Log to external service
+  console.error("Error occurred:", error);
+  
+  // Could integrate with:
+  // - Sentry
+  // - LogRocket
+  // - Rollbar
+  // - Custom error tracking API
+}, [error]);
+```
+
+### Testing Error Pages
+
+**Test 404 Page:**
+```bash
+# Navigate to any undefined route
+http://localhost:3000/this-does-not-exist
+```
+
+**Test Error Boundary:**
+```bash
+# Trigger a component error by modifying a lab component
+throw new Error("Test error");
+```
+
+**Test Global Error:**
+```bash
+# Errors in root layout will trigger global-error.tsx
+```
+
+---
+
+### Step-by-Step Guide
+
+#### 1. Create the Route Page
+Create a new page file in the appropriate subject folder:
+
+```bash
+# Example: Adding a new physics lab
+touch app/physics/newlab/page.tsx
+```
+
+#### 2. Build the Component
+Create a corresponding component in the components folder:
+
+```bash
+mkdir -p app/components/physics/newlab
+touch app/components/physics/newlab/LabComponent.tsx
+```
+
+#### 3. Export the Component
+In your page file, import and export the component:
+
+```typescript
+// app/physics/newlab/page.tsx
+'use client'
+
+import dynamic from 'next/dynamic'
+import NewLabComponent from '@/app/components/physics/newlab/LabComponent'
+
+// Use dynamic import with ssr: false for 3D components
+const LabWithoutSSR = dynamic(() => import('@/app/components/physics/newlab/LabComponent'), {
+  ssr: false
+})
+
+export default function NewLabPage() {
+  return <LabWithoutSSR />
+}
+```
+
+#### 4. Add Navigation Link
+Update [app/components/Navbar.tsx](app/components/Navbar.tsx) to include your new lab in the navigation menu.
+
+#### 5. Add Static Assets
+Store any images or data files in `public/`:
+
+```bash
+public/
+├── images/
+│   └── newlab/
+│       └── experiment.png
+└── data/
+    └── newlab-data.json
+```
+
+### Best Practices
+
+- **Use TypeScript** for type safety and better IDE support
+- **Dynamic Imports** — Always use `dynamic()` with `ssr: false` for Three.js/WebGL components
+- **Responsive Design** — Use Tailwind CSS for mobile compatibility
+- **Component Props** — Document props with TypeScript interfaces
+- **Error Handling** — Gracefully handle WebGL unavailability
+- **Performance** — Optimize 3D rendering, use lazy loading for heavy assets
+- **Accessibility** — Ensure keyboard navigation and screen reader support
 
 ---
 
 ## Contributing 🤝
 
-We welcome improvements, bug fixes, and new labs!
+We welcome contributions! Whether it's bug fixes, new features, or documentation improvements.
 
-1. Fork the repository
-2. Create a branch: `git checkout -b feat/your-feature`
-3. Make changes, commit, and push
-4. Submit a Pull Request with a clear description and screenshots/videos
+### How to Contribute
 
-Guidelines:
+1. **Fork** the repository on GitHub
+2. **Create** a feature branch: `git checkout -b feature/your-feature-name`
+3. **Make changes** and commit with clear messages: `git commit -m "feat: add new lab feature"`
+4. **Push** to your fork: `git push origin feature/your-feature-name`
+5. **Submit** a Pull Request with:
+   - Clear description of changes
+   - Screenshots or videos for new features
+   - Reference to any related issues
 
-- Keep changes focused and small
-- Add or update tests where relevant (future improvement)
-- Follow consistent formatting and lint rules
+### Development Guidelines
+
+- **Code Style** — Follow ESLint configuration; run `yarn lint` before submitting
+- **Testing** — Test components locally in multiple browsers
+- **TypeScript** — Use strict type checking for all new code
+- **Commit Messages** — Use conventional commits (feat:, fix:, docs:, etc.)
+- **Branch Naming** — Use descriptive names (feature/periodic-table, fix/auth-bug)
+- **Documentation** — Update README for new features or significant changes
+
+### Reporting Issues
+
+When reporting bugs, please include:
+- Clear description of the issue
+- Steps to reproduce
+- Expected vs. actual behavior
+- Environment details (browser, OS)
+- Screenshots if applicable
 
 ---
 
 ## Deployment 🚀
 
-The app deploys easily to Vercel (recommended):
+OpenLabs is optimized for modern hosting platforms with Node.js 18+ support.
 
-1. Push your repository to GitHub
-2. Import the project on Vercel and set the build command to `yarn build` and the output directory to `.`
-3. Add any environment variables in the Vercel dashboard if needed
+### Deploy to Vercel (Recommended)
 
-Other hosts (Netlify, Fly) should also work with a compatible Node 18+ environment.
+Vercel is the recommended platform (creators of Next.js):
+
+1. **Push repository to GitHub** (if not already done)
+2. **Go to** [https://vercel.com](https://vercel.com) and sign in
+3. **Click** "New Project" and import your GitHub repository
+4. **Configure:**
+   - Framework: Next.js
+   - Build Command: `yarn build`
+   - Output Directory: `.`
+5. **Add environment variables** in Vercel dashboard:
+   ```
+   JWT_SECRET
+   MONGO_URI
+   EMAIL_USER
+   EMAIL_PASSWORD
+   WEBSITE_URL
+   WEBSITE_NAME
+   ```
+6. **Deploy** — Vercel automatically deploys on push to main branch
+
+### Alternative Hosting
+
+Other Node.js compatible platforms also work:
+
+- **Netlify** — Preview deployments, custom rewrite rules
+- **Railway** — Simple deployment with environment management
+- **Fly.io** — Global deployment with edge computing
+- **Self-hosted** — Docker-ready for custom servers
+
+### Pre-Deployment Checklist
+
+- ✅ Run `yarn build` locally and verify no errors
+- ✅ Test all authentication flows
+- ✅ Verify environment variables are set
+- ✅ Check database connectivity to MongoDB Atlas
+- ✅ Test email delivery (OTP, password reset)
+- ✅ Review SEO metadata in layout.tsx
+- ✅ Run `yarn lint` to catch code issues
+- ✅ Test on multiple browsers and devices
 
 ---
 
 ## Screenshots & Media 🖼️
 
-Add screenshots under `public/images/` and reference them here to make the README visually rich.
+Add screenshots and media assets in `public/images/`:
 
-Example:
+```bash
+public/
+└── images/
+    ├── elements/          # Periodic table element visuals
+    ├── labs/              # Lab screenshots
+    └── tutorials/         # Tutorial images
+```
+
+To reference in documentation:
 
 ```markdown
-![Periodic Table](/images/elements/placeholder.jpg)
+![Experiment Name](public/images/labs/experiment.jpg)
 ```
 
 ---
 
-## Roadmap & Ideas 💡
+## Future Roadmap 💡
 
-- Unit & integration tests (Jest / React Testing Library)
-- Accessibility audit and improvements (a11y)
-- More advanced labs (optics, thermodynamics, circuits)
-- Internationalization (i18n)
-- OAuth2 integration (Google, GitHub login)
-- User profile dashboard
-- Progress tracking and certificates
-- Discussion forums for students
+### High Priority
+- [ ] Automated testing suite (Jest + React Testing Library)
+- [ ] Accessibility audit and WCAG 2.1 compliance improvements
+- [ ] User progress tracking and learning statistics
+- [ ] Student certificates and achievement system
+- [ ] Accessibility improvements (keyboard navigation, screen reader support)
 
----
+### Medium Priority
+- [ ] OAuth2 integration (Google, GitHub single sign-in)
+- [ ] User profile dashboard with customization
+- [ ] Advanced physics labs (thermodynamics, quantum mechanics)
+- [ ] Interactive quiz and assessment system
+- [ ] Code lab templates and starter code
 
-## License
-
-This project is released under the **Proprietary License** — see the `LICENSE` file for details.
-
----
-
-## Trademark & Brand Notice
-
-OpenLabs™ is a name, concept, and brand owned by Rahul Rajput.
-
-The OpenLabs name, logo, and branding may not be used in any derivative
-projects, products, or services without prior written permission.
-
----
-
-## Maintainers & Contact 📬
-
-- Maintainer: [@rahulra3621](https://github.com/rahulra3621)
-
-If you need help or want to contribute, open an issue or submit a PR — we welcome collaborators!
+### Long-term Vision
+- [ ] Internationalization (i18n) — Multi-language support
+- [ ] Real-time collaborative labs (WebSockets)
+- [ ] Discussion forums for peer learning
+- [ ] Instructor dashboard for class management
+- [ ] Mobile native app (React Native)
+- [ ] AI-powered explanations and tutoring
+- [ ] Laboratory video demonstrations
+- [ ] Advanced 3D simulations with physics engines
 
 ---
 
-Thank you for checking out **OpenLabs** — built for curious minds! 🎉
+## License & Legal 📄
+
+### License
+
+This project is released under a **Proprietary License** — see the [LICENSE](LICENSE) file for full terms and conditions.
+
+### Trademark & Brand Protection
+
+**OpenLabs™** is a registered name and brand concept owned by **Rahul Rajput**.
+
+The OpenLabs name, logo, visual identity, and branding are **protected intellectual property**. 
+
+**Usage Restrictions:**
+- ❌ Cannot be used in derivative projects without written permission
+- ❌ Cannot be used for commercial purposes without explicit authorization
+- ❌ Cannot be used in product names or marketing materials without consent
+
+For licensing inquiries, please contact the maintainer.
+
+---
+
+## Contact & Support 📬
+
+- **Maintainer:** [@rahulra3621](https://github.com/rahulra3621)
+- **Issues & Bugs:** Open an issue on [GitHub](https://github.com/rahulra3621/openlabs/issues)
+- **Feature Requests:** Submit a discussion on [GitHub Discussions](https://github.com/rahulra3621/openlabs/discussions)
+- **Contributions:** See the [Contributing](#contributing-) section above
+
+For direct inquiries about licensing or partnerships:
+- GitHub: [@rahulra3621](https://github.com/rahulra3621)
+
+---
+
+## Changelog
+
+### Version History
+
+Detailed changes per release are tracked in [CHANGELOG.md](CHANGELOG.md) (if available) or in [GitHub Releases](https://github.com/rahulra3621/openlabs/releases).
+
+### Latest Updates
+
+**Recent Enhancements (February 2026):**
+- ✅ Professional 404, 500, and error boundary pages with consistent branding
+- ✅ Fixed mobile navbar z-index issue (dropdown now stays above content)
+- ✅ Added Computer Science to main navbar navigation
+- ✅ Enhanced homepage with "Explore All Labs" discovery section
+- ✅ Lab showcase grid organized by category with color-coded headers
+- ✅ Quick links to 16+ labs from homepage
+
+**Existing Features:**
+- ✅ Complete authentication system with OTP email verification
+- ✅ JWT token-based session management
+- ✅ Project management for code labs
+- ✅ Comprehensive physics, chemistry, biology, and computer science labs
+- ✅ Responsive mobile-first design with Framer Motion animations
+
+---
+
+## Acknowledgments 🙏
+
+OpenLabs is built with ❤️ using:
+- [Next.js](https://nextjs.org/) community and documentation
+- [React](https://react.dev/) ecosystem
+- [Three.js](https://threejs.org/) for 3D graphics
+- [Tailwind CSS](https://tailwindcss.com/) community
+- All open-source dependencies listed in [package.json](package.json)
+
+---
+
+**Built for curious minds, by educators, for learning. 🎓**
+
+*Last Updated: February 2026*

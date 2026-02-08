@@ -7,11 +7,11 @@
   "packageManager": "yarn@1.22.22",
   "proxy": "http://localhost:5000",
   "scripts": {
-    "predev": "node -e \"require('dotenv').config(); require('dotenv').config({ path: '.env.local' }); require('@hackeryard/mandatory-guard').initGuard()\"",
+    "predev": "node scripts/guard.cjs",
     "dev": "next dev",
-    "prebuild": "node -e \"require('dotenv').config(); require('dotenv').config({ path: '.env.local' }); require('@hackeryard/mandatory-guard').initGuard()\"",
+    "prebuild": "node scripts/guard.cjs",
     "build": "next build",
-    "prestart": "node -e \"require('dotenv').config(); require('dotenv').config({ path: '.env.local' }); require('@hackeryard/mandatory-guard').initGuard()\"",
+    "prestart": "node scripts/guard.cjs",
     "start": "next start",
     "lint": "next lint",
     "preview": "next start"
