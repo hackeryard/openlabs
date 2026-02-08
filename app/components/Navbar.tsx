@@ -59,10 +59,17 @@ export default function Navbar() {
     }
   };
 
+  const navLinks = [
+  { label: "Physics", path: "/physics" },
+  { label: "Chemistry", path: "/chemistry" },
+  { label: "Biology", path: "/biology" },
+  { label: "Computer Science", path: "/computer-science" },
+];
+
   return (
     <motion.nav
       layout
-      className="bg-gradient-to-r from-indigo-600 via-blue-600 to-sky-500 text-white py-3"
+      className="bg-gradient-to-r from-indigo-600 via-blue-600 to-sky-500 text-white py-3 relative z-40"
     >
       <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
@@ -103,13 +110,13 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <ul className="hidden md:flex md:items-center md:gap-8">
-          {["Home", "Chemistry", "Physics", "Biology"].map((item) => (
-            <li key={item}>
+          {navLinks.map((item) => (
+            <li key={item.label}>
               <Link
-                href={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+                href={item.path}
                 className="px-3 py-2 rounded hover:bg-white/10 transition"
               >
-                {item}
+                {item.label}
               </Link>
             </li>
           ))}
@@ -144,16 +151,16 @@ export default function Navbar() {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="md:hidden absolute top-16 right-4 bg-white text-slate-800 p-4 rounded-lg shadow-lg w-48 space-y-1"
+            className="md:hidden absolute top-16 right-4 bg-white text-slate-800 p-4 rounded-lg shadow-lg w-48 space-y-1 z-50"
           >
-            {["Home", "Chemistry", "Physics", "Biology"].map((item) => (
-              <li key={item}>
+            {navLinks.map((item) => (
+              <li key={item.label}>
                 <Link
-                  href={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+                  href={item.path}
                   className="block px-3 py-2 rounded hover:bg-slate-100 transition"
                   onClick={() => setOpen(false)}
                 >
-                  {item}
+                  {item.label}
                 </Link>
               </li>
             ))}
