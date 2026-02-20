@@ -18,5 +18,7 @@ jobs:
           node-version: 20
 
       - run: yarn install --frozen-lockfile
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - run: node scripts/guard.cjs

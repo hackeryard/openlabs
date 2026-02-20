@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import EditorPanel from "@/app/components/computer-science/code-lab/html-css-js/EditorPanel";
 import PreviewPanel from "@/app/components/computer-science/code-lab/html-css-js/PreviewPanel";
 import ConsolePanel from "@/app/components/computer-science/code-lab/html-css-js/ConsolePanel";
@@ -21,6 +21,8 @@ export default function CodeLab() {
 
   const pathname = usePathname();
   const projectType = pathname.split('/').pop() || 'html-css-js';
+  const router = useRouter();
+  const currentPath = typeof window !== "undefined" ? window.location.pathname + window.location.search : "/";
 
   /* ---------------- PROJECT HOOK ---------------- */
   const {
@@ -58,7 +60,7 @@ export default function CodeLab() {
 
     setSaving(true);
 
-    await fetch("/api/projects", {
+    const res = await fetch("/api/projects", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -71,6 +73,12 @@ export default function CodeLab() {
       }),
     });
 
+    if (res.status === 401) {
+      setSaving(false);
+      router.push(`/login?next=${encodeURIComponent(currentPath)}`);
+      return;
+    }
+
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 1500);
@@ -82,6 +90,11 @@ export default function CodeLab() {
     const res = await fetch(
       `/api/projects?projectId=${activeProject.id}&projectType=${projectType}`
     );
+
+    if (res.status === 401) {
+      router.push(`/login?next=${encodeURIComponent(currentPath)}`);
+      return;
+    }
 
     if (!res.ok) return;
 

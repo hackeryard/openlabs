@@ -33,7 +33,7 @@ export default function Footer() {
       initial="hidden"
       animate="visible"
       variants={container}
-      className="mt-12 bg-gradient-to-r from-slate-800 to-indigo-900 text-white py-8"
+      className="bg-gradient-to-r from-slate-800 to-indigo-900 text-white py-8"
     >
       <motion.div
         layout

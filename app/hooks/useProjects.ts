@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { nanoid } from "nanoid";
 
 export interface Project {
@@ -24,6 +25,9 @@ export function useProjects(projectType: string) {
     }
   }, [initialized]);
 
+  const router = useRouter();
+  const currentPath = typeof window !== "undefined" ? window.location.pathname + window.location.search : "/";
+
   useEffect(() => {
     if (!activeId && projects.length > 0) {
       setActiveId(projects[0].id);
@@ -39,6 +43,11 @@ export function useProjects(projectType: string) {
       const res = await fetch(
         `/api/projects?projectType=${projectType}`
       );
+
+      if (res.status === 401) {
+        router.push(`/login?next=${encodeURIComponent(currentPath)}`);
+        return;
+      }
 
       if (!res.ok) return;
 
@@ -112,7 +121,7 @@ export function useProjects(projectType: string) {
     setProjects((prev) => [project, ...prev]);
     setActiveId(id);
 
-    await fetch("/api/projects", {
+    const res = await fetch("/api/projects", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -124,6 +133,11 @@ export function useProjects(projectType: string) {
         projectType: projectType,
       }),
     });
+
+    if (res.status === 401) {
+      router.push(`/login?next=${encodeURIComponent(currentPath)}`);
+      return;
+    }
   };
 
   // ---------------------------
@@ -134,9 +148,14 @@ export function useProjects(projectType: string) {
     setProjects((prev) => prev.filter((p) => p.id !== id));
 
     // Delete from DB
-    await fetch(`/api/projects?projectId=${id}`, {
+    const res = await fetch(`/api/projects?projectId=${id}`, {
       method: "DELETE",
     });
+
+    if (res.status === 401) {
+      router.push(`/login?next=${encodeURIComponent(currentPath)}`);
+      return;
+    }
 
     // If deleting active project, clear activeId
     if (id === activeId) {
