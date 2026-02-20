@@ -94,6 +94,7 @@ yarn start
 
 ### Computer Science Labs
 - **HTML/CSS/JS Code Editor** — Live code editor with real-time preview and console output
+- **JavaScript Visual Debugger** — Step-through debugger with memory, stack, and async queue visualization
 - **Project Management** — Save, load, and manage projects with type-based filtering and persistent storage
 
 ### Authentication & Security
@@ -103,6 +104,8 @@ yarn start
 - ✅ **Password reset flow** with OTP verification (15-minute expiry)
 - ✅ **Persistent sessions** via httpOnly cookies
 - ✅ **Database-backed user management** with MongoDB Atlas
+- ✅ **Redirect-after-login** — Users redirected to their intended page after authentication
+- ✅ **Protected API routes** — Automatic authentication checks with session redirect
 
 ### UI/UX Features
 - **Responsive Design** — Mobile-friendly layouts with Tailwind CSS
@@ -124,6 +127,7 @@ yarn start
 - **React** 18.2.0 (frontend library)
 - **TypeScript** 5.4.0 (type safety)
 - **Tailwind CSS** 3.4.17 (utility-first styling)
+- **Babel** 7.29.x (@babel/parser, @babel/generator, @babel/traverse) — JavaScript parsing and code transformation
 
 ### 3D Graphics & Visualization
 - **Three.js** 0.182.0 (3D graphics engine)
@@ -261,7 +265,7 @@ OpenLabs/
 ## Routes & Navigation 🧭
 
 ### Home & Authentication
-
+Supports optional `?next=/path` query parameter to redirect users to their intended page after login.
 | Route | Purpose |
 |-------|---------|
 | `/` | Landing page with navigation |
@@ -308,6 +312,7 @@ OpenLabs/
 | Route | Tool |
 |-------|------|
 | `/computer-science/code-lab/html-css-js` | Live HTML/CSS/JS code editor with preview |
+| `/computer-science/code-lab/js` | JavaScript Visual Debugger with runtime visualization |
 
 ### API Endpoints
 
@@ -465,7 +470,7 @@ WEBSITE_URL=https://yourdomain.com
 
 ## Error Handling & Custom Error Pages 🚨
 
-OpenLabs includes professionally designed, branded error pages that provide excellent user experience during failures.
+OpenLabs includes professionally designed, branded error pages with subject-specific themes that provide excellent user experience during failures.
 
 ### Error Pages Overview
 
@@ -526,6 +531,33 @@ throw new Error("Failed to load 3D model");
 #### 3. **Global Error Boundary** (`app/global-error.tsx`)
 Root-level error handler for critical system-wide failures.
 
+#### 4. **Subject-Specific Error Boundaries**
+Dedicated error pages with lab-themed branding for each science domain:
+
+**Physics Lab Error** (`app/physics/error.tsx`)
+- 🌀 Blue quantum-themed aesthetic with rotating atom icon
+- "Physics_Wing // Entropy" branding
+- Sync Coordinates recovery action
+- Grid background with scanning line effect
+
+**Chemistry Lab Error** (`app/chemistry/error.tsx`)
+- 🧪 Emerald green chemistry-themed design with flask icon
+- "Chem_Lab // Breach" branding
+- Re-Stabilize Solution recovery action
+- Animated reagent particles effect
+
+**Biology Lab Error** (`app/biology/error.tsx`)
+- 🧬 Rose/pink biological-themed interface with DNA icon
+- "Bio_Sector // Mutation" branding  
+- Regenerate Helix recovery action
+- Heart pulse background animation
+
+**Computer Science Lab Error** (`app/computer-science/error.tsx`)
+- 💻 Amber/orange retro-tech aesthetic with CPU icon
+- "CS_Lab // Kernel_Panic" branding
+- Hard Reboot recovery action
+- Binary code background Matrix-style effect
+
 **Features:**
 - 🌐 System-level error handling
 - ⚠️ Critical error notification
@@ -544,8 +576,12 @@ Root-level error handler for critical system-wide failures.
 | Page | Scope | Triggered By |
 |------|-------|--------------|
 | **404** | Single route | Non-existent path |
-| **error.tsx** | Route segment | Component errors |
+| **error.tsx** | Route segment | Root component errors |
 | **global-error.tsx** | Entire app | Layout/global errors |
+| **physics/error.tsx** | Physics routes | Errors in physics labs |
+| **chemistry/error.tsx** | Chemistry routes | Errors in chemistry labs |
+| **biology/error.tsx** | Biology routes | Errors in biology labs |
+| **computer-science/error.tsx** | CS routes | Errors in CS labs |
 
 ### Error Recovery Options
 
@@ -592,6 +628,23 @@ throw new Error("Test error");
 ```bash
 # Errors in root layout will trigger global-error.tsx
 ```
+
+### JavaScript Visual Debugger 🐛
+
+The JavaScript debugger allows students to visualize code execution with runtime introspection:
+
+**Features:**
+- **Step-through execution** — Progress through code line by line
+- **Memory inspection** — View all variables and their values at each step
+- **Call stack viewer** — Examine function call hierarchy
+- **DOM tracker** — Monitor DOM mutations
+- **Async queue** — Visualize setTimeout, setInterval, and promises
+- **Timeline scrubber** — Jump to any execution step instantly
+- **Source mapping** — Synchronized code highlighting
+
+**Located at:** `/computer-science/code-lab/js`
+
+**Powered by:** Babel parser (`@babel/parser`, `@babel/generator`, `@babel/traverse`) for code instrumentation
 
 ---
 
@@ -832,7 +885,16 @@ Detailed changes per release are tracked in [CHANGELOG.md](CHANGELOG.md) (if ava
 
 ### Latest Updates
 
-**Recent Enhancements (February 2026):**
+**Latest Updates (February 2026 - v2.5):**
+- ✅ **Subject-Specific Error Pages** — Custom error boundaries for Physics, Chemistry, Biology, and Computer Science labs with lab-themed branding
+- ✅ **JavaScript Visual Debugger** — Step-through runtime visualizer with memory, stack, and async queue inspection
+- ✅ **Enhanced Authentication** — Redirect-after-login functionality with `?next` query parameter support
+- ✅ **Protected API Routes** — Automatic session validation with authentication checks on all project endpoints
+- ✅ **Babel Integration** — JavaScript parsing and code transformation for debugger instrumentation
+- ✅ **GitHub Actions NPM Token** — CI/CD security improvements for dependency installation
+- ✅ **Footer Layout Fix** — Removed unnecessary margin top for better spacing consistency
+
+**Previous Release Features (v2.0-v2.4):**
 - ✅ Professional 404, 500, and error boundary pages with consistent branding
 - ✅ Fixed mobile navbar z-index issue (dropdown now stays above content)
 - ✅ Added Computer Science to main navbar navigation
@@ -840,7 +902,7 @@ Detailed changes per release are tracked in [CHANGELOG.md](CHANGELOG.md) (if ava
 - ✅ Lab showcase grid organized by category with color-coded headers
 - ✅ Quick links to 16+ labs from homepage
 
-**Existing Features:**
+**Core Existing Features:**
 - ✅ Complete authentication system with OTP email verification
 - ✅ JWT token-based session management
 - ✅ Project management for code labs
