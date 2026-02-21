@@ -30,18 +30,25 @@ const item: Variants = {
 
 const cards = [
   {
-    href: "/computer-science/code-lab",
-    title: "Code Lab",
-    desc: "Interactive lab that help in visualizing the code you write.",
+    href: "/computer-science/logic-gates/and-gate",
+    title: "AND Gate",
+    desc: "Interactive lab for visualising working of AND Gate.",
   },
+
   {
-    href: "/computer-science/logic-gates",
-    title: "Logic Gates",
-    desc: "Interactive lab for visualising working of Logic Gates.",
+    href: "/computer-science/logic-gates/or-gate",
+    title: "OR Gate",
+    desc: "Interactive lab for visualising working of OR Gate.",
+  },
+
+    {
+    href: "/computer-science/logic-gates/not-gate",
+    title: "NOT Gate",
+    desc: "Interactive lab for visualising working of NOT Gate.",
   },
 ];
 
-export default function ComputerScience() {
+export default function LogicGates() {
   return (
     <main className="min-h-screen p-6">
       <motion.div
@@ -52,11 +59,11 @@ export default function ComputerScience() {
       >
         {/* -------- Header -------- */}
         <motion.h1 variants={item} className="text-2xl font-bold">
-          Computer Science Experiments
+          Code Visualisation
         </motion.h1>
 
         <motion.p variants={item} className="text-gray-600 mb-6">
-          Coding and Tech related experiments.
+          Coding related experiments.
         </motion.p>
 
         {/* -------- Grid -------- */}
@@ -81,9 +88,7 @@ export default function ComputerScience() {
                 className="block h-full bg-white rounded-xl border-2 border-gray-100 hover:border-indigo-200 shadow-sm hover:shadow-lg p-5 transition"
               >
                 <h3 className="text-lg font-semibold">{card.title}</h3>
-                <p className="text-sm text-gray-500 mt-2">
-                  {card.desc}
-                </p>
+                <p className="text-sm text-gray-500 mt-2">{card.desc}</p>
               </Link>
             </motion.div>
           ))}
