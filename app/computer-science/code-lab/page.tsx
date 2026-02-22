@@ -34,6 +34,11 @@ const cards = [
     title: "HTML | CSS | JS",
     desc: "Interactive lab for previewing the code written in HTML CSS and JS.",
   },
+  {
+    href: "/computer-science/code-lab/js",
+    title: "JavaScript",
+    desc: "Interactive lab for previewing the code written in JavaScript.",
+  },
 ];
 
 export default function CodeLab() {
