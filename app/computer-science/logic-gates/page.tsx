@@ -41,11 +41,35 @@ const cards = [
     desc: "Interactive lab for visualising working of OR Gate.",
   },
 
-    {
+  {
     href: "/computer-science/logic-gates/not-gate",
     title: "NOT Gate",
     desc: "Interactive lab for visualising working of NOT Gate.",
   },
+
+  {
+    href: "/computer-science/logic-gates/nand-gate",
+    title: "NAND Gate",
+    desc: "Interactive lab for visualising working of NAND Gate.",
+  },
+
+  {
+    href: "/computer-science/logic-gates/nor-gate",
+    title: "NOR Gate",
+    desc: "Interactive lab for visualising working of NOR Gate.",
+  },
+
+  {
+    href: "/computer-science/logic-gates/xor-gate",
+    title: "XOR Gate",
+    desc: "Interactive lab for visualising working of XOR Gate.",
+  },  
+
+  {
+    href: "/computer-science/logic-gates/xnor-gate",
+    title: "XNOR Gate",
+    desc: "Interactive lab for visualising working of XNOR Gate.",
+  },   
 ];
 
 export default function LogicGates() {
