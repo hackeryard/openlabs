@@ -34,6 +34,11 @@ const cards = [
     title: "Code Lab",
     desc: "Interactive lab that help in visualizing the code you write.",
   },
+  {
+    href: "/computer-science/logic-gates",
+    title: "Logic Gates",
+    desc: "Interactive lab for visualising working of Logic Gates.",
+  },
 ];
 
 export default function ComputerScience() {

@@ -30,18 +30,49 @@ const item: Variants = {
 
 const cards = [
   {
-    href: "/computer-science/code-lab/html-css-js",
-    title: "HTML | CSS | JS",
-    desc: "Interactive lab for previewing the code written in HTML CSS and JS.",
+    href: "/computer-science/logic-gates/and-gate",
+    title: "AND Gate",
+    desc: "Interactive lab for visualising working of AND Gate.",
   },
+
   {
-    href: "/computer-science/code-lab/js",
-    title: "JavaScript",
-    desc: "Interactive lab for previewing the code written in JavaScript.",
+    href: "/computer-science/logic-gates/or-gate",
+    title: "OR Gate",
+    desc: "Interactive lab for visualising working of OR Gate.",
   },
+
+  {
+    href: "/computer-science/logic-gates/not-gate",
+    title: "NOT Gate",
+    desc: "Interactive lab for visualising working of NOT Gate.",
+  },
+
+  {
+    href: "/computer-science/logic-gates/nand-gate",
+    title: "NAND Gate",
+    desc: "Interactive lab for visualising working of NAND Gate.",
+  },
+
+  {
+    href: "/computer-science/logic-gates/nor-gate",
+    title: "NOR Gate",
+    desc: "Interactive lab for visualising working of NOR Gate.",
+  },
+
+  {
+    href: "/computer-science/logic-gates/xor-gate",
+    title: "XOR Gate",
+    desc: "Interactive lab for visualising working of XOR Gate.",
+  },  
+
+  {
+    href: "/computer-science/logic-gates/xnor-gate",
+    title: "XNOR Gate",
+    desc: "Interactive lab for visualising working of XNOR Gate.",
+  },   
 ];
 
-export default function CodeLab() {
+export default function LogicGates() {
   return (
     <main className="min-h-screen p-6">
       <motion.div
@@ -81,9 +112,7 @@ export default function CodeLab() {
                 className="block h-full bg-white rounded-xl border-2 border-gray-100 hover:border-indigo-200 shadow-sm hover:shadow-lg p-5 transition"
               >
                 <h3 className="text-lg font-semibold">{card.title}</h3>
-                <p className="text-sm text-gray-500 mt-2">
-                  {card.desc}
-                </p>
+                <p className="text-sm text-gray-500 mt-2">{card.desc}</p>
               </Link>
             </motion.div>
           ))}
