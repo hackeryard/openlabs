@@ -2,6 +2,7 @@ import './globals.css'
 import React from 'react'
 import type { Metadata } from 'next'
 import dynamic from 'next/dynamic'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const Navbar = dynamic(() => import('./components/Navbar'), { ssr: false })
 const Footer = dynamic(() => import('./components/Footer'), { ssr: false })
@@ -20,6 +21,7 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
           <main>{children}</main>
         </div>
         <Footer />
+        <SpeedInsights />
       </body>
     </html>
   )
