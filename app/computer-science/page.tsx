@@ -39,6 +39,11 @@ const cards = [
     title: "Logic Gates",
     desc: "Interactive lab for visualising working of Logic Gates.",
   },
+  {
+    href: "/computer-science/git-simulator",
+    title: "Git Simulator",
+    desc: "Interactive lab for visualising the git commands.",
+  },
 ];
 
 export default function ComputerScience() {
