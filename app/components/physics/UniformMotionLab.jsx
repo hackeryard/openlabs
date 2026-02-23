@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
+import { useChat } from "../ChatContext";
 
 const STORAGE_KEY = "openlabs_kinematics_runs_v1";
 
@@ -8,6 +9,16 @@ export default function UniformMotionLab({
     initialAcceleration = 0,
     initialPosition = 0,
 }) {
+    // Chatbot 
+    const { setExperimentData } = useChat();
+  
+  useEffect(() => {
+    setExperimentData({
+      title: "Uniform Motion",
+      theory: "uniform linear motion using a moving object",
+      extraContext: ``,
+    });
+  }, []);
     const canvasRef = useRef(null);
     const rafRef = useRef(null);
 

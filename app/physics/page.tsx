@@ -55,6 +55,11 @@ const cards = [
     desc: "Diffraction & interference lab (Fraunhofer).",
   },
   {
+    href: "/physics/opticslens",
+    title: "Optics Lens",
+    desc: "Optical Lens lab.",
+  },
+  {
     href: "/physics/rclab",
     title: "RC Lab",
     desc: "RC circuit charging / discharging experiments.",

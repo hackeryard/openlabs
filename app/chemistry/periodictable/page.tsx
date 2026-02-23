@@ -1,5 +1,7 @@
-import React from 'react'
+"use client"
+import React, { useEffect } from 'react'
 import dynamic from 'next/dynamic'
+import { useChat } from '@/app/components/ChatContext';
 
 const PeriodicTable = dynamic(() => import('../../components/chemistry/PeriodicTable'), {
   ssr: false,
@@ -7,6 +9,16 @@ const PeriodicTable = dynamic(() => import('../../components/chemistry/PeriodicT
 })
 
 export default function PeriodicTablePage() {
+  // Chatbot 
+  const { setExperimentData } = useChat();
+
+  useEffect(() => {
+    setExperimentData({
+      title: "Chemical Elements Periodic Table.",
+      theory: "",
+      extraContext: ``,
+    });
+  }, []);
   return (
     <main className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto">

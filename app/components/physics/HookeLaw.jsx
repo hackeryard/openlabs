@@ -1,6 +1,7 @@
 "use client";
 // src/components/HookeLawLab.jsx
 import React, { useEffect, useRef, useState } from "react";
+import { useChat } from "../ChatContext";
 
 /**
  * HookeLawLab.jsx
@@ -28,6 +29,16 @@ export default function HookeLaw({
   initialC = 0.05,
   initialX = 0.5
 }) {
+  // Chatbot 
+    const { setExperimentData } = useChat();
+  
+  useEffect(() => {
+    setExperimentData({
+      title: "Hooke Law",
+      theory: "Mass spring virtual lab",
+      extraContext: ``,
+    });
+  }, []);
   const canvasRef = useRef(null);
   const rafRef = useRef(null);
   const dataRef = useRef([]); // {t, x}

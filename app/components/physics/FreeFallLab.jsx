@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
+import { useChat } from "../ChatContext";
 
 const STORAGE_KEY = "openlabs_freefall_runs_v1";
 
@@ -8,6 +9,16 @@ export default function FreeFallLab({
   initialGravity = 9.8,
   initialHeight = 5,
 }) {
+  // Chatbot 
+  const { setExperimentData } = useChat();
+
+  useEffect(() => {
+    setExperimentData({
+      title: "Free Fall",
+      theory: "Free Fall demonstration virtual lab.",
+      extraContext: ``,
+    });
+  }, []);
   const canvasRef = useRef(null);
   const rafRef = useRef(null);
 
@@ -231,10 +242,10 @@ export default function FreeFallLab({
     alert("Run saved");
   }
 
-    function printReport() {
-        const rows = dataRef.current.slice(-200);
+  function printReport() {
+    const rows = dataRef.current.slice(-200);
 
-        const html = `
+    const html = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -347,10 +358,10 @@ export default function FreeFallLab({
 </html>
 `;
 
-        const w = window.open("", "_blank");
-        w.document.write(html);
-        w.document.close();
-    }
+    const w = window.open("", "_blank");
+    w.document.write(html);
+    w.document.close();
+  }
 
   /* ================= UI ================= */
   return (
@@ -376,9 +387,8 @@ export default function FreeFallLab({
           <button
             key={m}
             onClick={() => setGraphMode(m)}
-            className={`px-3 py-1 rounded border ${
-              graphMode === m ? "bg-blue-600 text-white" : ""
-            }`}
+            className={`px-3 py-1 rounded border ${graphMode === m ? "bg-blue-600 text-white" : ""
+              }`}
           >
             {m.toUpperCase()}
           </button>

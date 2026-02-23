@@ -7,7 +7,7 @@ import { useEffect } from "react"
 useGLTF.preload("/models/skeleton.glb")
 
 export default function Model({ type, onSelect }: any) {
-  const path = "/models/skeleton.glb"
+  const path = "/models/human.glb"
 
   try {
     const gltf = useGLTF(path)

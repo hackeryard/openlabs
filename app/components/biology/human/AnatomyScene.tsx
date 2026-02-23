@@ -1,9 +1,8 @@
 "use client"
 
 import { useState, Suspense } from "react"
-import dynamic from "next/dynamic"
 import { Canvas } from "@react-three/fiber"
-import { OrbitControls, Environment } from "@react-three/drei"
+import { OrbitControls } from "@react-three/drei"
 import Model from "./Model"
 
 const CanvasWrapper = ({ type, onSelect }: any) => {

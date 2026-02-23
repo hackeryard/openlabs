@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
+import { useChat } from "../components/ChatContext";
 
 /* ---------------- Animations ---------------- */
 
@@ -47,6 +48,16 @@ const cards = [
 ];
 
 export default function ChemistryPage() {
+  // Chatbot 
+  const { setExperimentData } = useChat();
+
+  useEffect(() => {
+    setExperimentData({
+      title: "Chemistry Page",
+      theory: "",
+      extraContext: ``,
+    });
+  }, []);
   return (
     <main className="min-h-screen p-6">
       <motion.div

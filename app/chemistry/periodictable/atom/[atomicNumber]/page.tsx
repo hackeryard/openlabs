@@ -3,8 +3,20 @@
 import { useParams } from "next/navigation";
 import AtomicModel3D from "../../../../components/chemistry/AtomicModel3D"
 import elements from "../../../../src/data/elements";
+import { useEffect } from "react";
+import { useChat } from "@/app/components/ChatContext";
 
 export default function AtomPage() {
+  // Chatbot 
+  const { setExperimentData } = useChat();
+
+  useEffect(() => {
+    setExperimentData({
+      title: "Chemistry Periodic Table Atom",
+      theory: "",
+      extraContext: ``,
+    });
+  }, []);
   const { atomicNumber } = useParams();
   const Z = Number(atomicNumber);
 

@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
+import { useChat } from "../components/ChatContext";
 
 /* ---------------- Animations ---------------- */
 
@@ -47,6 +48,16 @@ const cards = [
 ];
 
 export default function BiologyPage() {
+  // Chatbot 
+  const { setExperimentData } = useChat();
+
+  useEffect(() => {
+    setExperimentData({
+      title: "Biology Page",
+      theory: "",
+      extraContext: ``,
+    });
+  }, []);
   return (
     <main className="min-h-screen p-6">
       <motion.div
@@ -84,7 +95,7 @@ export default function BiologyPage() {
               <Link
                 href={card.href}
                 className="block h-full bg-white rounded-xl border-2 border-gray-200 shadow-sm p-5 cursor-default"
-              
+
               >
                 <h3 className="text-lg font-semibold">{card.title}</h3>
                 <p className="text-sm text-gray-500 mt-2">

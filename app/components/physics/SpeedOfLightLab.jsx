@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
+import { useChat } from "../ChatContext";
 
 const STORAGE_KEY = "openlabs_light_speed_runs_v1";
 const C = 3e8;
@@ -21,6 +22,16 @@ const COLORS = {
 };
 
 export default function SpeedOfLightLab() {
+    // Chatbot 
+    const { setExperimentData } = useChat();
+  
+  useEffect(() => {
+    setExperimentData({
+      title: "Speed of Light",
+      theory: "demonstration of chsnge in speed of light in different media",
+      extraContext: ``,
+    });
+  }, []);
     const canvasRef = useRef(null);
     const rafRef = useRef(null);
 

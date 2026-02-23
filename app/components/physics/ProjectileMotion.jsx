@@ -1,6 +1,7 @@
 "use client";
 // src/components/ProjectileMotionLab.jsx
 import React, { useEffect, useRef, useState } from "react";
+import { useChat } from "../ChatContext";
 
 /**
  * ProjectileMotionLab.jsx
@@ -21,7 +22,7 @@ export default function ProjectileMotionLab({
   const simTRef = useRef(0);
   const posRef = useRef({ x: 0, y: initialHeight });
   const velRef = useRef({ vx: initialSpeed * Math.cos(initialAngle * Math.PI / 180), vy: initialSpeed * Math.sin(initialAngle * Math.PI / 180) });
-
+  
   const [v0, setV0] = useState(initialSpeed);
   const [angle, setAngle] = useState(initialAngle);
   const [h0, setH0] = useState(initialHeight);
@@ -31,7 +32,7 @@ export default function ProjectileMotionLab({
   const [tof, setTof] = useState(null);
   const [range, setRange] = useState(null);
   const [maxH, setMaxH] = useState(null);
-
+  
   // stopwatch & manual
   const [swRunning, setSwRunning] = useState(false);
   const swRef = useRef({ start: null, elapsed: 0 });
@@ -46,11 +47,23 @@ export default function ProjectileMotionLab({
   const [sweepSteps, setSweepSteps] = useState(8);
   const [sweepResults, setSweepResults] = useState([]);
   const [sweepRunning, setSweepRunning] = useState(false);
-
+  
   const [_uncertainty, _setUncertainty] = useState(0.05);
   const [_instrumentNoise, _setInstrumentNoise] = useState(0.01);
   const STORAGE_KEY = "openlabs_projectile_runs_v1";
-
+  
+  // Chatbot 
+    const { setExperimentData } = useChat();
+  
+  useEffect(() => {
+    setExperimentData({
+      title: "Projectile Motion",
+      theory: "2D projectile motion virtual lab.",
+      extraContext: ``,
+    });
+  }, []);
+  
+  
   useEffect(() => { // init theoretical values
     computeAnalytic(v0, angle, h0, g);
     resetSim();

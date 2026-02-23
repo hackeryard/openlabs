@@ -1,6 +1,7 @@
 // src/components/RCLab.jsx
 "use client";
 import React, { useEffect, useRef, useState } from "react";
+import { useChat } from "../ChatContext";
 
 /**
  * RCLab.jsx
@@ -44,6 +45,16 @@ export default function RCLab({
   const [tauMeasured, setTauMeasured] = useState(null);
   const [_simTime, setSimTime] = useState(0);
 
+  // Chatbot 
+      const { setExperimentData } = useChat();
+    
+    useEffect(() => {
+      setExperimentData({
+        title: "RC Lab",
+        theory: "Interactive RC charging/discharging lab will be added here. For now, this is a placeholder page.",
+        extraContext: ``,
+      });
+    }, []);
   // integrate
   useEffect(() => {
     const canvas = canvasRef.current;
