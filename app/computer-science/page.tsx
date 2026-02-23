@@ -42,6 +42,11 @@ const cards = [
     desc: "Interactive lab for visualising the git commands.",
     accent: "from-orange-500 to-amber-500",
   },
+  {
+    href: "/computer-science/dsa",
+    title: "Data Structures & Algorithms",
+    desc: "Interactive lab that help in visualizing the code you write.",
+  },
 ];
 
 export default function ComputerScience() {
