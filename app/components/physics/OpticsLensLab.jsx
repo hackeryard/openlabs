@@ -1,5 +1,7 @@
+"use client"
 // src/components/OpticsLensLab.jsx
 import React, { useEffect, useRef, useState } from "react";
+import { useChat } from "../ChatContext";
 
 /**
  * OpticsLensLab.jsx
@@ -29,6 +31,16 @@ export default function OpticsLensLab({
   initialDo = 0.25, // meters
   initialObjH = 0.05, // meters (5 cm)
 }) {
+  // Chatbot 
+  const { setExperimentData } = useChat();
+
+  useEffect(() => {
+    setExperimentData({
+      title: "Wave Optics",
+      theory: "Wave optics diffraction and interference lab.",
+      extraContext: ``,
+    });
+  }, []);
   const canvasRef = useRef(null);
   const [f, setF] = useState(Number(initialF)); // focal length (m)
   const [doDist, setDoDist] = useState(Number(initialDo)); // object distance (m)
@@ -275,7 +287,7 @@ export default function OpticsLensLab({
       const _lensPlanePoint = { x: lensPlaneX, y: CtoFleft.y + (lensPlaneX - CtoFleft.x) * (CtoFleft.y === top.y ? 0 : (top.y - CtoFleft.y) / (top.x - CtoFleft.x || 1)) };
       // simpler: emergent parallel line at height top.y
       const emergent = { x: rightFar, y: top.y };
-      strokeRay([ { x: lensPlaneX, y: top.y }, emergent ], "#f59e0b", false, 1.5);
+      strokeRay([{ x: lensPlaneX, y: top.y }, emergent], "#f59e0b", false, 1.5);
 
       // If image exists to the right (real), draw image arrow
       if (diCalc !== null && Number.isFinite(diCalc)) {
@@ -311,7 +323,7 @@ export default function OpticsLensLab({
       clearInterval(id);
       window.removeEventListener("resize", resize);
     };
-    
+
   }, [f, doDist, objH, showExtended, simRunning, mag, di]);
 
   // Pointer interactions: drag object vertically or horizontally to set doDist and objH
@@ -381,7 +393,7 @@ export default function OpticsLensLab({
       window.removeEventListener("touchmove", onMove);
       window.removeEventListener("touchend", onUp);
     };
-    
+
   }, [doDist, objH, f]);
 
   // manual entry
@@ -453,7 +465,7 @@ export default function OpticsLensLab({
       <h2>Results</h2>
       <p>Image distance di: ${di !== null ? di.toFixed(6) + " m" : "—"}</p>
       <p>Magnification: ${mag !== null ? mag.toFixed(6) : "—"}</p>
-      <h3>Manual entries</h3><pre>${manualEntries.map(e=>`do=${e.do} m, di=${e.di}, m=${e.mag}  ${e.note||""}`).join("\n")}</pre>
+      <h3>Manual entries</h3><pre>${manualEntries.map(e => `do=${e.do} m, di=${e.di}, m=${e.mag}  ${e.note || ""}`).join("\n")}</pre>
       <button onclick="window.print()">Print / Save as PDF</button>
       </body></html>`;
     const w = window.open("", "_blank", "noopener,noreferrer");
@@ -503,24 +515,24 @@ export default function OpticsLensLab({
         <div className="md:col-span-1 bg-white p-4 rounded shadow space-y-3">
           <div>
             <label className="block text-sm font-medium">Focal length f (m) — (+) converging, (−) diverging</label>
-            <input type="range" min={-0.5} max={0.5} step={0.001} value={f} onChange={(e)=>setF(Number(e.target.value))} />
-            <input type="number" value={f} onChange={(e)=>setF(Number(e.target.value))} className="mt-1 w-full border rounded px-2 py-1" />
+            <input type="range" min={-0.5} max={0.5} step={0.001} value={f} onChange={(e) => setF(Number(e.target.value))} />
+            <input type="number" value={f} onChange={(e) => setF(Number(e.target.value))} className="mt-1 w-full border rounded px-2 py-1" />
           </div>
 
           <div>
             <label className="block text-sm font-medium">Object distance do (m)</label>
-            <input type="range" min={0.02} max={1.2} step={0.001} value={doDist} onChange={(e)=>setDoDist(Number(e.target.value))} />
-            <input type="number" value={doDist} onChange={(e)=>setDoDist(Number(e.target.value))} className="mt-1 w-full border rounded px-2 py-1" />
+            <input type="range" min={0.02} max={1.2} step={0.001} value={doDist} onChange={(e) => setDoDist(Number(e.target.value))} />
+            <input type="number" value={doDist} onChange={(e) => setDoDist(Number(e.target.value))} className="mt-1 w-full border rounded px-2 py-1" />
           </div>
 
           <div>
             <label className="block text-sm font-medium">Object height (m)</label>
-            <input type="range" min={0.005} max={0.5} step={0.001} value={objH} onChange={(e)=>setObjH(Number(e.target.value))} />
-            <input type="number" value={objH} onChange={(e)=>setObjH(Number(e.target.value))} className="mt-1 w-full border rounded px-2 py-1" />
+            <input type="range" min={0.005} max={0.5} step={0.001} value={objH} onChange={(e) => setObjH(Number(e.target.value))} />
+            <input type="number" value={objH} onChange={(e) => setObjH(Number(e.target.value))} className="mt-1 w-full border rounded px-2 py-1" />
           </div>
 
           <div className="mt-2">
-            <label className="inline-flex items-center"><input type="checkbox" checked={showExtended} onChange={(e)=>setShowExtended(e.target.checked)} className="mr-2"/> Show extended rays</label>
+            <label className="inline-flex items-center"><input type="checkbox" checked={showExtended} onChange={(e) => setShowExtended(e.target.checked)} className="mr-2" /> Show extended rays</label>
           </div>
 
           <div className="mt-2 text-sm">
@@ -530,8 +542,8 @@ export default function OpticsLensLab({
           </div>
 
           <div className="flex gap-2 mt-2">
-            <button onClick={()=>addManualEntry()} className="flex-1 py-2 rounded bg-green-600 text-white">Record Measurement</button>
-            <button onClick={()=>{ setDoDist(initialDo); setF(initialF); setObjH(initialObjH); setManualEntries([]); setSweepResults([]); }} className="flex-1 py-2 rounded bg-gray-200">Reset</button>
+            <button onClick={() => addManualEntry()} className="flex-1 py-2 rounded bg-green-600 text-white">Record Measurement</button>
+            <button onClick={() => { setDoDist(initialDo); setF(initialF); setObjH(initialObjH); setManualEntries([]); setSweepResults([]); }} className="flex-1 py-2 rounded bg-gray-200">Reset</button>
           </div>
 
           <div className="mt-2">
@@ -549,7 +561,7 @@ export default function OpticsLensLab({
               <button onClick={exportReport} className="px-3 py-1 bg-indigo-600 text-white rounded">Printable Report</button>
             </div>
           </div>
-          <canvas ref={canvasRef} className="w-full border rounded" style={{height:380}} />
+          <canvas ref={canvasRef} className="w-full border rounded" style={{ height: 380 }} />
           <div className="mt-2 text-xs text-gray-500">Tip: click/touch near the object arrow to drag height, or drag horizontally to move object distance.</div>
         </div>
       </div>
@@ -560,28 +572,28 @@ export default function OpticsLensLab({
         <div className="grid md:grid-cols-6 gap-2 items-end">
           <div>
             <label className="block text-xs">Mode</label>
-            <select value={sweepMode} onChange={(e)=>setSweepMode(e.target.value)} className="w-full border rounded px-2 py-1">
+            <select value={sweepMode} onChange={(e) => setSweepMode(e.target.value)} className="w-full border rounded px-2 py-1">
               <option value="object">Vary object distance (do)</option>
               <option value="focal">Vary focal length (f)</option>
             </select>
           </div>
           <div>
             <label className="block text-xs">Start</label>
-            <input type="number" step="0.001" value={sweepStart} onChange={(e)=>setSweepStart(Number(e.target.value))} className="w-full border rounded px-2 py-1" />
+            <input type="number" step="0.001" value={sweepStart} onChange={(e) => setSweepStart(Number(e.target.value))} className="w-full border rounded px-2 py-1" />
           </div>
           <div>
             <label className="block text-xs">End</label>
-            <input type="number" step="0.001" value={sweepEnd} onChange={(e)=>setSweepEnd(Number(e.target.value))} className="w-full border rounded px-2 py-1" />
+            <input type="number" step="0.001" value={sweepEnd} onChange={(e) => setSweepEnd(Number(e.target.value))} className="w-full border rounded px-2 py-1" />
           </div>
           <div>
             <label className="block text-xs">Steps</label>
-            <input type="number" min="2" step="1" value={sweepSteps} onChange={(e)=>setSweepSteps(Number(e.target.value))} className="w-full border rounded px-2 py-1" />
+            <input type="number" min="2" step="1" value={sweepSteps} onChange={(e) => setSweepSteps(Number(e.target.value))} className="w-full border rounded px-2 py-1" />
           </div>
           <div>
-            <button onClick={()=>{ setSweepResults([]); runSweep(); }} disabled={sweepRunning} className="w-full py-2 rounded bg-indigo-600 text-white">{sweepRunning ? "Running..." : "Run Sweep"}</button>
+            <button onClick={() => { setSweepResults([]); runSweep(); }} disabled={sweepRunning} className="w-full py-2 rounded bg-indigo-600 text-white">{sweepRunning ? "Running..." : "Run Sweep"}</button>
           </div>
           <div>
-            <button onClick={()=>setSweepResults([])} className="w-full py-2 rounded bg-gray-200">Clear</button>
+            <button onClick={() => setSweepResults([])} className="w-full py-2 rounded bg-gray-200">Clear</button>
           </div>
         </div>
 
@@ -590,8 +602,8 @@ export default function OpticsLensLab({
             <div className="text-sm font-medium">Sweep Results</div>
             <div className="mt-2 max-h-40 overflow-auto text-sm">
               {sweepResults.length === 0 ? <div className="text-xs text-gray-500">No results</div> :
-                <table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={{padding:6}}>Param</th><th style={{padding:6}}>di (m)</th><th style={{padding:6}}>m</th></tr></thead><tbody>
-                  {sweepResults.map((r,i)=>(<tr key={i}><td style={{padding:6}}>{r.do ? `do=${r.do.toFixed(3)}` : r.f ? `f=${r.f.toFixed(3)}` : "-"}</td><td style={{padding:6}}>{r.di !== null ? r.di.toFixed(4) : "—"}</td><td style={{padding:6}}>{r.mag !== null ? r.mag.toFixed(4) : "—"}</td></tr>))}
+                <table style={{ width: "100%", borderCollapse: "collapse" }}><thead><tr><th style={{ padding: 6 }}>Param</th><th style={{ padding: 6 }}>di (m)</th><th style={{ padding: 6 }}>m</th></tr></thead><tbody>
+                  {sweepResults.map((r, i) => (<tr key={i}><td style={{ padding: 6 }}>{r.do ? `do=${r.do.toFixed(3)}` : r.f ? `f=${r.f.toFixed(3)}` : "-"}</td><td style={{ padding: 6 }}>{r.di !== null ? r.di.toFixed(4) : "—"}</td><td style={{ padding: 6 }}>{r.mag !== null ? r.mag.toFixed(4) : "—"}</td></tr>))}
                 </tbody></table>}
             </div>
           </div>
@@ -600,10 +612,10 @@ export default function OpticsLensLab({
             <div className="text-sm font-medium">Manual Entries</div>
             <div className="mt-2 text-sm">
               <div className="mt-2">
-                <button onClick={()=>addManualEntry()} className="px-3 py-1 rounded bg-emerald-500 text-white mb-2">Add Current Measurement</button>
-                <button onClick={()=>setManualEntries([])} className="px-3 py-1 rounded bg-gray-200 ml-2 mb-2">Clear</button>
+                <button onClick={() => addManualEntry()} className="px-3 py-1 rounded bg-emerald-500 text-white mb-2">Add Current Measurement</button>
+                <button onClick={() => setManualEntries([])} className="px-3 py-1 rounded bg-gray-200 ml-2 mb-2">Clear</button>
                 <ul className="max-h-40 overflow-auto">
-                  {manualEntries.map((m,i)=>(<li key={i} className="py-1 border-b text-sm">{`do=${m.do} m, di=${m.di||"—"}, m=${m.mag||"—"} ${m.note||""}`}</li>))}
+                  {manualEntries.map((m, i) => (<li key={i} className="py-1 border-b text-sm">{`do=${m.do} m, di=${m.di || "—"}, m=${m.mag || "—"} ${m.note || ""}`}</li>))}
                 </ul>
               </div>
             </div>
@@ -613,9 +625,9 @@ export default function OpticsLensLab({
 
       {/* Save / export */}
       <div className="bg-white p-4 rounded shadow flex gap-2">
-        <button onClick={()=>saveRun()} className="px-3 py-2 bg-orange-500 text-white rounded">Save Run</button>
-        <button onClick={()=>{ const runs=listRuns(); if(!runs || runs.length===0) alert("No saved runs"); else alert(runs.map(r=>r.name+" - "+r.date).join("\n")); }} className="px-3 py-2 bg-gray-200 rounded">List Saved</button>
-        <button onClick={()=>clearRuns()} className="px-3 py-2 bg-red-500 text-white rounded">Clear Saved</button>
+        <button onClick={() => saveRun()} className="px-3 py-2 bg-orange-500 text-white rounded">Save Run</button>
+        <button onClick={() => { const runs = listRuns(); if (!runs || runs.length === 0) alert("No saved runs"); else alert(runs.map(r => r.name + " - " + r.date).join("\n")); }} className="px-3 py-2 bg-gray-200 rounded">List Saved</button>
+        <button onClick={() => clearRuns()} className="px-3 py-2 bg-red-500 text-white rounded">Clear Saved</button>
         <div className="flex-1" />
         <button onClick={exportCSV} className="px-3 py-2 bg-green-600 text-white rounded">Export CSV</button>
         <button onClick={exportJSON} className="px-3 py-2 bg-yellow-400 rounded">Export JSON</button>

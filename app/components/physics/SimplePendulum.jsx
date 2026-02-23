@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
+import { useChat } from "../ChatContext";
 
 export default function SimplePendulum({
   initialLength = 1.0,
@@ -7,6 +8,16 @@ export default function SimplePendulum({
   initialDamping = 0.01,
   initialAngleDeg = 20,
 }) {
+  // Chatbot 
+    const { setExperimentData } = useChat();
+  
+  useEffect(() => {
+    setExperimentData({
+      title: "Simple Pendullum",
+      theory: "Interactive pendulum lab.",
+      extraContext: ``,
+    });
+  }, []);
   const canvasRef = useRef(null);
   const rafRef = useRef(null);
   const _lastFrameRef = useRef(null);

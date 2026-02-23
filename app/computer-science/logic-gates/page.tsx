@@ -11,7 +11,7 @@ const container: Variants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.12,
+      staggerChildren: 0.08, // Faster stagger for more items
     },
   },
 };
@@ -23,96 +23,88 @@ const item: Variants = {
     y: 0,
     transition: {
       duration: 0.4,
-      ease: [0.16, 1, 0.3, 1], // easeOut
+      ease: [0.16, 1, 0.3, 1],
     },
   },
 };
 
 const cards = [
-  {
-    href: "/computer-science/logic-gates/and-gate",
-    title: "AND Gate",
-    desc: "Interactive lab for visualising working of AND Gate.",
-  },
-
-  {
-    href: "/computer-science/logic-gates/or-gate",
-    title: "OR Gate",
-    desc: "Interactive lab for visualising working of OR Gate.",
-  },
-
-  {
-    href: "/computer-science/logic-gates/not-gate",
-    title: "NOT Gate",
-    desc: "Interactive lab for visualising working of NOT Gate.",
-  },
-
-  {
-    href: "/computer-science/logic-gates/nand-gate",
-    title: "NAND Gate",
-    desc: "Interactive lab for visualising working of NAND Gate.",
-  },
-
-  {
-    href: "/computer-science/logic-gates/nor-gate",
-    title: "NOR Gate",
-    desc: "Interactive lab for visualising working of NOR Gate.",
-  },
-
-  {
-    href: "/computer-science/logic-gates/xor-gate",
-    title: "XOR Gate",
-    desc: "Interactive lab for visualising working of XOR Gate.",
-  },  
-
-  {
-    href: "/computer-science/logic-gates/xnor-gate",
-    title: "XNOR Gate",
-    desc: "Interactive lab for visualising working of XNOR Gate.",
-  },   
+  { href: "/computer-science/logic-gates/and-gate", title: "AND Gate", desc: "Interactive lab for visualising working of AND Gate." },
+  { href: "/computer-science/logic-gates/or-gate", title: "OR Gate", desc: "Interactive lab for visualising working of OR Gate." },
+  { href: "/computer-science/logic-gates/not-gate", title: "NOT Gate", desc: "Interactive lab for visualising working of NOT Gate." },
+  { href: "/computer-science/logic-gates/nand-gate", title: "NAND Gate", desc: "Interactive lab for visualising working of NAND Gate." },
+  { href: "/computer-science/logic-gates/nor-gate", title: "NOR Gate", desc: "Interactive lab for visualising working of NOR Gate." },
+  { href: "/computer-science/logic-gates/xor-gate", title: "XOR Gate", desc: "Interactive lab for visualising working of XOR Gate." },
+  { href: "/computer-science/logic-gates/xnor-gate", title: "XNOR Gate", desc: "Interactive lab for visualising working of XNOR Gate." },
 ];
 
 export default function LogicGates() {
   return (
-    <main className="min-h-screen p-6">
+    // Added a subtle radial gradient background to feel more like a 'lab'
+    <main className="min-h-screen bg-[#FDFDFF] p-6 md:p-12 relative overflow-hidden">
+      
+      {/* Background Decor: Grid Pattern */}
+      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none" 
+           style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg stroke='%234F46E5' stroke-width='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2v-4h4v-2h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2v-4h4v-2H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} 
+      />
+
       <motion.div
         initial="hidden"
         animate="visible"
         variants={container}
-        className="max-w-6xl mx-auto"
+        className="max-w-6xl mx-auto relative z-10"
       >
         {/* -------- Header -------- */}
-        <motion.h1 variants={item} className="text-2xl font-bold">
-          Code Visualisation
-        </motion.h1>
+        <header className="mb-10">
+          <motion.h1 variants={item} className="text-3xl font-extrabold text-slate-900 tracking-tight">
+            Logic Gates <span className="text-indigo-600">Visualisation</span>
+          </motion.h1>
 
-        <motion.p variants={item} className="text-gray-600 mb-6">
-          Coding related experiments.
-        </motion.p>
+          <motion.p variants={item} className="text-slate-500 mt-2 font-medium">
+            Explore the fundamental building blocks of digital electronics.
+          </motion.p>
+        </header>
 
         {/* -------- Grid -------- */}
         <motion.div
           layout
           variants={container}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
         >
           {cards.map((card) => (
             <motion.div
               key={card.href}
               variants={item}
-              whileHover={{ y: -6, scale: 1.02 }}
+              whileHover={{ y: -4 }}
               whileTap={{ scale: 0.98 }}
-              transition={{
-                duration: 0.25,
-                ease: [0.4, 0, 0.2, 1],
-              }}
             >
               <Link
                 href={card.href}
-                className="block h-full bg-white rounded-xl border-2 border-gray-100 hover:border-indigo-200 shadow-sm hover:shadow-lg p-5 transition"
+                className="group block h-full bg-white rounded-2xl border border-slate-200 p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:border-indigo-300 relative overflow-hidden"
               >
-                <h3 className="text-lg font-semibold">{card.title}</h3>
-                <p className="text-sm text-gray-500 mt-2">{card.desc}</p>
+                {/* Accent Gradient Blur (Visible on Hover) */}
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="text-xl font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">
+                    {card.title}
+                  </h3>
+                  {/* Gate Symbol Placeholder/Icon Decoration */}
+                  <div className="p-2 rounded-lg bg-slate-50 text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-500 transition-colors">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
+                    </svg>
+                  </div>
+                </div>
+
+                <p className="text-sm leading-relaxed text-slate-500 group-hover:text-slate-600 transition-colors">
+                  {card.desc}
+                </p>
+                
+                {/* Subtle "Go" Indicator */}
+                <div className="mt-5 flex items-center text-[11px] font-bold uppercase tracking-widest text-indigo-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
+                  Launch Lab →
+                </div>
               </Link>
             </motion.div>
           ))}

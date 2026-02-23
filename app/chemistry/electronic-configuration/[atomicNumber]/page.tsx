@@ -3,8 +3,20 @@
 import { useParams } from "next/navigation";
 import ElectronicConfiguration from "../../../components/chemistry/ElectronicConfiguration";
 import elements from "../../../src/data/elements";
+import { useEffect } from "react";
+import { useChat } from "@/app/components/ChatContext";
 
 export default function ElectronicConfigurationPage() {
+  // Chatbot 
+  const { setExperimentData } = useChat();
+
+  useEffect(() => {
+    setExperimentData({
+      title: "Electronic Configuration",
+      theory: "",
+      extraContext: ``,
+    });
+  }, []);
   const { atomicNumber } = useParams();
   const Z = Number(atomicNumber);
 

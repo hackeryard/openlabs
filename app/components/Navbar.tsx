@@ -73,14 +73,14 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
-        <motion.div layout className="flex items-center gap-3">
+        <motion.a href="/" layout className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center font-bold">
             OL
           </div>
           <div className="text-xl font-extrabold tracking-tight">
             OpenLabs
           </div>
-        </motion.div>
+        </motion.a>
 
         {/* Mobile Toggle */}
         <motion.button

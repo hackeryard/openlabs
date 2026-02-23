@@ -1,6 +1,7 @@
 "use client";
 // src/components/OhmsLawLab.jsx
 import React, { useEffect, useRef, useState } from "react";
+import { useChat } from "../ChatContext";
 
 /**
  * Ohm's Law — Virtual Lab
@@ -35,6 +36,16 @@ export default function OhmsLaw({
   initialR = 5,
   initialRint = 0.5,
 }) {
+  // Chatbot 
+      const { setExperimentData } = useChat();
+    
+    useEffect(() => {
+      setExperimentData({
+        title: "Ohm's Law",
+        theory: "ohm's law virtual lab.",
+        extraContext: ``,
+      });
+    }, []);
   // core states
   const [voltage, setVoltage] = useState(Number(initialV)); // source EMF (V)
   const [resistance, setResistance] = useState(Number(initialR)); // load R (Ω)

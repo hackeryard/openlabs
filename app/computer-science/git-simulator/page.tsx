@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RepoState } from "@/app/types/gitSimualtor";
 import TerminalInput from "@/app/components/computer-science/git-simulator/TerminalInput";
 import RepoStatePanel from "@/app/components/computer-science/git-simulator/RepoStatePanel";
 import CommitGraph from "@/app/components/computer-science/git-simulator/CommitGraph";
 import { executeCommand } from "./utils/executeCommand";
+import { useChat } from "@/app/components/ChatContext";
 
 const initialState: RepoState = {
   objects: {},
@@ -17,6 +18,16 @@ const initialState: RepoState = {
 };
 
 export default function GitVisualizerPage() {
+  // Chatbot 
+  const { setExperimentData } = useChat();
+
+  useEffect(() => {
+    setExperimentData({
+      title: "Git Simulator",
+      theory: "A simulator interface which show the effect of git commands on the reposetory.",
+      extraContext: ``,
+    });
+  }, []);
   const [state, setState] = useState<RepoState>(initialState);
 
   const handleCommand = (command: string) => {

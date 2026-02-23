@@ -6,11 +6,22 @@ import PreviewPanel from "@/app/components/computer-science/code-lab/html-css-js
 import ConsolePanel from "@/app/components/computer-science/code-lab/html-css-js/ConsolePanel";
 import { useProjects } from "@/app/hooks/useProjects";
 import { Cloud } from 'lucide-react';
+import { useChat } from "@/app/components/ChatContext";
 
 
 type View = "edit" | "preview";
 
 export default function CodeLab() {
+  // Chatbot 
+  const { setExperimentData } = useChat();
+
+  useEffect(() => {
+    setExperimentData({
+      title: "HTML CSS JS code viewer.",
+      theory: "",
+      extraContext: ``,
+    });
+  }, []);
 
   /* ---------------- STATES ---------------- */
   const [view, setView] = useState<View>("edit");

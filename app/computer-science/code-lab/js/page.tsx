@@ -1,12 +1,23 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import DebuggerModal from "@/app/components/computer-science/code-lab/js/DebuggerModal";
 import { Memory, RuntimeSnapshot, StackFrame, Task } from "@/app/types/jsDebugger";
+import { useChat } from "@/app/components/ChatContext";
 
 export default function DebuggerPage() {
+    // Chatbot 
+    const { setExperimentData } = useChat();
+
+    useEffect(() => {
+        setExperimentData({
+            title: "Javascript code compiler visualizer.",
+            theory: "",
+            extraContext: ``,
+        });
+    }, []);
     const [editorCode, setEditorCode] = useState<string>(
-`// Event Loop Demo
+        `// Event Loop Demo
 console.log('1: Start');
 
 setTimeout(function timeout() {
@@ -32,7 +43,7 @@ console.log('5: End');`
     const handleRun = useCallback(async () => {
         setIsLoading(true);
         setError(null);
-        
+
         try {
             const result = await simulateEventLoop(editorCode);
             setSnapshots(result);
@@ -53,7 +64,7 @@ console.log('5: End');`
                     <p className="text-sm">{error}</p>
                 </div>
             )}
-            
+
             <DebuggerModal
                 open={openDebugger}
                 onClose={() => setOpenDebugger(false)}
@@ -104,7 +115,7 @@ console.log('5: End');`
 async function simulateEventLoop(code: string): Promise<RuntimeSnapshot[]> {
     const lines = code.split('\n');
     const snapshots: RuntimeSnapshot[] = [];
-    
+
     // State
     const memory: Memory = {};
     const stack: StackFrame[] = [{
@@ -113,7 +124,7 @@ async function simulateEventLoop(code: string): Promise<RuntimeSnapshot[]> {
         locals: memory,
         type: 'global'
     }];
-    
+
     const taskQueue: Task[] = [];
     const microtaskQueue: Task[] = [];
     const webAPIs: Task[] = [];
@@ -125,7 +136,7 @@ async function simulateEventLoop(code: string): Promise<RuntimeSnapshot[]> {
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         const trimmedLine = line.trim();
-        
+
         if (trimmedLine === '' || trimmedLine.startsWith('//')) {
             snapshots.push(createSnapshot(i, memory, stack, taskQueue, microtaskQueue, webAPIs, domOutput, line));
             continue;
@@ -146,7 +157,7 @@ async function simulateEventLoop(code: string): Promise<RuntimeSnapshot[]> {
             if (match) {
                 const callbackName = match[1];
                 timeoutId++;
-                
+
                 // Add to Web APIs
                 webAPIs.push({
                     id: `timeout-${timeoutId}`,
@@ -156,7 +167,7 @@ async function simulateEventLoop(code: string): Promise<RuntimeSnapshot[]> {
                     line: i + 1,
                     status: 'pending'
                 });
-                
+
                 // Add to task queue (simulating after delay)
                 taskQueue.push({
                     id: `task-${timeoutId}`,
@@ -172,7 +183,7 @@ async function simulateEventLoop(code: string): Promise<RuntimeSnapshot[]> {
         // Simulate Promises
         else if (trimmedLine.includes('Promise.resolve()')) {
             promiseId++;
-            
+
             // Promise executor runs synchronously
             stack.push({
                 id: `executor-${promiseId}`,
@@ -180,10 +191,10 @@ async function simulateEventLoop(code: string): Promise<RuntimeSnapshot[]> {
                 locals: {},
                 type: 'executor'
             });
-            
+
             // Add snapshot for promise creation
             snapshots.push(createSnapshot(i, memory, stack, taskQueue, microtaskQueue, webAPIs, domOutput, line));
-            
+
             // Then callbacks go to microtask queue
             let j = i + 1;
             while (j < lines.length && lines[j].trim().includes('.then')) {
@@ -202,7 +213,7 @@ async function simulateEventLoop(code: string): Promise<RuntimeSnapshot[]> {
                 }
                 j++;
             }
-            
+
             // Pop promise executor
             stack.pop();
         }
@@ -220,9 +231,9 @@ async function simulateEventLoop(code: string): Promise<RuntimeSnapshot[]> {
                     locals: {},
                     type: microtask.type === 'then' ? 'then' : 'promise'
                 });
-                
+
                 snapshots.push(createSnapshot(i, memory, stack, taskQueue, microtaskQueue, webAPIs, domOutput, `// Running microtask: ${microtask.name}`));
-                
+
                 stack.pop();
             }
         }
@@ -238,9 +249,9 @@ async function simulateEventLoop(code: string): Promise<RuntimeSnapshot[]> {
                 locals: {},
                 type: 'function'
             });
-            
+
             snapshots.push(createSnapshot(lines.length - 1, memory, stack, taskQueue, microtaskQueue, webAPIs, domOutput, `// Running task: ${task.name}`));
-            
+
             stack.pop();
         }
     }

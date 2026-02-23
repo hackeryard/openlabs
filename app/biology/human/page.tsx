@@ -1,9 +1,10 @@
 "use client"
 
-import { useState, Suspense } from "react"
+import { useState, Suspense, useEffect } from "react"
 import ProceduralAnatomy from "@/app/components/biology/human/HumanBody"
 import dynamic from "next/dynamic"
 import InfoPanel from "@/app/components/biology/human/InfoPanel"
+import { useChat } from "@/app/components/ChatContext"
 
 const AnatomyScene = dynamic(
   () => import("@/app/components/biology/human/AnatomyScene"),
@@ -11,13 +12,23 @@ const AnatomyScene = dynamic(
 )
 
 export default function Page() {
+  // Chatbot 
+  const { setExperimentData } = useChat();
+
+  useEffect(() => {
+    setExperimentData({
+      title: "3D Structure model of human anatomy.",
+      theory: "",
+      extraContext: ``,
+    });
+  }, []);
   const [selectedOrgan, setSelectedOrgan] = useState("")
   const [type, setType] = useState<"human" | "animal">("human")
 
   return (
     <div className="grid md:grid-cols-3 h-screen">
       {/* <ProceduralAnatomy /> */}
-      
+
       <div className="md:col-span-2">
         <AnatomyScene type={type} onSelect={setSelectedOrgan} />
       </div>

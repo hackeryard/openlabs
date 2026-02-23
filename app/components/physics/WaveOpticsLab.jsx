@@ -1,6 +1,7 @@
 "use client";
 // src/components/WaveOpticsLab.jsx
 import React, { useEffect, useRef, useState } from "react";
+import { useChat } from "../ChatContext";
 
 /**
  * WaveOpticsLab.jsx
@@ -26,6 +27,16 @@ function sinc(x) {
 }
 
 export default function WaveOpticsLab() {
+  // Chatbot 
+  const { setExperimentData } = useChat();
+
+  useEffect(() => {
+    setExperimentData({
+      title: "Wave Optics",
+      theory: "wave optics diffraction and interference.",
+      extraContext: ``,
+    });
+  }, []);
   const canvasRef = useRef(null);
   const _smallRef = useRef(null);
   const [mode, setMode] = useState("double"); // 'single'|'double'|'grating'
@@ -335,7 +346,7 @@ export default function WaveOpticsLab() {
         <li>Screen distance: ${L} m</li>
       </ul>
       <h2>Sample points (first 50)</h2>
-      <pre>${pts.slice(0,50).map(p=>`x=${p.x.toFixed(6)} m, I=${(p.I*intensityScale).toFixed(6)}`).join("\n")}</pre>
+      <pre>${pts.slice(0, 50).map(p => `x=${p.x.toFixed(6)} m, I=${(p.I * intensityScale).toFixed(6)}`).join("\n")}</pre>
       <button onclick="window.print()">Print / Save as PDF</button>
       </body></html>`;
     const w = window.open("", "_blank", "noopener,noreferrer");
@@ -416,7 +427,7 @@ export default function WaveOpticsLab() {
 
           <div className="mt-2 flex gap-2">
             <button onClick={() => draw()} className="flex-1 py-2 rounded bg-blue-600 text-white">Redraw</button>
-            <button onClick={() => { setResolution( Math.max(200, resolution + 200)); draw(); }} className="py-2 px-3 rounded bg-gray-200">+Res</button>
+            <button onClick={() => { setResolution(Math.max(200, resolution + 200)); draw(); }} className="py-2 px-3 rounded bg-gray-200">+Res</button>
           </div>
         </div>
 

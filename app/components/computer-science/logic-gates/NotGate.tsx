@@ -1,9 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useChat } from "../../ChatContext";
 
 export default function NotGate() {
+  // Chatbot 
+    const { setExperimentData } = useChat();
+  
+    useEffect(() => {
+      setExperimentData({
+        title: "NOT Gate",
+        theory: "",
+        extraContext: ``,
+      });
+    }, []);
   const [a, setA] = useState(0);
 
   const output = a ? 0 : 1;

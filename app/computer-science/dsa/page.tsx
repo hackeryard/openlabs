@@ -30,63 +30,13 @@ const item: Variants = {
 
 const cards = [
   {
-    href: "/physics/simplependulum",
-    title: "Simple Pendulum",
-    desc: "Simulate pendulum motion and compare theory vs measured period.",
-  },
-  {
-    href: "/physics/projectilemotion",
-    title: "Projectile Motion",
-    desc: "Simulate trajectories and measure range & time-of-flight.",
-  },
-  {
-    href: "/physics/hookelaw",
-    title: "Hooke's Law",
-    desc: "Mass–spring system: observe oscillations and measure period.",
-  },
-  {
-    href: "/physics/ohmslaw",
-    title: "Ohm's Law",
-    desc: "Explore V–I behavior with virtual instruments.",
-  },
-  {
-    href: "/physics/waveoptics",
-    title: "Wave Optics",
-    desc: "Diffraction & interference lab (Fraunhofer).",
-  },
-  {
-    href: "/physics/opticslens",
-    title: "Optics Lens",
-    desc: "Optical Lens lab.",
-  },
-  {
-    href: "/physics/rclab",
-    title: "RC Lab",
-    desc: "RC circuit charging / discharging experiments.",
-  },
-  {
-    href: "/physics/energyconservation",
-    title: "Energy Conservation",
-    desc: "Investigate energy transformation and conservation.",
-  },
-  {
-    href: "/physics/uniformmotionlab",
-    title: "Uniform Motion Lab",
-    desc: "Uniform linear motion using a moving object.",
-  },
-  {
-    href: "/physics/freefall",
-    title: "Free Fall Lab",
-    desc: "Free Fall demonstration of an object.",
-  },
-  {
-    href: "/physics/speedoflight",
-    title: "Speed of Light Lab",
-    desc: "Demonstration of speed of light in different media.",
+    href: "/computer-science/dsa/sorting",
+    title: "Sorting Visualizer",
+    desc: "Interactive lab that help in visualizing the code you write.",
   },
 ];
 
-export default function PhysicsPage() {
+export default function ComputerScience() {
   return (
     <main className="min-h-screen p-6">
       <motion.div
@@ -96,18 +46,12 @@ export default function PhysicsPage() {
         className="max-w-6xl mx-auto"
       >
         {/* -------- Header -------- */}
-        <motion.h1
-          variants={item}
-          className="text-2xl font-bold"
-        >
-          Physics Experiments
+        <motion.h1 variants={item} className="text-2xl font-bold">
+          Computer Science Experiments
         </motion.h1>
 
-        <motion.p
-          variants={item}
-          className="text-gray-600 mb-6"
-        >
-          This page will host physics experiment links and landing UI.
+        <motion.p variants={item} className="text-gray-600 mb-6">
+          Coding and Tech related experiments.
         </motion.p>
 
         {/* -------- Grid -------- */}
@@ -143,4 +87,3 @@ export default function PhysicsPage() {
     </main>
   );
 }
-        

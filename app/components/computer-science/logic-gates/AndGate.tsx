@@ -1,9 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useChat } from "../../ChatContext";
 
 export default function AndGate() {
+  // Chatbot 
+  const { setExperimentData } = useChat();
+
+  useEffect(() => {
+    setExperimentData({
+      title: "AND Gate",
+      theory: "",
+      extraContext: ``,
+    });
+  }, []);
   const [a, setA] = useState(0);
   const [b, setB] = useState(0);
 
@@ -11,7 +22,7 @@ export default function AndGate() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white p-4 flex flex-col items-center">
-      
+
       <h1 className="text-3xl md:text-4xl font-bold mb-10 text-center">
         AND Gate Visualizer
       </h1>
@@ -26,11 +37,10 @@ export default function AndGate() {
             <p className="mr-2 my-auto font-semibold">Input A</p>
             <button
               onClick={() => setA(a ? 0 : 1)}
-              className={`w-16 h-12 rounded-xl text-xl font-bold transition-all duration-300 ${
-                a
+              className={`w-16 h-12 rounded-xl text-xl font-bold transition-all duration-300 ${a
                   ? "bg-green-500 shadow-lg shadow-green-400/50"
                   : "bg-red-500 shadow-lg shadow-red-400/40"
-              }`}
+                }`}
             >
               {a}
             </button>
@@ -40,11 +50,10 @@ export default function AndGate() {
             <p className="mr-2 my-auto font-semibold">Input B</p>
             <button
               onClick={() => setB(b ? 0 : 1)}
-              className={`w-16 h-12 rounded-xl text-xl font-bold transition-all duration-300 ${
-                b
+              className={`w-16 h-12 rounded-xl text-xl font-bold transition-all duration-300 ${b
                   ? "bg-green-500 shadow-lg shadow-green-400/50"
                   : "bg-red-500 shadow-lg shadow-red-400/40"
-              }`}
+                }`}
             >
               {b}
             </button>
@@ -75,11 +84,10 @@ export default function AndGate() {
           <p className="mb-2 font-semibold">Output</p>
           <motion.div
             animate={{ scale: output ? 1.2 : 1 }}
-            className={`w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold transition ${
-              output
+            className={`w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold transition ${output
                 ? "bg-green-500 shadow-lg shadow-green-400/50"
                 : "bg-red-500 shadow-lg shadow-red-400/40"
-            }`}
+              }`}
           >
             {output}
           </motion.div>

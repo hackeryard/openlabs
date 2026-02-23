@@ -1,12 +1,7 @@
 "use client"
 // src/components/EnergyConservationLab.jsx
 import React, { useEffect, useRef, useState } from "react";
-
-/**
- * EnergyConservationLab.jsx
- * - Simulates a block sliding down an incline with optional friction
- * - Shows PE, KE, and Lost energy; plots energy vs time; measures speed
- */
+import { useChat } from "../ChatContext";
 
 export default function EnergyConservation({
   initialMass = 0.5,
@@ -29,6 +24,17 @@ export default function EnergyConservation({
   const dataRef = useRef([]); // {t, PE, KE, lost}
   const [simTime, setSimTime] = useState(0);
   const [speedBottom, setSpeedBottom] = useState(null);
+
+  // Chatbot 
+  const { setExperimentData } = useChat();
+
+  useEffect(() => {
+    setExperimentData({
+      title: "Energy Conservation",
+      theory: "This page will host experiments demonstrating energy conservation in mechanical systems.",
+      extraContext: ``,
+    });
+  }, []);
 
   useEffect(() => {
     // setup canvas
@@ -96,7 +102,7 @@ export default function EnergyConservation({
     }
     rafRef.current = requestAnimationFrame(step);
     return () => { cancelAnimationFrame(rafRef.current); window.removeEventListener("resize", resize); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [running, m, angleDeg, h0, mu]);
 
   function draw(ctx, canvas) {
@@ -168,7 +174,7 @@ export default function EnergyConservation({
   }
 
   function exportCSV() {
-    const rows = [["t_s","PE_J","KE_J","lost_J"], ...dataRef.current.map(p => [p.t.toFixed(4), p.PE.toFixed(6), p.KE.toFixed(6), p.lost.toFixed(6)])];
+    const rows = [["t_s", "PE_J", "KE_J", "lost_J"], ...dataRef.current.map(p => [p.t.toFixed(4), p.PE.toFixed(6), p.KE.toFixed(6), p.lost.toFixed(6)])];
     const csv = rows.map(r => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -181,23 +187,23 @@ export default function EnergyConservation({
       <div className="grid md:grid-cols-3 gap-4">
         <div className="space-y-3">
           <label className="block text-sm">Mass (kg)</label>
-          <input type="range" min={0.1} max={5} step={0.01} value={m} onChange={(e)=>setM(Number(e.target.value))} />
-          <input type="number" value={m} onChange={(e)=>setM(Number(e.target.value))} className="w-full mt-1 border rounded px-2 py-1" />
+          <input type="range" min={0.1} max={5} step={0.01} value={m} onChange={(e) => setM(Number(e.target.value))} />
+          <input type="number" value={m} onChange={(e) => setM(Number(e.target.value))} className="w-full mt-1 border rounded px-2 py-1" />
 
           <label className="block text-sm mt-2">Incline angle (°)</label>
-          <input type="range" min={1} max={60} step={0.1} value={angleDeg} onChange={(e)=>setAngleDeg(Number(e.target.value))} />
-          <input type="number" value={angleDeg} onChange={(e)=>setAngleDeg(Number(e.target.value))} className="w-full mt-1 border rounded px-2 py-1" />
+          <input type="range" min={1} max={60} step={0.1} value={angleDeg} onChange={(e) => setAngleDeg(Number(e.target.value))} />
+          <input type="number" value={angleDeg} onChange={(e) => setAngleDeg(Number(e.target.value))} className="w-full mt-1 border rounded px-2 py-1" />
 
           <label className="block text-sm mt-2">Start height (m)</label>
-          <input type="range" min={0.1} max={3} step={0.01} value={h0} onChange={(e)=>setH0(Number(e.target.value))} />
-          <input type="number" value={h0} onChange={(e)=>setH0(Number(e.target.value))} className="w-full mt-1 border rounded px-2 py-1" />
+          <input type="range" min={0.1} max={3} step={0.01} value={h0} onChange={(e) => setH0(Number(e.target.value))} />
+          <input type="number" value={h0} onChange={(e) => setH0(Number(e.target.value))} className="w-full mt-1 border rounded px-2 py-1" />
 
           <label className="block text-sm mt-2">Friction µ</label>
-          <input type="range" min={0} max={0.5} step={0.001} value={mu} onChange={(e)=>setMu(Number(e.target.value))} />
-          <input type="number" value={mu} onChange={(e)=>setMu(Number(e.target.value))} className="w-full mt-1 border rounded px-2 py-1" />
+          <input type="range" min={0} max={0.5} step={0.001} value={mu} onChange={(e) => setMu(Number(e.target.value))} />
+          <input type="number" value={mu} onChange={(e) => setMu(Number(e.target.value))} className="w-full mt-1 border rounded px-2 py-1" />
 
           <div className="flex gap-2 mt-2">
-            <button onClick={()=>setRunning(r=>!r)} className="flex-1 py-2 rounded bg-blue-600 text-white">{running ? "Pause" : "Start"}</button>
+            <button onClick={() => setRunning(r => !r)} className="flex-1 py-2 rounded bg-blue-600 text-white">{running ? "Pause" : "Start"}</button>
             <button onClick={reset} className="flex-1 py-2 rounded bg-gray-200">Reset</button>
           </div>
 
@@ -212,7 +218,7 @@ export default function EnergyConservation({
         </div>
 
         <div className="md:col-span-2">
-          <canvas ref={canvasRef} className="w-full border rounded" style={{height:320}} />
+          <canvas ref={canvasRef} className="w-full border rounded" style={{ height: 320 }} />
         </div>
       </div>
     </div>

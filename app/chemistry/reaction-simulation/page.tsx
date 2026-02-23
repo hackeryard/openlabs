@@ -1,7 +1,8 @@
 "use client"
 
+import { useChat } from '@/app/components/ChatContext';
 import dynamic from 'next/dynamic'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 const ReactionSimulation = dynamic(() => import('../../components/chemistry/reactions/ReactionSimulation'), {
   ssr: false,
@@ -10,6 +11,16 @@ const ReactionSimulation = dynamic(() => import('../../components/chemistry/reac
 })
 
 export default function ChemistryPage() {
+  // Chatbot 
+  const { setExperimentData } = useChat();
+
+  useEffect(() => {
+    setExperimentData({
+      title: "Chemistry Reaction Simulation",
+      theory: "",
+      extraContext: ``,
+    });
+  }, []);
   return (
     <>
       <ReactionSimulation />
