@@ -31,17 +31,31 @@ const item: Variants = {
 const cards = [
   {
     href: "/computer-science/dsa/sorting/merge-sort",
-    title: "Merge Sorting Visualizer",
+    title: "Merge Sort",
     desc: "Interactive lab that help in visualizing the code you write.",
   },
   {
     href: "/computer-science/dsa/sorting/quick-sort",
-    title: "Quick Sorting Visualizer",
+    title: "Quick Sort",
     desc: "Interactive lab that help in visualizing the code you write.",
   },
   {
     href: "/computer-science/dsa/sorting/bubble-sort",
-    title: "Bubble Sorting Visualizer",
+    title: "Bubble Sort",
+    desc: "Interactive lab that help in visualizing the code you write.",
+  },{
+    href: "/computer-science/dsa/sorting/heap-sort",
+    title: "Heap Sort",
+    desc: "Interactive lab that help in visualizing the code you write.",
+  },
+  {
+    href: "/computer-science/dsa/sorting/insertion-sort",
+    title: " Insertion Sort",
+    desc: "Interactive lab that help in visualizing the code you write.",
+  },
+  {
+    href: "/computer-science/dsa/sorting/selection-sort",
+    title: "Selection Sort",
     desc: "Interactive lab that help in visualizing the code you write.",
   },
 ];

@@ -6,63 +6,44 @@ import { useChat } from "@/app/components/ChatContext";
 
 // Types
 type Mode = "beginner" | "expert" | "interview";
-type Language = "javascript" | "python" | "java";
-type PivotStrategy = "first" | "last" | "middle" | "random";
 
 interface Step {
-  type: "pivot" | "partition" | "swap" | "complete";
+  type: "select" | "shift" | "insert" | "complete";
   array: number[];
-  pivotIndex: number;
-  leftIndex: number;
-  rightIndex: number;
-  partitionIndex?: number;
-  depth: number;
+  currentIndex: number;
+  comparingIndex: number;
+  selectedValue: number;
+  insertedAt: number;
   explanation: string;
   insight: string;
   codeLine: number;
 }
 
-interface TreeNode {
-  id: string;
-  value: number;
-  indices: [number, number];
-  left?: TreeNode;
-  right?: TreeNode;
-  depth: number;
-  isActive: boolean;
-  isPivot: boolean;
-}
-
-export default function QuickSortVisualizer() {
+export default function InsertionSortVisualizer() {
   // Chatbot
   const { setExperimentData } = useChat();
 
   useEffect(() => {
     setExperimentData({
-      title: "Quick Sort",
-      theory: "Quick Sort Data Structure Visualizer",
+      title: "Insertion Sort",
+      theory: "Insertion Sort Data Structure Visualizer",
       extraContext: ``,
     });
   }, []);
   // ================= STATE MANAGEMENT =================
   const [inputArray, setInputArray] = useState<number[]>([
-    38, 27, 43, 3, 9, 82, 10,
+    12, 11, 13, 5, 6, 7, 9,
   ]);
-  const [inputString, setInputString] = useState("38, 27, 43, 3, 9, 82, 10");
+  const [inputString, setInputString] = useState("12, 11, 13, 5, 6, 7, 9");
   const [steps, setSteps] = useState<Step[]>([]);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [mode, setMode] = useState<Mode>("beginner");
-  const [language, setLanguage] = useState<Language>("javascript");
-  const [pivotStrategy, setPivotStrategy] = useState<PivotStrategy>("last");
-  const [speed, setSpeed] = useState(800);
-  const [recursionTree, setRecursionTree] = useState<TreeNode | null>(null);
+  const [speed, setSpeed] = useState(700);
   const [stats, setStats] = useState({
     comparisons: 0,
-    swaps: 0,
-    partitions: 0,
-    maxDepth: 0,
-    memoryUsage: 0,
+    shifts: 0,
+    insertions: 0,
   });
   const [showCelebration, setShowCelebration] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -70,192 +51,122 @@ export default function QuickSortVisualizer() {
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // ================= QUICK SORT ALGORITHM WITH STEP GENERATION =================
-  const generateSteps = useCallback(
-    (arr: number[], strategy: PivotStrategy): Step[] => {
-      const steps: Step[] = [];
-      const array = [...arr];
-      let comparisons = 0;
-      let swaps = 0;
-      let partitions = 0;
+  // ================= INSERTION SORT ALGORITHM WITH STEP GENERATION =================
+  const generateSteps = useCallback((arr: number[]): Step[] => {
+    const steps: Step[] = [];
+    const array = [...arr];
+    let comparisons = 0;
+    let shifts = 0;
+    let insertions = 0;
 
-      const buildRecursionTree = (
-        subarray: number[],
-        startIdx: number,
-        endIdx: number,
-        depth: number = 0,
-      ): TreeNode | null => {
-        if (startIdx > endIdx) return null;
+    const n = array.length;
 
-        const mid = Math.floor((startIdx + endIdx) / 2);
-        const node: TreeNode = {
-          id: Math.random().toString(36).substr(2, 9),
-          value: array[mid],
-          indices: [startIdx, endIdx],
-          depth,
-          isActive: false,
-          isPivot: false,
-        };
+    steps.push({
+      type: "select",
+      array: [...array],
+      currentIndex: 0,
+      comparingIndex: -1,
+      selectedValue: array[0],
+      insertedAt: -1,
+      explanation:
+        "Starting Insertion Sort. First element is considered sorted.",
+      insight:
+        "Insertion Sort builds the final sorted array one element at a time.",
+      codeLine: 3,
+    });
 
-        if (startIdx < endIdx) {
-          node.left = buildRecursionTree(array, startIdx, mid - 1, depth + 1);
-          node.right = buildRecursionTree(array, mid + 1, endIdx, depth + 1);
-        }
-
-        return node;
-      };
-
-      const choosePivot = (low: number, high: number): number => {
-        switch (strategy) {
-          case "first":
-            return low;
-          case "last":
-            return high;
-          case "middle":
-            return Math.floor((low + high) / 2);
-          case "random":
-            return Math.floor(Math.random() * (high - low + 1)) + low;
-          default:
-            return high;
-        }
-      };
-
-      const partition = (arr: number[], low: number, high: number): number => {
-        partitions++;
-        const pivotIndex = choosePivot(low, high);
-        const pivotValue = arr[pivotIndex];
-
-        // Move pivot to end
-        if (pivotIndex !== high) {
-          [arr[pivotIndex], arr[high]] = [arr[high], arr[pivotIndex]];
-          swaps++;
-        }
-
-        steps.push({
-          type: "pivot",
-          array: [...arr],
-          pivotIndex: high,
-          leftIndex: low,
-          rightIndex: high - 1,
-          depth: low === 0 && high === arr.length - 1 ? 0 : 1,
-          explanation: `Selected pivot: ${pivotValue} at position ${high}`,
-          insight:
-            strategy === "random"
-              ? "Random pivot helps avoid worst-case O(n²) on sorted arrays"
-              : `${strategy} element pivot strategy chosen`,
-          codeLine: 5,
-        });
-
-        let i = low - 1;
-
-        for (let j = low; j < high; j++) {
-          comparisons++;
-
-          steps.push({
-            type: "partition",
-            array: [...arr],
-            pivotIndex: high,
-            leftIndex: i + 1,
-            rightIndex: j,
-            depth: low === 0 && high === arr.length - 1 ? 0 : 1,
-            explanation: `Comparing ${arr[j]} with pivot ${pivotValue}`,
-            insight:
-              arr[j] <= pivotValue
-                ? `${arr[j]} is ≤ pivot, will move to left partition`
-                : `${arr[j]} is > pivot, stays in right partition`,
-            codeLine: 8,
-          });
-
-          if (arr[j] <= pivotValue) {
-            i++;
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-            swaps++;
-
-            steps.push({
-              type: "swap",
-              array: [...arr],
-              pivotIndex: high,
-              leftIndex: i,
-              rightIndex: j,
-              partitionIndex: i,
-              depth: low === 0 && high === arr.length - 1 ? 0 : 1,
-              explanation: `Swapped ${arr[i]} and ${arr[j]}`,
-              insight: "Elements smaller than pivot move to the left",
-              codeLine: 10,
-            });
-          }
-        }
-
-        // Place pivot in correct position
-        [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
-        swaps++;
-
-        steps.push({
-          type: "swap",
-          array: [...arr],
-          pivotIndex: i + 1,
-          leftIndex: low,
-          rightIndex: high,
-          partitionIndex: i + 1,
-          depth: low === 0 && high === arr.length - 1 ? 0 : 1,
-          explanation: `Pivot placed at position ${i + 1}`,
-          insight: "All elements left of pivot are smaller, right are larger",
-          codeLine: 16,
-        });
-
-        return i + 1;
-      };
-
-      const quickSort = (
-        arr: number[],
-        low: number,
-        high: number,
-        depth: number = 0,
-      ) => {
-        if (low < high) {
-          const pi = partition(arr, low, high);
-
-          quickSort(arr, low, pi - 1, depth + 1);
-          quickSort(arr, pi + 1, high, depth + 1);
-        }
-      };
-
-      // Build initial recursion tree
-      const tree = buildRecursionTree(array, 0, array.length - 1);
-      setRecursionTree(tree);
-
-      quickSort(array, 0, array.length - 1);
+    for (let i = 1; i < n; i++) {
+      const key = array[i];
+      let j = i - 1;
 
       steps.push({
-        type: "complete",
+        type: "select",
         array: [...array],
-        pivotIndex: -1,
-        leftIndex: -1,
-        rightIndex: -1,
-        depth: 0,
-        explanation: "✨ Quick Sort complete! The array is now fully sorted.",
+        currentIndex: i,
+        comparingIndex: j,
+        selectedValue: key,
+        insertedAt: -1,
+        explanation: `Selected element ${key} at position ${i} to insert into sorted portion`,
         insight:
-          "Average time complexity: O(n log n) | Space complexity: O(log n)",
-        codeLine: 22,
+          "We take one unsorted element and insert it into its correct position in the sorted portion.",
+        codeLine: 5,
       });
 
-      setStats({
-        comparisons,
-        swaps,
-        partitions,
-        maxDepth: Math.max(...steps.map((s) => s.depth)),
-        memoryUsage: Math.log2(arr.length) * 8, // Stack space estimation
-      });
+      // Move elements greater than key one position ahead
+      while (j >= 0 && array[j] > key) {
+        comparisons++;
 
-      return steps;
-    },
-    [],
-  );
+        steps.push({
+          type: "shift",
+          array: [...array],
+          currentIndex: i,
+          comparingIndex: j,
+          selectedValue: key,
+          insertedAt: -1,
+          explanation: `${array[j]} is greater than ${key}, shifting ${array[j]} to the right`,
+          insight:
+            "Larger elements are shifted to make room for the smaller element.",
+          codeLine: 7,
+        });
+
+        array[j + 1] = array[j];
+        shifts++;
+        j--;
+
+        steps.push({
+          type: "shift",
+          array: [...array],
+          currentIndex: i,
+          comparingIndex: j,
+          selectedValue: key,
+          insertedAt: -1,
+          explanation: `Shifted element to position ${j + 2}`,
+          insight: "Elements keep shifting until we find the correct position.",
+          codeLine: 8,
+        });
+      }
+
+      array[j + 1] = key;
+      insertions++;
+
+      steps.push({
+        type: "insert",
+        array: [...array],
+        currentIndex: i,
+        comparingIndex: -1,
+        selectedValue: key,
+        insertedAt: j + 1,
+        explanation: `Inserted ${key} at position ${j + 1}`,
+        insight: "The element is now in its correct sorted position.",
+        codeLine: 11,
+      });
+    }
+
+    steps.push({
+      type: "complete",
+      array: [...array],
+      currentIndex: -1,
+      comparingIndex: -1,
+      selectedValue: -1,
+      insertedAt: -1,
+      explanation: "✨ Insertion Sort complete! The array is now fully sorted.",
+      insight: `Time complexity: O(n²) average/worst, O(n) best | Space: O(1)`,
+      codeLine: 15,
+    });
+
+    setStats({
+      comparisons,
+      shifts,
+      insertions,
+    });
+
+    return steps;
+  }, []);
 
   // ================= INITIALIZATION =================
   useEffect(() => {
     reset();
-  }, [pivotStrategy]);
+  }, []);
 
   const reset = () => {
     const arr = inputString
@@ -264,7 +175,7 @@ export default function QuickSortVisualizer() {
       .filter((n) => !isNaN(n));
 
     setInputArray(arr);
-    setSteps(generateSteps(arr, pivotStrategy));
+    setSteps(generateSteps(arr));
     setCurrentStepIndex(0);
     setIsPlaying(false);
     setShowCelebration(false);
@@ -284,228 +195,52 @@ export default function QuickSortVisualizer() {
     const timer = setTimeout(
       () => {
         setCurrentStepIndex((i) => i + 1);
-
-        // Update recursion tree active node
-        if (recursionTree) {
-          updateTreeActiveNode(
-            recursionTree,
-            steps[currentStepIndex + 1]?.depth || 0,
-          );
-        }
       },
       mode === "beginner" ? speed : speed / 2,
     );
 
     return () => clearTimeout(timer);
-  }, [isPlaying, currentStepIndex, steps, mode, speed, recursionTree]);
-
-  const updateTreeActiveNode = (
-    node: TreeNode,
-    targetDepth: number,
-  ): boolean => {
-    if (node.depth === targetDepth) {
-      node.isActive = true;
-      return true;
-    }
-
-    node.isActive = false;
-    let found = false;
-
-    if (node.left && updateTreeActiveNode(node.left, targetDepth)) found = true;
-    if (node.right && updateTreeActiveNode(node.right, targetDepth))
-      found = true;
-
-    return found;
-  };
+  }, [isPlaying, currentStepIndex, steps, mode, speed]);
 
   const currentStep = steps[currentStepIndex];
 
-  // ================= CODE SNIPPETS =================
-  const codeSnippets = {
-    javascript: `function quickSort(arr, low = 0, high = arr.length - 1) {
-  if (low < high) {
-    const pi = partition(arr, low, high);
-    quickSort(arr, low, pi - 1);
-    quickSort(arr, pi + 1, high);
+  // ================= CODE SNIPPET =================
+  const codeSnippet = `function insertionSort(arr) {
+  // Start from the second element
+  for (let i = 1; i < arr.length; i++) {
+    let key = arr[i];
+    let j = i - 1;
+    
+    // Move elements greater than key one position ahead
+    while (j >= 0 && arr[j] > key) {
+      arr[j + 1] = arr[j];
+      j--;
+    }
+    
+    // Insert key in its correct position
+    arr[j + 1] = key;
   }
   return arr;
-}
-
-function partition(arr, low, high) {
-  const pivot = arr[high];
-  let i = low - 1;
-  
-  for (let j = low; j < high; j++) {
-    if (arr[j] <= pivot) {
-      i++;
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-  }
-  
-  [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
-  return i + 1;
-}`,
-    python: `def quick_sort(arr, low=0, high=None):
-    if high is None:
-        high = len(arr) - 1
-    
-    if low < high:
-        pi = partition(arr, low, high)
-        quick_sort(arr, low, pi - 1)
-        quick_sort(arr, pi + 1, high)
-    
-    return arr
-
-def partition(arr, low, high):
-    pivot = arr[high]
-    i = low - 1
-    
-    for j in range(low, high):
-        if arr[j] <= pivot:
-            i += 1
-            arr[i], arr[j] = arr[j], arr[i]
-    
-    arr[i + 1], arr[high] = arr[high], arr[i + 1]
-    return i + 1`,
-    java: `public class QuickSort {
-    public static void quickSort(int[] arr, int low, int high) {
-        if (low < high) {
-            int pi = partition(arr, low, high);
-            quickSort(arr, low, pi - 1);
-            quickSort(arr, pi + 1, high);
-        }
-    }
-    
-    private static int partition(int[] arr, int low, int high) {
-        int pivot = arr[high];
-        int i = low - 1;
-        
-        for (int j = low; j < high; j++) {
-            if (arr[j] <= pivot) {
-                i++;
-                int temp = arr[i];
-                arr[i] = arr[j];
-                arr[j] = temp;
-            }
-        }
-        
-        int temp = arr[i + 1];
-        arr[i + 1] = arr[high];
-        arr[high] = temp;
-        
-        return i + 1;
-    }
-}`,
-  };
-
-  // ================= RENDER RECURSION TREE =================
-  const renderTreeNode = (
-    node: TreeNode,
-    x: number = 0,
-    y: number = 0,
-    level: number = 0,
-  ) => {
-    if (!node) return null;
-
-    const horizontalSpacing = Math.max(60, 180 / (level + 1));
-    const verticalSpacing = 70;
-
-    return (
-      <g key={node.id}>
-        {node.left && (
-          <>
-            <line
-              x1={x}
-              y1={y}
-              x2={x - horizontalSpacing}
-              y2={y + verticalSpacing}
-              stroke={isDarkMode ? "#4B5563" : "#CBD5E1"}
-              strokeWidth="2"
-              strokeDasharray="4,3"
-            />
-            {renderTreeNode(
-              node.left,
-              x - horizontalSpacing,
-              y + verticalSpacing,
-              level + 1,
-            )}
-          </>
-        )}
-        {node.right && (
-          <>
-            <line
-              x1={x}
-              y1={y}
-              x2={x + horizontalSpacing}
-              y2={y + verticalSpacing}
-              stroke={isDarkMode ? "#4B5563" : "#CBD5E1"}
-              strokeWidth="2"
-              strokeDasharray="4,3"
-            />
-            {renderTreeNode(
-              node.right,
-              x + horizontalSpacing,
-              y + verticalSpacing,
-              level + 1,
-            )}
-          </>
-        )}
-        <motion.g
-          initial={{ scale: 0 }}
-          animate={{
-            scale: node.isActive ? 1.2 : 1,
-          }}
-          transition={{ type: "spring", stiffness: 300, damping: 20 }}
-        >
-          <circle
-            cx={x}
-            cy={y}
-            r={Math.max(18, 25 - level * 2)}
-            fill={
-              node.isActive ? "#F59E0B" : isDarkMode ? "#374151" : "#F3F4F6"
-            }
-            stroke={node.isPivot ? "#10B981" : "#F59E0B"}
-            strokeWidth="2"
-            className="cursor-pointer transition-all duration-300 hover:filter hover:drop-shadow-lg"
-          />
-          <text
-            x={x}
-            y={y}
-            textAnchor="middle"
-            dy=".3em"
-            fill={node.isActive ? "white" : isDarkMode ? "#E5E7EB" : "#1F2937"}
-            fontSize="10"
-            fontWeight="500"
-            className="select-none"
-          >
-            {node.value}
-          </text>
-        </motion.g>
-      </g>
-    );
-  };
+}`;
 
   // ================= HELPER FUNCTIONS =================
   const getBarColor = (index: number) => {
-    if (!currentStep) return isDarkMode ? "#4B5563" : "#93C5FD";
+    if (!currentStep) return isDarkMode ? "#4B5563" : "#F59E0B";
 
-    if (index === currentStep.pivotIndex) {
-      return "#F59E0B"; // Orange for pivot
+    if (index === currentStep.insertedAt) {
+      return "#10B981"; // Green for just inserted
     }
-    if (index === currentStep.leftIndex) {
-      return "#10B981"; // Green for left pointer
+    if (index === currentStep.currentIndex) {
+      return "#EC4899"; // Pink for current element being processed
     }
-    if (index === currentStep.rightIndex) {
-      return "#EF4444"; // Red for right pointer
+    if (index === currentStep.comparingIndex) {
+      return "#3B82F6"; // Blue for element being compared
     }
-    if (
-      currentStep.partitionIndex !== undefined &&
-      index <= currentStep.partitionIndex
-    ) {
-      return "#8B5CF6"; // Purple for partitioned left
+    if (index < currentStep.currentIndex && currentStep.currentIndex > 0) {
+      return "#8B5CF6"; // Purple for sorted portion
     }
 
-    return isDarkMode ? "#4B5563" : "#93C5FD";
+    return isDarkMode ? "#4B5563" : "#F59E0B";
   };
 
   // ================= MAIN RENDER =================
@@ -513,8 +248,8 @@ def partition(arr, low, high):
     <div
       className={`min-h-screen transition-colors duration-300 ${
         isDarkMode
-          ? "bg-gradient-to-br from-gray-900 via-orange-900 to-gray-900"
-          : "bg-gradient-to-br from-slate-50 via-orange-50 to-white"
+          ? "bg-gradient-to-br from-gray-900 via-amber-900 to-gray-900"
+          : "bg-gradient-to-br from-slate-50 via-amber-50 to-white"
       }`}
     >
       {/* Animated Background */}
@@ -530,7 +265,7 @@ def partition(arr, low, high):
             repeat: Infinity,
             ease: "linear",
           }}
-          className="absolute top-0 -left-4 w-72 h-72 bg-orange-300 rounded-full mix-blend-multiply filter blur-xl opacity-20"
+          className="absolute top-0 -left-4 w-72 h-72 bg-amber-300 rounded-full mix-blend-multiply filter blur-xl opacity-20"
         />
         <motion.div
           animate={{
@@ -542,7 +277,7 @@ def partition(arr, low, high):
             repeat: Infinity,
             ease: "linear",
           }}
-          className="absolute top-0 -right-4 w-72 h-72 bg-amber-300 rounded-full mix-blend-multiply filter blur-xl opacity-20"
+          className="absolute top-0 -right-4 w-72 h-72 bg-orange-300 rounded-full mix-blend-multiply filter blur-xl opacity-20"
         />
       </div>
 
@@ -564,15 +299,15 @@ def partition(arr, low, high):
           <div className="flex items-center justify-between">
             <div>
               <h1
-                className={`text-4xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent`}
+                className={`text-4xl font-bold bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent`}
               >
-                Quick Sort Studio
+                Insertion Sort Visualizer
               </h1>
               <p
                 className={`mt-2 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}
               >
-                Master the partition-based sorting algorithm with interactive
-                visualization
+                Build sorted array one element at a time by inserting each
+                element into its correct position
               </p>
             </div>
 
@@ -595,7 +330,7 @@ def partition(arr, low, high):
                   isDarkMode
                     ? "bg-gray-700/50 border-gray-600 text-white"
                     : "bg-white/50 border-gray-200 text-gray-800"
-                } focus:outline-none focus:ring-2 focus:ring-orange-500`}
+                } focus:outline-none focus:ring-2 focus:ring-amber-500`}
               >
                 <option value="beginner">🌱 Beginner Mode</option>
                 <option value="expert">⚡ Expert Mode</option>
@@ -628,23 +363,23 @@ def partition(arr, low, high):
               <input
                 value={inputString}
                 onChange={(e) => setInputString(e.target.value)}
-                placeholder="Enter numbers (e.g., 38, 27, 43, 3)"
+                placeholder="Enter numbers (e.g., 12, 11, 13, 5)"
                 className={`w-full px-4 py-3 rounded-xl backdrop-blur-sm border ${
                   isDarkMode
                     ? "bg-gray-700/50 border-gray-600 text-white placeholder-gray-400"
                     : "bg-white/50 border-gray-200 text-gray-800 placeholder-gray-500"
-                } focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all`}
+                } focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all`}
               />
 
               <div className="grid grid-cols-2 gap-3 mt-4">
                 <button
                   onClick={reset}
-                  className="px-4 py-3 bg-gradient-to-r from-orange-600 to-amber-600 text-white rounded-xl hover:shadow-xl hover:scale-105 transition-all font-medium"
+                  className="px-4 py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-xl hover:shadow-xl hover:scale-105 transition-all font-medium"
                 >
                   Apply
                 </button>
                 <button
-                  onClick={() => setInputString("64, 34, 25, 12, 22, 11, 90")}
+                  onClick={() => setInputString("12, 11, 13, 5, 6, 7, 9")}
                   className={`px-4 py-3 rounded-xl backdrop-blur-sm border ${
                     isDarkMode
                       ? "bg-gray-700/50 border-gray-600 text-white hover:bg-gray-600/50"
@@ -653,43 +388,6 @@ def partition(arr, low, high):
                 >
                   Random
                 </button>
-              </div>
-            </motion.div>
-
-            {/* Pivot Strategy Card */}
-            <motion.div
-              initial={{ x: -20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.15 }}
-              className={`backdrop-blur-xl rounded-2xl p-6 ${
-                isDarkMode
-                  ? "bg-gray-800/50 border border-gray-700"
-                  : "bg-white/70 border border-white/20"
-              } shadow-xl`}
-            >
-              <h3
-                className={`font-semibold mb-3 ${isDarkMode ? "text-white" : "text-gray-800"}`}
-              >
-                🎯 Pivot Strategy
-              </h3>
-              <div className="grid grid-cols-2 gap-2">
-                {(["first", "last", "middle", "random"] as PivotStrategy[]).map(
-                  (strategy) => (
-                    <button
-                      key={strategy}
-                      onClick={() => setPivotStrategy(strategy)}
-                      className={`px-3 py-2 rounded-lg text-sm capitalize transition-all ${
-                        pivotStrategy === strategy
-                          ? "bg-orange-500 text-white shadow-lg"
-                          : isDarkMode
-                            ? "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      }`}
-                    >
-                      {strategy}
-                    </button>
-                  ),
-                )}
               </div>
             </motion.div>
 
@@ -781,7 +479,7 @@ def partition(arr, low, high):
               <h3
                 className={`font-semibold mb-4 ${isDarkMode ? "text-white" : "text-gray-800"}`}
               >
-                📈 Algorithm Insights
+                📈 Algorithm Statistics
               </h3>
 
               <div className="space-y-3">
@@ -801,36 +499,24 @@ def partition(arr, low, high):
                   <span
                     className={isDarkMode ? "text-gray-400" : "text-gray-600"}
                   >
-                    Swaps
+                    Shifts
                   </span>
                   <span
                     className={`font-mono font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}
                   >
-                    {stats.swaps}
+                    {stats.shifts}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span
                     className={isDarkMode ? "text-gray-400" : "text-gray-600"}
                   >
-                    Partitions
+                    Insertions
                   </span>
                   <span
                     className={`font-mono font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}
                   >
-                    {stats.partitions}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span
-                    className={isDarkMode ? "text-gray-400" : "text-gray-600"}
-                  >
-                    Max Depth
-                  </span>
-                  <span
-                    className={`font-mono font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}
-                  >
-                    {stats.maxDepth}
+                    {stats.insertions}
                   </span>
                 </div>
                 <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent my-2" />
@@ -840,9 +526,27 @@ def partition(arr, low, high):
                   >
                     Time Complexity
                   </span>
-                  <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded-lg text-sm font-mono">
-                    O(n log n) avg
+                  <span className="px-2 py-1 bg-amber-100 text-amber-700 rounded-lg text-sm font-mono">
+                    O(n²)
                   </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span
+                    className={isDarkMode ? "text-gray-400" : "text-gray-600"}
+                  >
+                    Space Complexity
+                  </span>
+                  <span className="px-2 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-mono">
+                    O(1)
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span
+                    className={isDarkMode ? "text-gray-400" : "text-gray-600"}
+                  >
+                    Stable
+                  </span>
+                  <span className="text-emerald-500">✓ Yes</span>
                 </div>
               </div>
             </motion.div>
@@ -870,44 +574,60 @@ def partition(arr, low, high):
                     exit={{ opacity: 0, scale: 0.95 }}
                     className="space-y-8"
                   >
-                    {/* Array Visualization with Bars */}
-                    <div className="flex justify-center items-end gap-2 h-64">
+                    {/* Array Visualization with Cards */}
+                    <div className="flex justify-center items-center gap-3 flex-wrap">
                       {currentStep.array.map((value, idx) => {
-                        const maxValue = Math.max(...currentStep.array);
-                        const height = (value / maxValue) * 180 + 20;
+                        const isSorted =
+                          idx < currentStep.currentIndex &&
+                          currentStep.currentIndex > 0;
 
                         return (
                           <motion.div
                             key={`${idx}-${value}`}
                             initial={{ y: 20, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
-                            transition={{ delay: idx * 0.02 }}
+                            transition={{ delay: idx * 0.05 }}
                             className="relative group"
                           >
                             <motion.div
                               animate={{
-                                scale: idx === currentStep.pivotIndex ? 1.1 : 1,
-                                y: idx === currentStep.pivotIndex ? -5 : 0,
+                                scale:
+                                  idx === currentStep.insertedAt
+                                    ? [1, 1.2, 1]
+                                    : 1,
+                                rotateY:
+                                  idx === currentStep.insertedAt
+                                    ? [0, 180, 360]
+                                    : 0,
                               }}
-                              className="w-10 rounded-t-lg cursor-pointer transition-all"
+                              transition={{ duration: 0.8 }}
+                              className={`w-16 h-16 rounded-xl flex flex-col items-center justify-center shadow-lg
+                                ${getBarColor(idx)} 
+                                ${isSorted ? "border-2 border-purple-400" : ""}
+                                text-white font-bold relative overflow-hidden`}
                               style={{
-                                height: `${height}px`,
                                 backgroundColor: getBarColor(idx),
                               }}
                             >
-                              {/* Value label */}
-                              <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-mono font-bold">
-                                {value}
-                              </div>
+                              <span className="text-xl">{value}</span>
+                              <span className="text-xs opacity-75 mt-1">
+                                idx:{idx}
+                              </span>
 
-                              {/* Index label */}
-                              <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs">
-                                {idx}
-                              </div>
+                              {/* Sorted badge */}
+                              {isSorted && (
+                                <motion.div
+                                  initial={{ scale: 0 }}
+                                  animate={{ scale: 1 }}
+                                  className="absolute -top-1 -right-1 w-4 h-4 bg-purple-400 rounded-full flex items-center justify-center text-[10px]"
+                                >
+                                  ✓
+                                </motion.div>
+                              )}
 
                               {/* Tooltip */}
                               {showTooltips && (
-                                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block">
+                                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-20">
                                   <div
                                     className={`px-2 py-1 text-xs rounded-lg whitespace-nowrap ${
                                       isDarkMode
@@ -915,7 +635,7 @@ def partition(arr, low, high):
                                         : "bg-white text-gray-800"
                                     } shadow-lg`}
                                   >
-                                    Index: {idx}, Value: {value}
+                                    Value: {value}
                                   </div>
                                 </div>
                               )}
@@ -925,38 +645,31 @@ def partition(arr, low, high):
                       })}
                     </div>
 
+                    {/* Selected element indicator */}
+                    {currentStep.selectedValue > 0 &&
+                      currentStep.type !== "complete" && (
+                        <motion.div
+                          initial={{ y: -20, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          className="flex justify-center"
+                        >
+                          <div
+                            className={`px-4 py-2 rounded-full ${
+                              isDarkMode
+                                ? "bg-pink-500/20 text-pink-300"
+                                : "bg-pink-100 text-pink-700"
+                            }`}
+                          >
+                            🔍 Currently inserting:{" "}
+                            <span className="font-bold text-lg">
+                              {currentStep.selectedValue}
+                            </span>
+                          </div>
+                        </motion.div>
+                      )}
+
                     {/* Legend */}
-                    <div className="flex justify-center gap-6 text-sm">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-amber-500"></div>
-                        <span
-                          className={
-                            isDarkMode ? "text-gray-300" : "text-gray-600"
-                          }
-                        >
-                          Pivot
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-                        <span
-                          className={
-                            isDarkMode ? "text-gray-300" : "text-gray-600"
-                          }
-                        >
-                          Left Pointer
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                        <span
-                          className={
-                            isDarkMode ? "text-gray-300" : "text-gray-600"
-                          }
-                        >
-                          Right Pointer
-                        </span>
-                      </div>
+                    <div className="flex justify-center gap-4 text-sm flex-wrap">
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-purple-500"></div>
                         <span
@@ -964,9 +677,59 @@ def partition(arr, low, high):
                             isDarkMode ? "text-gray-300" : "text-gray-600"
                           }
                         >
-                          Partitioned
+                          Sorted Portion
                         </span>
                       </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-pink-500"></div>
+                        <span
+                          className={
+                            isDarkMode ? "text-gray-300" : "text-gray-600"
+                          }
+                        >
+                          Current Element
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                        <span
+                          className={
+                            isDarkMode ? "text-gray-300" : "text-gray-600"
+                          }
+                        >
+                          Comparing
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span
+                          className={
+                            isDarkMode ? "text-gray-300" : "text-gray-600"
+                          }
+                        >
+                          Just Inserted
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Current Operation Info */}
+                    <div
+                      className={`text-center p-4 rounded-xl ${
+                        isDarkMode ? "bg-gray-700/50" : "bg-gray-50/50"
+                      }`}
+                    >
+                      <span
+                        className={`font-medium ${isDarkMode ? "text-white" : "text-gray-800"}`}
+                      >
+                        {currentStep.type === "select" &&
+                          "🔍 Selecting element to insert"}
+                        {currentStep.type === "shift" &&
+                          "⬅️ Shifting elements right"}
+                        {currentStep.type === "insert" &&
+                          "📥 Inserting element"}
+                        {currentStep.type === "complete" &&
+                          "✨ Sorting Complete!"}
+                      </span>
                     </div>
 
                     {/* Explanation Card (Beginner Mode) */}
@@ -974,7 +737,7 @@ def partition(arr, low, high):
                       <motion.div
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
-                        className={`mt-8 p-6 rounded-2xl ${
+                        className={`mt-4 p-6 rounded-2xl ${
                           isDarkMode
                             ? "bg-gray-700/50 border border-gray-600"
                             : "bg-white/50 border border-gray-200"
@@ -1001,52 +764,6 @@ def partition(arr, low, high):
                 )}
               </AnimatePresence>
             </motion.div>
-
-            {/* Recursion Tree Visualization */}
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className={`backdrop-blur-xl rounded-3xl p-6 ${
-                isDarkMode
-                  ? "bg-gray-800/50 border border-gray-700"
-                  : "bg-white/70 border border-white/20"
-              } shadow-xl overflow-x-auto`}
-            >
-              <h3
-                className={`font-semibold mb-4 ${isDarkMode ? "text-white" : "text-gray-800"}`}
-              >
-                🌳 Recursion Tree
-              </h3>
-              <div className="min-w-[800px] h-[350px] relative">
-                <svg
-                  width="100%"
-                  height="100%"
-                  viewBox="0 0 800 350"
-                  preserveAspectRatio="xMidYMid meet"
-                >
-                  {recursionTree && renderTreeNode(recursionTree, 400, 40, 0)}
-                </svg>
-              </div>
-              <div className="flex justify-center gap-4 mt-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-amber-500"></div>
-                  <span
-                    className={isDarkMode ? "text-gray-300" : "text-gray-600"}
-                  >
-                    Active Node
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full border-2 border-emerald-500"></div>
-                  <span
-                    className={isDarkMode ? "text-gray-300" : "text-gray-600"}
-                  >
-                    Pivot Node
-                  </span>
-                </div>
-              </div>
-            </motion.div>
           </div>
 
           {/* Right Column - Code & Progress */}
@@ -1062,26 +779,11 @@ def partition(arr, low, high):
                   : "bg-white/70 border border-white/20"
               } shadow-xl`}
             >
-              <div className="flex justify-between items-center mb-4">
-                <h3
-                  className={`font-semibold ${isDarkMode ? "text-white" : "text-gray-800"}`}
-                >
-                  💻 Code
-                </h3>
-                <select
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value as Language)}
-                  className={`px-2 py-1 text-sm rounded-lg ${
-                    isDarkMode
-                      ? "bg-gray-700 text-white border-gray-600"
-                      : "bg-gray-100 text-gray-800 border-gray-200"
-                  } border`}
-                >
-                  <option value="javascript">JavaScript</option>
-                  <option value="python">Python</option>
-                  <option value="java">Java</option>
-                </select>
-              </div>
+              <h3
+                className={`font-semibold mb-4 ${isDarkMode ? "text-white" : "text-gray-800"}`}
+              >
+                💻 JavaScript Code
+              </h3>
 
               <div
                 className={`relative rounded-xl overflow-hidden ${
@@ -1089,7 +791,7 @@ def partition(arr, low, high):
                 }`}
               >
                 <pre className="p-4 text-sm font-mono overflow-x-auto">
-                  {codeSnippets[language].split("\n").map((line, idx) => (
+                  {codeSnippet.split("\n").map((line, idx) => (
                     <motion.div
                       key={idx}
                       animate={{
@@ -1097,7 +799,7 @@ def partition(arr, low, high):
                           currentStep?.codeLine === idx + 1
                             ? isDarkMode
                               ? "#374151"
-                              : "#FEE2E2"
+                              : "#FEF3C7"
                             : "transparent",
                       }}
                       className="px-2 py-0.5 rounded"
@@ -1152,7 +854,7 @@ def partition(arr, low, high):
                       animate={{
                         width: `${((currentStepIndex + 1) / steps.length) * 100}%`,
                       }}
-                      className="h-full bg-gradient-to-r from-orange-500 to-amber-500"
+                      className="h-full bg-gradient-to-r from-amber-500 to-orange-500"
                     />
                   </div>
                 </div>
@@ -1162,20 +864,12 @@ def partition(arr, low, high):
                     <span
                       className={isDarkMode ? "text-gray-400" : "text-gray-600"}
                     >
-                      Current Operation
+                      Sorted Elements
                     </span>
                     <span
-                      className={`px-2 py-0.5 rounded-full text-xs ${
-                        currentStep?.type === "pivot"
-                          ? "bg-amber-100 text-amber-700"
-                          : currentStep?.type === "partition"
-                            ? "bg-blue-100 text-blue-700"
-                            : currentStep?.type === "swap"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-purple-100 text-purple-700"
-                      }`}
+                      className={`font-mono font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}
                     >
-                      {currentStep?.type || "Ready"}
+                      {currentStep?.currentIndex || 0} / {inputArray.length}
                     </span>
                   </div>
 
@@ -1183,31 +877,37 @@ def partition(arr, low, high):
                     <span
                       className={isDarkMode ? "text-gray-400" : "text-gray-600"}
                     >
-                      Current Depth
+                      Current Operation
                     </span>
                     <span
-                      className={`font-mono ${isDarkMode ? "text-white" : "text-gray-800"}`}
+                      className={`px-2 py-0.5 rounded-full text-xs ${
+                        currentStep?.type === "select"
+                          ? "bg-purple-100 text-purple-700"
+                          : currentStep?.type === "shift"
+                            ? "bg-blue-100 text-blue-700"
+                            : currentStep?.type === "insert"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-amber-100 text-amber-700"
+                      }`}
                     >
-                      {currentStep?.depth || 0}
+                      {currentStep?.type || "Ready"}
                     </span>
                   </div>
-
-                  {currentStep?.pivotIndex !== undefined &&
-                    currentStep.pivotIndex >= 0 && (
-                      <div className="flex justify-between text-sm">
-                        <span
-                          className={
-                            isDarkMode ? "text-gray-400" : "text-gray-600"
-                          }
-                        >
-                          Pivot Value
-                        </span>
-                        <span className={`font-mono font-bold text-amber-500`}>
-                          {currentStep.array[currentStep.pivotIndex]}
-                        </span>
-                      </div>
-                    )}
                 </div>
+
+                {currentStep?.type === "shift" && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className={`p-2 rounded-lg text-sm text-center ${
+                      isDarkMode
+                        ? "bg-blue-500/20 text-blue-300"
+                        : "bg-blue-100 text-blue-700"
+                    }`}
+                  >
+                    ⬅️ Shifting elements to make room
+                  </motion.div>
+                )}
               </div>
             </motion.div>
 
@@ -1226,28 +926,32 @@ def partition(arr, low, high):
                 <h3
                   className={`font-semibold mb-3 ${isDarkMode ? "text-amber-300" : "text-amber-800"}`}
                 >
-                  💡 Quick Tips
+                  💡 Insertion Sort Tips
                 </h3>
                 <ul
                   className={`space-y-2 text-sm ${isDarkMode ? "text-amber-200" : "text-amber-700"}`}
                 >
                   <li className="flex items-start gap-2">
                     <span>•</span>
-                    <span>Pivot selection affects performance</span>
+                    <span>Excellent for small arrays (n ≤ 20)</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span>•</span>
                     <span>
-                      Elements smaller than pivot go left, larger go right
+                      Efficient for nearly sorted data - O(n) best case
                     </span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span>•</span>
-                    <span>Watch the pointers move during partition</span>
+                    <span>Stable sort - maintains relative order</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span>•</span>
-                    <span>Try different pivot strategies</span>
+                    <span>Used in Timsort (Python's default sort)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span>•</span>
+                    <span>Think of sorting a hand of playing cards</span>
                   </li>
                 </ul>
               </motion.div>
@@ -1273,8 +977,8 @@ def partition(arr, low, high):
       <style jsx>{`
         .bg-grid-pattern {
           background-image:
-            linear-gradient(rgba(249, 115, 22, 0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(249, 115, 22, 0.1) 1px, transparent 1px);
+            linear-gradient(rgba(245, 158, 11, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(245, 158, 11, 0.1) 1px, transparent 1px);
           background-size: 50px 50px;
         }
       `}</style>

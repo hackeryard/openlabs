@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useChat } from "@/app/components/ChatContext";
 
 // Types
 type Mode = "beginner" | "expert" | "interview";
@@ -26,6 +27,16 @@ interface PassStats {
 }
 
 export default function BubbleSortVisualizer() {
+  // Chatbot 
+          const { setExperimentData } = useChat();
+        
+          useEffect(() => {
+            setExperimentData({
+              title: "Bubble Sort",
+              theory: "Bubble Sort Data Structure Visualizer",
+              extraContext: ``,
+            });
+          }, []);
   // ================= STATE MANAGEMENT =================
   const [inputArray, setInputArray] = useState<number[]>([64, 34, 25, 12, 22, 11, 90]);
   const [inputString, setInputString] = useState("64, 34, 25, 12, 22, 11, 90");
