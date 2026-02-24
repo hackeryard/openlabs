@@ -47,7 +47,11 @@ const cards = [
     title: "Data Structures & Algorithms",
     desc: "Interactive lab that help in visualizing the code you write.",
   },
- 
+  {
+    href: "/computer-science/networking",
+    title: "Computer Networking Lab",
+    desc: "Interactive lab that help in visualizing the working of computer networking.",
+  },
 ];
 
 export default function ComputerScience() {
