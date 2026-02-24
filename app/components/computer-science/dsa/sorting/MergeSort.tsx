@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useChat } from "@/app/components/ChatContext";
 
 // Types
 type Mode = "beginner" | "expert" | "interview";
@@ -30,6 +31,16 @@ interface TreeNode {
 }
 
 export default function MergeSortVisualizer() {
+  // Chatbot 
+          const { setExperimentData } = useChat();
+        
+          useEffect(() => {
+            setExperimentData({
+              title: "Merge Sort",
+              theory: "Merge Sort Data Structure Visualizer",
+              extraContext: ``,
+            });
+          }, []);
   // ================= STATE MANAGEMENT =================
   const [inputArray, setInputArray] = useState<number[]>([38, 27, 43, 3, 9, 82, 10]);
   const [inputString, setInputString] = useState("38, 27, 43, 3, 9, 82, 10");

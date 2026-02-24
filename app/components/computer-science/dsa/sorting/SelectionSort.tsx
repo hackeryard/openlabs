@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useChat } from "@/app/components/ChatContext";
 
 // Types
 type Mode = "beginner" | "expert" | "interview";
@@ -19,8 +20,20 @@ interface Step {
 }
 
 export default function SelectionSortVisualizer() {
+  // Chatbot
+  const { setExperimentData } = useChat();
+
+  useEffect(() => {
+    setExperimentData({
+      title: "Selection Sort",
+      theory: "Selection Sort Data Structure Visualizer",
+      extraContext: ``,
+    });
+  }, []);
   // ================= STATE MANAGEMENT =================
-  const [inputArray, setInputArray] = useState<number[]>([64, 25, 12, 22, 11, 9, 34]);
+  const [inputArray, setInputArray] = useState<number[]>([
+    64, 25, 12, 22, 11, 9, 34,
+  ]);
   const [inputString, setInputString] = useState("64, 25, 12, 22, 11, 9, 34");
   const [steps, setSteps] = useState<Step[]>([]);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -35,7 +48,7 @@ export default function SelectionSortVisualizer() {
   const [showCelebration, setShowCelebration] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showTooltips, setShowTooltips] = useState(true);
-  
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   // ================= SELECTION SORT ALGORITHM WITH STEP GENERATION =================
@@ -45,7 +58,7 @@ export default function SelectionSortVisualizer() {
     let comparisons = 0;
     let swaps = 0;
     let passes = 0;
-    
+
     const n = array.length;
 
     steps.push({
@@ -55,8 +68,10 @@ export default function SelectionSortVisualizer() {
       comparingIndex: 1,
       swapIndices: [-1, -1],
       sortedBoundary: 0,
-      explanation: "Starting Selection Sort. Finding minimum element in unsorted portion.",
-      insight: "Selection sort repeatedly selects the smallest element and moves it to the front.",
+      explanation:
+        "Starting Selection Sort. Finding minimum element in unsorted portion.",
+      insight:
+        "Selection sort repeatedly selects the smallest element and moves it to the front.",
       codeLine: 3,
     });
 
@@ -79,7 +94,7 @@ export default function SelectionSortVisualizer() {
       // Find the minimum element in unsorted array
       for (let j = i + 1; j < n; j++) {
         comparisons++;
-        
+
         steps.push({
           type: "find",
           array: [...array],
@@ -88,15 +103,16 @@ export default function SelectionSortVisualizer() {
           swapIndices: [-1, -1],
           sortedBoundary: i,
           explanation: `Comparing current minimum ${array[minIndex]} with ${array[j]}`,
-          insight: array[j] < array[minIndex] 
-            ? `✅ ${array[j]} is smaller, updating minimum` 
-            : `❌ ${array[minIndex]} is still smaller`,
+          insight:
+            array[j] < array[minIndex]
+              ? `✅ ${array[j]} is smaller, updating minimum`
+              : `❌ ${array[minIndex]} is still smaller`,
           codeLine: 7,
         });
 
         if (array[j] < array[minIndex]) {
           minIndex = j;
-          
+
           steps.push({
             type: "find",
             array: [...array],
@@ -171,9 +187,9 @@ export default function SelectionSortVisualizer() {
   const reset = () => {
     const arr = inputString
       .split(",")
-      .map(n => parseInt(n.trim()))
-      .filter(n => !isNaN(n));
-    
+      .map((n) => parseInt(n.trim()))
+      .filter((n) => !isNaN(n));
+
     setInputArray(arr);
     setSteps(generateSteps(arr));
     setCurrentStepIndex(0);
@@ -192,9 +208,12 @@ export default function SelectionSortVisualizer() {
       return;
     }
 
-    const timer = setTimeout(() => {
-      setCurrentStepIndex(i => i + 1);
-    }, mode === "beginner" ? speed : speed / 2);
+    const timer = setTimeout(
+      () => {
+        setCurrentStepIndex((i) => i + 1);
+      },
+      mode === "beginner" ? speed : speed / 2,
+    );
 
     return () => clearTimeout(timer);
   }, [isPlaying, currentStepIndex, steps, mode, speed]);
@@ -226,9 +245,9 @@ export default function SelectionSortVisualizer() {
   // ================= HELPER FUNCTIONS =================
   const getBarColor = (index: number) => {
     if (!currentStep) return isDarkMode ? "#4B5563" : "#10B981";
-    
+
     const [swap1, swap2] = currentStep.swapIndices;
-    
+
     if (index === swap1 || index === swap2) {
       return "#F59E0B"; // Orange for swapping
     }
@@ -241,18 +260,19 @@ export default function SelectionSortVisualizer() {
     if (index < currentStep.sortedBoundary) {
       return "#8B5CF6"; // Purple for sorted portion
     }
-    
+
     return isDarkMode ? "#4B5563" : "#10B981";
   };
 
   // ================= MAIN RENDER =================
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${
-      isDarkMode 
-        ? "bg-gradient-to-br from-gray-900 via-emerald-900 to-gray-900" 
-        : "bg-gradient-to-br from-slate-50 via-emerald-50 to-white"
-    }`}>
-      
+    <div
+      className={`min-h-screen transition-colors duration-300 ${
+        isDarkMode
+          ? "bg-gradient-to-br from-gray-900 via-emerald-900 to-gray-900"
+          : "bg-gradient-to-br from-slate-50 via-emerald-50 to-white"
+      }`}
+    >
       {/* Animated Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
@@ -283,46 +303,52 @@ export default function SelectionSortVisualizer() {
       </div>
 
       {/* Main Container */}
-      <div ref={containerRef} className="relative z-10 max-w-7xl mx-auto p-6 space-y-6">
-        
+      <div
+        ref={containerRef}
+        className="relative z-10 max-w-7xl mx-auto p-6 space-y-6"
+      >
         {/* Header */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           className={`backdrop-blur-xl rounded-3xl p-8 ${
-            isDarkMode 
-              ? "bg-gray-800/50 border border-gray-700" 
+            isDarkMode
+              ? "bg-gray-800/50 border border-gray-700"
               : "bg-white/70 border border-white/20"
           } shadow-2xl`}
         >
           <div className="flex items-center justify-between">
             <div>
-              <h1 className={`text-4xl font-bold bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent`}>
+              <h1
+                className={`text-4xl font-bold bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent`}
+              >
                 Selection Sort Visualizer
               </h1>
-              <p className={`mt-2 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
+              <p
+                className={`mt-2 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}
+              >
                 Repeatedly select the smallest element and move it to the front
               </p>
             </div>
-            
+
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setIsDarkMode(!isDarkMode)}
                 className={`p-3 rounded-xl transition-all ${
-                  isDarkMode 
-                    ? "bg-gray-700 hover:bg-gray-600 text-yellow-400" 
+                  isDarkMode
+                    ? "bg-gray-700 hover:bg-gray-600 text-yellow-400"
                     : "bg-white hover:bg-gray-50 text-gray-700"
                 } shadow-lg`}
               >
                 {isDarkMode ? "☀️" : "🌙"}
               </button>
-              
+
               <select
                 value={mode}
                 onChange={(e) => setMode(e.target.value as Mode)}
                 className={`px-4 py-3 rounded-xl backdrop-blur-xl border ${
-                  isDarkMode 
-                    ? "bg-gray-700/50 border-gray-600 text-white" 
+                  isDarkMode
+                    ? "bg-gray-700/50 border-gray-600 text-white"
                     : "bg-white/50 border-gray-200 text-gray-800"
                 } focus:outline-none focus:ring-2 focus:ring-emerald-500`}
               >
@@ -336,22 +362,22 @@ export default function SelectionSortVisualizer() {
 
         {/* Main Grid */}
         <div className="grid grid-cols-12 gap-6">
-          
           {/* Left Column - Controls & Input */}
           <div className="col-span-12 lg:col-span-3 space-y-6">
-            
             {/* Input Card */}
             <motion.div
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
               className={`backdrop-blur-xl rounded-2xl p-6 ${
-                isDarkMode 
-                  ? "bg-gray-800/50 border border-gray-700" 
+                isDarkMode
+                  ? "bg-gray-800/50 border border-gray-700"
                   : "bg-white/70 border border-white/20"
               } shadow-xl`}
             >
-              <h3 className={`font-semibold mb-3 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+              <h3
+                className={`font-semibold mb-3 ${isDarkMode ? "text-white" : "text-gray-800"}`}
+              >
                 📊 Input Array
               </h3>
               <input
@@ -359,12 +385,12 @@ export default function SelectionSortVisualizer() {
                 onChange={(e) => setInputString(e.target.value)}
                 placeholder="Enter numbers (e.g., 64, 25, 12, 22)"
                 className={`w-full px-4 py-3 rounded-xl backdrop-blur-sm border ${
-                  isDarkMode 
-                    ? "bg-gray-700/50 border-gray-600 text-white placeholder-gray-400" 
+                  isDarkMode
+                    ? "bg-gray-700/50 border-gray-600 text-white placeholder-gray-400"
                     : "bg-white/50 border-gray-200 text-gray-800 placeholder-gray-500"
                 } focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all`}
               />
-              
+
               <div className="grid grid-cols-2 gap-3 mt-4">
                 <button
                   onClick={reset}
@@ -375,8 +401,8 @@ export default function SelectionSortVisualizer() {
                 <button
                   onClick={() => setInputString("64, 25, 12, 22, 11, 9, 34")}
                   className={`px-4 py-3 rounded-xl backdrop-blur-sm border ${
-                    isDarkMode 
-                      ? "bg-gray-700/50 border-gray-600 text-white hover:bg-gray-600/50" 
+                    isDarkMode
+                      ? "bg-gray-700/50 border-gray-600 text-white hover:bg-gray-600/50"
                       : "bg-white/50 border-gray-200 text-gray-800 hover:bg-white/80"
                   } transition-all font-medium`}
                 >
@@ -391,21 +417,25 @@ export default function SelectionSortVisualizer() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
               className={`backdrop-blur-xl rounded-2xl p-6 ${
-                isDarkMode 
-                  ? "bg-gray-800/50 border border-gray-700" 
+                isDarkMode
+                  ? "bg-gray-800/50 border border-gray-700"
                   : "bg-white/70 border border-white/20"
               } shadow-xl`}
             >
-              <h3 className={`font-semibold mb-4 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+              <h3
+                className={`font-semibold mb-4 ${isDarkMode ? "text-white" : "text-gray-800"}`}
+              >
                 🎮 Playback Controls
               </h3>
-              
+
               <div className="flex justify-between gap-2 mb-4">
                 <button
-                  onClick={() => setCurrentStepIndex(Math.max(0, currentStepIndex - 1))}
+                  onClick={() =>
+                    setCurrentStepIndex(Math.max(0, currentStepIndex - 1))
+                  }
                   className={`p-3 rounded-xl ${
-                    isDarkMode 
-                      ? "bg-gray-700 hover:bg-gray-600 text-white" 
+                    isDarkMode
+                      ? "bg-gray-700 hover:bg-gray-600 text-white"
                       : "bg-white hover:bg-gray-50 text-gray-700"
                   } shadow-lg transition-all`}
                 >
@@ -414,18 +444,22 @@ export default function SelectionSortVisualizer() {
                 <button
                   onClick={() => setIsPlaying(!isPlaying)}
                   className={`flex-1 px-4 py-3 ${
-                    isPlaying 
-                      ? "bg-orange-500 hover:bg-orange-600" 
+                    isPlaying
+                      ? "bg-orange-500 hover:bg-orange-600"
                       : "bg-green-500 hover:bg-green-600"
                   } text-white rounded-xl shadow-lg hover:shadow-xl transition-all font-medium`}
                 >
                   {isPlaying ? "⏸️ Pause" : "▶️ Play"}
                 </button>
                 <button
-                  onClick={() => setCurrentStepIndex(Math.min(steps.length - 1, currentStepIndex + 1))}
+                  onClick={() =>
+                    setCurrentStepIndex(
+                      Math.min(steps.length - 1, currentStepIndex + 1),
+                    )
+                  }
                   className={`p-3 rounded-xl ${
-                    isDarkMode 
-                      ? "bg-gray-700 hover:bg-gray-600 text-white" 
+                    isDarkMode
+                      ? "bg-gray-700 hover:bg-gray-600 text-white"
                       : "bg-white hover:bg-gray-50 text-gray-700"
                   } shadow-lg transition-all`}
                 >
@@ -434,7 +468,9 @@ export default function SelectionSortVisualizer() {
               </div>
 
               <div>
-                <label className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                <label
+                  className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                >
                   Speed: {speed}ms
                 </label>
                 <input
@@ -455,49 +491,81 @@ export default function SelectionSortVisualizer() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
               className={`backdrop-blur-xl rounded-2xl p-6 ${
-                isDarkMode 
-                  ? "bg-gray-800/50 border border-gray-700" 
+                isDarkMode
+                  ? "bg-gray-800/50 border border-gray-700"
                   : "bg-white/70 border border-white/20"
               } shadow-xl`}
             >
-              <h3 className={`font-semibold mb-4 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+              <h3
+                className={`font-semibold mb-4 ${isDarkMode ? "text-white" : "text-gray-800"}`}
+              >
                 📈 Algorithm Statistics
               </h3>
-              
+
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className={isDarkMode ? "text-gray-400" : "text-gray-600"}>Comparisons</span>
-                  <span className={`font-mono font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                  <span
+                    className={isDarkMode ? "text-gray-400" : "text-gray-600"}
+                  >
+                    Comparisons
+                  </span>
+                  <span
+                    className={`font-mono font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}
+                  >
                     {stats.comparisons}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className={isDarkMode ? "text-gray-400" : "text-gray-600"}>Swaps</span>
-                  <span className={`font-mono font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                  <span
+                    className={isDarkMode ? "text-gray-400" : "text-gray-600"}
+                  >
+                    Swaps
+                  </span>
+                  <span
+                    className={`font-mono font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}
+                  >
                     {stats.swaps}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className={isDarkMode ? "text-gray-400" : "text-gray-600"}>Passes</span>
-                  <span className={`font-mono font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                  <span
+                    className={isDarkMode ? "text-gray-400" : "text-gray-600"}
+                  >
+                    Passes
+                  </span>
+                  <span
+                    className={`font-mono font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}
+                  >
                     {stats.passes}
                   </span>
                 </div>
                 <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent my-2" />
                 <div className="flex justify-between items-center">
-                  <span className={isDarkMode ? "text-gray-400" : "text-gray-600"}>Time Complexity</span>
+                  <span
+                    className={isDarkMode ? "text-gray-400" : "text-gray-600"}
+                  >
+                    Time Complexity
+                  </span>
                   <span className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-mono">
                     O(n²)
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className={isDarkMode ? "text-gray-400" : "text-gray-600"}>Space Complexity</span>
+                  <span
+                    className={isDarkMode ? "text-gray-400" : "text-gray-600"}
+                  >
+                    Space Complexity
+                  </span>
                   <span className="px-2 py-1 bg-green-100 text-green-700 rounded-lg text-sm font-mono">
                     O(1)
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className={isDarkMode ? "text-gray-400" : "text-gray-600"}>Stable</span>
+                  <span
+                    className={isDarkMode ? "text-gray-400" : "text-gray-600"}
+                  >
+                    Stable
+                  </span>
                   <span className="text-amber-500">⚠️ No</span>
                 </div>
               </div>
@@ -506,15 +574,14 @@ export default function SelectionSortVisualizer() {
 
           {/* Center Column - Visualization */}
           <div className="col-span-12 lg:col-span-6 space-y-6">
-            
             {/* Main Visualization Card */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
               className={`backdrop-blur-xl rounded-3xl p-8 ${
-                isDarkMode 
-                  ? "bg-gray-800/50 border border-gray-700" 
+                isDarkMode
+                  ? "bg-gray-800/50 border border-gray-700"
                   : "bg-white/70 border border-white/20"
               } shadow-2xl min-h-[400px]`}
             >
@@ -527,13 +594,12 @@ export default function SelectionSortVisualizer() {
                     exit={{ opacity: 0, scale: 0.95 }}
                     className="space-y-8"
                   >
-                    
                     {/* Array Visualization with Bars */}
                     <div className="flex justify-center items-end gap-2 h-64">
                       {currentStep.array.map((value, idx) => {
                         const maxValue = Math.max(...currentStep.array);
                         const height = (value / maxValue) * 180 + 20;
-                        
+
                         return (
                           <motion.div
                             key={`${idx}-${value}`}
@@ -544,10 +610,13 @@ export default function SelectionSortVisualizer() {
                           >
                             <motion.div
                               animate={{
-                                scale: idx === currentStep.currentMinIndex || 
-                                       idx === currentStep.comparingIndex ||
-                                       idx === currentStep.swapIndices[0] ||
-                                       idx === currentStep.swapIndices[1] ? 1.1 : 1,
+                                scale:
+                                  idx === currentStep.currentMinIndex ||
+                                  idx === currentStep.comparingIndex ||
+                                  idx === currentStep.swapIndices[0] ||
+                                  idx === currentStep.swapIndices[1]
+                                    ? 1.1
+                                    : 1,
                                 y: idx === currentStep.currentMinIndex ? -5 : 0,
                               }}
                               className="w-10 rounded-t-lg cursor-pointer transition-all"
@@ -560,12 +629,12 @@ export default function SelectionSortVisualizer() {
                               <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-mono font-bold">
                                 {value}
                               </div>
-                              
+
                               {/* Index label */}
                               <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs">
                                 {idx}
                               </div>
-                              
+
                               {/* Minimum marker */}
                               {idx === currentStep.currentMinIndex && (
                                 <motion.div
@@ -576,13 +645,17 @@ export default function SelectionSortVisualizer() {
                                   ⭐
                                 </motion.div>
                               )}
-                              
+
                               {/* Tooltip */}
                               {showTooltips && (
                                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block">
-                                  <div className={`px-2 py-1 text-xs rounded-lg whitespace-nowrap ${
-                                    isDarkMode ? "bg-gray-700 text-white" : "bg-white text-gray-800"
-                                  } shadow-lg`}>
+                                  <div
+                                    className={`px-2 py-1 text-xs rounded-lg whitespace-nowrap ${
+                                      isDarkMode
+                                        ? "bg-gray-700 text-white"
+                                        : "bg-white text-gray-800"
+                                    } shadow-lg`}
+                                  >
                                     Value: {value}
                                   </div>
                                 </div>
@@ -597,31 +670,65 @@ export default function SelectionSortVisualizer() {
                     <div className="flex justify-center gap-4 text-sm flex-wrap">
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-purple-500"></div>
-                        <span className={isDarkMode ? "text-gray-300" : "text-gray-600"}>Sorted</span>
+                        <span
+                          className={
+                            isDarkMode ? "text-gray-300" : "text-gray-600"
+                          }
+                        >
+                          Sorted
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-pink-500"></div>
-                        <span className={isDarkMode ? "text-gray-300" : "text-gray-600"}>Current Min</span>
+                        <span
+                          className={
+                            isDarkMode ? "text-gray-300" : "text-gray-600"
+                          }
+                        >
+                          Current Min
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                        <span className={isDarkMode ? "text-gray-300" : "text-gray-600"}>Comparing</span>
+                        <span
+                          className={
+                            isDarkMode ? "text-gray-300" : "text-gray-600"
+                          }
+                        >
+                          Comparing
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-                        <span className={isDarkMode ? "text-gray-300" : "text-gray-600"}>Swapping</span>
+                        <span
+                          className={
+                            isDarkMode ? "text-gray-300" : "text-gray-600"
+                          }
+                        >
+                          Swapping
+                        </span>
                       </div>
                     </div>
 
                     {/* Current Operation Info */}
-                    <div className={`text-center p-4 rounded-xl ${
-                      isDarkMode ? "bg-gray-700/50" : "bg-gray-50/50"
-                    }`}>
-                      <span className={`font-medium ${isDarkMode ? "text-white" : "text-gray-800"}`}>
-                        {currentStep.type === "find" && currentStep.comparingIndex !== -1 && "🔍 Finding minimum..."}
-                        {currentStep.type === "find" && currentStep.comparingIndex === -1 && "✅ Found minimum!"}
-                        {currentStep.type === "swap" && "🔄 Swapping into position"}
-                        {currentStep.type === "complete" && "✨ Sorting Complete!"}
+                    <div
+                      className={`text-center p-4 rounded-xl ${
+                        isDarkMode ? "bg-gray-700/50" : "bg-gray-50/50"
+                      }`}
+                    >
+                      <span
+                        className={`font-medium ${isDarkMode ? "text-white" : "text-gray-800"}`}
+                      >
+                        {currentStep.type === "find" &&
+                          currentStep.comparingIndex !== -1 &&
+                          "🔍 Finding minimum..."}
+                        {currentStep.type === "find" &&
+                          currentStep.comparingIndex === -1 &&
+                          "✅ Found minimum!"}
+                        {currentStep.type === "swap" &&
+                          "🔄 Swapping into position"}
+                        {currentStep.type === "complete" &&
+                          "✨ Sorting Complete!"}
                       </span>
                     </div>
 
@@ -631,18 +738,22 @@ export default function SelectionSortVisualizer() {
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         className={`mt-4 p-6 rounded-2xl ${
-                          isDarkMode 
-                            ? "bg-gray-700/50 border border-gray-600" 
+                          isDarkMode
+                            ? "bg-gray-700/50 border border-gray-600"
                             : "bg-white/50 border border-gray-200"
                         } backdrop-blur-sm`}
                       >
                         <div className="flex items-start gap-3">
                           <span className="text-2xl">💭</span>
                           <div>
-                            <p className={`font-medium mb-1 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                            <p
+                              className={`font-medium mb-1 ${isDarkMode ? "text-white" : "text-gray-800"}`}
+                            >
                               {currentStep.explanation}
                             </p>
-                            <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                            <p
+                              className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                            >
                               {currentStep.insight}
                             </p>
                           </div>
@@ -657,37 +768,47 @@ export default function SelectionSortVisualizer() {
 
           {/* Right Column - Code & Progress */}
           <div className="col-span-12 lg:col-span-3 space-y-6">
-            
             {/* Code Card */}
             <motion.div
               initial={{ x: 20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
               className={`backdrop-blur-xl rounded-2xl p-6 ${
-                isDarkMode 
-                  ? "bg-gray-800/50 border border-gray-700" 
+                isDarkMode
+                  ? "bg-gray-800/50 border border-gray-700"
                   : "bg-white/70 border border-white/20"
               } shadow-xl`}
             >
-              <h3 className={`font-semibold mb-4 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+              <h3
+                className={`font-semibold mb-4 ${isDarkMode ? "text-white" : "text-gray-800"}`}
+              >
                 💻 JavaScript Code
               </h3>
-              
-              <div className={`relative rounded-xl overflow-hidden ${
-                isDarkMode ? "bg-gray-900" : "bg-gray-50"
-              }`}>
+
+              <div
+                className={`relative rounded-xl overflow-hidden ${
+                  isDarkMode ? "bg-gray-900" : "bg-gray-50"
+                }`}
+              >
                 <pre className="p-4 text-sm font-mono overflow-x-auto">
-                  {codeSnippet.split('\n').map((line, idx) => (
+                  {codeSnippet.split("\n").map((line, idx) => (
                     <motion.div
                       key={idx}
                       animate={{
-                        backgroundColor: currentStep?.codeLine === idx + 1 
-                          ? isDarkMode ? "#374151" : "#D1FAE5"
-                          : "transparent",
+                        backgroundColor:
+                          currentStep?.codeLine === idx + 1
+                            ? isDarkMode
+                              ? "#374151"
+                              : "#D1FAE5"
+                            : "transparent",
                       }}
                       className="px-2 py-0.5 rounded"
                     >
-                      <code className={isDarkMode ? "text-gray-300" : "text-gray-700"}>
+                      <code
+                        className={
+                          isDarkMode ? "text-gray-300" : "text-gray-700"
+                        }
+                      >
                         {line}
                       </code>
                     </motion.div>
@@ -702,27 +823,37 @@ export default function SelectionSortVisualizer() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
               className={`backdrop-blur-xl rounded-2xl p-6 ${
-                isDarkMode 
-                  ? "bg-gray-800/50 border border-gray-700" 
+                isDarkMode
+                  ? "bg-gray-800/50 border border-gray-700"
                   : "bg-white/70 border border-white/20"
               } shadow-xl`}
             >
-              <h3 className={`font-semibold mb-4 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+              <h3
+                className={`font-semibold mb-4 ${isDarkMode ? "text-white" : "text-gray-800"}`}
+              >
                 📍 Progress
               </h3>
-              
+
               <div className="space-y-4">
                 <div>
                   <div className="flex justify-between text-sm mb-1">
-                    <span className={isDarkMode ? "text-gray-400" : "text-gray-600"}>Step</span>
-                    <span className={isDarkMode ? "text-white" : "text-gray-800"}>
+                    <span
+                      className={isDarkMode ? "text-gray-400" : "text-gray-600"}
+                    >
+                      Step
+                    </span>
+                    <span
+                      className={isDarkMode ? "text-white" : "text-gray-800"}
+                    >
                       {currentStepIndex + 1} / {steps.length}
                     </span>
                   </div>
                   <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
-                      animate={{ width: `${((currentStepIndex + 1) / steps.length) * 100}%` }}
+                      animate={{
+                        width: `${((currentStepIndex + 1) / steps.length) * 100}%`,
+                      }}
                       className="h-full bg-gradient-to-r from-emerald-500 to-teal-500"
                     />
                   </div>
@@ -730,42 +861,63 @@ export default function SelectionSortVisualizer() {
 
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className={isDarkMode ? "text-gray-400" : "text-gray-600"}>Sorted Elements</span>
-                    <span className={`font-mono font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                    <span
+                      className={isDarkMode ? "text-gray-400" : "text-gray-600"}
+                    >
+                      Sorted Elements
+                    </span>
+                    <span
+                      className={`font-mono font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}
+                    >
                       {currentStep?.sortedBoundary || 0} / {inputArray.length}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between text-sm">
-                    <span className={isDarkMode ? "text-gray-400" : "text-gray-600"}>Current Operation</span>
-                    <span className={`px-2 py-0.5 rounded-full text-xs ${
-                      currentStep?.type === "find" && currentStep.comparingIndex !== -1
-                        ? "bg-blue-100 text-blue-700"
-                        : currentStep?.type === "find"
-                        ? "bg-purple-100 text-purple-700"
-                        : currentStep?.type === "swap"
-                        ? "bg-orange-100 text-orange-700"
-                        : "bg-emerald-100 text-emerald-700"
-                    }`}>
-                      {currentStep?.type === "find" && currentStep.comparingIndex !== -1 && "Finding Min"}
-                      {currentStep?.type === "find" && currentStep.comparingIndex === -1 && "Min Found"}
+                    <span
+                      className={isDarkMode ? "text-gray-400" : "text-gray-600"}
+                    >
+                      Current Operation
+                    </span>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-xs ${
+                        currentStep?.type === "find" &&
+                        currentStep.comparingIndex !== -1
+                          ? "bg-blue-100 text-blue-700"
+                          : currentStep?.type === "find"
+                            ? "bg-purple-100 text-purple-700"
+                            : currentStep?.type === "swap"
+                              ? "bg-orange-100 text-orange-700"
+                              : "bg-emerald-100 text-emerald-700"
+                      }`}
+                    >
+                      {currentStep?.type === "find" &&
+                        currentStep.comparingIndex !== -1 &&
+                        "Finding Min"}
+                      {currentStep?.type === "find" &&
+                        currentStep.comparingIndex === -1 &&
+                        "Min Found"}
                       {currentStep?.type === "swap" && "Swapping"}
                       {currentStep?.type === "complete" && "Complete"}
                     </span>
                   </div>
                 </div>
 
-                {currentStep?.type === "swap" && currentStep.swapIndices[0] !== -1 && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className={`p-2 rounded-lg text-sm text-center ${
-                      isDarkMode ? "bg-orange-500/20 text-orange-300" : "bg-orange-100 text-orange-700"
-                    }`}
-                  >
-                    🔄 Swapping positions {currentStep.swapIndices[0]} and {currentStep.swapIndices[1]}
-                  </motion.div>
-                )}
+                {currentStep?.type === "swap" &&
+                  currentStep.swapIndices[0] !== -1 && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className={`p-2 rounded-lg text-sm text-center ${
+                        isDarkMode
+                          ? "bg-orange-500/20 text-orange-300"
+                          : "bg-orange-100 text-orange-700"
+                      }`}
+                    >
+                      🔄 Swapping positions {currentStep.swapIndices[0]} and{" "}
+                      {currentStep.swapIndices[1]}
+                    </motion.div>
+                  )}
               </div>
             </motion.div>
 
@@ -776,15 +928,19 @@ export default function SelectionSortVisualizer() {
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
                 className={`backdrop-blur-xl rounded-2xl p-6 ${
-                  isDarkMode 
-                    ? "bg-emerald-900/30 border border-emerald-800" 
+                  isDarkMode
+                    ? "bg-emerald-900/30 border border-emerald-800"
                     : "bg-emerald-50/70 border border-emerald-100"
                 } shadow-xl`}
               >
-                <h3 className={`font-semibold mb-3 ${isDarkMode ? "text-emerald-300" : "text-emerald-800"}`}>
+                <h3
+                  className={`font-semibold mb-3 ${isDarkMode ? "text-emerald-300" : "text-emerald-800"}`}
+                >
                   💡 Selection Sort Tips
                 </h3>
-                <ul className={`space-y-2 text-sm ${isDarkMode ? "text-emerald-200" : "text-emerald-700"}`}>
+                <ul
+                  className={`space-y-2 text-sm ${isDarkMode ? "text-emerald-200" : "text-emerald-700"}`}
+                >
                   <li className="flex items-start gap-2">
                     <span>•</span>
                     <span>Minimizes swaps - only O(n) swaps total</span>
@@ -828,7 +984,8 @@ export default function SelectionSortVisualizer() {
 
       <style jsx>{`
         .bg-grid-pattern {
-          background-image: linear-gradient(rgba(16, 185, 129, 0.1) 1px, transparent 1px),
+          background-image:
+            linear-gradient(rgba(16, 185, 129, 0.1) 1px, transparent 1px),
             linear-gradient(90deg, rgba(16, 185, 129, 0.1) 1px, transparent 1px);
           background-size: 50px 50px;
         }
