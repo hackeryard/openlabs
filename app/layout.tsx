@@ -20,7 +20,7 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
       <body>
         <Navbar />
         <div className="mx-auto">
-          <main>
+          <main data-ol-page-root>
             <ChatProvider>
               {children}
               <OpenLabsAI />

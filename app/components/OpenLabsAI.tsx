@@ -6,9 +6,12 @@ import remarkGfm from "remark-gfm";
 import { useChat } from "./ChatContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bot, Mic } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { getPageKnowledgeText } from "@/app/lib/pageKnowledge";
 
 export default function OpenLabsAI() {
   const { experimentData } = useChat();
+  const pathname = usePathname();
 
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState("");
@@ -18,6 +21,7 @@ export default function OpenLabsAI() {
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const lastSnapshotRef = useRef<string>("");
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -97,6 +101,64 @@ export default function OpenLabsAI() {
     return navigator.language || "en-US";
   };
 
+  const buildPageSnapshot = () => {
+    if (typeof window === "undefined") return "";
+
+    const url =
+      typeof window !== "undefined"
+        ? window.location.pathname + window.location.search
+        : pathname;
+
+    const root =
+      (document.querySelector("[data-ol-page-root]") as HTMLElement | null) ??
+      document.body;
+
+    const headingEls = Array.from(root.querySelectorAll("h1, h2, h3")).slice(
+      0,
+      20
+    );
+    const headings = headingEls
+      .map((el) => el.textContent?.trim())
+      .filter(Boolean) as string[];
+
+    const keyUiEls = Array.from(
+      root.querySelectorAll("button, label, summary, [role='button']")
+    ).slice(0, 40);
+    const keyUiText = keyUiEls
+      .map((el) => el.textContent?.replace(/\s+/g, " ").trim())
+      .filter((t) => t && t.length >= 2) as string[];
+
+    // Text snapshot: keep it small and readable (avoid huge prompts).
+    const rawText = (root.textContent || "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 4500);
+
+    const knowledge = getPageKnowledgeText(pathname);
+
+    const snapshot = [
+      `URL: ${url}`,
+      `Document title: ${document.title || "(none)"}`,
+      `Curated page knowledge:\n${knowledge ?? "(none)"}`,
+      `Headings:\n${headings.length ? headings.map((h) => `- ${h}`).join("\n") : "(none)"}`,
+      `Key UI labels:\n${keyUiText.length ? keyUiText.map((t) => `- ${t}`).join("\n") : "(none)"}`,
+      `Visible text excerpt:\n${rawText || "(none)"}`,
+    ].join("\n\n");
+
+    lastSnapshotRef.current = snapshot;
+    return snapshot;
+  };
+
+  // Keep a reasonably fresh snapshot after navigation/render settles.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const t = window.setTimeout(() => {
+      requestAnimationFrame(() => buildPageSnapshot());
+    }, 120);
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
+
   const sendMessage = async () => {
     await sendMessageWithText(input);
     setInput("");
@@ -140,6 +202,10 @@ export default function OpenLabsAI() {
     setIsTyping(true);
 
     try {
+      const pageSnapshot = buildPageSnapshot() || lastSnapshotRef.current || "";
+      const hasFreshExperimentContext =
+        experimentData?.path && experimentData.path === pathname;
+
       const res = await fetch("/api/agent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -153,10 +219,18 @@ export default function OpenLabsAI() {
       - If Hinglish → respond in Hinglish.
       - If English → respond in English.
       - Match tone and clarity.
+      - Use the PAGE SNAPSHOT and CURATED PAGE KNOWLEDGE to explain what is happening on the current page.
+      - If experiment info conflicts with the snapshot, trust the snapshot (experiment info can be stale).
+      - Explain UI controls and what changes when user interacts with them.
 
-      Experiment: ${experimentData.title || "General Question"}
-      Theory: ${experimentData.theory || "No theory provided"}
-      Extra Context: ${experimentData.extraContext || "None"}
+      PAGE SNAPSHOT (live context of current page):
+      ${pageSnapshot || "(snapshot unavailable)"}
+
+      Experiment info (may be empty on some pages):
+      - Path when set: ${experimentData?.path || "(unknown)"}
+      - Title: ${(hasFreshExperimentContext ? experimentData?.title : "") || "General Question"}
+      - Theory: ${(hasFreshExperimentContext ? experimentData?.theory : "") || "No theory provided"}
+      - Extra Context: ${(hasFreshExperimentContext ? experimentData?.extraContext : "") || "None"}
 
       User Question:
       ${text}

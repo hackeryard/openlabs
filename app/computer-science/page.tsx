@@ -48,6 +48,26 @@ const cards = [
     desc: "Interactive lab that help in visualizing the code you write.",
   },
   {
+    href: "/computer-science/blockchain",
+    title: "Blockchain",
+    desc: "Interactive lab that help in visualizing the blockchain implementations.",
+  },
+  {
+    href: "/computer-science/ai-problem",
+    title: "Artificial-Intelligence",
+    desc: "Interactive lab that help in visualizing the AI implementations.",
+  },
+   {
+    href: "/computer-science/data-science",
+    title: "Data-Science",
+    desc: "Interactive lab that help in visualizing the data science implementations.",
+  },
+  {
+    href: "/computer-science/data-analyzer",
+    title: "Data Analyzing ",
+    desc: "Interactive lab that help in visualizing the data-analysis implementations.",
+  },
+  {
     href: "/computer-science/networking",
     title: "Computer Networking Lab",
     desc: "Interactive lab that help in visualizing the working of computer networking.",

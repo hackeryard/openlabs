@@ -32,6 +32,7 @@ const cards = [
   { href: "/computer-science/networking/packet-switching", title: "Packet Switching", desc: "Interactive lab for visualising of data flow of  packet switching." },
   { href: "/computer-science/networking/circuit-switching", title: "Circuit Switching", desc: "Interactive lab for visualising of data flow of  circuit switching." },
   { href: "/computer-science/networking/topology-builder", title: "Topology Builder", desc: "Interactive lab for visualising of topologies." },
+  { href: "/computer-science/networking/osi-model", title: "OSI Model", desc: "Interactive lab for visualising of working of OSI Model." },
 ];
 
 export default function Page() {
