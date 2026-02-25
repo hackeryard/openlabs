@@ -94,7 +94,16 @@ yarn start
 
 ### Computer Science Labs
 - **HTML/CSS/JS Code Editor** — Live code editor with real-time preview and console output
+- **Java Code Editor** — Java code compilation and execution environment
 - **JavaScript Visual Debugger** — Step-through debugger with memory, stack, and async queue visualization
+- **Data Structures & Algorithms (DSA)** — Interactive DSA visualizations and algorithm implementations
+- **Data Analyzer** — Data visualization and analysis tools with D3 integration
+- **Data Science** — Data science experiments and machine learning demonstrations
+- **AI Problem Solver** — AI-powered problem solving and code suggestion tool
+- **Blockchain Explorer** — Blockchain technology visualization and concepts
+- **Networking Lab** — Network protocols and communication simulations
+- **Logic Gates** — Boolean logic and digital circuit simulations
+- **Git Simulator** — Interactive Git version control simulator
 - **Project Management** — Save, load, and manage projects with type-based filtering and persistent storage
 
 ### Authentication & Security
@@ -106,6 +115,13 @@ yarn start
 - ✅ **Database-backed user management** with MongoDB Atlas
 - ✅ **Redirect-after-login** — Users redirected to their intended page after authentication
 - ✅ **Protected API routes** — Automatic authentication checks with session redirect
+
+### AI & Chat Features
+- ✅ **OpenLabsAI Chat Assistant** — Context-aware AI assistant integrated across all labs
+- ✅ **Speech Recognition** — Voice input support for chat interactions
+- ✅ **OpenAI Integration** — Powered by advanced language models
+- ✅ **Chat Context Management** — Remembers experiment state and provides relevant responses
+- ✅ **Real-time Markdown Support** — Response formatting with GitHub-flavored Markdown
 
 ### UI/UX Features
 - **Responsive Design** — Mobile-friendly layouts with Tailwind CSS
@@ -130,32 +146,44 @@ yarn start
 - **Babel** 7.29.x (@babel/parser, @babel/generator, @babel/traverse) — JavaScript parsing and code transformation
 
 ### 3D Graphics & Visualization
-- **Three.js** 0.182.0 (3D graphics engine)
+- **Three.js** 0.170.0 (3D graphics engine)
 - **@react-three/fiber** 8.17.0 (React renderer for Three.js)
 - **@react-three/drei** 9.108.0 (useful Three.js helpers)
 - **@react-three/postprocessing** 2.16.0 (post-processing effects)
 - **postprocessing** 6.30.1 (advanced rendering techniques)
 - **p5.js** 2.1.1 (creative coding visualizations)
+- **D3.js** 7.9.0 (data visualization library)
+- **react-graph-vis** 1.0.7 (network and graph visualization)
 
 ### Code Editing & Interactive Labs
 - **@monaco-editor/react** 4.7.0 (vs-code powered editor)
 
-### Authentication & Database
+### Authentication, AI & Database
 - **MongoDB Atlas** (cloud database)
 - **Mongoose** 9.1.4 (MongoDB object modeling)
 - **jsonwebtoken** 9.0.3 (JWT token generation & verification)
 - **bcryptjs** 3.0.3 (password hashing)
 - **Nodemailer** 7.0.12 (email delivery)
+- **OpenAI** 6.22.0 (AI language model integration)
+- **@hackeryard/mandatory-guard** 1.0.3 (build-time validation)
 
 ### UI & Animation
 - **Framer Motion** 12.29.0 (declarative animations)
 - **Lucide React** 0.562.0 (icon library)
 - **Axios** 1.13.2 (HTTP client)
+- **react-markdown** 10.1.0 (Markdown rendering)
+- **remark-gfm** 4.0.1 (GitHub-flavored Markdown support)
+- **@headlessui/react** 2.2.9 (accessible UI components)
+
+### Analytics & Performance
+- **@vercel/speed-insights** 1.3.1 (performance monitoring)
 
 ### Development & Build
 - **ESLint** 8.57.1 (code linting)
 - **Autoprefixer** 10.4.23 (CSS vendor prefixes)
 - **PostCSS** 8.5.6 (CSS transformations)
+- **nanoid** 5.1.6 (unique ID generation)
+- **dotenv** 17.2.4 (environment variable management)
 
 ---
 
@@ -196,19 +224,21 @@ OpenLabs/
 │   │   │   ├── reset-password/       # Password reset form
 │   │   │   ├── logout/               # User logout
 │   │   │   └── check/                # Auth status check
-│   │   └── projects/                 # Project management API
-│   │
+│   │   └── projects/                 # Project management API│   │   ├── chat/                     # AI chat response endpoint
+│   │   └── agent/                    # AI agent service routing│   │
 │   ├── (maths)/                      # Math labs (algebra, etc.)
 │   ├── biology/                      # Biology labs & visualizations
 │   ├── chemistry/                    # Chemistry labs & periodic table
 │   ├── physics/                      # Physics experiments & simulations
-│   ├── computer-science/             # CS labs (code editor, etc.)
+│   ├── computer-science/             # CS labs (DSA, Data Science, AI, etc.)
 │   │
 │   ├── components/                   # Reusable UI components
 │   │   ├── biology/                  # Cell & anatomy components
 │   │   ├── chemistry/                # Chemistry-specific components
 │   │   ├── physics/                  # Physics lab components
 │   │   ├── computer-science/         # Code editor & CS components
+│   │   ├── ChatContext.tsx           # Global chat context provider
+│   │   ├── OpenLabsAI.tsx            # AI chat assistant component
 │   │   ├── Footer.tsx                # Footer component
 │   │   ├── Navbar.tsx                # Navigation bar (includes Computer Science)
 │   │   └── Hero.tsx                  # Hero section with labs exploration
@@ -222,7 +252,8 @@ OpenLabs/
 │   │   ├── auth.js                   # JWT utilities
 │   │   ├── email.js                  # Email sending logic
 │   │   ├── mongodb.ts                # Database connection
-│   │   └── getUserFromToken.ts       # Token parsing
+│   │   ├── getUserFromToken.ts       # Token parsing
+│   │   └── pageKnowledge.ts          # Experiment context data for AI
 │   │
 │   ├── hooks/                        # Custom React hooks
 │   │   ├── useLocalStorage.ts        # Local storage management
@@ -313,6 +344,14 @@ Supports optional `?next=/path` query parameter to redirect users to their inten
 |-------|------|
 | `/computer-science/code-lab/html-css-js` | Live HTML/CSS/JS code editor with preview |
 | `/computer-science/code-lab/js` | JavaScript Visual Debugger with runtime visualization |
+| `/computer-science/dsa` | Data Structures & Algorithms visualizations |
+| `/computer-science/data-analyzer` | Data analysis and D3 visualization tools |
+| `/computer-science/data-science` | Data science experiments and ML demonstrations |
+| `/computer-science/ai-problem` | AI-powered problem solver and assistant |
+| `/computer-science/blockchain` | Blockchain technology explorer |
+| `/computer-science/networking` | Network protocols and communication simulator |
+| `/computer-science/logic-gates` | Boolean logic and digital circuits |
+| `/computer-science/git-simulator` | Interactive Git version control simulator |
 
 ### API Endpoints
 
@@ -329,6 +368,8 @@ Supports optional `?next=/path` query parameter to redirect users to their inten
 | GET | `/api/projects` | Fetch user projects (filtered by type) |
 | POST | `/api/projects` | Create or update project |
 | DELETE | `/api/projects` | Delete project |
+| POST | `/api/chat` | Send message to AI assistant |
+| POST | `/api/agent` | Route queries to external AI agent service |
 
 ---
 
@@ -816,6 +857,70 @@ To reference in documentation:
 
 ---
 
+## OpenLabsAI Chat Assistant 🤖
+
+OpenLabsAI is a context-aware AI assistant integrated across all platform labs, powered by OpenAI's language models.
+
+### Features
+
+**Smart Context Awareness:**
+- Automatically tracks current lab and experiment state
+- Provides relevant explanations for active labs
+- Remembers experiment data in `experimentDataState`
+- Resets context when navigating between pages
+
+**Multi-Modal Input:**
+- Text input for queries
+- Speech recognition support (Web Speech API)
+- Microphone control for hands-free interaction
+
+**Rich Response Formatting:**
+- GitHub-flavored Markdown rendering
+- Code block syntax highlighting
+- Tables and formatted lists
+- Real-time typing animation
+
+**User Experience:**
+- Floating chat widget on all pages
+- Smooth animations with Framer Motion
+- Auto-scroll to latest messages
+- Keyboard shortcut support (focus with Enter)
+
+### Configuration
+
+Create `.env.local` with:
+```env
+# OpenAI Configuration
+OPENAI_API_KEY=sk-your-api-key-here
+```
+
+### API Endpoints Used
+- `POST /api/chat` — Send message to AI assistant
+- `POST /api/agent` — Route complex queries to external agent service
+
+### Component Architecture
+
+**ChatContext** (`app/components/ChatContext.tsx`):
+- Global state management for chat
+- Tracks experiment metadata (title, theory, context)
+- Path-based context reset
+- Provider wraps entire application
+
+**OpenLabsAI** (`app/components/OpenLabsAI.tsx`):
+- Main chat interface component
+- 560-line interactive UI
+- Speech recognition handling
+- Message streaming and formatting
+
+### Browser Compatibility
+- Chrome 25+ (Speech Recognition)
+- Firefox 25+ (Speech Recognition)
+- Safari 14.1+ (Speech Recognition)
+- Edge 79+ (Speech Recognition)
+- Graceful degradation for unsupported browsers
+
+---
+
 ## Future Roadmap 💡
 
 ### High Priority
@@ -823,7 +928,7 @@ To reference in documentation:
 - [ ] Accessibility audit and WCAG 2.1 compliance improvements
 - [ ] User progress tracking and learning statistics
 - [ ] Student certificates and achievement system
-- [ ] Accessibility improvements (keyboard navigation, screen reader support)
+- [ ] Voice synthesis for AI responses (text-to-speech)
 
 ### Medium Priority
 - [ ] OAuth2 integration (Google, GitHub single sign-in)
@@ -831,6 +936,8 @@ To reference in documentation:
 - [ ] Advanced physics labs (thermodynamics, quantum mechanics)
 - [ ] Interactive quiz and assessment system
 - [ ] Code lab templates and starter code
+- [ ] Streaming AI responses for real-time chat
+- [ ] AI-powered code review and suggestions
 
 ### Long-term Vision
 - [ ] Internationalization (i18n) — Multi-language support
@@ -838,9 +945,11 @@ To reference in documentation:
 - [ ] Discussion forums for peer learning
 - [ ] Instructor dashboard for class management
 - [ ] Mobile native app (React Native)
-- [ ] AI-powered explanations and tutoring
+- [ ] AI-powered personalized learning paths
 - [ ] Laboratory video demonstrations
 - [ ] Advanced 3D simulations with physics engines
+- [ ] Fine-tuned AI models for domain-specific expertise
+- [ ] AI-generated lab reports and documentation
 
 ---
 
@@ -885,14 +994,23 @@ Detailed changes per release are tracked in [CHANGELOG.md](CHANGELOG.md) (if ava
 
 ### Latest Updates
 
-**Latest Updates (February 2026 - v2.5):**
+**Latest Updates (February 2026 - v3.0):**
+- ✅ **OpenLabsAI Chat Assistant** — Context-aware AI chatbot integrated across all labs using OpenAI
+- ✅ **Speech Recognition Support** — Voice input capability for chat interactions (Web Speech API)
+- ✅ **8 New Computer Science Labs** — Data Analyzer, Data Science, AI Problem, Blockchain, Networking, Logic Gates, Git Simulator, and Java code lab
+- ✅ **D3 & Graph Visualization** — Data visualization libraries for advanced analytics
+- ✅ **Markdown Support** — Rich text rendering with GitHub-flavored Markdown in chat responses
+- ✅ **AI Agent Integration** — External AI agent service routing for enhanced problem-solving
+- ✅ **ChatContext System** — Context-aware state management tracking experiment data across routes
+- ✅ **Performance Monitoring** — Vercel Speed Insights integration for analytics
+- ✅ **Enhanced Accessibility** — @headlessui/react components for better WCAG compliance
+
+**v2.5 Features (Previous):**
 - ✅ **Subject-Specific Error Pages** — Custom error boundaries for Physics, Chemistry, Biology, and Computer Science labs with lab-themed branding
 - ✅ **JavaScript Visual Debugger** — Step-through runtime visualizer with memory, stack, and async queue inspection
 - ✅ **Enhanced Authentication** — Redirect-after-login functionality with `?next` query parameter support
 - ✅ **Protected API Routes** — Automatic session validation with authentication checks on all project endpoints
 - ✅ **Babel Integration** — JavaScript parsing and code transformation for debugger instrumentation
-- ✅ **GitHub Actions NPM Token** — CI/CD security improvements for dependency installation
-- ✅ **Footer Layout Fix** — Removed unnecessary margin top for better spacing consistency
 
 **Previous Release Features (v2.0-v2.4):**
 - ✅ Professional 404, 500, and error boundary pages with consistent branding
@@ -924,4 +1042,4 @@ OpenLabs is built with ❤️ using:
 
 **Built for curious minds, by educators, for learning. 🎓**
 
-*Last Updated: February 2026*
+*Last Updated: February 26, 2026 (v3.0)*

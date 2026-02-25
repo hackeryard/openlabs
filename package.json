@@ -21,6 +21,7 @@
     "@babel/parser": "^7.29.0",
     "@babel/traverse": "^7.29.0",
     "@hackeryard/mandatory-guard": "^1.0.3",
+    "@headlessui/react": "^2.2.9",
     "@monaco-editor/react": "^4.7.0",
     "@react-three/drei": "^9.108.0",
     "@react-three/fiber": "^8.17.0",

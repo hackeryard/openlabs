@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
-const AGENT_URL =
-  "https://agent.aicodepro.com/api/v1/prediction/7ab68714-4730-4fd7-af37-67dfded10658";
+const AGENT_URL ="https://agent.aicodepro.com/api/v1/prediction/0397bf51-7308-49bb-b6a8-b8a9d48dac3b";
+  // "https://agent.aicodepro.com/api/v1/prediction/7ab68714-4730-4fd7-af37-67dfded10658";
 
 export async function POST(req: Request) {
   console.log("📩 /api/agent called");
