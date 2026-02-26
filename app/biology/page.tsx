@@ -45,7 +45,17 @@ const cards = [
     title: "Plant Cell Structure",
     desc: "Explore the structure of plant cells using interactive visuals.",
   },
-];
+  {
+    href: "/biology/blood",
+    title: "Blood-transfusion simulator",
+    desc: "Explore the blood transfusion technology .",
+  },
+  {
+    href: "/biology/brainNeuron",
+    title: "Brain Neuron",
+    desc: "Learn how stimulus and response works .",
+  },
+]
 
 export default function BiologyPage() {
   // Chatbot 

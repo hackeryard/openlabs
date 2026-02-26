@@ -18,6 +18,7 @@ interface Step {
   explanation: string;
   insight: string;
   codeLine: number;
+  swapIndices?: [number, number];
 }
 
 interface PassStats {
@@ -28,15 +29,16 @@ interface PassStats {
 
 export default function BubbleSortVisualizer() {
   // Chatbot 
-          const { setExperimentData } = useChat();
-        
-          useEffect(() => {
-            setExperimentData({
-              title: "Bubble Sort",
-              theory: "Bubble Sort Data Structure Visualizer",
-              extraContext: ``,
-            });
-          }, []);
+  const { setExperimentData } = useChat();
+
+  useEffect(() => {
+    setExperimentData({
+      title: "Bubble Sort",
+      theory: "Bubble Sort Data Structure Visualizer",
+      extraContext: ``,
+    });
+  }, []);
+
   // ================= STATE MANAGEMENT =================
   const [inputArray, setInputArray] = useState<number[]>([64, 34, 25, 12, 22, 11, 90]);
   const [inputString, setInputString] = useState("64, 34, 25, 12, 22, 11, 90");
@@ -58,7 +60,8 @@ export default function BubbleSortVisualizer() {
   const [showCelebration, setShowCelebration] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showTooltips, setShowTooltips] = useState(true);
-  
+  const [isAnimating, setIsAnimating] = useState(false);
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   // ================= BUBBLE SORT ALGORITHM WITH STEP GENERATION =================
@@ -69,22 +72,21 @@ export default function BubbleSortVisualizer() {
     let swaps = 0;
     let passes = 0;
     const passStats: PassStats[] = [];
-    
+
     const n = array.length;
     let swapped: boolean;
     let iterationSwaps: number;
 
     switch (variant) {
       case "standard":
-        // Standard Bubble Sort
         for (let i = 0; i < n - 1; i++) {
           passes++;
           swapped = false;
           iterationSwaps = 0;
-          
+
           for (let j = 0; j < n - i - 1; j++) {
             comparisons++;
-            
+
             steps.push({
               type: "compare",
               array: [...array],
@@ -92,18 +94,17 @@ export default function BubbleSortVisualizer() {
               swapped: false,
               pass: i + 1,
               explanation: `Comparing ${array[j]} and ${array[j + 1]}`,
-              insight: array[j] > array[j + 1] 
-                ? `${array[j]} is greater than ${array[j + 1]}, they will swap` 
+              insight: array[j] > array[j + 1]
+                ? `${array[j]} is greater than ${array[j + 1]}, they will swap`
                 : `${array[j]} is less than or equal to ${array[j + 1]}, they stay in place`,
               codeLine: 4,
             });
 
             if (array[j] > array[j + 1]) {
-              // Swap elements
               [array[j], array[j + 1]] = [array[j + 1], array[j]];
               swaps++;
               iterationSwaps++;
-              
+
               steps.push({
                 type: "swap",
                 array: [...array],
@@ -113,18 +114,19 @@ export default function BubbleSortVisualizer() {
                 explanation: `Swapped ${array[j]} and ${array[j + 1]}`,
                 insight: "Larger element bubbles up to the right",
                 codeLine: 6,
+                swapIndices: [j, j + 1],
               });
-              
+
               swapped = true;
             }
           }
-          
+
           passStats.push({
             passNumber: i + 1,
             swaps: iterationSwaps,
             comparisons: n - i - 1,
           });
-          
+
           steps.push({
             type: "compare",
             array: [...array],
@@ -132,8 +134,8 @@ export default function BubbleSortVisualizer() {
             swapped: false,
             pass: i + 1,
             explanation: `Pass ${i + 1} complete. ${iterationSwaps} swaps performed.`,
-            insight: iterationSwaps === 0 
-              ? "No swaps in this pass - array is sorted!" 
+            insight: iterationSwaps === 0
+              ? "No swaps in this pass - array is sorted!"
               : `Largest element ${Math.max(...array.slice(0, n - i))} is now in place`,
             codeLine: 10,
           });
@@ -141,15 +143,14 @@ export default function BubbleSortVisualizer() {
         break;
 
       case "optimized":
-        // Optimized Bubble Sort with early termination
         for (let i = 0; i < n - 1; i++) {
           passes++;
           swapped = false;
           iterationSwaps = 0;
-          
+
           for (let j = 0; j < n - i - 1; j++) {
             comparisons++;
-            
+
             steps.push({
               type: "compare",
               array: [...array],
@@ -165,7 +166,7 @@ export default function BubbleSortVisualizer() {
               [array[j], array[j + 1]] = [array[j + 1], array[j]];
               swaps++;
               iterationSwaps++;
-              
+
               steps.push({
                 type: "swap",
                 array: [...array],
@@ -175,18 +176,19 @@ export default function BubbleSortVisualizer() {
                 explanation: `Swapped ${array[j]} and ${array[j + 1]}`,
                 insight: "Elements swapped - array is becoming more sorted",
                 codeLine: 6,
+                swapIndices: [j, j + 1],
               });
-              
+
               swapped = true;
             }
           }
-          
+
           passStats.push({
             passNumber: i + 1,
             swaps: iterationSwaps,
             comparisons: n - i - 1,
           });
-          
+
           steps.push({
             type: "compare",
             array: [...array],
@@ -194,30 +196,29 @@ export default function BubbleSortVisualizer() {
             swapped: false,
             pass: i + 1,
             explanation: `Pass ${i + 1} complete. ${iterationSwaps} swaps performed.`,
-            insight: !swapped 
-              ? "✨ Early termination: No swaps means array is sorted!" 
+            insight: !swapped
+              ? "✨ Early termination: No swaps means array is sorted!"
               : `${n - i - 1} comparisons made in this pass`,
             codeLine: 10,
           });
-          
+
           if (!swapped) break;
         }
         break;
 
       case "cocktail":
-        // Cocktail Shaker Sort (bidirectional bubble sort)
         let start = 0;
         let end = n - 1;
         passes = 0;
-        
+
         while (start < end) {
           passes++;
           iterationSwaps = 0;
-          
+
           // Forward pass
           for (let j = start; j < end; j++) {
             comparisons++;
-            
+
             steps.push({
               type: "compare",
               array: [...array],
@@ -233,7 +234,7 @@ export default function BubbleSortVisualizer() {
               [array[j], array[j + 1]] = [array[j + 1], array[j]];
               swaps++;
               iterationSwaps++;
-              
+
               steps.push({
                 type: "swap",
                 array: [...array],
@@ -243,22 +244,23 @@ export default function BubbleSortVisualizer() {
                 explanation: `Swapped ${array[j]} and ${array[j + 1]}`,
                 insight: "Largest element bubbles to the right",
                 codeLine: 17,
+                swapIndices: [j, j + 1],
               });
-              
+
               swapped = true;
             }
           }
           end--;
-          
+
           if (!swapped) break;
-          
+
           passes++;
           swapped = false;
-          
+
           // Backward pass
           for (let j = end - 1; j >= start; j--) {
             comparisons++;
-            
+
             steps.push({
               type: "compare",
               array: [...array],
@@ -274,7 +276,7 @@ export default function BubbleSortVisualizer() {
               [array[j], array[j + 1]] = [array[j + 1], array[j]];
               swaps++;
               iterationSwaps++;
-              
+
               steps.push({
                 type: "swap",
                 array: [...array],
@@ -284,26 +286,27 @@ export default function BubbleSortVisualizer() {
                 explanation: `Swapped ${array[j]} and ${array[j + 1]}`,
                 insight: "Smallest element bubbles to the left",
                 codeLine: 24,
+                swapIndices: [j, j + 1],
               });
-              
+
               swapped = true;
             }
           }
           start++;
-          
+
           passStats.push({
             passNumber: passes,
             swaps: iterationSwaps,
             comparisons: end - start + 1,
           });
-          
+
           if (!swapped) break;
         }
         break;
     }
 
     setPassHistory(passStats);
-    
+
     steps.push({
       type: "complete",
       array: [...array],
@@ -311,11 +314,11 @@ export default function BubbleSortVisualizer() {
       swapped: false,
       pass: passes,
       explanation: "✨ Bubble Sort complete! The array is now fully sorted.",
-      insight: variant === "optimized" 
+      insight: variant === "optimized"
         ? `Array sorted in ${passes} passes with early optimization`
         : variant === "cocktail"
-        ? `Cocktail shaker sort completed in ${passes} passes (bidirectional)`
-        : `Standard bubble sort completed in ${n-1} passes`,
+          ? `Cocktail shaker sort completed in ${passes} passes (bidirectional)`
+          : `Standard bubble sort completed in ${n - 1} passes`,
       codeLine: 30,
     });
 
@@ -340,7 +343,7 @@ export default function BubbleSortVisualizer() {
       .split(",")
       .map(n => parseInt(n.trim()))
       .filter(n => !isNaN(n));
-    
+
     setInputArray(arr);
     setSteps(generateSteps(arr, variant));
     setCurrentStepIndex(0);
@@ -558,37 +561,180 @@ export default function BubbleSortVisualizer() {
     },
   };
 
+  // ================= SMOOTH ANIMATED BAR COMPONENT =================
+  const AnimatedBar = ({
+    value,
+    index,
+    color,
+    isActive = false,
+    isSwapping = false,
+    showTooltip = false,
+    isSorted = false,
+    onSwapComplete
+  }: {
+    value: number;
+    index: number;
+    color: string;
+    isActive?: boolean;
+    isSwapping?: boolean;
+    showTooltip?: boolean;
+    isSorted?: boolean;
+    onSwapComplete?: () => void;
+  }) => {
+    const maxValue = currentStep ? Math.max(...currentStep.array) : 100;
+    const height = (value / maxValue) * 180 + 20;
+
+    return (
+      <motion.div
+        layout
+        layoutId={`bar-${index}-${value}`}
+        initial={false}
+        animate={{
+          scale: isActive ? 1.1 : 1,
+          y: isActive ? -5 : 0,
+          backgroundColor: color,
+          transition: {
+            type: "spring",
+            stiffness: 400,
+            damping: 30,
+            mass: 1,
+            backgroundColor: { duration: 0.3 }
+          }
+        }}
+        whileHover={{ scale: 1.05 }}
+        onAnimationComplete={onSwapComplete}
+        className="relative group cursor-pointer"
+        style={{ height: `${height}px` }}
+      >
+        {/* Bar with gradient and shadow */}
+        <motion.div 
+          className="w-full h-full rounded-t-lg shadow-lg relative overflow-hidden"
+          style={{ 
+            background: `linear-gradient(180deg, ${color}dd 0%, ${color} 80%)`,
+            boxShadow: isSwapping ? '0 0 20px rgba(245, 158, 11, 0.6)' : undefined
+          }}
+        >
+          {/* Bubble effect during swap */}
+          {isSwapping && (
+            <motion.div
+              initial={{ scale: 0, opacity: 0.5, x: '-50%', y: '50%' }}
+              animate={{
+                scale: [1, 1.8, 0],
+                opacity: [0.6, 1, 0],
+                x: '-50%',
+                y: ['50%', '-50%', '-100%']
+              }}
+              transition={{
+                duration: 0.8,
+                repeat: Infinity,
+                ease: "easeOut"
+              }}
+              className="absolute left-1/2 bottom-0 w-12 h-12 bg-yellow-300 rounded-full blur-xl"
+            />
+          )}
+
+          {/* Shine effect */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30"
+            animate={{
+              x: ['-100%', '100%']
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              repeatDelay: 1
+            }}
+          />
+        </motion.div>
+
+        {/* Value label */}
+        <motion.div
+          layout
+          className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-mono font-bold"
+        >
+          {value}
+        </motion.div>
+
+        {/* Index label */}
+        <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs">
+          {index}
+        </div>
+
+        {/* Sorted indicator */}
+        {isSorted && (
+          <motion.div
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: "spring", stiffness: 500, damping: 25 }}
+            className="absolute -top-2 -right-2 w-5 h-5 bg-emerald-500 rounded-full border-2 border-white flex items-center justify-center"
+          >
+            <span className="text-[10px] text-white">✓</span>
+          </motion.div>
+        )}
+
+        {/* Tooltip */}
+        {showTooltip && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-10"
+          >
+            <div className={`px-2 py-1 text-xs rounded-lg whitespace-nowrap ${isDarkMode ? "bg-gray-700 text-white" : "bg-white text-gray-800"
+              } shadow-lg`}>
+              Index: {index}, Value: {value}
+            </div>
+          </motion.div>
+        )}
+      </motion.div>
+    );
+  };
+
   // ================= HELPER FUNCTIONS =================
   const getBarColor = (index: number) => {
     if (!currentStep) return isDarkMode ? "#4B5563" : "#60A5FA";
-    
+
     const [i, j] = currentStep.compareIndices;
-    
+
     if (index === i || index === j) {
       return currentStep.type === "swap" ? "#F59E0B" : "#3B82F6";
     }
-    
-    // Highlight sorted portion
+
     if (variant === "standard" || variant === "optimized") {
-      const sortedUntil = currentStep.pass > 0 
-        ? inputArray.length - currentStep.pass 
+      const sortedUntil = currentStep.pass > 0
+        ? inputArray.length - currentStep.pass
         : -1;
       if (index > sortedUntil && sortedUntil >= 0) {
         return "#10B981";
       }
     }
-    
+
     return isDarkMode ? "#4B5563" : "#60A5FA";
+  };
+
+  const isBarSwapping = (index: number): boolean => {
+    if (!currentStep?.swapIndices) return false;
+    const [i, j] = currentStep.swapIndices;
+    return index === i || index === j;
+  };
+
+  const isBarSorted = (index: number): boolean => {
+    if (!currentStep) return false;
+    if (variant === "standard" || variant === "optimized") {
+      const sortedUntil = currentStep.pass > 0
+        ? inputArray.length - currentStep.pass
+        : -1;
+      return index > sortedUntil && sortedUntil >= 0;
+    }
+    return false;
   };
 
   // ================= MAIN RENDER =================
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${
-      isDarkMode 
-        ? "bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900" 
+    <div className={`min-h-screen transition-colors duration-300 ${isDarkMode
+        ? "bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900"
         : "bg-gradient-to-br from-slate-50 via-blue-50 to-white"
-    }`}>
-      
+      }`}>
+
       {/* Animated Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
@@ -620,16 +766,15 @@ export default function BubbleSortVisualizer() {
 
       {/* Main Container */}
       <div ref={containerRef} className="relative z-10 max-w-7xl mx-auto p-6 space-y-6">
-        
+
         {/* Header */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className={`backdrop-blur-xl rounded-3xl p-8 ${
-            isDarkMode 
-              ? "bg-gray-800/50 border border-gray-700" 
+          className={`backdrop-blur-xl rounded-3xl p-8 ${isDarkMode
+              ? "bg-gray-800/50 border border-gray-700"
               : "bg-white/70 border border-white/20"
-          } shadow-2xl`}
+            } shadow-2xl`}
         >
           <div className="flex items-center justify-between">
             <div>
@@ -637,30 +782,28 @@ export default function BubbleSortVisualizer() {
                 Bubble Sort Visualizer
               </h1>
               <p className={`mt-2 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-                Watch elements bubble up to their correct positions
+                Watch elements glide smoothly as they bubble up
               </p>
             </div>
-            
+
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setIsDarkMode(!isDarkMode)}
-                className={`p-3 rounded-xl transition-all ${
-                  isDarkMode 
-                    ? "bg-gray-700 hover:bg-gray-600 text-yellow-400" 
+                className={`p-3 rounded-xl transition-all ${isDarkMode
+                    ? "bg-gray-700 hover:bg-gray-600 text-yellow-400"
                     : "bg-white hover:bg-gray-50 text-gray-700"
-                } shadow-lg`}
+                  } shadow-lg`}
               >
                 {isDarkMode ? "☀️" : "🌙"}
               </button>
-              
+
               <select
                 value={mode}
                 onChange={(e) => setMode(e.target.value as Mode)}
-                className={`px-4 py-3 rounded-xl backdrop-blur-xl border ${
-                  isDarkMode 
-                    ? "bg-gray-700/50 border-gray-600 text-white" 
+                className={`px-4 py-3 rounded-xl backdrop-blur-xl border ${isDarkMode
+                    ? "bg-gray-700/50 border-gray-600 text-white"
                     : "bg-white/50 border-gray-200 text-gray-800"
-                } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  } focus:outline-none focus:ring-2 focus:ring-blue-500`}
               >
                 <option value="beginner">🌱 Beginner Mode</option>
                 <option value="expert">⚡ Expert Mode</option>
@@ -672,20 +815,19 @@ export default function BubbleSortVisualizer() {
 
         {/* Main Grid */}
         <div className="grid grid-cols-12 gap-6">
-          
+
           {/* Left Column - Controls & Input */}
           <div className="col-span-12 lg:col-span-3 space-y-6">
-            
+
             {/* Input Card */}
             <motion.div
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
-              className={`backdrop-blur-xl rounded-2xl p-6 ${
-                isDarkMode 
-                  ? "bg-gray-800/50 border border-gray-700" 
+              className={`backdrop-blur-xl rounded-2xl p-6 ${isDarkMode
+                  ? "bg-gray-800/50 border border-gray-700"
                   : "bg-white/70 border border-white/20"
-              } shadow-xl`}
+                } shadow-xl`}
             >
               <h3 className={`font-semibold mb-3 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
                 📊 Input Array
@@ -694,13 +836,12 @@ export default function BubbleSortVisualizer() {
                 value={inputString}
                 onChange={(e) => setInputString(e.target.value)}
                 placeholder="Enter numbers (e.g., 64, 34, 25, 12)"
-                className={`w-full px-4 py-3 rounded-xl backdrop-blur-sm border ${
-                  isDarkMode 
-                    ? "bg-gray-700/50 border-gray-600 text-white placeholder-gray-400" 
+                className={`w-full px-4 py-3 rounded-xl backdrop-blur-sm border ${isDarkMode
+                    ? "bg-gray-700/50 border-gray-600 text-white placeholder-gray-400"
                     : "bg-white/50 border-gray-200 text-gray-800 placeholder-gray-500"
-                } focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all`}
+                  } focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all`}
               />
-              
+
               <div className="grid grid-cols-2 gap-3 mt-4">
                 <button
                   onClick={reset}
@@ -710,11 +851,10 @@ export default function BubbleSortVisualizer() {
                 </button>
                 <button
                   onClick={() => setInputString("64, 34, 25, 12, 22, 11, 90")}
-                  className={`px-4 py-3 rounded-xl backdrop-blur-sm border ${
-                    isDarkMode 
-                      ? "bg-gray-700/50 border-gray-600 text-white hover:bg-gray-600/50" 
+                  className={`px-4 py-3 rounded-xl backdrop-blur-sm border ${isDarkMode
+                      ? "bg-gray-700/50 border-gray-600 text-white hover:bg-gray-600/50"
                       : "bg-white/50 border-gray-200 text-gray-800 hover:bg-white/80"
-                  } transition-all font-medium`}
+                    } transition-all font-medium`}
                 >
                   Random
                 </button>
@@ -726,11 +866,10 @@ export default function BubbleSortVisualizer() {
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.15 }}
-              className={`backdrop-blur-xl rounded-2xl p-6 ${
-                isDarkMode 
-                  ? "bg-gray-800/50 border border-gray-700" 
+              className={`backdrop-blur-xl rounded-2xl p-6 ${isDarkMode
+                  ? "bg-gray-800/50 border border-gray-700"
                   : "bg-white/70 border border-white/20"
-              } shadow-xl`}
+                } shadow-xl`}
             >
               <h3 className={`font-semibold mb-3 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
                 🔄 Algorithm Variant
@@ -741,22 +880,22 @@ export default function BubbleSortVisualizer() {
                   { id: "optimized", label: "Optimized Version", desc: "Early termination" },
                   { id: "cocktail", label: "Cocktail Shaker", desc: "Bidirectional" },
                 ].map((v) => (
-                  <button
+                  <motion.button
                     key={v.id}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={() => setVariant(v.id as Variant)}
-                    className={`px-4 py-3 rounded-xl text-left transition-all ${
-                      variant === v.id
+                    className={`px-4 py-3 rounded-xl text-left transition-all ${variant === v.id
                         ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg"
                         : isDarkMode
                           ? "bg-gray-700 text-gray-300 hover:bg-gray-600"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
+                      }`}
                   >
                     <div className="font-medium">{v.label}</div>
-                    <div className={`text-xs ${
-                      variant === v.id ? "text-blue-100" : isDarkMode ? "text-gray-400" : "text-gray-500"
-                    }`}>{v.desc}</div>
-                  </button>
+                    <div className={`text-xs ${variant === v.id ? "text-blue-100" : isDarkMode ? "text-gray-400" : "text-gray-500"
+                      }`}>{v.desc}</div>
+                  </motion.button>
                 ))}
               </div>
             </motion.div>
@@ -766,47 +905,49 @@ export default function BubbleSortVisualizer() {
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className={`backdrop-blur-xl rounded-2xl p-6 ${
-                isDarkMode 
-                  ? "bg-gray-800/50 border border-gray-700" 
+              className={`backdrop-blur-xl rounded-2xl p-6 ${isDarkMode
+                  ? "bg-gray-800/50 border border-gray-700"
                   : "bg-white/70 border border-white/20"
-              } shadow-xl`}
+                } shadow-xl`}
             >
               <h3 className={`font-semibold mb-4 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
                 🎮 Playback Controls
               </h3>
-              
+
               <div className="flex justify-between gap-2 mb-4">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={() => setCurrentStepIndex(Math.max(0, currentStepIndex - 1))}
-                  className={`p-3 rounded-xl ${
-                    isDarkMode 
-                      ? "bg-gray-700 hover:bg-gray-600 text-white" 
+                  className={`p-3 rounded-xl ${isDarkMode
+                      ? "bg-gray-700 hover:bg-gray-600 text-white"
                       : "bg-white hover:bg-gray-50 text-gray-700"
-                  } shadow-lg transition-all`}
+                    } shadow-lg transition-all`}
                 >
                   ⏮️
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => setIsPlaying(!isPlaying)}
-                  className={`flex-1 px-4 py-3 ${
-                    isPlaying 
-                      ? "bg-orange-500 hover:bg-orange-600" 
+                  className={`flex-1 px-4 py-3 ${isPlaying
+                      ? "bg-orange-500 hover:bg-orange-600"
                       : "bg-green-500 hover:bg-green-600"
-                  } text-white rounded-xl shadow-lg hover:shadow-xl transition-all font-medium`}
+                    } text-white rounded-xl shadow-lg hover:shadow-xl transition-all font-medium`}
                 >
                   {isPlaying ? "⏸️ Pause" : "▶️ Play"}
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={() => setCurrentStepIndex(Math.min(steps.length - 1, currentStepIndex + 1))}
-                  className={`p-3 rounded-xl ${
-                    isDarkMode 
-                      ? "bg-gray-700 hover:bg-gray-600 text-white" 
+                  className={`p-3 rounded-xl ${isDarkMode
+                      ? "bg-gray-700 hover:bg-gray-600 text-white"
                       : "bg-white hover:bg-gray-50 text-gray-700"
-                  } shadow-lg transition-all`}
+                    } shadow-lg transition-all`}
                 >
                   ⏭️
-                </button>
+                </motion.button>
               </div>
 
               <div>
@@ -828,134 +969,146 @@ export default function BubbleSortVisualizer() {
 
           {/* Center Column - Visualization */}
           <div className="col-span-12 lg:col-span-6 space-y-6">
-            
+
             {/* Main Visualization Card */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className={`backdrop-blur-xl rounded-3xl p-8 ${
-                isDarkMode 
-                  ? "bg-gray-800/50 border border-gray-700" 
+              className={`backdrop-blur-xl rounded-3xl p-8 ${isDarkMode
+                  ? "bg-gray-800/50 border border-gray-700"
                   : "bg-white/70 border border-white/20"
-              } shadow-2xl min-h-[400px]`}
+                } shadow-2xl min-h-[400px]`}
             >
               <AnimatePresence mode="wait">
                 {currentStep && (
                   <motion.div
                     key={currentStepIndex}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
+                    initial={{ opacity: 1 }}
+                    animate={{ opacity: 1 }}
                     className="space-y-8"
                   >
-                    
-                    {/* Array Visualization with Bars */}
-                    <div className="flex justify-center items-end gap-2 h-64">
-                      {currentStep.array.map((value, idx) => {
-                        const maxValue = Math.max(...currentStep.array);
-                        const height = (value / maxValue) * 180 + 20;
-                        const [i, j] = currentStep.compareIndices;
-                        
-                        return (
-                          <motion.div
-                            key={`${idx}-${value}`}
-                            initial={{ y: 20, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            transition={{ delay: idx * 0.02 }}
-                            className="relative group"
-                          >
-                            <motion.div
-                              animate={{
-                                scale: idx === i || idx === j ? 1.1 : 1,
-                                y: idx === i || idx === j ? -5 : 0,
-                              }}
-                              className="w-12 rounded-t-lg cursor-pointer transition-all"
-                              style={{
-                                height: `${height}px`,
-                                backgroundColor: getBarColor(idx),
-                              }}
-                            >
-                              {/* Value label */}
-                              <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-mono font-bold">
-                                {value}
-                              </div>
-                              
-                              {/* Index label */}
-                              <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs">
-                                {idx}
-                              </div>
-                              
-                              {/* Bubble animation for swaps */}
-                              {currentStep.type === "swap" && (idx === i || idx === j) && (
-                                <motion.div
-                                  initial={{ scale: 1, opacity: 0.5 }}
-                                  animate={{ 
-                                    scale: [1, 1.5, 1],
-                                    opacity: [0.5, 1, 0]
-                                  }}
-                                  transition={{ duration: 0.5 }}
-                                  className="absolute inset-0 bg-yellow-400 rounded-lg -z-10"
-                                />
-                              )}
-                              
-                              {/* Tooltip */}
-                              {showTooltips && (
-                                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block">
-                                  <div className={`px-2 py-1 text-xs rounded-lg whitespace-nowrap ${
-                                    isDarkMode ? "bg-gray-700 text-white" : "bg-white text-gray-800"
-                                  } shadow-lg`}>
-                                    Index: {idx}, Value: {value}
-                                  </div>
-                                </div>
-                              )}
-                            </motion.div>
-                          </motion.div>
-                        );
-                      })}
+                    {/* Array Visualization with Smooth Bars */}
+                    <div className="flex justify-center items-end gap-4 h-64 px-4">
+                      {currentStep.array.map((value, idx) => (
+                        <motion.div
+                          key={`${idx}-${value}`}
+                          layout
+                          transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 40,
+                            mass: 1.2
+                          }}
+                          className="w-12"
+                        >
+                          <AnimatedBar
+                            value={value}
+                            index={idx}
+                            color={getBarColor(idx)}
+                            isActive={idx === currentStep.compareIndices[0] || idx === currentStep.compareIndices[1]}
+                            isSwapping={isBarSwapping(idx)}
+                            showTooltip={showTooltips}
+                            isSorted={isBarSorted(idx)}
+                          />
+                        </motion.div>
+                      ))}
                     </div>
 
                     {/* Legend */}
-                    <div className="flex justify-center gap-6 text-sm">
+                    <div className="flex justify-center gap-6 text-sm flex-wrap">
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                        <motion.div
+                          className="w-3 h-3 rounded-full bg-blue-500"
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ repeat: Infinity, duration: 2 }}
+                        />
                         <span className={isDarkMode ? "text-gray-300" : "text-gray-600"}>Comparing</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+                        <motion.div
+                          className="w-3 h-3 rounded-full bg-amber-500"
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ repeat: Infinity, duration: 2, delay: 0.5 }}
+                        />
                         <span className={isDarkMode ? "text-gray-300" : "text-gray-600"}>Swapping</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                        <motion.div
+                          className="w-3 h-3 rounded-full bg-emerald-500"
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ repeat: Infinity, duration: 2, delay: 1 }}
+                        />
                         <span className={isDarkMode ? "text-gray-300" : "text-gray-600"}>Sorted</span>
                       </div>
                     </div>
 
+                    {/* Pointer Indicators */}
+                    <motion.div
+                      className="flex justify-center gap-4 text-sm font-mono flex-wrap"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                    >
+                      {currentStep.compareIndices[0] >= 0 && (
+                        <motion.div 
+                          className="flex items-center gap-2"
+                          animate={{ y: [0, -2, 0] }}
+                          transition={{ repeat: Infinity, duration: 1.5 }}
+                        >
+                          <span className={isDarkMode ? "text-blue-400" : "text-blue-600"}>
+                            ← Left: {currentStep.compareIndices[0]} ({currentStep.array[currentStep.compareIndices[0]]})
+                          </span>
+                        </motion.div>
+                      )}
+                      {currentStep.compareIndices[1] >= 0 && (
+                        <motion.div 
+                          className="flex items-center gap-2"
+                          animate={{ y: [0, -2, 0] }}
+                          transition={{ repeat: Infinity, duration: 1.5, delay: 0.2 }}
+                        >
+                          <span className={isDarkMode ? "text-cyan-400" : "text-cyan-600"}>
+                            Right: {currentStep.compareIndices[1]} ({currentStep.array[currentStep.compareIndices[1]]}) →
+                          </span>
+                        </motion.div>
+                      )}
+                    </motion.div>
+
                     {/* Pass Information */}
-                    <div className={`text-center p-4 rounded-xl ${
-                      isDarkMode ? "bg-gray-700/50" : "bg-gray-50/50"
-                    }`}>
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className={`text-center p-4 rounded-xl ${isDarkMode ? "bg-gray-700/50" : "bg-gray-50/50"
+                        }`}
+                    >
                       <span className={`font-medium ${isDarkMode ? "text-white" : "text-gray-800"}`}>
-                        Pass {currentStep.pass} 
-                        {variant === "cocktail" && currentStep.type === "compare" && 
-                          (currentStep.compareIndices[0] < currentStep.compareIndices[1] 
-                            ? " → Forward" : " ← Backward")}
+                        Pass {currentStep.pass}
+                        {variant === "cocktail" && currentStep.type === "compare" &&
+                          currentStep.compareIndices[0] >= 0 && currentStep.compareIndices[1] >= 0 &&
+                          (currentStep.compareIndices[0] < currentStep.compareIndices[1]
+                            ? " → Forward Pass"
+                            : " ← Backward Pass")}
                       </span>
-                    </div>
+                    </motion.div>
 
                     {/* Explanation Card (Beginner Mode) */}
                     {mode === "beginner" && (
                       <motion.div
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
-                        className={`mt-8 p-6 rounded-2xl ${
-                          isDarkMode 
-                            ? "bg-gray-700/50 border border-gray-600" 
+                        transition={{ delay: 0.2 }}
+                        className={`mt-8 p-6 rounded-2xl ${isDarkMode
+                            ? "bg-gray-700/50 border border-gray-600"
                             : "bg-white/50 border border-gray-200"
-                        } backdrop-blur-sm`}
+                          } backdrop-blur-sm`}
                       >
                         <div className="flex items-start gap-3">
-                          <span className="text-2xl">💭</span>
+                          <motion.span
+                            animate={{ rotate: [0, 10, -10, 0] }}
+                            transition={{ repeat: Infinity, duration: 2 }}
+                            className="text-2xl"
+                          >
+                            💭
+                          </motion.span>
                           <div>
                             <p className={`font-medium mb-1 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
                               {currentStep.explanation}
@@ -977,11 +1130,10 @@ export default function BubbleSortVisualizer() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className={`backdrop-blur-xl rounded-3xl p-6 ${
-                isDarkMode 
-                  ? "bg-gray-800/50 border border-gray-700" 
+              className={`backdrop-blur-xl rounded-3xl p-6 ${isDarkMode
+                  ? "bg-gray-800/50 border border-gray-700"
                   : "bg-white/70 border border-white/20"
-              } shadow-xl`}
+                } shadow-xl`}
             >
               <h3 className={`font-semibold mb-4 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
                 📊 Pass Statistics
@@ -992,6 +1144,12 @@ export default function BubbleSortVisualizer() {
                     <motion.div
                       initial={{ height: 0 }}
                       animate={{ height: `${(pass.swaps / Math.max(...passHistory.map(p => p.swaps), 1)) * 100}%` }}
+                      transition={{ 
+                        type: "spring",
+                        stiffness: 100,
+                        damping: 20,
+                        delay: idx * 0.1 
+                      }}
                       className="w-8 bg-gradient-to-t from-blue-500 to-cyan-500 rounded-t-lg"
                     />
                     <span className={`text-xs mt-2 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
@@ -1008,17 +1166,16 @@ export default function BubbleSortVisualizer() {
 
           {/* Right Column - Code & Stats */}
           <div className="col-span-12 lg:col-span-3 space-y-6">
-            
+
             {/* Code Card */}
             <motion.div
               initial={{ x: 20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
-              className={`backdrop-blur-xl rounded-2xl p-6 ${
-                isDarkMode 
-                  ? "bg-gray-800/50 border border-gray-700" 
+              className={`backdrop-blur-xl rounded-2xl p-6 ${isDarkMode
+                  ? "bg-gray-800/50 border border-gray-700"
                   : "bg-white/70 border border-white/20"
-              } shadow-xl`}
+                } shadow-xl`}
             >
               <div className="flex justify-between items-center mb-4">
                 <h3 className={`font-semibold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
@@ -1027,29 +1184,36 @@ export default function BubbleSortVisualizer() {
                 <select
                   value={language}
                   onChange={(e) => setLanguage(e.target.value as Language)}
-                  className={`px-2 py-1 text-sm rounded-lg ${
-                    isDarkMode 
-                      ? "bg-gray-700 text-white border-gray-600" 
+                  className={`px-2 py-1 text-sm rounded-lg ${isDarkMode
+                      ? "bg-gray-700 text-white border-gray-600"
                       : "bg-gray-100 text-gray-800 border-gray-200"
-                  } border`}
+                    } border`}
                 >
                   <option value="javascript">JavaScript</option>
                   <option value="python">Python</option>
                   <option value="java">Java</option>
                 </select>
               </div>
-              
-              <div className={`relative rounded-xl overflow-hidden ${
-                isDarkMode ? "bg-gray-900" : "bg-gray-50"
-              }`}>
+
+              <div className={`relative rounded-xl overflow-hidden ${isDarkMode ? "bg-gray-900" : "bg-gray-50"
+                }`}>
                 <pre className="p-4 text-sm font-mono overflow-x-auto max-h-96">
                   {codeSnippets[language][variant].split('\n').map((line, idx) => (
                     <motion.div
                       key={idx}
                       animate={{
-                        backgroundColor: currentStep?.codeLine === idx + 1 
+                        backgroundColor: currentStep?.codeLine === idx + 1
                           ? isDarkMode ? "#374151" : "#DBEAFE"
                           : "transparent",
+                        borderLeft: currentStep?.codeLine === idx + 1
+                          ? "4px solid #3B82F6"
+                          : "4px solid transparent",
+                        x: currentStep?.codeLine === idx + 1 ? 5 : 0
+                      }}
+                      transition={{ 
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 30
                       }}
                       className="px-2 py-0.5 rounded"
                     >
@@ -1067,66 +1231,83 @@ export default function BubbleSortVisualizer() {
               initial={{ x: 20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className={`backdrop-blur-xl rounded-2xl p-6 ${
-                isDarkMode 
-                  ? "bg-gray-800/50 border border-gray-700" 
+              className={`backdrop-blur-xl rounded-2xl p-6 ${isDarkMode
+                  ? "bg-gray-800/50 border border-gray-700"
                   : "bg-white/70 border border-white/20"
-              } shadow-xl`}
+                } shadow-xl`}
             >
               <h3 className={`font-semibold mb-4 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
                 📈 Live Statistics
               </h3>
-              
+
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
-                  <div className={`p-3 rounded-xl ${
-                    isDarkMode ? "bg-gray-700/50" : "bg-gray-50/50"
-                  }`}>
+                  <motion.div
+                    className={`p-3 rounded-xl ${isDarkMode ? "bg-gray-700/50" : "bg-gray-50/50"}`}
+                    key={stats.comparisons}
+                    initial={{ scale: 0.9 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                  >
                     <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Comparisons</div>
                     <div className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
                       {stats.comparisons}
                     </div>
-                  </div>
-                  <div className={`p-3 rounded-xl ${
-                    isDarkMode ? "bg-gray-700/50" : "bg-gray-50/50"
-                  }`}>
+                  </motion.div>
+                  <motion.div
+                    className={`p-3 rounded-xl ${isDarkMode ? "bg-gray-700/50" : "bg-gray-50/50"}`}
+                    key={stats.swaps}
+                    initial={{ scale: 0.9 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                  >
                     <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>Swaps</div>
                     <div className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
                       {stats.swaps}
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
 
                 <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
+                  <motion.div
+                    className="flex justify-between text-sm"
+                    key={currentStep?.pass}
+                    initial={{ x: -10, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                  >
                     <span className={isDarkMode ? "text-gray-400" : "text-gray-600"}>Current Pass</span>
                     <span className={`font-mono font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
                       {currentStep?.pass || 0} / {stats.totalPasses}
                     </span>
-                  </div>
-                  
-                  <div className="flex justify-between text-sm">
+                  </motion.div>
+
+                  <motion.div
+                    className="flex justify-between text-sm"
+                    key={currentStepIndex}
+                    initial={{ x: -10, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                  >
                     <span className={isDarkMode ? "text-gray-400" : "text-gray-600"}>Progress</span>
                     <span className={`font-mono font-bold ${isDarkMode ? "text-white" : "text-gray-800"}`}>
                       {Math.round((currentStepIndex / (steps.length - 1)) * 100)}%
                     </span>
-                  </div>
+                  </motion.div>
 
                   {currentStep?.type === "swap" && (
                     <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className={`mt-2 p-2 rounded-lg text-sm text-center ${
-                        isDarkMode ? "bg-amber-500/20 text-amber-300" : "bg-amber-100 text-amber-700"
-                      }`}
+                      initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      className={`mt-2 p-2 rounded-lg text-sm text-center ${isDarkMode ? "bg-amber-500/20 text-amber-300" : "bg-amber-100 text-amber-700"
+                        }`}
                     >
-                      🔄 Swapping elements
+                      🔄 Swapping {currentStep.array[currentStep.compareIndices[0]]} and {currentStep.array[currentStep.compareIndices[1]]}
                     </motion.div>
                   )}
                 </div>
 
                 <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent my-2" />
-                
+
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span className={isDarkMode ? "text-gray-400" : "text-gray-600"}>Time Complexity</span>
@@ -1142,11 +1323,23 @@ export default function BubbleSortVisualizer() {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className={isDarkMode ? "text-gray-400" : "text-gray-600"}>Stable</span>
-                    <span className="text-emerald-500">✓ Yes</span>
+                    <motion.span
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ repeat: Infinity, duration: 2 }}
+                      className="text-emerald-500"
+                    >
+                      ✓ Yes
+                    </motion.span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className={isDarkMode ? "text-gray-400" : "text-gray-600"}>In-place</span>
-                    <span className="text-emerald-500">✓ Yes</span>
+                    <motion.span
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ repeat: Infinity, duration: 2, delay: 0.5 }}
+                      className="text-emerald-500"
+                    >
+                      ✓ Yes
+                    </motion.span>
                   </div>
                 </div>
               </div>
@@ -1158,33 +1351,40 @@ export default function BubbleSortVisualizer() {
                 initial={{ x: 20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
-                className={`backdrop-blur-xl rounded-2xl p-6 ${
-                  isDarkMode 
-                    ? "bg-blue-900/30 border border-blue-800" 
+                className={`backdrop-blur-xl rounded-2xl p-6 ${isDarkMode
+                    ? "bg-blue-900/30 border border-blue-800"
                     : "bg-blue-50/70 border border-blue-100"
-                } shadow-xl`}
+                  } shadow-xl`}
               >
                 <h3 className={`font-semibold mb-3 ${isDarkMode ? "text-blue-300" : "text-blue-800"}`}>
                   💡 Quick Tips
                 </h3>
-                <ul className={`space-y-2 text-sm ${isDarkMode ? "text-blue-200" : "text-blue-700"}`}>
-                  <li className="flex items-start gap-2">
-                    <span>•</span>
-                    <span>Largest element bubbles to the end in each pass</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span>•</span>
-                    <span>Optimized version stops early if array is sorted</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span>•</span>
-                    <span>Cocktail shaker works both directions</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span>•</span>
-                    <span>Blue = comparing, Orange = swapping, Green = sorted</span>
-                  </li>
-                </ul>
+                <motion.ul
+                  className={`space-y-2 text-sm ${isDarkMode ? "text-blue-200" : "text-blue-700"}`}
+                >
+                  {[
+                    "Largest element bubbles to the end in each pass",
+                    "Optimized version stops early if array is sorted",
+                    "Cocktail shaker works both directions",
+                    "Blue = comparing, Orange = swapping, Green = sorted",
+                  ].map((tip, i) => (
+                    <motion.li
+                      key={i}
+                      initial={{ x: -10, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: 0.1 * i }}
+                      className="flex items-start gap-2"
+                    >
+                      <motion.span
+                        animate={{ rotate: [0, 15, -15, 0] }}
+                        transition={{ repeat: Infinity, duration: 2, delay: i * 0.5 }}
+                      >
+                        •
+                      </motion.span>
+                      <span>{tip}</span>
+                    </motion.li>
+                  ))}
+                </motion.ul>
               </motion.div>
             )}
           </div>
@@ -1199,7 +1399,19 @@ export default function BubbleSortVisualizer() {
               exit={{ opacity: 0, scale: 0.5 }}
               className="fixed inset-0 pointer-events-none flex items-center justify-center z-50"
             >
-              <div className="text-6xl">🎉</div>
+              <motion.div
+                animate={{ 
+                  rotate: 360,
+                  scale: [1, 1.2, 1]
+                }}
+                transition={{ 
+                  rotate: { duration: 2, repeat: Infinity },
+                  scale: { duration: 1, repeat: Infinity }
+                }}
+                className="text-7xl"
+              >
+                🎉
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>

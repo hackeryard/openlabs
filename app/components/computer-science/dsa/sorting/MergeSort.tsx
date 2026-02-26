@@ -18,6 +18,7 @@ interface Step {
   explanation: string;
   insight: string;
   codeLine: number;
+  previousMergedArray?: number[]; // Track previous state for smooth transitions
 }
 
 interface TreeNode {
@@ -32,15 +33,16 @@ interface TreeNode {
 
 export default function MergeSortVisualizer() {
   // Chatbot 
-          const { setExperimentData } = useChat();
-        
-          useEffect(() => {
-            setExperimentData({
-              title: "Merge Sort",
-              theory: "Merge Sort Data Structure Visualizer",
-              extraContext: ``,
-            });
-          }, []);
+  const { setExperimentData } = useChat();
+
+  useEffect(() => {
+    setExperimentData({
+      title: "Merge Sort",
+      theory: "Merge Sort Data Structure Visualizer",
+      extraContext: ``,
+    });
+  }, []);
+
   // ================= STATE MANAGEMENT =================
   const [inputArray, setInputArray] = useState<number[]>([38, 27, 43, 3, 9, 82, 10]);
   const [inputString, setInputString] = useState("38, 27, 43, 3, 9, 82, 10");
@@ -61,9 +63,9 @@ export default function MergeSortVisualizer() {
   const [showCelebration, setShowCelebration] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showTooltips, setShowTooltips] = useState(true);
-  const [soundEnabled, setSoundEnabled] = useState(false);
-  
+
   const containerRef = useRef<HTMLDivElement>(null);
+  const animationFrameRef = useRef<number>();
 
   // ================= MERGE SORT ALGORITHM WITH STEP GENERATION =================
   const generateSteps = useCallback((arr: number[]): Step[] => {
@@ -71,6 +73,7 @@ export default function MergeSortVisualizer() {
     let comparisons = 0;
     let functionCalls = 0;
     let mergeOperations = 0;
+    let previousMergedArray: number[] = [];
 
     const buildRecursionTree = (array: number[], depth: number = 0): TreeNode => {
       const node: TreeNode = {
@@ -93,12 +96,12 @@ export default function MergeSortVisualizer() {
     const merge = (left: number[], right: number[], depth: number): number[] => {
       const merged: number[] = [];
       let i = 0, j = 0;
-      
+
       mergeOperations++;
-      
+
       while (i < left.length && j < right.length) {
         comparisons++;
-        
+
         steps.push({
           type: "compare",
           leftArray: left,
@@ -109,6 +112,7 @@ export default function MergeSortVisualizer() {
           explanation: `Comparing ${left[i]} and ${right[j]} to determine which is smaller.`,
           insight: "We compare the smallest unmerged elements from both halves.",
           codeLine: 8,
+          previousMergedArray: [...merged],
         });
 
         if (left[i] <= right[j]) {
@@ -129,12 +133,13 @@ export default function MergeSortVisualizer() {
           explanation: `Placing ${merged[merged.length - 1]} into the merged array.`,
           insight: "Smaller elements are merged first to maintain sorted order.",
           codeLine: 10,
+          previousMergedArray: [...merged.slice(0, -1)],
         });
       }
 
       // Add remaining elements
       const remaining = [...merged, ...left.slice(i), ...right.slice(j)];
-      
+
       steps.push({
         type: "merge",
         leftArray: left,
@@ -145,6 +150,7 @@ export default function MergeSortVisualizer() {
         explanation: "All elements merged! This subarray is now sorted.",
         insight: "Merging two sorted arrays takes O(n) time.",
         codeLine: 16,
+        previousMergedArray: merged,
       });
 
       return remaining;
@@ -164,12 +170,13 @@ export default function MergeSortVisualizer() {
           explanation: `Base case reached: array [${array}] is already sorted.`,
           insight: "Arrays of size 0 or 1 are trivially sorted.",
           codeLine: 4,
+          previousMergedArray: [],
         });
         return array;
       }
 
       const mid = Math.floor(array.length / 2);
-      
+
       steps.push({
         type: "split",
         leftArray: array.slice(0, mid),
@@ -180,19 +187,20 @@ export default function MergeSortVisualizer() {
         explanation: `Dividing array into [${array.slice(0, mid)}] and [${array.slice(mid)}]`,
         insight: "Division continues until we reach single elements.",
         codeLine: 5,
+        previousMergedArray: [],
       });
 
       const left = sort(array.slice(0, mid), depth + 1);
       const right = sort(array.slice(mid), depth + 1);
-      
+
       return merge(left, right, depth);
     };
 
     const tree = buildRecursionTree(arr);
     setRecursionTree(tree);
-    
+
     sort(arr);
-    
+
     steps.push({
       type: "complete",
       leftArray: [],
@@ -203,6 +211,7 @@ export default function MergeSortVisualizer() {
       explanation: "✨ Merge Sort complete! The array is now fully sorted.",
       insight: "Time complexity: O(n log n) | Space complexity: O(n)",
       codeLine: 20,
+      previousMergedArray: steps[steps.length - 1]?.mergedArray || [],
     });
 
     setStats({
@@ -226,9 +235,10 @@ export default function MergeSortVisualizer() {
       .split(",")
       .map(n => parseInt(n.trim()))
       .filter(n => !isNaN(n));
-    
+
     setInputArray(arr);
-    setSteps(generateSteps(arr));
+    const newSteps = generateSteps(arr);
+    setSteps(newSteps);
     setCurrentStepIndex(0);
     setIsPlaying(false);
     setShowCelebration(false);
@@ -247,7 +257,7 @@ export default function MergeSortVisualizer() {
 
     const timer = setTimeout(() => {
       setCurrentStepIndex(i => i + 1);
-      
+
       // Update recursion tree active node
       if (recursionTree) {
         updateTreeActiveNode(recursionTree, steps[currentStepIndex + 1]?.depth || 0);
@@ -262,13 +272,13 @@ export default function MergeSortVisualizer() {
       node.isActive = true;
       return true;
     }
-    
+
     node.isActive = false;
     let found = false;
-    
+
     if (node.left && updateTreeActiveNode(node.left, targetDepth)) found = true;
     if (node.right && updateTreeActiveNode(node.right, targetDepth)) found = true;
-    
+
     return found;
   };
 
@@ -356,14 +366,13 @@ def merge(left, right):
 }`,
   };
 
-  // ================= RENDER RECURSION TREE (IMPROVED SPACING) =================
+  // ================= RENDER RECURSION TREE =================
   const renderTreeNode = (node: TreeNode, x: number = 0, y: number = 0, level: number = 0, totalNodes: number = 1) => {
     if (!node) return null;
-    
-    // Dynamic spacing based on depth
+
     const horizontalSpacing = Math.max(60, 180 / (level + 1));
     const verticalSpacing = 70;
-    
+
     return (
       <g key={node.id}>
         {node.left && (
@@ -427,6 +436,113 @@ def merge(left, right):
     );
   };
 
+  // ================= ANIMATED ARRAY COMPONENT =================
+  const AnimatedArray = ({ 
+    values, 
+    label, 
+    activeIndex, 
+    color = "indigo",
+    previousValues = [],
+    isMerged = false
+  }: { 
+    values: number[]; 
+    label: string; 
+    activeIndex?: number; 
+    color?: string;
+    previousValues?: number[];
+    isMerged?: boolean;
+  }) => {
+    const colorClasses = {
+      indigo: {
+        bg: "bg-indigo-500",
+        light: "bg-indigo-100",
+        text: "text-indigo-700",
+        dark: "bg-indigo-600",
+      },
+      purple: {
+        bg: "bg-purple-500",
+        light: "bg-purple-100",
+        text: "text-purple-700",
+        dark: "bg-purple-600",
+      },
+      emerald: {
+        bg: "bg-emerald-500",
+        light: "bg-emerald-100",
+        text: "text-emerald-700",
+        dark: "bg-emerald-600",
+      },
+    };
+
+    const colors = colorClasses[color as keyof typeof colorClasses];
+
+    return (
+      <div className="flex-1">
+        <div className="text-center mb-3">
+          <span className={`text-sm font-medium px-3 py-1 rounded-full ${
+            isDarkMode 
+              ? `${colors.dark}/20 text-${color}-300` 
+              : `${colors.light} ${colors.text}`
+          }`}>
+            {label}
+          </span>
+        </div>
+        <div className="flex justify-center gap-2 flex-wrap min-h-[80px]">
+          {values.map((value, idx) => {
+            const wasInPrevious = previousValues.includes(value);
+            const isNew = !wasInPrevious && values.length > previousValues.length;
+            
+            return (
+              <motion.div
+                key={`${value}-${idx}`}
+                layout
+                initial={{ 
+                  scale: isNew ? 0 : 1,
+                  opacity: isNew ? 0 : 1,
+                  y: isNew ? 20 : 0
+                }}
+                animate={{ 
+                  scale: 1,
+                  opacity: 1,
+                  y: 0,
+                  backgroundColor: activeIndex === idx 
+                    ? isDarkMode ? "#6366F1" : colors.bg
+                    : isDarkMode 
+                      ? "#374151" 
+                      : isMerged 
+                        ? "#D1FAE5" 
+                        : "#F3F4F6",
+                  color: activeIndex === idx 
+                    ? "#FFFFFF"
+                    : isDarkMode 
+                      ? "#E5E7EB" 
+                      : "#1F2937",
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 30,
+                  backgroundColor: { duration: 0.3 }
+                }}
+                whileHover={{ scale: 1.1 }}
+                className={`relative w-12 h-12 rounded-xl flex items-center justify-center font-mono font-bold text-lg shadow-md`}
+              >
+                {value}
+                {activeIndex === idx && (
+                  <motion.div
+                    initial={{ scale: 1 }}
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ repeat: Infinity, duration: 1 }}
+                    className="absolute -inset-1 bg-indigo-400 rounded-xl -z-10 opacity-50 blur-sm"
+                  />
+                )}
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
   // ================= MAIN RENDER =================
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
@@ -483,7 +599,7 @@ def merge(left, right):
                 Merge Sort Studio
               </h1>
               <p className={`mt-2 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-                Understand Divide and Conquer in 30 seconds through interactive visualization
+                Understand Divide and Conquer through smooth, continuous visualization
               </p>
             </div>
             
@@ -696,186 +812,100 @@ def merge(left, right):
                   : "bg-white/70 border border-white/20"
               } shadow-2xl min-h-[400px]`}
             >
-              <AnimatePresence mode="wait">
-                {currentStep && (
-                  <motion.div
-                    key={currentStepIndex}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="space-y-8"
-                  >
+              {currentStep && (
+                <motion.div
+                  key={currentStepIndex}
+                  initial={{ opacity: 1 }}
+                  animate={{ opacity: 1 }}
+                  className="space-y-8"
+                >
+                  
+                  {/* Split View or Merge Animation */}
+                  <div className="flex justify-around items-center gap-4">
                     
-                    {/* Split View or Merge Animation */}
-                    <div className="flex justify-around items-center gap-4">
-                      
-                      {/* Left Array */}
-                      {currentStep.leftArray.length > 0 && (
-                        <div className="flex-1">
-                          <div className="text-center mb-3">
-                            <span className={`text-sm font-medium px-3 py-1 rounded-full ${
-                              isDarkMode 
-                                ? "bg-indigo-500/20 text-indigo-300" 
-                                : "bg-indigo-100 text-indigo-700"
-                            }`}>
-                              Left Half
-                            </span>
-                          </div>
-                          <div className="flex justify-center gap-2 flex-wrap">
-                            {currentStep.leftArray.map((value, idx) => (
-                              <motion.div
-                                key={`left-${idx}`}
-                                initial={{ y: 20, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                transition={{ delay: idx * 0.05 }}
-                                whileHover={{ scale: 1.1 }}
-                                className={`relative w-12 h-12 rounded-xl flex items-center justify-center font-mono font-bold text-lg
-                                  ${currentStep.activeIndices.left === idx 
-                                    ? "bg-gradient-to-br from-indigo-500 to-purple-500 text-white shadow-xl scale-110 z-10" 
-                                    : isDarkMode
-                                      ? "bg-gray-700 text-gray-200"
-                                      : "bg-gray-100 text-gray-800"
-                                  }`}
-                              >
-                                {value}
-                                {currentStep.activeIndices.left === idx && (
-                                  <motion.div
-                                    initial={{ scale: 1 }}
-                                    animate={{ scale: [1, 1.2, 1] }}
-                                    transition={{ repeat: Infinity, duration: 1 }}
-                                    className="absolute -inset-1 bg-indigo-400 rounded-xl -z-10 opacity-50 blur-sm"
-                                  />
-                                )}
-                              </motion.div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
+                    {/* Left Array */}
+                    {currentStep.leftArray.length > 0 && (
+                      <AnimatedArray
+                        values={currentStep.leftArray}
+                        label="Left Half"
+                        activeIndex={currentStep.activeIndices.left}
+                        color="indigo"
+                        previousValues={currentStep.previousMergedArray || []}
+                      />
+                    )}
 
-                      {/* Merge Arrow (visible during merge) */}
-                      {currentStep.type === "merge" && currentStep.mergedArray.length > 0 && (
-                        <motion.div
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          className="text-2xl"
-                        >
-                          ➡️
-                        </motion.div>
-                      )}
-
-                      {/* Right Array */}
-                      {currentStep.rightArray.length > 0 && (
-                        <div className="flex-1">
-                          <div className="text-center mb-3">
-                            <span className={`text-sm font-medium px-3 py-1 rounded-full ${
-                              isDarkMode 
-                                ? "bg-purple-500/20 text-purple-300" 
-                                : "bg-purple-100 text-purple-700"
-                            }`}>
-                              Right Half
-                            </span>
-                          </div>
-                          <div className="flex justify-center gap-2 flex-wrap">
-                            {currentStep.rightArray.map((value, idx) => (
-                              <motion.div
-                                key={`right-${idx}`}
-                                initial={{ y: 20, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                transition={{ delay: idx * 0.05 }}
-                                whileHover={{ scale: 1.1 }}
-                                className={`relative w-12 h-12 rounded-xl flex items-center justify-center font-mono font-bold text-lg
-                                  ${currentStep.activeIndices.right === idx 
-                                    ? "bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-xl scale-110 z-10" 
-                                    : isDarkMode
-                                      ? "bg-gray-700 text-gray-200"
-                                      : "bg-gray-100 text-gray-800"
-                                  }`}
-                              >
-                                {value}
-                                {currentStep.activeIndices.right === idx && (
-                                  <motion.div
-                                    initial={{ scale: 1 }}
-                                    animate={{ scale: [1, 1.2, 1] }}
-                                    transition={{ repeat: Infinity, duration: 1 }}
-                                    className="absolute -inset-1 bg-purple-400 rounded-xl -z-10 opacity-50 blur-sm"
-                                  />
-                                )}
-                              </motion.div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Merged Array (Bottom) */}
-                    {currentStep.mergedArray.length > 0 && (
+                    {/* Merge Arrow (visible during merge) */}
+                    {currentStep.type === "merge" && currentStep.mergedArray.length > 0 && (
                       <motion.div
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        className="mt-8"
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ type: "spring", stiffness: 200 }}
+                        className="text-3xl"
                       >
-                        <div className="text-center mb-3">
-                          <span className={`text-sm font-medium px-3 py-1 rounded-full ${
-                            isDarkMode 
-                              ? "bg-emerald-500/20 text-emerald-300" 
-                              : "bg-emerald-100 text-emerald-700"
-                          }`}>
-                            Merged Array {currentStep.type === "complete" ? "✓" : ""}
-                          </span>
-                        </div>
-                        <div className="flex justify-center gap-2 flex-wrap">
-                          {currentStep.mergedArray.map((value, idx) => (
-                            <motion.div
-                              key={`merged-${idx}`}
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              transition={{ 
-                                type: "spring",
-                                delay: idx * 0.1 
-                              }}
-                              className={`w-12 h-12 rounded-xl flex items-center justify-center font-mono font-bold text-lg
-                                ${isDarkMode 
-                                  ? "bg-emerald-600 text-white" 
-                                  : "bg-emerald-500 text-white"
-                                } shadow-lg`}
-                            >
-                              {value}
-                            </motion.div>
-                          ))}
-                        </div>
+                        {currentStep.type === "merge" ? "➡️" : "🔄"}
                       </motion.div>
                     )}
 
-                    {/* Explanation Card (Beginner Mode) */}
-                    {mode === "beginner" && (
-                      <motion.div
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        className={`mt-8 p-6 rounded-2xl ${
-                          isDarkMode 
-                            ? "bg-gray-700/50 border border-gray-600" 
-                            : "bg-white/50 border border-gray-200"
-                        } backdrop-blur-sm`}
-                      >
-                        <div className="flex items-start gap-3">
-                          <span className="text-2xl">💭</span>
-                          <div>
-                            <p className={`font-medium mb-1 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
-                              {currentStep.explanation}
-                            </p>
-                            <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                              {currentStep.insight}
-                            </p>
-                          </div>
-                        </div>
-                      </motion.div>
+                    {/* Right Array */}
+                    {currentStep.rightArray.length > 0 && (
+                      <AnimatedArray
+                        values={currentStep.rightArray}
+                        label="Right Half"
+                        activeIndex={currentStep.activeIndices.right}
+                        color="purple"
+                        previousValues={currentStep.previousMergedArray || []}
+                      />
                     )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                  </div>
+
+                  {/* Merged Array (Bottom) */}
+                  {currentStep.mergedArray.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="mt-8"
+                    >
+                      <AnimatedArray
+                        values={currentStep.mergedArray}
+                        label={`Merged Array ${currentStep.type === "complete" ? "✓" : ""}`}
+                        color="emerald"
+                        previousValues={currentStep.previousMergedArray || []}
+                        isMerged={true}
+                      />
+                    </motion.div>
+                  )}
+
+                  {/* Explanation Card (Beginner Mode) */}
+                  {mode === "beginner" && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                      className={`mt-8 p-6 rounded-2xl ${
+                        isDarkMode 
+                          ? "bg-gray-700/50 border border-gray-600" 
+                          : "bg-white/50 border border-gray-200"
+                      } backdrop-blur-sm`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <span className="text-2xl">💭</span>
+                        <div>
+                          <p className={`font-medium mb-1 ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                            {currentStep.explanation}
+                          </p>
+                          <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                            {currentStep.insight}
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </motion.div>
+              )}
             </motion.div>
 
-            {/* Recursion Tree Visualization - IMPROVED SPACING */}
+            {/* Recursion Tree Visualization */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -955,7 +985,11 @@ def merge(left, right):
                         backgroundColor: currentStep?.codeLine === idx + 1 
                           ? isDarkMode ? "#374151" : "#E0E7FF"
                           : "transparent",
+                        borderLeft: currentStep?.codeLine === idx + 1
+                          ? "4px solid #6366F1"
+                          : "4px solid transparent",
                       }}
+                      transition={{ duration: 0.3 }}
                       className="px-2 py-0.5 rounded"
                     >
                       <code className={isDarkMode ? "text-gray-300" : "text-gray-700"}>
@@ -994,6 +1028,7 @@ def merge(left, right):
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${((currentStepIndex + 1) / steps.length) * 100}%` }}
+                      transition={{ duration: 0.5 }}
                       className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
                     />
                   </div>
@@ -1002,24 +1037,34 @@ def merge(left, right):
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className={isDarkMode ? "text-gray-400" : "text-gray-600"}>Current Operation</span>
-                    <span className={`px-2 py-0.5 rounded-full text-xs ${
-                      currentStep?.type === "split" 
-                        ? "bg-blue-100 text-blue-700"
-                        : currentStep?.type === "compare"
-                        ? "bg-yellow-100 text-yellow-700"
-                        : currentStep?.type === "merge"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-purple-100 text-purple-700"
-                    }`}>
+                    <motion.span
+                      key={currentStep?.type}
+                      initial={{ scale: 0.8 }}
+                      animate={{ scale: 1 }}
+                      className={`px-2 py-0.5 rounded-full text-xs ${
+                        currentStep?.type === "split" 
+                          ? "bg-blue-100 text-blue-700"
+                          : currentStep?.type === "compare"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : currentStep?.type === "merge"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-purple-100 text-purple-700"
+                      }`}
+                    >
                       {currentStep?.type || "Ready"}
-                    </span>
+                    </motion.span>
                   </div>
                   
                   <div className="flex justify-between text-sm">
                     <span className={isDarkMode ? "text-gray-400" : "text-gray-600"}>Current Depth</span>
-                    <span className={`font-mono ${isDarkMode ? "text-white" : "text-gray-800"}`}>
+                    <motion.span
+                      key={currentStep?.depth}
+                      initial={{ y: -10 }}
+                      animate={{ y: 0 }}
+                      className={`font-mono ${isDarkMode ? "text-white" : "text-gray-800"}`}
+                    >
                       {currentStep?.depth || 0}
-                    </span>
+                    </motion.span>
                   </div>
                 </div>
               </div>
@@ -1043,15 +1088,15 @@ def merge(left, right):
                 <ul className={`space-y-2 text-sm ${isDarkMode ? "text-indigo-200" : "text-indigo-700"}`}>
                   <li className="flex items-start gap-2">
                     <span>•</span>
-                    <span>Click on tree nodes to explore subarrays</span>
+                    <span>Elements smoothly transition between states</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span>•</span>
-                    <span>Watch the highlighted elements during comparison</span>
+                    <span>Watch highlighted elements during comparison</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span>•</span>
-                    <span>Code highlights sync with current operation</span>
+                    <span>New elements fade in during merge</span>
                   </li>
                 </ul>
               </motion.div>

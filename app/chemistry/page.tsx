@@ -45,6 +45,11 @@ const cards = [
     title: "Chemical Reactions",
     desc: "Visual chemical reactions simulation.",
   },
+  {
+    href: "/chemistry/water-quality",
+    title: "Water-quality-Analysis",
+    desc: "Visual water quality analyser.",
+  },
 ];
 
 export default function ChemistryPage() {

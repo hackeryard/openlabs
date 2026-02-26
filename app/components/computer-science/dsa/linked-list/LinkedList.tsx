@@ -1,268 +1,218 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { 
   Plus, 
   Trash2, 
   RotateCcw, 
-  ArrowRight, 
   Link as LinkIcon, 
-  RefreshCw,
-  Zap, 
-  ChevronDown
+  ChevronDown,
+  CircleDot,
+  CornerRightDown,
+  ArrowLeftRight
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useChat } from "@/app/components/ChatContext";
 
 type ListType = "singly" | "doubly" | "circular" | "circular-doubly";
 
 const UniversalLinkedList: React.FC = () => {
-    // Chatbot 
-    const { setExperimentData } = useChat();
-  
-    useEffect(() => {
-      setExperimentData({
-        title: "LinkedList",
-        theory: "LinkedList Data Structure Visualizer",
-        extraContext: ``,
-      });
-    }, []);
-  // 1. Pehle se koi node nahi aayega, khali list rahegi
   const [list, setList] = useState<string[]>([]);
   const [type, setType] = useState<ListType>("singly");
   const [inputValue, setInputValue] = useState<string>("");
-  
-  // 2. Default position hamesha list ki length (Tail) par rahegi
   const [posValue, setPosValue] = useState<number>(0); 
   const [logs, setLogs] = useState<{ text: string; type: string }[]>([]);
-  const maxSize = 8;
+  
+  const maxSize = 16;
+  const nodesPerRow = 4; // Controls the "Snake" wrapping
 
-  // Jab bhi list change ho, next default position ko tail (list.length) par set karo
   useEffect(() => {
     setPosValue(list.length);
   }, [list.length]);
 
   const addLog = (text: string, type: "success" | "error" | "info") => {
-    setLogs((prev) => [{ text, type }, ...prev].slice(0, 4));
+    setLogs((prev) => [{ text, type }, ...prev].slice(0, 3));
   };
 
   const handleInsert = () => {
-    if (!inputValue.trim()) {
-      addLog("Value enter karo Guru!", "error");
-      return;
-    }
-    if (list.length >= maxSize) {
-      addLog("Limit reach ho gayi (Max 8 Nodes)", "error");
-      return;
-    }
+    if (!inputValue.trim()) return addLog("Enter a value!", "error");
+    if (list.length >= maxSize) return addLog("List Full!", "error");
 
     const newList = [...list];
-    // Default insertion ab Tail par hai
     const insertIdx = Math.min(Math.max(0, posValue), list.length);
     newList.splice(insertIdx, 0, inputValue.trim());
     
     setList(newList);
-    addLog(`Inserted node with value ${inputValue} at position ${insertIdx}`, "success");
+    addLog(`Added ${inputValue} at index ${insertIdx}`, "success");
     setInputValue("");
   };
 
   const deleteNode = (index: number) => {
-    const val = list[index];
     const newList = list.filter((_, i) => i !== index);
     setList(newList);
-    addLog(`Deleted node with value ${val} from position ${index}`, "info");
+    addLog(`Removed node at index ${index}`, "info");
   };
 
-  const reset = () => {
-    setList([]);
-    addLog("List ekdum saaf kar di gayi hai", "info");
+  // --- ARROW COMPONENTS ---
+  const CurvedArrow = ({ isDoubly }: { isDoubly: boolean }) => (
+    <div className="flex flex-col items-center justify-center w-12 h-full">
+      <div className="h-[2px] w-full bg-slate-800 relative">
+        <div className="absolute right-0 -top-[5px] border-y-[6px] border-y-transparent border-l-[10px] border-l-slate-800" />
+        {isDoubly && (
+          <div className="absolute left-0 -top-[5px] border-y-[6px] border-y-transparent border-r-[10px] border-r-slate-400" />
+        )}
+      </div>
+    </div>
+  );
+
+  // --- CIRCULAR LAYOUT (Fixing Overlap with Arcs) ---
+  const CircularLayout = () => {
+    const radius = 140;
+    const centerX = 200;
+    const centerY = 200;
+
+    return (
+      <svg viewBox="0 0 400 400" className="w-full max-w-[500px] h-auto overflow-visible">
+        <defs>
+          <marker id="head" orient="auto" markerWidth="3" markerHeight="4" refX="0.1" refY="2">
+            <path d="M0,0 V4 L2,2 Z" fill="#4f46e5" />
+          </marker>
+          <marker id="back" orient="auto" markerWidth="3" markerHeight="4" refX="0.1" refY="2">
+            <path d="M0,0 V4 L2,2 Z" fill="#94a3b8" />
+          </marker>
+        </defs>
+        
+        {list.map((_, i) => {
+          const angle1 = (i * 2 * Math.PI) / list.length - Math.PI / 2;
+          const angle2 = ((i + 1) * 2 * Math.PI) / list.length - Math.PI / 2;
+          
+          const x1 = centerX + radius * Math.cos(angle1);
+          const y1 = centerY + radius * Math.sin(angle1);
+          const x2 = centerX + radius * Math.cos(angle2);
+          const y2 = centerY + radius * Math.sin(angle2);
+
+          // Calculate Arc Midpoint for separation
+          const midAngle = (angle1 + angle2) / 2;
+          const offset = 25;
+          const qx = centerX + (radius + offset) * Math.cos(midAngle);
+          const qy = centerY + (radius + offset) * Math.sin(midAngle);
+          const qx2 = centerX + (radius - offset) * Math.cos(midAngle);
+          const qy2 = centerY + (radius - offset) * Math.sin(midAngle);
+
+          return (
+            <g key={i}>
+              {/* Forward Path (Outer Arc) */}
+              <path 
+                d={`M ${x1} ${y1} Q ${qx} ${qy} ${x2} ${y2}`} 
+                fill="none" stroke="#4f46e5" strokeWidth="2" strokeDasharray="4 2"
+                markerEnd="url(#head)"
+              />
+              {/* Backward Path (Inner Arc) for Doubly */}
+              {(type === "circular-doubly") && (
+                <path 
+                  d={`M ${x2} ${y2} Q ${qx2} ${qy2} ${x1} ${y1}`} 
+                  fill="none" stroke="#cbd5e1" strokeWidth="2"
+                  markerEnd="url(#back)"
+                />
+              )}
+            </g>
+          );
+        })}
+
+        {list.map((item, i) => {
+          const angle = (i * 2 * Math.PI) / list.length - Math.PI / 2;
+          const x = centerX + radius * Math.cos(angle);
+          const y = centerY + radius * Math.sin(angle);
+          return (
+            <foreignObject key={i} x={x - 30} y={y - 25} width="60" height="50">
+              <div className="bg-white border-2 border-slate-800 rounded-lg flex items-center justify-center h-full font-black text-sm shadow-sm relative group">
+                {item}
+                <button onClick={() => deleteNode(i)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100"><Trash2 size={10}/></button>
+              </div>
+            </foreignObject>
+          );
+        })}
+      </svg>
+    );
+  };
+
+  // --- SNAKE/GRID LAYOUT ---
+  const SnakeLayout = () => {
+    return (
+      <div className="grid grid-cols-4 gap-y-16 gap-x-4 p-4 w-full max-w-4xl">
+        {list.map((item, index) => {
+          const isEndOfRow = (index + 1) % nodesPerRow === 0 && index !== list.length - 1;
+          const isLastNode = index === list.length - 1;
+
+          return (
+            <div key={index} className="flex items-center relative">
+              <motion.div layout className="relative group flex border-2 border-slate-800 rounded-xl overflow-hidden bg-white shadow-[4px_4px_0px_rgba(0,0,0,1)]">
+                {(type === "doubly") && <div className="w-4 bg-slate-50 border-r border-slate-800 flex items-center justify-center"><CircleDot size={8} className="text-slate-300"/></div>}
+                <div className="px-6 py-4 font-black min-w-[60px] text-center">{item}</div>
+                <div className="w-6 bg-slate-800 flex items-center justify-center"><CircleDot size={8} className="text-indigo-400"/></div>
+                <button onClick={() => deleteNode(index)} className="absolute -top-2 -right-2 bg-rose-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 z-50"><Trash2 size={12}/></button>
+              </motion.div>
+
+              {!isLastNode && !isEndOfRow && <CurvedArrow isDoubly={type === "doubly"} />}
+
+              {isEndOfRow && (
+                <div className="absolute -bottom-12 right-1/2 translate-x-1/2 flex flex-col items-center">
+                  <CornerRightDown className="text-slate-400" size={30} />
+                  <div className="text-[8px] font-black text-slate-300 uppercase">Next Line</div>
+                </div>
+              )}
+
+              {isLastNode && (
+                <div className="ml-4 text-[10px] font-black text-slate-300 uppercase italic">
+                  {type.includes("circular") ? "LOOPING..." : "NULL"}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans text-slate-900">
-      <div className="max-w-7xl mx-auto space-y-6">
-        
-        {/* Top Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-center bg-white p-5 rounded-[2rem] border border-slate-200 shadow-sm gap-4">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-indigo-600 rounded-2xl text-white shadow-lg shadow-indigo-100">
-              <LinkIcon size={24} />
-            </div>
-            <div>
-              <h1 className="text-xl font-black uppercase tracking-tight">LinkedList.<span className="text-indigo-600">Pro</span></h1>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest italic">Start Adding Nodes...</p>
-            </div>
+    <div className="min-h-screen bg-slate-50 p-6 font-sans">
+      <div className="max-w-6xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-center bg-white p-6 rounded-3xl border-2 border-slate-800 shadow-[8px_8px_0px_rgba(79,70,229,1)]">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-indigo-600 rounded-xl text-white"><LinkIcon /></div>
+            <h1 className="text-2xl font-black uppercase italic">Linked<span className="text-indigo-600 underline">List.</span></h1>
           </div>
-
-          <div className="relative group">
-            <select 
-              value={type}
-              onChange={(e) => setType(e.target.value as ListType)}
-              className="appearance-none bg-slate-50 border-2 border-slate-200 py-3 px-6 pr-12 rounded-2xl font-bold text-slate-700 outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50/50 transition-all cursor-pointer"
-            >
-              <option value="singly">Singly Linked List</option>
-              <option value="doubly">Doubly Linked List</option>
-              <option value="circular">Circular Linked List</option>
+          <div className="flex items-center gap-4 mt-4 md:mt-0">
+            <select value={type} onChange={(e) => setType(e.target.value as ListType)} className="bg-slate-50 border-2 border-slate-800 p-2 rounded-xl font-bold outline-none">
+              <option value="singly">Singly</option>
+              <option value="doubly">Doubly</option>
+              <option value="circular">Circular</option>
               <option value="circular-doubly">Circular Doubly</option>
             </select>
-            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" size={18} />
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Controls Panel */}
-          <div className="lg:col-span-4 space-y-6">
-            <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-200 space-y-5">
-              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
-                <Zap size={14} className="text-amber-500 fill-amber-500" /> Action Center
-              </label>
-
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <span className="text-[10px] font-bold text-slate-500 ml-1 uppercase">New Node Data</span>
-                  <input
-                    type="text" value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && handleInsert()}
-                    placeholder="Enter value (e.g. 55)"
-                    className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-bold"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <span className="text-[10px] font-bold text-slate-500 ml-1 uppercase">Insert At Position</span>
-                  <div className="relative">
-                    <input
-                      type="number" value={posValue}
-                      min="0" max={list.length}
-                      onChange={(e) => setPosValue(parseInt(e.target.value) || 0)}
-                      className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-mono font-bold text-indigo-600"
-                    />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-300 pointer-events-none">
-                      (TAIL = {list.length})
-                    </span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 pt-2">
-                  <button onClick={handleInsert} className="bg-indigo-600 text-white p-4 rounded-2xl font-black hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 flex items-center justify-center gap-2 active:scale-95">
-                    <Plus size={20} strokeWidth={3} /> ADD NODE
-                  </button>
-                  <button onClick={reset} className="bg-slate-100 text-slate-500 p-4 rounded-2xl font-black hover:bg-slate-200 transition-all flex items-center justify-center gap-2 active:scale-95">
-                    <RotateCcw size={18} strokeWidth={3} /> RESET
-                  </button>
-                </div>
-              </div>
-
-              {/* Console Logs */}
-              <div className="mt-4 pt-4 border-t border-slate-50 space-y-2">
-                {logs.length === 0 && <p className="text-[10px] text-center text-slate-300 font-bold uppercase py-2">Waiting for input...</p>}
-                {logs.map((log, i) => (
-                  <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} key={i} className={`text-[10px] p-3 rounded-xl border flex items-center gap-2 font-bold ${
-                    log.type === 'error' ? 'bg-rose-50 text-rose-500 border-rose-100' : 
-                    log.type === 'success' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
-                    'bg-indigo-50 text-indigo-600 border-indigo-100'
-                  }`}>
-                    <div className={`w-1.5 h-1.5 rounded-full ${log.type === 'error' ? 'bg-rose-400' : 'bg-indigo-400'}`} />
-                    {log.text.toUpperCase()}
-                  </motion.div>
-                ))}
-              </div>
+          {/* Controls */}
+          <div className="lg:col-span-4 bg-white p-6 rounded-3xl border-2 border-slate-800 space-y-4">
+            <input type="text" value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Data..." className="w-full p-4 bg-slate-100 border-2 border-transparent focus:border-indigo-600 rounded-2xl outline-none font-bold" />
+            <div className="flex gap-2">
+                <input type="number" value={posValue} onChange={(e) => setPosValue(parseInt(e.target.value))} className="w-20 p-4 bg-slate-100 rounded-2xl font-bold" />
+                <button onClick={handleInsert} className="flex-1 bg-indigo-600 text-white font-black rounded-2xl hover:scale-[1.02] active:scale-95 transition-transform uppercase">Add Node</button>
+            </div>
+            <button onClick={() => setList([])} className="w-full p-3 border-2 border-slate-200 text-slate-400 font-bold rounded-2xl flex items-center justify-center gap-2"><RotateCcw size={16}/> RESET</button>
+            
+            <div className="space-y-2">
+              {logs.map((log, i) => (
+                <div key={i} className={`text-[10px] p-2 rounded-lg font-bold uppercase ${log.type === 'error' ? 'bg-red-50 text-red-500' : 'bg-green-50 text-green-600'}`}>• {log.text}</div>
+              ))}
             </div>
           </div>
 
-          {/* Visualization Canvas */}
-          <div className="lg:col-span-8 bg-white rounded-[3rem] border border-slate-200 shadow-sm p-10 min-h-[550px] flex flex-wrap content-center justify-center gap-y-24 relative overflow-hidden">
-            
-            {/* Background Pattern */}
-            <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#4f46e5 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
-
-            {(type === "circular" || type === "circular-doubly") && list.length > 1 && (
-               <div className="absolute inset-x-20 bottom-12 h-36 border-x-4 border-b-4 border-dashed border-indigo-100 rounded-b-[120px] flex justify-center items-end pb-4 transition-all">
-                  <span className="text-[10px] font-black text-indigo-200 uppercase tracking-[0.3em]">Circular Loop Connect</span>
-                  <ArrowRight className="absolute left-0 -top-3 -rotate-90 text-indigo-100" size={28}/>
-               </div>
-            )}
-
-            <AnimatePresence mode="popLayout">
-              {list.map((item, index) => (
-                <div key={`${item}-${index}`} className="flex items-center">
-                  <motion.div
-                    layout
-                    initial={{ scale: 0, opacity: 0, y: 30 }}
-                    animate={{ scale: 1, opacity: 1, y: 0 }}
-                    exit={{ scale: 0, opacity: 0, y: -30 }}
-                    className="relative group"
-                  >
-                    {/* Node Visual */}
-                    <div className="flex border-[3px] border-slate-800 rounded-3xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(79,70,229,1)] bg-white transition-all hover:shadow-[4px_4px_0px_0px_rgba(79,70,229,1)] hover:translate-x-1 hover:translate-y-1">
-                      
-                      {/* Prev Pointer Slot (For Doubly) */}
-                      {(type === "doubly" || type === "circular-doubly") && (
-                        <div className="w-8 bg-slate-50 border-r-2 border-slate-800 flex items-center justify-center">
-                          <div className="w-2 h-2 rounded-full bg-slate-300" />
-                        </div>
-                      )}
-
-                      <div className="px-8 py-5 flex items-center justify-center font-black text-2xl bg-white min-w-[80px]">
-                        {item}
-                      </div>
-
-                      {/* Next Pointer Slot */}
-                      <div className="w-10 bg-slate-800 flex items-center justify-center">
-                        <div className="w-2.5 h-2.5 rounded-full bg-indigo-400 animate-pulse shadow-[0_0_10px_rgba(129,140,248,0.8)]" />
-                      </div>
-                    </div>
-
-                    {/* Delete Node Trigger */}
-                    <button 
-                      onClick={() => deleteNode(index)}
-                      className="absolute -top-5 -right-3 bg-rose-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-xl hover:scale-125 hover:bg-rose-600 z-30"
-                    >
-                      <Trash2 size={16} strokeWidth={3} />
-                    </button>
-
-                    <div className="absolute -bottom-10 left-0 right-0 text-center text-[11px] font-black text-slate-300 uppercase tracking-widest">
-                      {index === 0 ? "HEAD" : index === list.length-1 ? "TAIL" : `IDX ${index}`}
-                    </div>
-                  </motion.div>
-
-                  {/* Arrows */}
-                  {index < list.length - 1 ? (
-                    <div className="flex flex-col items-center mx-3">
-                       <ArrowRight size={32} className="text-slate-800" strokeWidth={3} />
-                       {(type === "doubly" || type === "circular-doubly") && (
-                         <motion.div initial={{ width: 0 }} animate={{ width: 40 }} className="h-1 bg-indigo-300 mt-1.5 relative rounded-full">
-                            <div className="absolute -left-1 -top-1 border-t-[6px] border-b-[6px] border-r-[8px] border-transparent border-r-indigo-300" />
-                         </motion.div>
-                       )}
-                    </div>
-                  ) : (
-                    <div className="ml-8">
-                      {type.includes("circular") ? (
-                        <div className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-full font-black text-[10px] shadow-lg shadow-indigo-100">
-                           <RefreshCw size={14} className="animate-spin" style={{ animationDuration: '4s' }} /> LOOPING
-                        </div>
-                      ) : (
-                        <span className="font-black text-slate-200 text-xl tracking-tighter">NULL</span>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </AnimatePresence>
-
-            {list.length === 0 && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center group cursor-default">
-                <div className="relative">
-                  <LinkIcon size={140} className="text-slate-100 group-hover:text-indigo-50 transition-colors" strokeWidth={0.5} />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                     <Plus size={40} className="text-slate-200 animate-pulse" />
-                  </div>
-                </div>
-                <p className="text-sm font-black text-slate-300 mt-6 tracking-[0.4em] uppercase">No Nodes Detected</p>
-                <p className="text-[10px] text-slate-400 mt-2 font-bold">ADD YOUR FIRST DATA FROM THE LEFT PANEL</p>
-              </motion.div>
-            )}
+          {/* Canvas */}
+          <div className="lg:col-span-8 bg-white rounded-3xl border-2 border-slate-800 min-h-[500px] flex items-center justify-center overflow-hidden relative">
+            <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(#000 1.5px, transparent 1.5px)', backgroundSize: '24px 24px' }} />
+            {list.length === 0 ? <p className="font-black text-slate-200 text-3xl uppercase tracking-widest">Empty List</p> : 
+             type.includes("circular") ? <CircularLayout /> : <SnakeLayout />}
           </div>
         </div>
       </div>
