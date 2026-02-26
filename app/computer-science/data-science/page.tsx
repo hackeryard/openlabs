@@ -46,6 +46,17 @@ export default function AnomalyDetectionLab() {
     setData(generateData());
   }, []);
 
+  // Auto-hide popup after 3 seconds when a point is selected
+  useEffect(() => {
+    if (selectedPoint) {
+      const timer = setTimeout(() => {
+        setSelectedPoint(null);
+      }, 3000); // 3 seconds
+
+      return () => clearTimeout(timer);
+    }
+  }, [selectedPoint]);
+
   // ==================== ANOMALY DETECTION LOGIC ====================
   const processedData = useMemo(() => {
     const centerX = 350;
@@ -115,6 +126,7 @@ export default function AnomalyDetectionLab() {
     setData(prevData => 
       prevData.map(point => ({ ...point, detected: false }))
     );
+    setSelectedPoint(null); // Hide popup immediately when reset is clicked
   };
 
   return (
@@ -271,33 +283,36 @@ export default function AnomalyDetectionLab() {
           </svg>
 
           {/* Point Info Overlay */}
-          {selectedPoint && (
-            <motion.div 
-              initial={{ x: 20, opacity: 0 }} 
-              animate={{ x: 0, opacity: 1 }}
-              className="absolute top-6 right-6 w-64 bg-slate-950/90 border border-slate-700 p-6 rounded-xl backdrop-blur-md shadow-2xl"
-            >
-              <h3 className={`text-lg font-bold ${selectedPoint.isAnomaly ? 'text-red-400' : 'text-cyan-400'}`}>
-                {selectedPoint.isAnomaly ? '⚠️ ANOMALY' : '✓ VERIFIED'}
-                {selectedPoint.detected && selectedPoint.isAnomaly && ' 🔴 DETECTED'}
-              </h3>
-              <div className="mt-4 space-y-2 text-xs font-mono">
-                <p><span className="text-slate-500">Source:</span> {selectedPoint.label}</p>
-                <p><span className="text-slate-500">Z-Score:</span> {selectedPoint.anomalyScore}</p>
-                <p><span className="text-slate-500">Vector:</span> [{Math.round(selectedPoint.x)}, {Math.round(selectedPoint.y)}]</p>
-                <p><span className="text-slate-500">Status:</span> {selectedPoint.detected ? 'Detected' : (selectedPoint.isAnomaly ? 'Undetected' : 'Normal')}</p>
-              </div>
-              <div className="mt-4 pt-4 border-t border-slate-800">
-                <p className="text-[10px] text-slate-400 italic">
-                  {selectedPoint.isAnomaly 
-                    ? selectedPoint.detected
-                      ? "Detected by monitoring system: This anomalous point has been flagged for investigation."
-                      : "Undetected anomaly: This point is outside normal parameters but hasn't been caught by monitoring yet."
-                    : "Data point matches historical distribution patterns."}
-                </p>
-              </div>
-            </motion.div>
-          )}
+          <AnimatePresence>
+            {selectedPoint && (
+              <motion.div 
+                initial={{ x: 20, opacity: 0 }} 
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: 20, opacity: 0 }}
+                className="absolute top-6 right-6 w-64 bg-slate-950/90 border border-slate-700 p-6 rounded-xl backdrop-blur-md shadow-2xl"
+              >
+                <h3 className={`text-lg font-bold ${selectedPoint.isAnomaly ? 'text-red-400' : 'text-cyan-400'}`}>
+                  {selectedPoint.isAnomaly ? '⚠️ ANOMALY' : '✓ VERIFIED'}
+                  {selectedPoint.detected && selectedPoint.isAnomaly && ' 🔴 DETECTED'}
+                </h3>
+                <div className="mt-4 space-y-2 text-xs font-mono">
+                  <p><span className="text-slate-500">Source:</span> {selectedPoint.label}</p>
+                  <p><span className="text-slate-500">Z-Score:</span> {selectedPoint.anomalyScore}</p>
+                  <p><span className="text-slate-500">Vector:</span> [{Math.round(selectedPoint.x)}, {Math.round(selectedPoint.y)}]</p>
+                  <p><span className="text-slate-500">Status:</span> {selectedPoint.detected ? 'Detected' : (selectedPoint.isAnomaly ? 'Undetected' : 'Normal')}</p>
+                </div>
+                <div className="mt-4 pt-4 border-t border-slate-800">
+                  <p className="text-[10px] text-slate-400 italic">
+                    {selectedPoint.isAnomaly 
+                      ? selectedPoint.detected
+                        ? "Detected by monitoring system: This anomalous point has been flagged for investigation."
+                        : "Undetected anomaly: This point is outside normal parameters but hasn't been caught by monitoring yet."
+                      : "Data point matches historical distribution patterns."}
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>
