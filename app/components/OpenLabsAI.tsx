@@ -156,41 +156,12 @@ export default function OpenLabsAI() {
       requestAnimationFrame(() => buildPageSnapshot());
     }, 120);
     return () => window.clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   const sendMessage = async () => {
     await sendMessageWithText(input);
     setInput("");
   };
-
-  //   const res = await fetch("/api/agent", {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify({
-  //       question: `
-  //       You are OpenLabs AI Assistant.
-
-  // IMPORTANT:
-  // - Always respond in the SAME language as the user's question.
-  // - If user writes in Hindi, respond in Hindi.
-  // - If Hinglish → respond in Hinglish.
-  // - If English → respond in English.
-  // - Match tone and clarity.
-
-  // Experiment: ${experimentData.title || "General Question"}
-
-  // Theory:
-  // ${experimentData.theory || "No theory provided"}
-
-  // Extra Context:
-  // ${experimentData.extraContext || "None"}
-
-  // User Question:
-  // ${currentInput}
-  //       `,
-  //     }),
-  //   });
 
   const sendMessageWithText = async (text: string) => {
     if (!text.trim()) return;
@@ -206,11 +177,11 @@ export default function OpenLabsAI() {
       const hasFreshExperimentContext =
         experimentData?.path && experimentData.path === pathname;
 
-      const res = await fetch("/api/agent", {
+      const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          question: `
+          message: `
       You are OpenLabs AI Assistant.
 
       IMPORTANT:
@@ -240,10 +211,7 @@ export default function OpenLabsAI() {
 
       const data = await res.json();
 
-      const reply =
-        data?.text ||
-        data?.output?.content ||
-        "⚠️ AI returned empty response";
+      const reply = data.reply || "⚠️ AI returned empty response";
 
       setMessages((prev) => [
         ...prev,
@@ -282,24 +250,6 @@ export default function OpenLabsAI() {
             aria-label="Open AI Assistant"
           >
             <Bot />
-
-
-            {/* <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 8V4H8" />
-              <rect x="4" y="4" width="16" height="16" rx="2" />
-              <path d="M8 12h8" />
-              <path d="M12 8v8" />
-            </svg> */}
           </motion.button>
         )}
       </AnimatePresence>
