@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import OpenLabsAI from './components/OpenLabsAI'
 import { ChatProvider } from './components/ChatContext'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import { Analytics } from "@vercel/analytics/next"
 
 const Navbar = dynamic(() => import('./components/Navbar'), { ssr: false })
 const Footer = dynamic(() => import('./components/Footer'), { ssr: false })
@@ -18,6 +19,7 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
   return (
     <html lang="en">
       <body>
+        <Analytics />
         <Navbar />
         <div className="mx-auto">
           <main data-ol-page-root>
