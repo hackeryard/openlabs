@@ -2,17 +2,25 @@ import bcrypt from "bcryptjs"
 import User from "@/app/models/User"
 import { connectDB } from "@/app/lib/mongodb"
 import { generateToken } from "@/app/lib/auth"
+import { mockFindUser } from "@/app/lib/devMock"
 import { serialize } from "cookie"
+
+const isDev = process.env.NODE_ENV === 'development'
 
 export async function POST(req) {
   await connectDB()
 
-  const { email, password } = await req.json()
+const { email, password } = await req.json()
 
-  const user = await User.findOne({ email })
+let user
+  if (isDev) {
+    user = await mockFindUser(email)
+  } else {
+    user = await User.findOne({ email })
+  }
   if (!user) return Response.json({ error: "Invalid credentials" }, { status: 401 })
 
-  const valid = await bcrypt.compare(password, user.password)
+const valid = isDev ? (password === user.password) : await bcrypt.compare(password, user.password)
   if (!valid) return Response.json({ error: "Invalid credentials" }, { status: 401 })
 
   const token = generateToken(user)

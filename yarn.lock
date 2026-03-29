@@ -184,10 +184,10 @@
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.10.tgz#a2a1e3812d14525f725d011a73eceb41fef5bc1c"
   integrity sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==
 
-"@hackeryard/mandatory-guard@^1.0.3":
-  version "1.0.3"
-  resolved "https://npm.pkg.github.com/download/@hackeryard/mandatory-guard/1.0.3/d0d410c0a816ed514a751873fdaf054c8c2a8458#d0d410c0a816ed514a751873fdaf054c8c2a8458"
-  integrity sha512-0zyRKO9rKT76l9uFWHY+b2YQ9y5YcPApyhaXU/GGHE3JOPaQPQapABGUr6h9719Eiu9Aa83TjWr8BWy8DHoLaw==
+"@hackeryard/mandatory-guard@^1.0.4":
+  version "1.0.4"
+  resolved "https://npm.pkg.github.com/download/@hackeryard/mandatory-guard/1.0.4/3bbad91bf85dd668bad64f644d4293cc9b9367b4#3bbad91bf85dd668bad64f644d4293cc9b9367b4"
+  integrity sha512-ZiHVyD7HVXfMT7f9kF/N6YAtY6+bntcXk30CS2c0tjRYPPuTabVaPqgODA7uNf5LCcyjxpC/ANKkipssqRseIw==
 
 "@headlessui/react@^2.2.9":
   version "2.2.9"
