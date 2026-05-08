@@ -1,3 +1,4 @@
+// @ts-ignore
 import './globals.css'
 import React from 'react'
 import type { Metadata } from 'next'
@@ -13,10 +14,10 @@ const Footer = dynamic(() => import('./components/Footer'), { ssr: false })
 
 export const metadata: Metadata = {
   title: {
-    default: 'OpenLabs - Interactive Science & Technology Learning Platform',
+    default: 'OpenLabs - Virtual Lab Experience Platform for Science & Technology',
     template: '%s | OpenLabs'
   },
-  description: 'Explore interactive physics, chemistry, biology, computer science, and mathematics experiments. Learn through hands-on simulations and virtual labs.',
+  description: 'OpenLabs is an interactive virtual lab experience platform where students can explore physics, chemistry, biology, and computer science experiments online.',
   keywords: [
     'interactive labs', 'physics experiments', 'chemistry simulations', 'biology education',
     'computer science learning', 'mathematics tools', 'virtual labs', 'science education',
@@ -38,8 +39,8 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: '/',
-    title: 'OpenLabs - Interactive Science & Technology Learning Platform',
-    description: 'Explore interactive physics, chemistry, biology, computer science, and mathematics experiments. Learn through hands-on simulations and virtual labs.',
+    title: 'OpenLabs - Virtual Lab Experience Platform for Science & Technology',
+    description: 'OpenLabs is an interactive virtual lab experience platform where students can explore physics, chemistry, biology, and computer science experiments online.',
     siteName: 'OpenLabs',
     images: [
       {
@@ -53,7 +54,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     images: ['/images/twitter-image.svg'],
-    title: 'OpenLabs - Interactive Science & Technology Learning Platform',
+    title: 'OpenLabs - Virtual Lab Experience Platform for Science & Technology',
     description: 'Explore interactive physics, chemistry, biology, computer science, and mathematics experiments.',
     creator: '@openlabs', // Replace with actual Twitter handle
   },
