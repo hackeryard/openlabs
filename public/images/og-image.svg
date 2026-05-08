@@ -1,0 +1,6 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#1f2937"/>
+  <text x="600" y="300" font-family="Arial, sans-serif" font-size="48" fill="white" text-anchor="middle">OpenLabs</text>
+  <text x="600" y="360" font-family="Arial, sans-serif" font-size="24" fill="#9ca3af" text-anchor="middle">Interactive Science & Technology Learning Platform</text>
+  <text x="600" y="400" font-family="Arial, sans-serif" font-size="18" fill="#6b7280" text-anchor="middle">Explore virtual labs in physics, chemistry, biology, computer science, and mathematics</text>
+</svg>
