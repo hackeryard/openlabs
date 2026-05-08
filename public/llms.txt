@@ -4,7 +4,7 @@
 # Site Information
 Title: OpenLabs - Interactive Science & Technology Learning Platform
 Description: Explore interactive physics, chemistry, biology, computer science, and mathematics experiments through virtual labs and simulations.
-URL: https://openlabs.org.in
+URL: https://www.openlabs.org.in
 
 # Content Guidelines
 - This site contains educational content focused on science and technology

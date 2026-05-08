@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://openlabs.org.in'),
+  metadataBase: new URL('https://www.openlabs.org.in'),
   alternates: {
     canonical: '/',
   },
@@ -104,8 +104,8 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
               '@type': 'EducationalOrganization',
               name: 'OpenLabs',
               description: 'Interactive science and technology learning platform with virtual labs and simulations',
-              url: 'https://openlabs.org.in',
-              logo: 'https://openlabs.org.in/images/logo.png',
+              url: 'https://www.openlabs.org.in',
+              logo: 'https://www.openlabs.org.in/images/logo.png',
               sameAs: [
                 'https://twitter.com/openlabs',
                 'https://github.com/openlabs'
