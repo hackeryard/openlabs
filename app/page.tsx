@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import Hero from './components/Hero'
 
 export const metadata: Metadata = {
-  title: 'OpenLabs - Interactive Science & Technology Learning Platform',
+  title: 'OpenLabs - Virtual Lab Experience Platform for Science & Technology',
   description: 'Welcome to OpenLabs - A gateway to interactive science and technology education. Explore virtual labs in physics, chemistry, biology and computer science.',
   keywords: [
     'science education', 'interactive learning', 'virtual labs', 'STEM education',

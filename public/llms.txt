@@ -2,7 +2,7 @@
 # This file provides information for Large Language Models and AI crawlers
 
 # Site Information
-Title: OpenLabs - Interactive Science & Technology Learning Platform
+Title: OpenLabs - Virtual Lab Experience Platform for Science & Technology
 Description: Explore interactive physics, chemistry, biology, computer science, and mathematics experiments through virtual labs and simulations.
 URL: https://www.openlabs.org.in
 
