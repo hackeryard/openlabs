@@ -51,11 +51,11 @@ export default function PeriodicTableLayout({
                         '@type': 'WebPage',
                         name: 'Interactive Periodic Table',
                         description: 'Interactive periodic table with detailed chemical element information',
-                        url: 'https://openlabs.org.in/chemistry/periodictable',
+                        url: 'https://www.openlabs.org.in/chemistry/periodictable',
                         isPartOf: {
                             '@type': 'WebSite',
                             name: 'OpenLabs',
-                            url: 'https://openlabs.org.in'
+                            url: 'https://www.openlabs.org.in'
                         },
                         about: {
                             '@type': 'DefinedTermSet',

@@ -17,6 +17,6 @@ export default function robots(): MetadataRoute.Robots {
         '/verify-email'
       ],
     },
-    sitemap: 'https://openlabs.org.in/sitemap.xml',
+    sitemap: 'https://www.openlabs.org.in/sitemap.xml',
   }
 }

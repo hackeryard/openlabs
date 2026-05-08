@@ -918,7 +918,7 @@ export const metadata: Metadata = {
   },
   
   alternates: {
-    canonical: 'https://openlabs.org.in/physics',
+    canonical: 'https://www.openlabs.org.in/physics',
   },
   
   robots: {
@@ -938,8 +938,8 @@ The root `app/layout.tsx` includes comprehensive structured data:
   "@type": "EducationalOrganization",
   "name": "OpenLabs",
   "description": "Interactive virtual science labs for Chemistry, Physics, Biology, and Computer Science",
-  "url": "https://openlabs.org.in",
-  "logo": "https://openlabs.org.in/logo.png",
+  "url": "https://www.openlabs.org.in",
+  "logo": "https://www.openlabs.org.in/logo.png",
   "courses": [
     {
       "@type": "Course",
@@ -975,7 +975,7 @@ Ensure your domain is correctly set in all configuration files:
 
 ```typescript
 // app/layout.tsx
-const baseUrl = 'https://openlabs.org.in'
+const baseUrl = 'https://www.openlabs.org.in'
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   // ...
@@ -1049,7 +1049,7 @@ public/images/twitter-image.svg  → public/images/twitter-image.jpg (1200×600p
 
 **Google Rich Results Test:**
 1. Visit [Google Rich Results Test](https://search.google.com/test/rich-results)
-2. Enter your domain: `https://openlabs.org.in`
+2. Enter your domain: `https://www.openlabs.org.in`
 3. Verify no errors in EducationalOrganization schema
 
 **Facebook Share Debugger:**
