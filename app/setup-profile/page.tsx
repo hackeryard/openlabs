@@ -1,0 +1,185 @@
+"use client"
+
+import React, { useEffect, useState, useRef } from "react"
+import { useRouter } from "next/navigation"
+
+const AVATARS = [
+  "/images/avatars/avatar1.png",
+  "/images/avatars/avatar2.png",
+  "/images/avatars/avatar3.png",
+  "/images/avatars/avatar4.png",
+]
+
+export default function SetupProfilePage() {
+  const router = useRouter()
+  const [username, setUsername] = useState("")
+  const [available, setAvailable] = useState<boolean | null>(null)
+  const [checking, setChecking] = useState(false)
+  const [avatar, setAvatar] = useState(AVATARS[0])
+  const [bio, setBio] = useState("")
+  const [keepExistingAvatar, setKeepExistingAvatar] = useState(false)
+  const [error, setError] = useState("")
+  const [submitting, setSubmitting] = useState(false)
+  const debounceRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    setError("")
+    setAvailable(null)
+    if (debounceRef.current) window.clearTimeout(debounceRef.current)
+
+    if (!username || username.length < 3) return
+
+    setChecking(true)
+    // debounce
+    debounceRef.current = window.setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/profile/check-username?username=${encodeURIComponent(username)}`)
+        const data = await res.json()
+        setAvailable(Boolean(data.available))
+      } catch (e) {
+        setAvailable(false)
+      } finally {
+        setChecking(false)
+      }
+    }, 450)
+
+    return () => {
+      if (debounceRef.current) window.clearTimeout(debounceRef.current)
+    }
+  }, [username])
+
+  // Fetch current user to prefill avatar if available (e.g. Google avatar)
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      try {
+        const res = await fetch('/api/auth/me')
+        if (!res.ok) return
+        const data = await res.json()
+        const u = data?.user
+        if (mounted && u?.avatar) {
+          setAvatar(u.avatar)
+          setKeepExistingAvatar(true)
+        }
+      } catch (e) {
+        // ignore
+      }
+    })()
+    return () => { mounted = false }
+  }, [])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError("")
+
+    const u = (username || "").toLowerCase().trim()
+    if (!/^[a-z0-9_-]{3,30}$/.test(u)) {
+      setError("Username must be 3-30 characters: lowercase letters, numbers, - or _")
+      return
+    }
+
+    setSubmitting(true)
+    try {
+      const res = await fetch("/api/profile/setup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: u, avatar, bio, replaceAvatar: !keepExistingAvatar }),
+      })
+
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error || "Failed to save profile")
+        setSubmitting(false)
+        return
+      }
+
+      // Redirect to profile page
+      router.push(`/profile`)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred")
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-900 text-slate-100 flex items-center justify-center p-6">
+      <div className="w-full max-w-3xl bg-slate-800 rounded-2xl shadow-xl p-8">
+        <h1 className="text-2xl font-bold mb-2">Set up your profile</h1>
+        <p className="text-sm text-slate-400 mb-6">Add a username, choose an avatar, and write a short bio.</p>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="text-sm font-medium text-slate-200">Username</label>
+            <input
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="your-username"
+              className="mt-2 w-full rounded-lg bg-slate-700 border border-slate-600 px-3 py-2 text-slate-100"
+            />
+            <div className="mt-2 text-xs text-slate-400 flex items-center gap-2">
+              {checking ? <span>Checking...</span> : available === null ? <span>Enter a username</span> : available ? <span className="text-emerald-400">Available</span> : <span className="text-rose-400">Taken</span>}
+            </div>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-slate-200">Avatar</label>
+            <div className="mt-3 flex gap-3">
+              {AVATARS.map((a) => (
+                <button
+                  type="button"
+                  key={a}
+                  onClick={() => { setAvatar(a); setKeepExistingAvatar(false); }}
+                  className={`w-20 h-20 rounded-lg overflow-hidden border-2 ${avatar === a ? 'border-indigo-400' : 'border-transparent'} focus:outline-none`}
+                >
+                  <img src={a} alt="avatar" className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+            {keepExistingAvatar && (
+              <div className="mt-2 text-xs text-slate-400 flex items-center gap-2">
+                <label className="inline-flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={keepExistingAvatar}
+                    onChange={() => setKeepExistingAvatar((s) => !s)}
+                  />
+                  <span>Keep my existing avatar</span>
+                </label>
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-slate-200">Bio <span className="text-xs text-slate-400">(max 160)</span></label>
+            <textarea
+              value={bio}
+              onChange={(e) => setBio(e.target.value.slice(0, 160))}
+              rows={4}
+              className="mt-2 w-full rounded-lg bg-slate-700 border border-slate-600 px-3 py-2 text-slate-100"
+            />
+            <div className="mt-1 text-xs text-slate-400">{bio.length}/160</div>
+          </div>
+
+          {error && <div className="text-sm text-rose-400">{error}</div>}
+
+          <div className="flex items-center gap-3">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
+            >
+              {submitting ? "Saving..." : "Save and Continue"}
+            </button>
+            <button
+              type="button"
+              onClick={() => router.push('/')}
+              className="text-sm text-slate-300 hover:underline"
+            >
+              Skip for now
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
