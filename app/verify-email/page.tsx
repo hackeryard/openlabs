@@ -56,10 +56,26 @@ function VerifyEmailPageContent() {
       }
 
       setSuccess(true)
-      // Automatically log in and redirect to home
-      setTimeout(() => {
-        router.push("/")
-      }, 2000)
+      // After success, fetch current user to decide redirect
+      setTimeout(async () => {
+        try {
+          const res = await fetch("/api/auth/me");
+          if (res.ok) {
+            const data = await res.json();
+            const next = searchParams.get("next") || "/";
+            const profileSetupComplete = data?.user?.profileSetupComplete;
+            if (!profileSetupComplete) {
+              router.push("/setup-profile");
+            } else {
+              router.push(next);
+            }
+          } else {
+            router.push("/");
+          }
+        } catch (e) {
+          router.push("/");
+        }
+      }, 1200)
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
     } finally {

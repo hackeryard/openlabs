@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { User, Mail, Lock, Eye, EyeOff, UserPlus, ArrowRight, AlertCircle, CheckCircle2 } from "lucide-react";
+import { signIn } from "next-auth/react";
 
 /* ================= TYPES ================= */
 
@@ -21,9 +22,11 @@ type SignupPageProps = {
 
 /* ================= COMPONENT ================= */
 
-export default function SignupPage({ onSuccess }: SignupPageProps) {
+function SignupPageContent({ onSuccess }: SignupPageProps) {
   const router = useRouter();
-  
+  const searchParams = useSearchParams();
+  const nextPath = searchParams?.get("next") || "/";
+
   // State
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -31,7 +34,7 @@ export default function SignupPage({ onSuccess }: SignupPageProps) {
   const [confirm, setConfirm] = useState("");
   const [accept, setAccept] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  
+
   // Status
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -91,7 +94,7 @@ export default function SignupPage({ onSuccess }: SignupPageProps) {
       onSuccess?.();
 
       // Redirect to email verification page
-      router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+      router.push(`/verify-email?email=${encodeURIComponent(email)}&next=${encodeURIComponent(nextPath)}`);
 
       // Send OTP email
       await fetch("/api/auth/send-otp", {
@@ -111,7 +114,7 @@ export default function SignupPage({ onSuccess }: SignupPageProps) {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4 font-sans text-slate-900">
       {/* Card Container */}
       <div className="w-full max-w-[440px] bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden">
-        
+
         {/* Header Section */}
         <div className="p-8 pb-6 text-center">
           <div className="mb-4 flex justify-center">
@@ -127,6 +130,24 @@ export default function SignupPage({ onSuccess }: SignupPageProps) {
           </p>
         </div>
 
+        {/* Social Login (Google) */}
+        <div className="px-8 pb-2">
+          <button
+            type="button"
+            onClick={() => signIn("google", { callbackUrl: "/" })}
+            className="w-full inline-flex items-center justify-center gap-3 bg-white border border-slate-200 py-3 px-4 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all active:scale-[0.98]"
+            aria-label="Sign up with Google"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 533.5 544.3" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#4285F4" d="M533.5 278.4c0-18.5-1.6-37-4.9-54.6H272v103.3h147.2c-6.4 34.7-25.5 64.1-54.4 83.7v69.6h87.8c51.4-47.3 81.9-117.4 81.9-202z" />
+              <path fill="#34A853" d="M272 544.3c73.7 0 135.6-24.5 180.8-66.7l-87.8-69.6c-24.4 16.4-55.7 26.1-93 26.1-71.4 0-132-48.2-153.6-113.1H28.4v71.1C73.9 486.7 168.6 544.3 272 544.3z" />
+              <path fill="#FBBC05" d="M118.4 327.9c-10.8-32.5-10.8-67.8 0-100.3V156.5H28.4c-39.5 78.9-39.5 171.1 0 250l90-78.6z" />
+              <path fill="#EA4335" d="M272 107.7c39.9 0 75.7 13.7 103.9 40.7l77.9-77.9C407.5 24.1 345.6 0 272 0 168.6 0 73.9 57.6 28.4 156.5l90 71.1C140 155.9 200.6 107.7 272 107.7z" />
+            </svg>
+            <span>Sign up with Google</span>
+          </button>
+        </div>
+
         {/* Server Error Alert */}
         {serverError && (
           <div className="mx-8 mb-4 flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-600 border border-red-100">
@@ -137,7 +158,7 @@ export default function SignupPage({ onSuccess }: SignupPageProps) {
 
         {/* Form Section */}
         <form onSubmit={handleSubmit} className="px-8 pb-8 space-y-5" noValidate>
-          
+
           {/* Name Input */}
           <div className="space-y-1.5">
             <label className="block text-sm font-semibold text-slate-700">
@@ -200,7 +221,7 @@ export default function SignupPage({ onSuccess }: SignupPageProps) {
 
           {/* Password Fields Wrapper */}
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            
+
             {/* Password */}
             <div className="space-y-1.5">
               <label className="block text-sm font-semibold text-slate-700">
@@ -255,7 +276,7 @@ export default function SignupPage({ onSuccess }: SignupPageProps) {
                   `}
                   placeholder="••••••"
                 />
-                
+
                 {/* Single Toggle for both fields, positioned in the second input */}
                 <button
                   type="button"
@@ -299,9 +320,9 @@ export default function SignupPage({ onSuccess }: SignupPageProps) {
               </label>
             </div>
             {errors.accept && (
-               <p className="text-xs font-medium text-red-500 animate-pulse ml-6">
+              <p className="text-xs font-medium text-red-500 animate-pulse ml-6">
                 {errors.accept}
-               </p>
+              </p>
             )}
           </div>
 
@@ -327,8 +348,8 @@ export default function SignupPage({ onSuccess }: SignupPageProps) {
           {/* Footer */}
           <p className="text-center text-sm text-slate-500">
             Already have an account?{" "}
-            <Link 
-              href="/login" 
+            <Link
+              href="/login"
               className="font-semibold text-indigo-600 hover:text-indigo-700 hover:underline"
             >
               Sign in
@@ -337,5 +358,13 @@ export default function SignupPage({ onSuccess }: SignupPageProps) {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage(props: SignupPageProps) {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-50"><div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div></div>}>
+      <SignupPageContent {...props} />
+    </Suspense>
   );
 }

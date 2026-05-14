@@ -1,6 +1,8 @@
 import React from 'react'
 import type { Metadata } from 'next'
 import Hero from './components/Hero'
+import ProfileSetupBanner from '../components/ProfileSetupBanner'
+import ProfileSetupBannerClient from '../components/ProfileSetupBannerClient'
 
 export const metadata: Metadata = {
   title: 'OpenLabs - Virtual Lab Experience Platform for Science & Technology',
@@ -28,9 +30,16 @@ export const metadata: Metadata = {
 }
 
 export default function Home() {
+  // NOTE: server component - banner visibility handled client-side normally.
   return (
     <main className="min-h-screen">
-      <Hero />
+      <div className="container mx-auto px-4 py-8">
+        {/* Banner placeholder - client will render if needed */}
+        {/* Client-only banner component */}
+        <script dangerouslySetInnerHTML={{ __html: "" }} />
+        <ProfileSetupBannerClient />
+        <Hero />
+      </div>
     </main>
   )
 }
