@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLab } from '@/app/hooks/useXP';
+import DailyChallengeCard from '@/app/components/DailyChallengeCard';
 
 // ==================== UTILS: STATISTICAL MODELS ====================
 const generateData = () => {
@@ -35,6 +37,8 @@ const generateData = () => {
 };
 
 export default function AnomalyDetectionLab() {
+  const { completeExperiment } = useLab("computer-science/data-science", "computerScience", "exploration");
+  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 15000); return () => clearTimeout(timer); }, []);
   const [data, setData] = useState([]);
   const [selectedPoint, setSelectedPoint] = useState(null);
   const [threshold, setThreshold] = useState(150);
@@ -131,6 +135,7 @@ export default function AnomalyDetectionLab() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-8 font-sans">
+      <DailyChallengeCard labId="computer-science/data-science" currentParams={{ anomaliesDetected: detectedAnomalies.length, threshold }} />
       <header className="mb-8 flex justify-between items-end">
         <div>
           <h1 className="text-4xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-fuchsia-500">

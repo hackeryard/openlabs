@@ -3,6 +3,8 @@
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import { useChat } from "@/app/components/ChatContext";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 const OSIModel = dynamic(
   () => import("@/app/components/computer-science/networking/osi-model/OSIModel"),
@@ -14,6 +16,7 @@ const OSIModel2D = dynamic(
 );
 
 export default function OSIPage() {
+  const { completeExperiment } = useLab("computer-science/networking", "computerScience", "exploration");
   const { setExperimentData } = useChat();
 
   useEffect(() => {
@@ -25,12 +28,14 @@ export default function OSIPage() {
         "Use TCP/UDP and Sender/Receiver mode to see how data flows through layers. Click any layer card to open details (function, protocols, devices, example, quiz).",
     });
   }, [setExperimentData]);
+  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 15000); return () => clearTimeout(timer); }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-6">
       <h1 className="text-4xl font-bold mb-6 text-center">
         OSI Model Interactive Visualization
       </h1>
+      <DailyChallengeCard labId="computer-science/networking" currentParams={{ protocolsExplored: 1 }} />
       {/* <OSIModel /> */}
       <OSIModel2D />
     </div>

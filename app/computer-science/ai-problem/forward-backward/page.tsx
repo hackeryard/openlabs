@@ -1,15 +1,20 @@
 "use client";
 // src/components/computer-science/ai-problem/RuleChaining.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 export default function RuleChaining() {
+  const { completeExperiment } = useLab("computer-science/ai-problem", "computerScience", "exploration");
+  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 15000); return () => clearTimeout(timer); }, []);
   const [activeTab, setActiveTab] = useState("forward");
   const [animationSpeed, setAnimationSpeed] = useState(1000);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white p-6">
       <div className="max-w-7xl mx-auto">
+        <DailyChallengeCard labId="computer-science/ai-problem" currentParams={{ chainsExplored: 1 }} />
         {/* Header with light/dark gradient */}
         <motion.div 
           initial={{ y: -50, opacity: 0 }}

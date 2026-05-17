@@ -2,6 +2,8 @@
 // src/components/WaveOpticsLab.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { useChat } from "../ChatContext";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 /**
  * WaveOpticsLab.jsx
@@ -27,6 +29,7 @@ function sinc(x) {
 }
 
 export default function WaveOpticsLab() {
+  const { completeExperiment } = useLab("physics/waveoptics", "physics", "exploration");
   // Chatbot 
   const { setExperimentData } = useChat();
 
@@ -278,6 +281,7 @@ export default function WaveOpticsLab() {
       const idx = Math.round(t * (points.length - 1));
       const p = points[idx];
       setClickInfo({ x: p.x, I: p.I });
+      completeExperiment();
     }
     canvas.addEventListener("click", onClick);
     return () => canvas.removeEventListener("click", onClick);
@@ -387,6 +391,7 @@ export default function WaveOpticsLab() {
         <h2 className="text-2xl font-semibold">Wave Optics — Diffraction & Interference Lab</h2>
         <div className="text-sm text-gray-600">Fraunhofer approximation: small-angle diffraction patterns</div>
       </header>
+      <DailyChallengeCard labId="physics/waveoptics" currentParams={{ fringeWidth: (wavelengthNm * 1e-9 * L) / (dMicron * 1e-6), wavelength: wavelengthNm }} />
 
       <div className="grid md:grid-cols-4 gap-4">
         <div className="md:col-span-1 bg-white p-4 rounded shadow space-y-3">

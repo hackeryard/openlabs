@@ -2,6 +2,8 @@
 // src/components/HookeLawLab.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { useChat } from "../ChatContext";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 /**
  * HookeLawLab.jsx
@@ -29,6 +31,7 @@ export default function HookeLaw({
   initialC = 0.05,
   initialX = 0.5
 }) {
+  const { completeExperiment } = useLab("physics/hookelaw", "physics", "simulation");
   // Chatbot 
     const { setExperimentData } = useChat();
   
@@ -157,6 +160,7 @@ export default function HookeLaw({
               const periods = [];
               for (let i = 2; i < arr.length; i++) periods.push(arr[i] - arr[i - 2]);
               const avg = periods.reduce((a, b) => a + b, 0) / periods.length;
+              if (measuredT === null) completeExperiment();
               setMeasuredT(avg);
             }
           }
@@ -336,6 +340,7 @@ export default function HookeLaw({
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <header className="flex items-center justify-between"><h2 className="text-2xl font-semibold">Hooke's Law — Virtual Lab</h2><div className="text-sm text-gray-600">Mass–spring experiment</div></header>
+      <DailyChallengeCard labId="physics/hookelaw" currentParams={{ extension: xRef.current, force: k * xRef.current, period: measuredT }} />
       <div className="grid md:grid-cols-3 gap-4">
         <div className="md:col-span-1 bg-white p-4 rounded shadow space-y-3">
           <label className="block text-sm">Mass (kg)</label>

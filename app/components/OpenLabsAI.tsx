@@ -9,9 +9,15 @@ import { Bot, Mic } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { getPageKnowledgeText } from "@/app/lib/pageKnowledge";
 
+// Routes where the chatbot is never shown, regardless of auth status
+const HIDDEN_ROUTES = ["/login", "/signup", "/forgot"];
+
 export default function OpenLabsAI() {
   const { experimentData } = useChat();
   const pathname = usePathname();
+
+  // --- Auth-aware visibility ---
+  const [isAuthed, setIsAuthed] = useState<boolean | null>(null); // null = loading
 
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState("");
@@ -19,13 +25,31 @@ export default function OpenLabsAI() {
   const [open, setOpen] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
 
+  // --- Stream Control State ---
+  const [streamingText, setStreamingText] = useState("");
+
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const lastSnapshotRef = useRef<string>("");
 
   useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (!res.ok) { if (!cancelled) setIsAuthed(false); return; }
+        const data = await res.json();
+        if (!cancelled) setIsAuthed(!!data.user);
+      } catch {
+        if (!cancelled) setIsAuthed(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [pathname]); // re-check on navigation
+
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading]);
+  }, [messages, loading, streamingText, isTyping]);
 
   useEffect(() => {
     if (open) {
@@ -59,7 +83,6 @@ export default function OpenLabsAI() {
 
       recognition.stop(); // stop immediately
       setListening(false);
-
       setInput(transcript);
 
       setTimeout(() => {
@@ -158,9 +181,39 @@ export default function OpenLabsAI() {
     return () => window.clearTimeout(t);
   }, [pathname]);
 
+  // --- Visibility gate (must come after all hooks) ---
+  const isHiddenRoute = HIDDEN_ROUTES.some(
+    (r) => pathname === r || pathname.startsWith(r + "/")
+  );
+  const isHomepage = pathname === "/";
+  const shouldHide = isHiddenRoute || (isHomepage && !isAuthed) || isAuthed === null;
+
+  if (shouldHide) return null;
+
   const sendMessage = async () => {
     await sendMessageWithText(input);
     setInput("");
+  };
+
+  // Runs typing progression framework mimicking live generation streams
+  const runTypewriter = (fullText: string) => {
+    setIsTyping(false);
+    let currentIdx = 0;
+    setStreamingText("");
+
+    const words = fullText.split(/(\s+)/);
+
+    const interval = setInterval(() => {
+      if (currentIdx < words.length) {
+        setStreamingText((prev) => prev + words[currentIdx]);
+        currentIdx++;
+      } else {
+        clearInterval(interval);
+        setMessages((prev) => [...prev, { role: "assistant", content: fullText }]);
+        setStreamingText("");
+        setLoading(false);
+      }
+    }, 25);
   };
 
   const sendMessageWithText = async (text: string) => {
@@ -210,21 +263,16 @@ export default function OpenLabsAI() {
       });
 
       const data = await res.json();
-
       const reply = data.reply || "⚠️ AI returned empty response";
 
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: reply },
-      ]);
+      runTypewriter(reply);
     } catch (err: any) {
+      setIsTyping(false);
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: "⚠️ Error: " + err.message },
       ]);
-    } finally {
       setLoading(false);
-      setIsTyping(false);
     }
   };
 
@@ -261,10 +309,16 @@ export default function OpenLabsAI() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-0 right-0 sm:bottom-6 sm:right-6 w-full sm:w-96 h-[100vh] sm:h-[550px] bg-white dark:bg-gray-900 shadow-2xl rounded-t-2xl sm:rounded-2xl flex flex-col z-50 border border-gray-200 dark:border-gray-800 overflow-hidden"
+            /* 
+              DIMENSION CHANGES MET:
+              - Width increased on desktop: sm:w-[460px] (from sm:w-96)
+              - Height decreased on desktop: sm:h-[480px] / sm:max-h-[480px] (from sm:h-[550px])
+              - Layout integrity metrics fully locked to avoid screen cut-off bounds.
+            */
+            className="fixed bottom-4 right-4 left-4 sm:left-auto sm:bottom-6 sm:right-6 w-auto sm:w-[460px] h-[calc(100dvh-2rem)] sm:h-[480px] max-h-[calc(100dvh-2rem)] sm:max-h-[480px] bg-white dark:bg-gray-900 shadow-2xl rounded-2xl flex flex-col z-50 border border-gray-200 dark:border-gray-800 overflow-hidden"
           >
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+            {/* Header - Original Style */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800 bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex-shrink-0">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
                   <svg
@@ -285,8 +339,8 @@ export default function OpenLabsAI() {
                   </svg>
                 </div>
                 <div>
-                  <h2 className="font-semibold">OpenLabs AI Assistant</h2>
-                  <p className="text-xs text-blue-100">Powered by Advanced AI</p>
+                  <h2 className="font-semibold text-sm">OpenLabs AI Assistant</h2>
+                  <p className="text-[10px] text-blue-100">Powered by Advanced AI</p>
                 </div>
               </div>
               <motion.button
@@ -300,8 +354,8 @@ export default function OpenLabsAI() {
               </motion.button>
             </div>
 
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900">
+            {/* Messages Container */}
+            <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900">
               {messages.length === 0 && (
                 <div className="text-center py-8">
                   <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -329,12 +383,13 @@ export default function OpenLabsAI() {
                 </div>
               )}
 
+              {/* Render Logs */}
               {messages.map((msg, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
+                  transition={{ delay: i * 0.05 }}
                   className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
@@ -367,6 +422,27 @@ export default function OpenLabsAI() {
                 </motion.div>
               ))}
 
+              {/* Live Streaming Typewriter Output Segment */}
+              {streamingText && (
+                <div className="flex justify-start">
+                  <div className="max-w-[85%] p-3 rounded-2xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 rounded-bl-none shadow-sm">
+                    <div className="prose prose-sm max-w-none dark:prose-invert">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                          a: ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{children}</a>,
+                          code: ({ children }) => <code className="bg-black/10 dark:bg-white/10 rounded px-1 py-0.5">{children}</code>,
+                        }}
+                      >
+                        {streamingText}
+                      </ReactMarkdown>
+                      <span className="inline-block w-1.5 h-3.5 ml-0.5 bg-blue-500 dark:bg-blue-400 animate-pulse" />
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {isTyping && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
@@ -386,8 +462,8 @@ export default function OpenLabsAI() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input Area */}
-            <div className="p-4 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+            {/* Input Input Console - Fixed Height */}
+            <div className="p-4 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 flex-shrink-0">
               <div className="flex gap-2 items-end">
                 <div className="flex-1 relative">
                   <input
@@ -412,20 +488,20 @@ export default function OpenLabsAI() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={toggleMic}
-                  className={`px-3 py-3 rounded-xl transition-all ${listening
+                  className={`px-3 py-3 rounded-xl transition-all flex-shrink-0 ${listening
                     ? "bg-red-500 text-white animate-pulse"
                     : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white"
                     }`}
                   aria-label="Voice input"
                 >
-                  <Mic />
+                  <Mic size={20} />
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={sendMessage}
                   disabled={loading || !input.trim()}
-                  className={`px-4 py-3 rounded-xl text-white transition-all ${loading || !input.trim()
+                  className={`px-4 py-3 rounded-xl text-white transition-all flex-shrink-0 ${loading || !input.trim()
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-lg"
                     }`}
@@ -450,16 +526,16 @@ export default function OpenLabsAI() {
 
               {/* Quick Actions */}
               {messages.length === 0 && (
-                <div className="flex gap-2 mt-3">
+                <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar">
                   <button
                     onClick={() => setInput("Explain the theory in simple terms")}
-                    className="text-xs px-3 py-1.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    className="text-xs px-3 py-1.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors whitespace-nowrap"
                   >
                     📚 Explain theory
                   </button>
                   <button
                     onClick={() => setInput("What are the key concepts?")}
-                    className="text-xs px-3 py-1.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    className="text-xs px-3 py-1.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors whitespace-nowrap"
                   >
                     🔑 Key concepts
                   </button>
@@ -468,9 +544,11 @@ export default function OpenLabsAI() {
             </div>
 
             {/* Footer */}
-            <div className="px-4 py-2 text-xs text-center text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
+            <div className="px-4 py-2 text-[11px] text-center text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 flex-shrink-0">
               AI responses may not always be accurate
             </div>
+
+            {/* Microphone Overlay */}
             {listening && (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -478,9 +556,7 @@ export default function OpenLabsAI() {
                 exit={{ opacity: 0 }}
                 className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
               >
-                <div className="flex flex-col items-center gap-4 bg-white dark:bg-gray-800 px-8 py-6 rounded-2xl shadow-xl">
-
-                  {/* Animated Mic Circle */}
+                <div className="flex flex-col items-center gap-4 bg-white dark:bg-gray-800 px-8 py-6 rounded-2xl shadow-xl m-4">
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ repeat: Infinity, duration: 1 }}
@@ -488,14 +564,12 @@ export default function OpenLabsAI() {
                   >
                     <Mic className="text-white" size={28} />
                   </motion.div>
-
                   <p className="text-sm font-medium text-gray-800 dark:text-white">
                     Listening...
                   </p>
-
                   <button
                     onClick={toggleMic}
-                    className="text-xs px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700"
+                    className="text-xs px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                   >
                     Tap to stop
                   </button>

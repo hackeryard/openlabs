@@ -2,6 +2,8 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { useChat } from "../ChatContext";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 /**
  * RCLab.jsx
@@ -32,6 +34,7 @@ export default function RCLab({
   initialC = 1e-6,
   initialV = 5,
 }) {
+  const { completeExperiment } = useLab("physics/rclab", "physics", "simulation");
   const canvasRef = useRef(null);
   const rafRef = useRef(null);
   const dataRef = useRef([]); // {t, v, i}
@@ -132,6 +135,7 @@ export default function RCLab({
   useEffect(() => {
     const id = setInterval(() => {
       const t = exponentialFitTau(dataRef.current.filter(d=>d.v >= 0));
+      if (t && !tauMeasured) completeExperiment();
       setTauMeasured(t);
     }, 300);
     return () => clearInterval(id);
@@ -232,6 +236,7 @@ export default function RCLab({
   return (
     <div className="max-w-4xl mx-auto space-y-4 p-4 bg-white rounded shadow">
       <h3 className="text-xl font-semibold">RC Circuit — Charge & Discharge Lab</h3>
+      <DailyChallengeCard labId="physics/rclab" currentParams={{ timeConstant: tauMeasured, voltage: Vsource }} />
       <div className="grid md:grid-cols-3 gap-4">
         <div className="space-y-3">
           <label className="block text-sm">Resistance R (Ω)</label>

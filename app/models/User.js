@@ -45,6 +45,36 @@ const UserSchema = new mongoose.Schema({
       count: Number,
     }
   ],
+  dailyChallenges: [
+    {
+      labId: {
+        type: String,
+        required: true,
+      },
+
+      date: {
+        type: Date,
+        required: true,
+      },
+
+      completed: {
+        type: Boolean,
+        default: false,
+      },
+
+      attempts: {
+        type: Number,
+        default: 0,
+        min: 0,
+      },
+
+      xpEarned: {
+        type: Number,
+        default: 0,
+        min: 0,
+      },
+    }
+  ],
 })
 
 export default mongoose.models.User || mongoose.model("User", UserSchema)

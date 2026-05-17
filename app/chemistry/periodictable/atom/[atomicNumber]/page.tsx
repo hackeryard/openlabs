@@ -5,8 +5,12 @@ import AtomicModel3D from "../../../../components/chemistry/AtomicModel3D"
 import elements from "../../../../src/data/elements";
 import { useEffect } from "react";
 import { useChat } from "@/app/components/ChatContext";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 export default function AtomPage() {
+  const { completeExperiment } = useLab("chemistry/periodictable", "chemistry", "exploration");
+  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
   // Chatbot 
   const { setExperimentData } = useChat();
 
@@ -34,6 +38,7 @@ export default function AtomPage() {
 
   return (
     <div className="min-h-screen bg-white p-6">
+      <DailyChallengeCard labId="chemistry/periodictable" currentParams={{ elementViewed: element.name }} />
       <h1 className="text-3xl font-bold text-center mb-2">
         {element.name} ({element.symbol})
       </h1>

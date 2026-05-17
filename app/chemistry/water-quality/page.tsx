@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 // Dynamically import the Water Quality component
 const WaterQualityLab = dynamic(
@@ -38,6 +40,8 @@ const WaterQualityLab = dynamic(
 );
 
 export default function WaterQualityPage() {
+  const { completeExperiment } = useLab("chemistry/water-quality", "chemistry", "exploration");
+  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -75,6 +79,7 @@ export default function WaterQualityPage() {
 
   return (
     <main className="min-h-screen">
+      <DailyChallengeCard labId="chemistry/water-quality" currentParams={{ labExplored: true }} />
       <WaterQualityLab />
     </main>
   );

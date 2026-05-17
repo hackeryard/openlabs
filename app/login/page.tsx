@@ -1,28 +1,28 @@
-import { Suspense } from "react";
-import dynamic from "next/dynamic";
+"use client";
 
-const LoginFormWithParams = dynamic(() => import("@/app/components/LoginFormWithParams"), {
-  loading: () => (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <div className="text-center">
-        <div className="mb-4 w-12 h-12 border-4 border-slate-200 border-t-indigo-600 rounded-full animate-spin mx-auto"></div>
-        <p className="text-slate-600">Loading...</p>
+import { Suspense } from "react";
+import LoginFormWithParams from "@/app/components/LoginFormWithParams";
+
+// Optimized Premium Loading Spinner Component to reuse for both dynamic & fallback
+function LoadingSpinner() {
+  return (
+    <div className="h-screen w-full flex items-center justify-center bg-slate-50 font-sans">
+      <div className="text-center space-y-3">
+        <div className="relative w-10 h-10 mx-auto">
+          {/* Outer glowing track */}
+          <div className="absolute inset-0 border-4 border-indigo-100 rounded-full"></div>
+          {/* Inner spinning gradient indicator */}
+          <div className="absolute inset-0 border-4 border-transparent border-t-indigo-600 rounded-full animate-spin"></div>
+        </div>
+        <p className="text-xs font-semibold text-slate-500 tracking-wide uppercase">Loading secure portal...</p>
       </div>
     </div>
-  ),
-  ssr: false,
-});
+  );
+}
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="text-center">
-          <div className="mb-4 w-12 h-12 border-4 border-slate-200 border-t-indigo-600 rounded-full animate-spin mx-auto"></div>
-          <p className="text-slate-600">Loading...</p>
-        </div>
-      </div>
-    }>
+    <Suspense fallback={<LoadingSpinner />}>
       <LoginFormWithParams />
     </Suspense>
   );

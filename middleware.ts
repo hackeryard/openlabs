@@ -22,8 +22,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Allow all /api/auth routes
-  if (pathname.startsWith('/api/auth')) {
+  // Allow all /api/auth routes and cron jobs
+  if (pathname.startsWith('/api/auth') || pathname.startsWith('/api/challenges/generate')) {
     return NextResponse.next();
   }
 

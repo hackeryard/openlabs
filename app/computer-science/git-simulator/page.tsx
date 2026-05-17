@@ -7,6 +7,8 @@ import RepoStatePanel from "@/app/components/computer-science/git-simulator/Repo
 import CommitGraph from "@/app/components/computer-science/git-simulator/CommitGraph";
 import { executeCommand } from "./utils/executeCommand";
 import { useChat } from "@/app/components/ChatContext";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 const initialState: RepoState = {
   objects: {},
@@ -18,6 +20,7 @@ const initialState: RepoState = {
 };
 
 export default function GitVisualizerPage() {
+  const { completeExperiment } = useLab("computer-science/git-simulator", "computerScience", "simulation");
   // Chatbot 
   const { setExperimentData } = useChat();
 
@@ -33,11 +36,13 @@ export default function GitVisualizerPage() {
   const handleCommand = (command: string) => {
     const { newState, output } = executeCommand(state, command);
     setState(newState);
+    completeExperiment();
     return { output };
   };
 
   return (
     <div className="p-6 space-y-6">
+      <DailyChallengeCard labId="computer-science/git-simulator" currentParams={{ commandsRun: 1, branchesCreated: Object.keys(state.refs).length }} />
       <TerminalInput onCommand={handleCommand} />
 
       <RepoStatePanel state={state} />

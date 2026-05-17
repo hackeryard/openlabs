@@ -1,8 +1,11 @@
 "use client";
 // src/components/computer-science/ai-problem/MonkeyBanana.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 export default function MonkeyBanana() {
+  const { completeExperiment } = useLab("computer-science/ai-problem", "computerScience", "simulation");
   // Simulator state
   const [state, setState] = useState({
     monkeyPos: 'atdoor',
@@ -173,6 +176,7 @@ export default function MonkeyBanana() {
       state: newState
     }]);
     setMessage('🎉 SUCCESS! Monkey got the banana!');
+    completeExperiment();
     
     setTimeout(() => { setCurrentLine(0); setActiveAction(null); }, 2000);
   };
@@ -198,6 +202,9 @@ export default function MonkeyBanana() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+      <div className="max-w-7xl mx-auto px-6 py-2">
+        <DailyChallengeCard labId="computer-science/ai-problem" currentParams={{ stepsTaken: history.length, goalReached: state.hasBanana === 'has' }} />
+      </div>
       {/* Header */}
       <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-4 shadow-lg">
         <div className="max-w-7xl mx-auto">

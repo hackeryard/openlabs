@@ -1,6 +1,8 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { useChat } from "../ChatContext";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "../DailyChallengeCard";
 
 export default function SimplePendulum({
   initialLength = 1.0,
@@ -8,9 +10,11 @@ export default function SimplePendulum({
   initialDamping = 0.01,
   initialAngleDeg = 20,
 }) {
+  const { completeExperiment } = useLab("physics/simplependulum", "physics", "simulation");
+
   // Chatbot 
-    const { setExperimentData } = useChat();
-  
+  const { setExperimentData } = useChat();
+
   useEffect(() => {
     setExperimentData({
       title: "Simple Pendullum",
@@ -163,6 +167,9 @@ export default function SimplePendulum({
               const periods = [];
               for (let i = 2; i < arr.length; i++) periods.push(arr[i] - arr[i - 2]);
               const avg = periods.reduce((a, b) => a + b, 0) / periods.length;
+              if (measuredPeriod === null) {
+                completeExperiment();
+              }
               setMeasuredPeriod(avg);
             }
           }
@@ -675,6 +682,8 @@ export default function SimplePendulum({
         <h2 className="text-2xl font-semibold">Simple Pendulum — Virtual Lab</h2>
         <div className="text-sm text-gray-600">Do the experiment like in a real lab: drag the bob, time oscillations, sweep lengths, export reports.</div>
       </header>
+      <DailyChallengeCard labId="physics/simplependulum" currentParams={{ length, gravity, period: measuredPeriod }} />
+
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Controls */}

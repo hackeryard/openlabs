@@ -1,8 +1,12 @@
 "use client";
 import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
+import { useLab } from '@/app/hooks/useXP';
+import DailyChallengeCard from '@/app/components/DailyChallengeCard';
 
 export default function Home() {
+  const { completeExperiment } = useLab("computer-science/ai-problem", "computerScience", "exploration");
+  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 15000); return () => clearTimeout(timer); }, []);
   const canvasRef = useRef(null);
   const [network, setNetwork] = useState(null);
   const [inputValues, setInputValues] = useState([0.5, 0.8]);
@@ -563,6 +567,7 @@ export default function Home() {
         <title>Neural Signal Flow Visualizer</title>
         <meta name="description" content="2D Interactive Neural Network with Signal Flow Visualization" />
       </Head>
+      <DailyChallengeCard labId="computer-science/ai-problem" currentParams={{ problemSelected: selectedProblem, isAnimating }} />
 
       {/* Header with Experiment Info */}
       <div style={styles.header}>

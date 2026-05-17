@@ -2,8 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
+import { useLab } from '@/app/hooks/useXP';
+import DailyChallengeCard from '@/app/components/DailyChallengeCard';
 
 export default function HillClimbingLab() {
+  const { completeExperiment } = useLab("computer-science/ai-problem", "computerScience", "simulation");
+  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 15000); return () => clearTimeout(timer); }, []);
   // Problem: Find maximum of a function (optimization)
   const [function_type, setFunctionType] = useState('quadratic');
   const [currentX, setCurrentX] = useState(0);
@@ -210,6 +214,7 @@ export default function HillClimbingLab() {
       <Head>
         <title>Hill Climbing Algorithm - AI Optimization Visualizer</title>
       </Head>
+      <DailyChallengeCard labId="computer-science/ai-problem" currentParams={{ stepsTaken: step, restarts, globalMaxFound: globalMaxima }} />
 
       {showAim && (
         <div className="aim-banner">

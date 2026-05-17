@@ -5,6 +5,8 @@ import ProceduralAnatomy from "@/app/components/biology/human/HumanBody"
 import dynamic from "next/dynamic"
 import InfoPanel from "@/app/components/biology/human/InfoPanel"
 import { useChat } from "@/app/components/ChatContext"
+import { useLab } from "@/app/hooks/useXP"
+import DailyChallengeCard from "@/app/components/DailyChallengeCard"
 
 const AnatomyScene = dynamic(
   () => import("@/app/components/biology/human/AnatomyScene"),
@@ -12,6 +14,7 @@ const AnatomyScene = dynamic(
 )
 
 export default function Page() {
+  const { completeExperiment } = useLab("biology/human", "biology", "exploration");
   // Chatbot 
   const { setExperimentData } = useChat();
 
@@ -22,11 +25,15 @@ export default function Page() {
       extraContext: ``,
     });
   }, []);
+  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
   const [selectedOrgan, setSelectedOrgan] = useState("")
   const [type, setType] = useState<"human" | "animal">("human")
 
   return (
     <div className="grid md:grid-cols-3 h-screen">
+      <div className="md:col-span-3 p-2">
+        <DailyChallengeCard labId="biology/human" currentParams={{ structuresExplored: selectedOrgan ? 1 : 0 }} />
+      </div>
       {/* <ProceduralAnatomy /> */}
 
       <div className="md:col-span-2">

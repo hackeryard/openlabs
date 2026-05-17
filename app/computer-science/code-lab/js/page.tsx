@@ -4,8 +4,12 @@ import { useState, useCallback, useEffect } from "react";
 import DebuggerModal from "@/app/components/computer-science/code-lab/js/DebuggerModal";
 import { Memory, RuntimeSnapshot, StackFrame, Task } from "@/app/types/jsDebugger";
 import { useChat } from "@/app/components/ChatContext";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 export default function DebuggerPage() {
+    const { completeExperiment } = useLab("computer-science/code-lab/js", "computerScience", "editor");
+    useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
     // Chatbot 
     const { setExperimentData } = useChat();
 
@@ -58,6 +62,7 @@ console.log('5: End');`
 
     return (
         <>
+            <DailyChallengeCard labId="computer-science/code-lab/js" currentParams={{ codeRun: snapshots.length > 0 }} />
             {error && (
                 <div className="fixed top-20 right-4 bg-red-600 text-white p-4 rounded-lg z-50 shadow-lg">
                     <p className="font-semibold">Error:</p>
