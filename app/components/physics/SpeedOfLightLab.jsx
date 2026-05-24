@@ -1,6 +1,8 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { useChat } from "../ChatContext";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 const STORAGE_KEY = "openlabs_light_speed_runs_v1";
 const C = 3e8;
@@ -22,6 +24,7 @@ const COLORS = {
 };
 
 export default function SpeedOfLightLab() {
+    const { completeExperiment } = useLab("physics/speedoflight", "physics", "exploration");
     // Chatbot 
     const { setExperimentData } = useChat();
   
@@ -84,6 +87,7 @@ export default function SpeedOfLightLab() {
                     velocities,
                 });
                 if (dataRef.current.length > 400) dataRef.current.shift();
+                if (dataRef.current.length === 50) completeExperiment();
 
                 setTime(tRef.current);
             }
@@ -431,6 +435,7 @@ function printReport() {
             <h2 className="text-2xl font-semibold">
                 Speed of Light in Different Media — Comparison Lab
             </h2>
+            <DailyChallengeCard labId="physics/speedoflight" currentParams={{ wavelength: 632.8, frequency: C / (632.8e-9) }} />
 
             {/* Graph + Controls row */}
             <div className="grid md:grid-cols-3 gap-4 items-start">

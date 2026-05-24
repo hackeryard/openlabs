@@ -1,6 +1,8 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { useChat } from "../ChatContext";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 const STORAGE_KEY = "openlabs_kinematics_runs_v1";
 
@@ -9,6 +11,7 @@ export default function UniformMotionLab({
     initialAcceleration = 0,
     initialPosition = 0,
 }) {
+    const { completeExperiment } = useLab("physics/uniformmotionlab", "physics", "simulation");
     // Chatbot 
     const { setExperimentData } = useChat();
   
@@ -76,6 +79,7 @@ export default function UniformMotionLab({
                     v: vRef.current,
                 });
                 if (dataRef.current.length > 500) dataRef.current.shift();
+                if (dataRef.current.length === 100) completeExperiment();
             }
 
             draw(ctx, canvas);
@@ -395,6 +399,7 @@ export default function UniformMotionLab({
             <h2 className="text-2xl font-semibold">
                 Kinematics — Uniform & Accelerated Motion Lab
             </h2>
+            <DailyChallengeCard labId="physics/uniformmotionlab" currentParams={{ distance: position, time, speed: velocity }} />
 
             {/* Dashboard */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">

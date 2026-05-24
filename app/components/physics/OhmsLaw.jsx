@@ -2,6 +2,8 @@
 // src/components/OhmsLawLab.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { useChat } from "../ChatContext";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 /**
  * Ohm's Law — Virtual Lab
@@ -36,6 +38,7 @@ export default function OhmsLaw({
   initialR = 5,
   initialRint = 0.5,
 }) {
+  const { completeExperiment } = useLab("physics/ohmslaw", "physics", "simulation");
   // Chatbot 
       const { setExperimentData } = useChat();
     
@@ -317,6 +320,7 @@ export default function OhmsLaw({
     const vread = showVoltmeter ? instrumentRead(voltage - current * rInternal, "V") : null; // reading across load
     const iread = showAmmeter ? instrumentRead(current, "I") : null;
     setManualEntries((m) => [...m, { V: vread, I: iread, note: "" }]);
+    completeExperiment();
   }
 
   // UI handlers with last-edited semantics
@@ -369,6 +373,7 @@ export default function OhmsLaw({
         <h2 className="text-2xl font-semibold">Ohm’s Law — Virtual Lab</h2>
         <div className="text-sm text-gray-600">Explore V = I × R — measure with virtual instruments, sweep, and export reports.</div>
       </header>
+      <DailyChallengeCard labId="physics/ohmslaw" currentParams={{ current, voltage, resistance }} />
 
       <div className="grid md:grid-cols-3 gap-4">
         {/* Controls */}

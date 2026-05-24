@@ -8,6 +8,8 @@ import {
   Target, PieChart, Link2, UserCheck 
 } from 'lucide-react';
 import * as d3 from 'd3';
+import { useLab } from '@/app/hooks/useXP';
+import DailyChallengeCard from '@/app/components/DailyChallengeCard';
 
 // ==================== TYPES ====================
 interface Node {
@@ -545,6 +547,8 @@ const NetworkGraph2D = ({
 
 // ==================== MAIN COMPONENT ====================
 export default function SocialNetworkAnalyzer() {
+  const { completeExperiment } = useLab("computer-science/data-analyzer", "computerScience", "exploration");
+  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 15000); return () => clearTimeout(timer); }, []);
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
   const [originalData, setOriginalData] = useState<GraphData>({ nodes: [], links: [] });
   const [cleanLevel, setCleanLevel] = useState(0);
@@ -764,6 +768,9 @@ export default function SocialNetworkAnalyzer() {
 
       <main className="container mx-auto px-6 py-8">
         <div className="grid grid-cols-12 gap-8">
+          <div className="col-span-12">
+            <DailyChallengeCard labId="computer-science/data-analyzer" currentParams={{ cleanLevel, nodesVisible: graphData.nodes.length }} />
+          </div>
           {/* Left Sidebar */}
           {showSidebar && (
             <div className="col-span-12 lg:col-span-4 space-y-6">

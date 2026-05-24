@@ -1,11 +1,18 @@
-import NandGate from '@/app/components/computer-science/logic-gates/NandGate'
-import React from 'react'
+"use client";
 
+import NandGate from "@/app/components/computer-science/logic-gates/NandGate";
+import { useEffect } from "react";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
-export default function NandGatePage() {
+export default function Page() {
+  const { completeExperiment } = useLab("computer-science/logic-gates", "computerScience", "simulation");
+  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
+
   return (
-    <>
+    <div>
+      <DailyChallengeCard labId="computer-science/logic-gates" currentParams={{ outputMatched: true, gatesUsed: 1 }} />
       <NandGate />
-    </>
-  )
+    </div>
+  );
 }

@@ -1,18 +1,18 @@
 "use client";
 
 import QuickSort from "@/app/components/computer-science/dsa/sorting/QuickSort";
-import { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { useProjects } from "@/app/hooks/useProjects";
-import { Cloud } from 'lucide-react';
+import { useEffect } from "react";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
+export default function Page() {
+  const { completeExperiment } = useLab("computer-science/dsa", "computerScience", "exploration");
+  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
 
-
-export default function Quick() {
-
- return(
+  return (
     <div>
-        <QuickSort/>
+      <DailyChallengeCard labId="computer-science/dsa" currentParams={{ algorithmsRun: 1, structuresExplored: 1 }} />
+      <QuickSort />
     </div>
- )
+  );
 }

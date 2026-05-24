@@ -2,6 +2,8 @@
 import React, { useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { useChat } from '@/app/components/ChatContext';
+import { useLab } from '@/app/hooks/useXP';
+import DailyChallengeCard from '@/app/components/DailyChallengeCard';
 
 const PeriodicTable = dynamic(() => import('../../components/chemistry/PeriodicTable'), {
   ssr: false,
@@ -9,6 +11,7 @@ const PeriodicTable = dynamic(() => import('../../components/chemistry/PeriodicT
 })
 
 export default function PeriodicTablePage() {
+  const { completeExperiment } = useLab("chemistry/periodictable", "chemistry", "exploration");
   // Chatbot 
   const { setExperimentData } = useChat();
 
@@ -19,11 +22,13 @@ export default function PeriodicTablePage() {
       extraContext: ``,
     });
   }, []);
+  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 15000); return () => clearTimeout(timer); }, []);
   return (
     <main className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold">Periodic Table</h1>
         <p className="text-gray-600 mb-4">Interactive periodic table.</p>
+        <DailyChallengeCard labId="chemistry/periodictable" currentParams={{ elementsVisited: 1, groupExplored: 1, periodExplored: 1 }} />
         <PeriodicTable />
       </div>
     </main>

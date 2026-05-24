@@ -1,6 +1,8 @@
 "use client";
 // src/components/computer-science/ai-problem/Hangman.jsx
 import React, { useState, useEffect } from "react";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 // Word database with categories and hints
 const WORD_DATABASE = {
@@ -37,11 +39,14 @@ const WORD_DATABASE = {
 };
 
 export default function Hangman() {
+  const { completeExperiment } = useLab("computer-science/ai-problem", "computerScience", "simulation");
+  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
   const [activeTab, setActiveTab] = useState("demo");
   const [difficulty, setDifficulty] = useState("medium");
 
   return (
     <div className="max-w-6xl mx-auto p-4">
+      <DailyChallengeCard labId="computer-science/ai-problem" currentParams={{ gamesPlayed: 1 }} />
       {/* Header */}
       <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 rounded-t-xl shadow-lg">
         <h1 className="text-3xl font-bold">🎮 Hangman Visual Learning Lab</h1>

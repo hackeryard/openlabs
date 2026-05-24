@@ -1,40 +1,24 @@
-import BrainNeuron from '@/app/components/biology/brainNeuron/BrainNeuron';
+"use client"
 
-export const metadata = {
-  title: 'Brain Neuron Simulation | OpenLabs',
-  description: 'Interactive 3D brain neuron simulation for neuroscience education. Explore neural networks, synaptic transmission, and brain cell structure.',
-  keywords: [
-    'brain neuron simulation', 'neuroscience education', '3D neuron model', 'neural networks',
-    'synaptic transmission', 'brain cell structure', 'interactive biology', 'neuroscience lab'
-  ],
-  openGraph: {
-    title: 'Brain Neuron Simulation | OpenLabs',
-    description: 'Interactive 3D brain neuron simulation for neuroscience education.',
-    url: '/biology/brainNeuron',
-    type: 'website',
-    images: [
-      {
-        url: '/images/biology/brain-neuron-og.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Brain Neuron Simulation',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    images: ['/images/twitter-image.svg'],
-    title: 'Brain Neuron Simulation | OpenLabs',
-    description: 'Interactive 3D brain neuron simulation for neuroscience education.',
-  },
-  alternates: {
-    canonical: '/biology/brainNeuron',
-  },
-};
+import dynamic from "next/dynamic"
+import { useEffect } from "react"
+import { useLab } from "@/app/hooks/useXP"
+import DailyChallengeCard from "@/app/components/DailyChallengeCard"
+
+const BrainNeuron = dynamic(() => import("@/app/components/biology/brainNeuron/BrainNeuron"), {
+  ssr: false,
+  loading: () => <div className="flex items-center justify-center min-h-screen bg-gray-950 text-white">Loading Brain Neuron Simulation...</div>
+})
 
 export default function BrainNeuronPage() {
+  const { completeExperiment } = useLab("biology/brainNeuron", "biology", "exploration");
+  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
+
   return (
     <div className="min-h-screen bg-gray-950">
+      <div className="p-2">
+        <DailyChallengeCard labId="biology/brainNeuron" currentParams={{ neuronsExplored: 1 }} />
+      </div>
       <BrainNeuron />
     </div>
   );

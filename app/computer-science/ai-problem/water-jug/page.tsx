@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useLab } from '@/app/hooks/useXP';
+import DailyChallengeCard from '@/app/components/DailyChallengeCard';
 
 export default function WaterJugProblem() {
+  const { completeExperiment } = useLab("computer-science/ai-problem", "computerScience", "simulation");
   // Problem configuration
   const [jug1Capacity, setJug1Capacity] = useState(5);
   const [jug2Capacity, setJug2Capacity] = useState(3);
@@ -50,6 +53,7 @@ export default function WaterJugProblem() {
         setSteps(finalSteps);
         setCurrentStep(0);
         updateDisplay(finalSteps[0]);
+        completeExperiment();
         return;
       }
       
@@ -170,6 +174,7 @@ export default function WaterJugProblem() {
         <h1 className="text-3xl font-bold text-center mb-6">
           💧 Water Jug Problem: Step-by-Step Visualization
         </h1>
+        <DailyChallengeCard labId="computer-science/ai-problem" currentParams={{ problemSolved: steps.length > 0 }} />
         
         {/* Problem Statement */}
         <div className="bg-white rounded-lg shadow-lg p-4 mb-6">

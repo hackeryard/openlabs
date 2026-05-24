@@ -2,6 +2,8 @@
 // src/components/ProjectileMotionLab.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { useChat } from "../ChatContext";
+import DailyChallengeCard from "../DailyChallengeCard";
+import { useLab } from "@/app/hooks/useXP";
 
 /**
  * ProjectileMotionLab.jsx
@@ -16,13 +18,15 @@ export default function ProjectileMotionLab({
   initialHeight = 0,
   initialGravity = 9.81
 }) {
+  const { completeExperiment } = useLab("physics/projectilemotion", "physics", "simulation");
+
   const canvasRef = useRef(null);
   const rafRef = useRef(null);
   const trajRef = useRef([]); // {t,x,y}
   const simTRef = useRef(0);
   const posRef = useRef({ x: 0, y: initialHeight });
   const velRef = useRef({ vx: initialSpeed * Math.cos(initialAngle * Math.PI / 180), vy: initialSpeed * Math.sin(initialAngle * Math.PI / 180) });
-  
+
   const [v0, setV0] = useState(initialSpeed);
   const [angle, setAngle] = useState(initialAngle);
   const [h0, setH0] = useState(initialHeight);
@@ -32,7 +36,7 @@ export default function ProjectileMotionLab({
   const [tof, setTof] = useState(null);
   const [range, setRange] = useState(null);
   const [maxH, setMaxH] = useState(null);
-  
+
   // stopwatch & manual
   const [swRunning, setSwRunning] = useState(false);
   const swRef = useRef({ start: null, elapsed: 0 });
@@ -47,14 +51,14 @@ export default function ProjectileMotionLab({
   const [sweepSteps, setSweepSteps] = useState(8);
   const [sweepResults, setSweepResults] = useState([]);
   const [sweepRunning, setSweepRunning] = useState(false);
-  
+
   const [_uncertainty, _setUncertainty] = useState(0.05);
   const [_instrumentNoise, _setInstrumentNoise] = useState(0.01);
   const STORAGE_KEY = "openlabs_projectile_runs_v1";
-  
+
   // Chatbot 
-    const { setExperimentData } = useChat();
-  
+  const { setExperimentData } = useChat();
+
   useEffect(() => {
     setExperimentData({
       title: "Projectile Motion",
@@ -62,8 +66,8 @@ export default function ProjectileMotionLab({
       extraContext: ``,
     });
   }, []);
-  
-  
+
+
   useEffect(() => { // init theoretical values
     computeAnalytic(v0, angle, h0, g);
     resetSim();
@@ -150,6 +154,7 @@ export default function ProjectileMotionLab({
               setTof(preciseT); setRange(preciseX); setMaxH(prev => prev || (Math.max(...trajRef.current.map(pt => pt.y))));
             }
             setRunning(false);
+            completeExperiment();
             break;
           }
           acc -= dt;
@@ -287,46 +292,46 @@ export default function ProjectileMotionLab({
   function listRuns() { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
   function clearRuns() { localStorage.removeItem(STORAGE_KEY); alert("Cleared"); }
 
- function exportCSV() {
-  const meta = [
-    ["OpenLabs Projectile Motion Experiment"],
-    ["Generated on", new Date().toLocaleString()],
-    [],
-    ["Parameters"],
-    ["Initial Speed (m/s)", v0],
-    ["Launch Angle (deg)", angle],
-    ["Initial Height (m)", h0],
-    ["Gravity (m/s^2)", g],
-    [],
-    ["Results"],
-    ["Time of Flight (s)", tof ? tof.toFixed(4) : "—"],
-    ["Range (m)", range ? range.toFixed(4) : "—"],
-    ["Maximum Height (m)", maxH ? maxH.toFixed(4) : "—"],
-    [],
-    ["Trajectory Data"],
-    ["t (s)", "x (m)", "y (m)"],
-  ];
+  function exportCSV() {
+    const meta = [
+      ["OpenLabs Projectile Motion Experiment"],
+      ["Generated on", new Date().toLocaleString()],
+      [],
+      ["Parameters"],
+      ["Initial Speed (m/s)", v0],
+      ["Launch Angle (deg)", angle],
+      ["Initial Height (m)", h0],
+      ["Gravity (m/s^2)", g],
+      [],
+      ["Results"],
+      ["Time of Flight (s)", tof ? tof.toFixed(4) : "—"],
+      ["Range (m)", range ? range.toFixed(4) : "—"],
+      ["Maximum Height (m)", maxH ? maxH.toFixed(4) : "—"],
+      [],
+      ["Trajectory Data"],
+      ["t (s)", "x (m)", "y (m)"],
+    ];
 
-  const dataRows = trajRef.current.map(p => [
-    p.t.toFixed(4),
-    p.x.toFixed(4),
-    p.y.toFixed(4),
-  ]);
+    const dataRows = trajRef.current.map(p => [
+      p.t.toFixed(4),
+      p.x.toFixed(4),
+      p.y.toFixed(4),
+    ]);
 
-  const csv = [...meta, ...dataRows]
-    .map(row => row.join(","))
-    .join("\n");
+    const csv = [...meta, ...dataRows]
+      .map(row => row.join(","))
+      .join("\n");
 
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
 
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `openlabs_projectile_${Date.now()}.csv`;
-  a.click();
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `openlabs_projectile_${Date.now()}.csv`;
+    a.click();
 
-  URL.revokeObjectURL(url);
-}
+    URL.revokeObjectURL(url);
+  }
 
   function exportJSON() { const obj = { params: { v0, angle, h0, g }, traj: trajRef.current.slice(-2000), tof, range, maxH, sweepResults }; const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = `projectile_${Date.now()}.json`; a.click(); URL.revokeObjectURL(url); }
   function exportReport() {
@@ -496,6 +501,8 @@ export default function ProjectileMotionLab({
         <h2 className="text-2xl font-semibold">Projectile Motion — Virtual Lab</h2>
         <div className="text-sm text-gray-600">Simulate launches, measure range & TOF</div>
       </header>
+      <DailyChallengeCard labId="physics/projectilemotion" currentParams={{ range, maxHeight: maxH, time: tof, speed: v0, angle, height: h0 }} />
+
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="md:col-span-1 bg-white p-4 rounded shadow space-y-3">

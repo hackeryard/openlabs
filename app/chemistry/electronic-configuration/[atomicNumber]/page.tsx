@@ -5,8 +5,11 @@ import ElectronicConfiguration from "../../../components/chemistry/ElectronicCon
 import elements from "../../../src/data/elements";
 import { useEffect } from "react";
 import { useChat } from "@/app/components/ChatContext";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 export default function ElectronicConfigurationPage() {
+  const { completeExperiment } = useLab("chemistry/electronic-configuration", "chemistry", "exploration");
   // Chatbot 
   const { setExperimentData } = useChat();
 
@@ -17,6 +20,7 @@ export default function ElectronicConfigurationPage() {
       extraContext: ``,
     });
   }, []);
+  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
   const { atomicNumber } = useParams();
   const Z = Number(atomicNumber);
 
@@ -33,10 +37,13 @@ export default function ElectronicConfigurationPage() {
   }
 
   return (
-    < ElectronicConfiguration
-      atomicNumber={atomicNumber}
-      symbol={element.symbol}
-      name={element.name}
-    />
+    <>
+      <DailyChallengeCard labId="chemistry/electronic-configuration" currentParams={{ elementsVisualized: 1 }} />
+      <ElectronicConfiguration
+        atomicNumber={atomicNumber}
+        symbol={element.symbol}
+        name={element.name}
+      />
+    </>
   )
 }

@@ -7,11 +7,14 @@ import ConsolePanel from "@/app/components/computer-science/code-lab/html-css-js
 import { useProjects } from "@/app/hooks/useProjects";
 import { Cloud } from 'lucide-react';
 import { useChat } from "@/app/components/ChatContext";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 
 type View = "edit" | "preview";
 
 export default function CodeLab() {
+  const { completeExperiment } = useLab("computer-science/code-lab/html-css-js", "computerScience", "editor");
   // Chatbot 
   const { setExperimentData } = useChat();
 
@@ -92,6 +95,7 @@ export default function CodeLab() {
 
     setSaving(false);
     setSaved(true);
+    completeExperiment();
     setTimeout(() => setSaved(false), 1500);
   };
 

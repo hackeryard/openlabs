@@ -2,6 +2,8 @@
 // src/components/EnergyConservationLab.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { useChat } from "../ChatContext";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 export default function EnergyConservation({
   initialMass = 0.5,
@@ -9,6 +11,7 @@ export default function EnergyConservation({
   initialHeight = 1.0,
   initialMu = 0.05,
 }) {
+  const { completeExperiment } = useLab("physics/energyconservation", "physics", "simulation");
   const canvasRef = useRef(null);
   const rafRef = useRef(null);
   const [m, setM] = useState(Number(initialMass));
@@ -91,6 +94,7 @@ export default function EnergyConservation({
           if (y <= 0) {
             setSpeedBottom(vRef.current);
             setRunning(false);
+            completeExperiment();
             break;
           }
           acc -= dt;
@@ -184,6 +188,7 @@ export default function EnergyConservation({
   return (
     <div className="max-w-4xl mx-auto p-4 bg-white rounded shadow space-y-4">
       <h3 className="text-xl font-semibold">Energy Conservation — Block on Incline Lab</h3>
+      <DailyChallengeCard labId="physics/energyconservation" currentParams={{ kineticEnergy: 0.5 * m * vRef.current * vRef.current, potentialEnergy: m * g * Math.max(0, h0 - sRef.current * Math.sin(angleDeg * Math.PI / 180)) }} />
       <div className="grid md:grid-cols-3 gap-4">
         <div className="space-y-3">
           <label className="block text-sm">Mass (kg)</label>

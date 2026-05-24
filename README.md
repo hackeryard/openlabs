@@ -1,7 +1,7 @@
 # OpenLabs 🔬⚡
 
-[![Status](https://img.shields.io/badge/status-active-brightgreen)](https://github.com/rahulra3621/openlabs)
-[![Repo](https://img.shields.io/badge/repo-GitHub-181717?style=flat&logo=github)](https://github.com/rahulra3621/openlabs)
+[![Status](https://img.shields.io/badge/status-active-brightgreen)](https://github.com/hackeryard/openlabs)
+[![Repo](https://img.shields.io/badge/repo-GitHub-181717?style=flat&logo=github)](https://github.com/hackeryard/openlabs)
 [![License: Proprietary](https://img.shields.io/badge/license-Proprietary-blue.svg)](LICENSE)
 [![Next.js](https://img.shields.io/badge/next-14.2.35-000000?style=flat&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/react-18.2.0-61dafb?style=flat&logo=react)](https://react.dev/)
@@ -115,6 +115,23 @@ yarn start
 - ✅ **Database-backed user management** with MongoDB Atlas
 - ✅ **Redirect-after-login** — Users redirected to their intended page after authentication
 - ✅ **Protected API routes** — Automatic authentication checks with session redirect
+- ✅ **User Profile Setup** — Custom onboarding banner prompting profile setup completion
+
+### Gamification & Progress Tracking 🏆
+- 🏆 **Daily Challenges** — Automated daily problems generated contextually per science lab with completion history and streaks
+- 🏆 **XP Engine** — Earn dynamic experience points (XP) for performing tasks, finishing labs, and completing daily challenges
+- 🏆 **Level Progression** — Advance through levels with visual progress meters and level up logic
+- 🏆 **Subject Mastery** — Tailored expertise tracking (e.g. Physics, Chemistry, Biology, CS) visualizing progress as students explore labs
+- 🏆 **Achievements & Badges** — Reward system offering unlockable badges stamped with award dates, viewable on profiles
+- 🏆 **Recent Activity Tracker** — Automatic tracking of user engagement and recent experiment history in the profile dashboard
+
+### Full-Stack Blog & Media Engine 📝
+- 📝 **Editorial Grid** — Public articles display with rich details: reading times, snippets, visual cover photo frames, and modern hovers
+- 📝 **Cover Image Uploads** — Drag-and-drop file inputs on create and edit panel pages, feeding directly into Cloudinary CDN
+- 📝 **Cloudinary Integration** — Secure, stream-based uploads automatically optimized into lightweight WebP formatting (5MB limit)
+- 📝 **Admin Dashboard (CRUD)** — Robust administrative control panel (`/admin/blogs`) supporting secure creating, editing, and deleting of articles
+- 📝 **x-admin-secret Protection** — Rest API uploads and mutations strictly restricted using secure header auth validation
+- 📝 **Dynamic FAQ Schema** — SEO-optimal automated injection of structured JSON-LD rich results from customized blog FAQs
 
 ### AI & Chat Features
 - ✅ **OpenLabsAI Chat Assistant** — Context-aware AI assistant integrated across all labs
@@ -124,6 +141,8 @@ yarn start
 - ✅ **Real-time Markdown Support** — Response formatting with GitHub-flavored Markdown
 
 ### UI/UX Features
+- **Responsive Profile Interface** — Mobile-first adaptive details panel with centralized Edit forms and wrapped grid columns
+- **Sleek Navbar Polish** — Minimalistic, emoji-free navigational items across categories and drawers for clean readability
 - **Responsive Design** — Mobile-friendly layouts with Tailwind CSS
 - **Accessibility-First** — WCAG-compliant accessible components
 - **Smooth Animations** — Framer Motion transitions and interactions
@@ -166,6 +185,10 @@ yarn start
 - **Nodemailer** 7.0.12 (email delivery)
 - **OpenAI** 6.22.0 (AI language model integration)
 - **@hackeryard/mandatory-guard** 1.0.3 (build-time validation)
+
+### Media Processing & Uploads
+- **Cloudinary SDK** — Stream-based remote uploads and media asset optimization
+- **Multer** — Node.js middleware for handling multipart/form-data upload buffers
 
 ### UI & Animation
 - **Framer Motion** 12.29.0 (declarative animations)
@@ -214,7 +237,17 @@ Available npm/yarn scripts in [package.json](package.json):
 ```
 OpenLabs/
 ├── app/                              # Next.js App Router
+│   ├── admin/                        # Blog Administration Panel
+│   │   └── blogs/                    # Blog Editor & manager listings
+│   │       ├── create/               # Create blog post form (with Cloudinary uploads)
+│   │       └── [slug]/edit/          # Edit blog post page
+│   │
 │   ├── api/                          # Backend API routes
+│   │   ├── admin/blogs/              # Admin blog management
+│   │   │   └── upload/               # Cloudinary secure upload route
+│   │   ├── blogs/                    # Blog retrieval endpoints
+│   │   ├── challenges/               # Daily challenges API
+│   │   ├── xp/                       # XP completions API
 │   │   ├── auth/                     # Authentication endpoints
 │   │   │   ├── signup/               # User registration
 │   │   │   ├── login/                # User login
@@ -224,40 +257,53 @@ OpenLabs/
 │   │   │   ├── reset-password/       # Password reset form
 │   │   │   ├── logout/               # User logout
 │   │   │   └── check/                # Auth status check
-│   │   └── projects/                 # Project management API│   │   ├── chat/                     # AI chat response endpoint
-│   │   └── agent/                    # AI agent service routing│   │
+│   │   └── projects/                 # Project management API
+│   │   ├── chat/                     # AI chat response endpoint
+│   │   └── agent/                    # AI agent service routing
+│   │
 │   ├── (maths)/                      # Math labs (algebra, etc.)
 │   ├── biology/                      # Biology labs & visualizations
 │   ├── chemistry/                    # Chemistry labs & periodic table
 │   ├── physics/                      # Physics experiments & simulations
 │   ├── computer-science/             # CS labs (DSA, Data Science, AI, etc.)
+│   ├── profile/                      # User dashboard page & custom profile editor
+│   ├── blog/                         # Public Blog listing & article page layouts
 │   │
 │   ├── components/                   # Reusable UI components
 │   │   ├── biology/                  # Cell & anatomy components
 │   │   ├── chemistry/                # Chemistry-specific components
 │   │   ├── physics/                  # Physics lab components
 │   │   ├── computer-science/         # Code editor & CS components
+│   │   ├── blog/                     # Blog listing card layouts
 │   │   ├── ChatContext.tsx           # Global chat context provider
 │   │   ├── OpenLabsAI.tsx            # AI chat assistant component
+│   │   ├── DailyChallengeCard.tsx    # Daily challenge dashboard item
 │   │   ├── Footer.tsx                # Footer component
-│   │   ├── Navbar.tsx                # Navigation bar (includes Computer Science)
+│   │   ├── Navbar.tsx                # Navigation bar
 │   │   └── Hero.tsx                  # Hero section with labs exploration
 │   │
 │   ├── models/                       # MongoDB Mongoose schemas
-│   │   ├── User.js                   # User model with auth fields
+│   │   ├── User.js                   # User model (auth & stats: levels, badges, streak)
 │   │   ├── OTP.js                    # OTP storage with expiry
-│   │   └── Project.ts                # Project data model
+│   │   ├── Project.ts                # Project data model
+│   │   ├── Blog.js                   # Blog posts schema (coverImage, faqs, metadata)
+│   │   └── DailyChallenge.js         # Daily generated challenge schema
 │   │
 │   ├── lib/                          # Utility libraries
 │   │   ├── auth.js                   # JWT utilities
 │   │   ├── email.js                  # Email sending logic
 │   │   ├── mongodb.ts                # Database connection
 │   │   ├── getUserFromToken.ts       # Token parsing
-│   │   └── pageKnowledge.ts          # Experiment context data for AI
+│   │   ├── pageKnowledge.ts          # Experiment context data for AI
+│   │   ├── cloudinary.ts             # Cloudinary configuration
+│   │   ├── labs.ts                   # Lab IDs metadata library
+│   │   └── xp.ts                     # XP definitions and progression rules
 │   │
 │   ├── hooks/                        # Custom React hooks
 │   │   ├── useLocalStorage.ts        # Local storage management
-│   │   └── useProjects.ts            # Project management hook
+│   │   ├── useProjects.ts            # Project management hook
+│   │   ├── useDailyChallenge.ts      # Fetch and progress challenges
+│   │   └── useXP.ts                  # Log experiment XP and check levels
 │   │
 │   ├── layout.tsx                    # Root layout (Navbar, Footer)
 │   ├── page.tsx                      # Home/landing page
@@ -305,6 +351,16 @@ Supports optional `?next=/path` query parameter to redirect users to their inten
 | `/verify-email` | Email OTP verification |
 | `/forgotpassword` | Password reset request |
 | `/reset-password` | Password reset with OTP |
+| `/profile` | Fully mobile-responsive user stats, badges, streaks, and customization |
+
+### Blog Platform (Public & Admin Panels)
+| Route | Purpose |
+|-------|---------|
+| `/blog` | Visual listing grid of all public articles with reading time and cover photo hovers |
+| `/blog/[slug]` | Dedicated editorial view with cover image and auto-injected dynamic FAQ Schema JSON-LD |
+| `/admin/blogs` | Admin blog manager dashboard listing (published vs draft status) |
+| `/admin/blogs/create` | Admin blog creator tool equipped with custom drag-and-drop Cloudinary file uploader |
+| `/admin/blogs/[slug]/edit` | Admin blog editor updating cover image, markdown content, metadata, and FAQs |
 
 ### Chemistry Labs
 
@@ -1289,8 +1345,8 @@ For licensing inquiries, please contact the maintainer.
 ## Contact & Support 📬
 
 - **Maintainer:** [@rahulra3621](https://github.com/rahulra3621)
-- **Issues & Bugs:** Open an issue on [GitHub](https://github.com/rahulra3621/openlabs/issues)
-- **Feature Requests:** Submit a discussion on [GitHub Discussions](https://github.com/rahulra3621/openlabs/discussions)
+- **Issues & Bugs:** Open an issue on [GitHub](https://github.com/hackeryard/openlabs/issues)
+- **Feature Requests:** Submit a discussion on [GitHub Discussions](https://github.com/hackeryard/openlabs/discussions)
 - **Contributions:** See the [Contributing](#contributing-) section above
 
 For direct inquiries about licensing or partnerships:
@@ -1302,11 +1358,19 @@ For direct inquiries about licensing or partnerships:
 
 ### Version History
 
-Detailed changes per release are tracked in [CHANGELOG.md](CHANGELOG.md) (if available) or in [GitHub Releases](https://github.com/rahulra3621/openlabs/releases).
+Detailed changes per release are tracked in [CHANGELOG.md](CHANGELOG.md) (if available) or in [GitHub Releases](https://github.com/hackeryard/openlabs/releases).
 
 ### Latest Updates
 
-**Latest Updates (February 2026 - v3.0):**
+**Latest Updates (May 2026 - v4.0):**
+- ✅ **Gamification & Rewards Engine** — Comprehensive interactive Daily Challenges, user Streak counting, Level Ups, and custom unlockable Achievements & Badges displayed on profile dashboards
+- ✅ **XP Progression Integration** — Native hooks integrated directly inside 35+ labs triggering XP logs on completion and synchronizing Subject Mastery levels
+- ✅ **Full-Stack Editorial Blog** — Blog manager panel CRUD (`/admin/blogs`), listing grid (`/blog`), dynamic cover photos, and custom SEO FAQ schema generation
+- ✅ **Cloudinary Media Pipeline** — Stream-based cover image upload API automatically parsing buffers into WebP formatting and securely restricting uploads under 5MB
+- ✅ **Fully Responsive Profile Dashboard** — Mobile-first redesigned custom setup panel featuring interactive avatar selectors, wrapped dynamic layout grids, and seamless text reflows
+- ✅ **Polished Emoji-free Navigation** — Removed excessive graphic icons from headers and mobile lists for clean, sophisticated, typography-centric layouts
+
+**v3.0 Release Features (Previous):**
 - ✅ **OpenLabsAI Chat Assistant** — Context-aware AI chatbot integrated across all labs using OpenAI
 - ✅ **Speech Recognition Support** — Voice input capability for chat interactions (Web Speech API)
 - ✅ **8 New Computer Science Labs** — Data Analyzer, Data Science, AI Problem, Blockchain, Networking, Logic Gates, Git Simulator, and Java code lab
@@ -1317,7 +1381,7 @@ Detailed changes per release are tracked in [CHANGELOG.md](CHANGELOG.md) (if ava
 - ✅ **Performance Monitoring** — Vercel Speed Insights integration for analytics
 - ✅ **Enhanced Accessibility** — @headlessui/react components for better WCAG compliance
 
-**v2.5 Features (Previous):**
+**v2.5 Release Features (Previous):**
 - ✅ **Subject-Specific Error Pages** — Custom error boundaries for Physics, Chemistry, Biology, and Computer Science labs with lab-themed branding
 - ✅ **JavaScript Visual Debugger** — Step-through runtime visualizer with memory, stack, and async queue inspection
 - ✅ **Enhanced Authentication** — Redirect-after-login functionality with `?next` query parameter support
@@ -1354,4 +1418,4 @@ OpenLabs is built with ❤️ using:
 
 **Built for curious minds, by educators, for learning. 🎓**
 
-*Last Updated: February 26, 2026 (v3.0)*
+*Last Updated: May 24, 2026 (v4.0)*

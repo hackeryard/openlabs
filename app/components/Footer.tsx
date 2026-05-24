@@ -74,11 +74,11 @@ export default function Footer() {
           <p className="text-sm text-slate-200 mt-2">
             Email:{" "}
             <motion.a
-              href="mailto:hello@openlabs.local"
+              href="mailto:support@openlabs.org.in  "
               whileHover={{ opacity: 0.85 }}
               className="underline underline-offset-2"
             >
-              hello@openlabs.local
+              support@openlabs.org.in
             </motion.a>
           </p>
         </motion.div>

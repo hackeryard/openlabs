@@ -5,6 +5,8 @@ import {
   Brain, RotateCcw, Play, Pause, Zap, 
   Eye, Activity, Settings, Info, ArrowRight
 } from 'lucide-react';
+import { useLab } from '@/app/hooks/useXP';
+import DailyChallengeCard from '@/app/components/DailyChallengeCard';
 
 // ==================== TYPES ====================
 interface Position {
@@ -96,6 +98,8 @@ const parseMaze = (mazeConfig: string[][]): {
 
 // ==================== MAIN COMPONENT ====================
 export default function QLearningVisualizer() {
+  const { completeExperiment } = useLab("computer-science/ai-problem", "computerScience", "simulation");
+  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 15000); return () => clearTimeout(timer); }, []);
   const [selectedMaze, setSelectedMaze] = useState<keyof typeof MAZES>('simple');
   const [mazeData, setMazeData] = useState(parseMaze(MAZES.simple.grid));
   const [isRunning, setIsRunning] = useState(false);
@@ -515,6 +519,9 @@ export default function QLearningVisualizer() {
 
       <main className="container mx-auto px-6 py-8">
         <div className="grid grid-cols-12 gap-8">
+          <div className="col-span-12">
+            <DailyChallengeCard labId="computer-science/ai-problem" currentParams={{ episodesRun: episode, successRate: episode > 0 ? successCount / episode : 0 }} />
+          </div>
           {/* Left Panel - Controls & Explanations */}
           <div className="col-span-12 lg:col-span-4 space-y-6">
             {/* Algorithm Explanation */}

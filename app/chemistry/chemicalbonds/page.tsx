@@ -4,8 +4,11 @@ import { useParams } from "next/navigation";
 import ChemicalBondTypes from "../../components/chemistry/ChemicalBondTypes";
 import { useEffect } from "react";
 import { useChat } from "@/app/components/ChatContext";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 export default function ElectronicConfigurationPage() {
+  const { completeExperiment } = useLab("chemistry/chemicalbonds", "chemistry", "exploration");
   // Chatbot 
   const { setExperimentData } = useChat();
 
@@ -16,7 +19,11 @@ export default function ElectronicConfigurationPage() {
       extraContext: ``,
     });
   }, []);
+  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
   return (
-    <ChemicalBondTypes />
+    <>
+      <DailyChallengeCard labId="chemistry/chemicalbonds" currentParams={{ bondsExplored: 1 }} />
+      <ChemicalBondTypes />
+    </>
   )
 }

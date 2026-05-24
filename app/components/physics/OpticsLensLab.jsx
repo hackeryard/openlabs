@@ -2,6 +2,8 @@
 // src/components/OpticsLensLab.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { useChat } from "../ChatContext";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 /**
  * OpticsLensLab.jsx
@@ -31,6 +33,7 @@ export default function OpticsLensLab({
   initialDo = 0.25, // meters
   initialObjH = 0.05, // meters (5 cm)
 }) {
+  const { completeExperiment } = useLab("physics/opticslenslab", "physics", "simulation");
   // Chatbot 
   const { setExperimentData } = useChat();
 
@@ -402,6 +405,7 @@ export default function OpticsLensLab({
       setManualEntries((m) => [...m, { do: doDist, di: null, mag: null, note }]);
     } else {
       setManualEntries((m) => [...m, { do: doDist, di: Number(di.toFixed(6)), mag: Number((mag || 0).toFixed(6)), note }]);
+      completeExperiment();
     }
   }
 
@@ -509,6 +513,7 @@ export default function OpticsLensLab({
         <h2 className="text-2xl font-semibold">Optics — Thin Lens Lab</h2>
         <div className="text-sm text-gray-600">Interactive ray diagram — thin lens equation 1/f = 1/do + 1/di</div>
       </header>
+      <DailyChallengeCard labId="physics/opticslenslab" currentParams={{ focalLength: f, objectDistance: doDist, imageDistance: di, magnification: mag }} />
 
       <div className="grid md:grid-cols-3 gap-4">
         {/* Controls */}

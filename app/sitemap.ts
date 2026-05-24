@@ -1,9 +1,26 @@
 import { MetadataRoute } from 'next'
+import { connectDB } from '@/app/lib/mongodb'
+import Blog from '@/app/models/Blog'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.openlabs.org.in'
 
-  return [
+  // Dynamic Blog posts fetching
+  let blogUrls: MetadataRoute.Sitemap = []
+  try {
+    await connectDB()
+    const blogs = await Blog.find({ published: true }).select('slug updatedAt').lean()
+    blogUrls = blogs.map((b: any) => ({
+      url: `${baseUrl}/blog/${b.slug}`,
+      lastModified: b.updatedAt ? new Date(b.updatedAt) : new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    }))
+  } catch (error) {
+    console.error('✗ Sitemap blog generation error:', error)
+  }
+
+  const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified: new Date(),
@@ -33,6 +50,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/about`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/contact`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
     },
     // Physics experiments
     {
@@ -317,4 +352,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     },
   ]
+
+  return [...staticRoutes, ...blogUrls]
 }
