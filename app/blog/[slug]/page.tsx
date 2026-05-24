@@ -6,6 +6,8 @@ import { ArrowLeft, Calendar, Clock, User, ChevronDown } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Metadata } from 'next';
+import { connectDB } from '@/app/lib/mongodb';
+import Blog from '@/app/models/Blog';
 
 // TypeScript Types for better safety
 interface FAQ {
@@ -29,17 +31,16 @@ interface BlogPost {
 }
 
 async function getBlogPost(slug: string): Promise<BlogPost | null> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   try {
-    const res = await fetch(`${baseUrl}/api/blogs/${slug}`, { cache: "no-store" });
-    if (!res.ok) {
-      if (res.status === 404) return null;
-      throw new Error('Failed to fetch blog post');
-    }
-    const data = await res.json();
-    return data.post;
+    await connectDB();
+    const blog = await Blog.findOne({ slug, published: true }).lean();
+    
+    if (!blog) return null;
+    
+    // Serialize Mongoose object to plain JS object for Next.js Server Components
+    return JSON.parse(JSON.stringify(blog));
   } catch (error) {
-    console.error("Failed to fetch blog post:", error);
+    console.error("Failed to fetch blog post directly:", error);
     return null;
   }
 }
