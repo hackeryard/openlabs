@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Define paths that are open to everyone
 const publicPaths = [
   '/',
   '/login',
@@ -9,9 +8,12 @@ const publicPaths = [
   '/forgotpassword',
   '/reset-password',
   '/verify-email',
-  '/blog',
   '/about',
   '/contact',
+];
+
+const publicPrefixes = [
+  '/blog',
 ];
 
 export function middleware(request: NextRequest) {
@@ -27,7 +29,7 @@ export function middleware(request: NextRequest) {
 
   // Allow all /api/auth routes, cron jobs, and contact form submission
   if (
-    pathname.startsWith('/api/auth') || 
+    pathname.startsWith('/api/auth') ||
     pathname.startsWith('/api/challenges/generate') ||
     pathname.startsWith('/api/contact') ||
     pathname.startsWith('/api/blogs') ||
@@ -37,7 +39,11 @@ export function middleware(request: NextRequest) {
   }
 
   const authToken = request.cookies.get('auth-token');
-  const isPublicPath = publicPaths.includes(pathname);
+  const isPublicPath =
+    publicPaths.includes(pathname) ||
+    publicPrefixes.some(prefix =>
+      pathname.startsWith(prefix)
+    );
 
   // If user is not authenticated and trying to access a protected route
   if (!authToken && !isPublicPath) {
