@@ -1,21 +1,24 @@
 import React from "react";
 import { Sparkles, BookOpen } from "lucide-react";
 import BlogGrid from "../components/blog/BlogGrid";
+import { connectDB } from '@/app/lib/mongodb';
+import Blog from '@/app/models/Blog';
 
 // Force dynamic or just use no-store in fetch to ensure fresh blog posts
 export const dynamic = 'force-dynamic';
 
 async function getBlogs() {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   try {
-    const res = await fetch(`${baseUrl}/api/blogs`, { cache: "no-store" });
-    if (!res.ok) {
-      return [];
-    }
-    const data = await res.json();
-    return data.posts || [];
+    await connectDB();
+    const blogs = await Blog.find({ published: true })
+      .sort({ date: -1 })
+      .select('slug title excerpt category author date readTime gradient border icon coverImage -_id')
+      .lean();
+    
+    // We need to serialize the MongoDB objects to plain JS objects for Server Components
+    return JSON.parse(JSON.stringify(blogs)) || [];
   } catch (error) {
-    console.error("Failed to fetch blogs:", error);
+    console.error("Failed to fetch blogs directly:", error);
     return [];
   }
 }
