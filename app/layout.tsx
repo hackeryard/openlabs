@@ -110,6 +110,19 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
 
         {/* Structured Data */}
         <Script
+          id="website-structured-data"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "OpenLabs",
+              alternateName: "OpenLabs Virtual Labs",
+              url: "https://www.openlabs.org.in",
+            }),
+          }}
+        />
+        <Script
           id="structured-data"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
