@@ -15,7 +15,16 @@ export async function GET(req: Request) {
     const user = await (User as any).findById(payload.id).select("-password").lean();
     if (!user) return Response.json({ error: "User not found" }, { status: 404 });
 
-    return Response.json({ user });
+    return Response.json(
+      { user },
+      {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+          "Pragma": "no-cache",
+          "Expires": "0",
+        },
+      }
+    );
   } catch (err) {
     console.error("/api/auth/me error:", err);
     return Response.json({ error: "Server error" }, { status: 500 });

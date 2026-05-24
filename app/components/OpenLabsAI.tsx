@@ -18,6 +18,7 @@ export default function OpenLabsAI() {
 
   // --- Auth-aware visibility ---
   const [isAuthed, setIsAuthed] = useState<boolean | null>(null); // null = loading
+  const [remainingQueries, setRemainingQueries] = useState<number | null>(null);
 
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState("");
@@ -29,6 +30,7 @@ export default function OpenLabsAI() {
   const [streamingText, setStreamingText] = useState("");
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const lastSnapshotRef = useRef<string>("");
 
@@ -36,10 +38,24 @@ export default function OpenLabsAI() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch("/api/auth/me");
+        const res = await fetch(`/api/auth/me?t=${Date.now()}`, {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache",
+            "Pragma": "no-cache"
+          }
+        });
         if (!res.ok) { if (!cancelled) setIsAuthed(false); return; }
         const data = await res.json();
-        if (!cancelled) setIsAuthed(!!data.user);
+        if (!cancelled) {
+          setIsAuthed(!!data.user);
+          if (data.user) {
+            const todayStr = new Date().toISOString().split("T")[0];
+            const hasQueriedToday = data.user.lastAiQueryDate === todayStr;
+            const count = hasQueriedToday ? (data.user.aiQueriesCount ?? 0) : 0;
+            setRemainingQueries(Math.max(0, 10 - count));
+          }
+        }
       } catch {
         if (!cancelled) setIsAuthed(false);
       }
@@ -47,9 +63,26 @@ export default function OpenLabsAI() {
     return () => { cancelled = true; };
   }, [pathname]); // re-check on navigation
 
+  // Track if user manually scrolled up
+  const userScrolledUpRef = useRef(false);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    // If user is more than 50px from the bottom, consider them scrolled up
+    const isAtBottom = scrollHeight - scrollTop - clientHeight < 50;
+    userScrolledUpRef.current = !isAtBottom;
+  };
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading, streamingText, isTyping]);
+    userScrolledUpRef.current = false;
+  }, [messages.length, loading]);
+
+  useEffect(() => {
+    if (!userScrolledUpRef.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+    }
+  }, [streamingText, isTyping]);
 
   useEffect(() => {
     if (open) {
@@ -185,8 +218,8 @@ export default function OpenLabsAI() {
   const isHiddenRoute = HIDDEN_ROUTES.some(
     (r) => pathname === r || pathname.startsWith(r + "/")
   );
-  const isHomepage = pathname === "/";
-  const shouldHide = isHiddenRoute || (isHomepage && !isAuthed) || isAuthed === null;
+  // Hide the chatbot if it's a hidden route or if the user is not authenticated (or auth state is still loading)
+  const shouldHide = isHiddenRoute || !isAuthed;
 
   if (shouldHide) return null;
 
@@ -235,7 +268,11 @@ export default function OpenLabsAI() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: `
-      You are OpenLabs AI Assistant.
+      You are OpenLabs AI Assistant, a friendly and highly educational companion for STEM learning!
+
+      RELEVANCE & SAFETY RULES:
+      - You should enthusiastically and thoroughly answer any questions about science, technology, engineering, mathematics, physics, chemistry, biology, computer science, programming, theories on this page, or active concepts. Always be as helpful and informative as possible for STEM learning!
+      - Decline to answer ONLY if the question is completely off-topic and has absolutely nothing to do with science, STEM, coding, academic learning, or the platform (such as recipes, pop-culture, general non-scientific history, sports, or purely social chitchat). In those off-topic cases, politely state that you are designed specifically to assist with STEM learning and lab experiments.
 
       IMPORTANT:
       - Always respond in the SAME language as the user's question.
@@ -263,6 +300,12 @@ export default function OpenLabsAI() {
       });
 
       const data = await res.json();
+      if (typeof data.remainingQueries === "number") {
+        setRemainingQueries(data.remainingQueries);
+      }
+      if (!res.ok && !data.reply) {
+        throw new Error(data.error || "Failed to connect to AI server");
+      }
       const reply = data.reply || "⚠️ AI returned empty response";
 
       runTypewriter(reply);
@@ -285,6 +328,15 @@ export default function OpenLabsAI() {
 
   return (
     <>
+      <style>{`
+        .hide-scroll::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scroll {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
       <AnimatePresence>
         {!open && (
           <motion.button
@@ -355,7 +407,11 @@ export default function OpenLabsAI() {
             </div>
 
             {/* Messages Container */}
-            <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900">
+            <div 
+              ref={messagesContainerRef}
+              onScroll={handleScroll}
+              className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900 hide-scroll"
+            >
               {messages.length === 0 && (
                 <div className="text-center py-8">
                   <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -544,8 +600,13 @@ export default function OpenLabsAI() {
             </div>
 
             {/* Footer */}
-            <div className="px-4 py-2 text-[11px] text-center text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 flex-shrink-0">
-              AI responses may not always be accurate
+            <div className="px-4 py-2 text-[11px] flex justify-between items-center text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 flex-shrink-0">
+              <span>AI responses may not always be accurate</span>
+              {remainingQueries !== null && (
+                <span className={`font-semibold transition-all duration-300 ${remainingQueries <= 2 ? "text-red-500 dark:text-red-400 font-bold" : "text-blue-600 dark:text-blue-400"}`}>
+                  Quota: {remainingQueries}/10 left
+                </span>
+              )}
             </div>
 
             {/* Microphone Overlay */}

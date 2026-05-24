@@ -75,6 +75,14 @@ const UserSchema = new mongoose.Schema({
       },
     }
   ],
+  aiQueriesCount: {
+    type: Number,
+    default: 0,
+  },
+  lastAiQueryDate: {
+    type: String,
+    default: null,
+  },
 })
 
 export default mongoose.models.User || mongoose.model("User", UserSchema)
