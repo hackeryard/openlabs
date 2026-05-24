@@ -78,14 +78,14 @@ const team = [
     gradient: "from-indigo-600 to-cyan-500",
   },
   {
-    name: "Aditya",
+    name: "Aditya Kumar",
     role: "Core Team Member",
     bio: "\"Design isn't just how it looks — it's how it works. Every interaction on OpenLabs is crafted to feel effortless, so students focus on the science, not the interface.\"",
-    initials: "AD",
+    initials: "AK",
     gradient: "from-blue-600 to-teal-500",
   },
   {
-    name: "Azhruddin Khan",
+    name: "Md Azharuddin Khan",
     role: "Core Team Member",
     bio: "\"Performance is a feature. Whether you're on a flagship phone or a budget laptop in a school lab, the simulations should run without compromise.\"",
     initials: "AK",
