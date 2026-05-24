@@ -196,3 +196,58 @@ export async function sendOTPEmail(email, otp, subject = "Email Verification - Y
   }
 }
 
+export async function sendContactEmail(name, email, subject, message) {
+  try {
+    const mailOptions = {
+      from: `${WEBSITE_NAME} System <${process.env.EMAIL_USER}>`,
+      to: 'support@openlabs.org.in',
+      replyTo: email,
+      subject: `[Contact Form] ${subject.toUpperCase()} - from ${name}`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; }
+            .header { background: #4f46e5; color: white; padding: 15px 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; }
+            .row { margin-bottom: 10px; }
+            .label { font-weight: bold; color: #64748b; font-size: 12px; text-transform: uppercase; }
+            .value { margin-top: 4px; font-size: 16px; }
+            .message { background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid #e2e8f0; white-space: pre-wrap; margin-top: 5px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h2 style="margin: 0;">New Contact Form Submission</h2>
+            </div>
+            <div class="row">
+              <div class="label">Sender Name</div>
+              <div class="value">${name}</div>
+            </div>
+            <div class="row">
+              <div class="label">Sender Email</div>
+              <div class="value"><a href="mailto:${email}">${email}</a></div>
+            </div>
+            <div class="row">
+              <div class="label">Classification</div>
+              <div class="value" style="text-transform: capitalize;">${subject}</div>
+            </div>
+            <div class="row" style="margin-top: 20px;">
+              <div class="label">Message Payload</div>
+              <div class="message">${message}</div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
+    }
+
+    await transporter.sendMail(mailOptions)
+    return { success: true }
+  } catch (error) {
+    console.error("Contact email sending error:", error)
+    throw new Error("Failed to send contact email")
+  }
+}

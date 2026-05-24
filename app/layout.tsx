@@ -82,7 +82,17 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
   return (
     <html lang="en">
       <head>
-        <meta name="msvalidate.01" content="DB3814EA47FB786C9197CFE5A3FC3BFC" />
+        {/* Google tag (gtag.js) */}
+        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-7XW8JGG3BD" strategy="afterInteractive" />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-7XW8JGG3BD');
+          `}
+        </Script>
       </head>
       <body>
         <Analytics />

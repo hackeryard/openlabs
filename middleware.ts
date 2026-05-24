@@ -9,11 +9,14 @@ const publicPaths = [
   '/forgotpassword',
   '/reset-password',
   '/verify-email',
+  '/blog',
+  '/about',
+  '/contact',
 ];
 
 export function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
-  
+
   // Exclude _next and static assets from being intercepted
   if (
     pathname.startsWith('/_next') ||
@@ -22,8 +25,14 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Allow all /api/auth routes and cron jobs
-  if (pathname.startsWith('/api/auth') || pathname.startsWith('/api/challenges/generate')) {
+  // Allow all /api/auth routes, cron jobs, and contact form submission
+  if (
+    pathname.startsWith('/api/auth') || 
+    pathname.startsWith('/api/challenges/generate') ||
+    pathname.startsWith('/api/contact') ||
+    pathname.startsWith('/api/blogs') ||
+    pathname.startsWith('/api/admin')
+  ) {
     return NextResponse.next();
   }
 

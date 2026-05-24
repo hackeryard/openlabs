@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence, Variants } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 
 /* ---------------- Animations ---------------- */
 
@@ -36,21 +37,68 @@ const menuVariants: Variants = {
   },
 };
 
+const dropdownVariants: Variants = {
+  hidden: { opacity: 0, y: 8, scale: 0.96 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] },
+  },
+  exit: {
+    opacity: 0,
+    y: 8,
+    scale: 0.96,
+    transition: { duration: 0.15, ease: [0.4, 0, 0.2, 1] },
+  },
+};
+
+/* ---------------- Lab Categories ---------------- */
+
+const labCategories = [
+  { label: "Physics", path: "/physics" },
+  { label: "Chemistry", path: "/chemistry" },
+  { label: "Biology", path: "/biology" },
+  { label: "Computer Science", path: "/computer-science" },
+];
+
 export default function Navbar() {
-  const [open, setOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [labsOpen, setLabsOpen] = useState(false);
+  const [mobileLabsOpen, setMobileLabsOpen] = useState(false);
   const [user, setUser] = useState<any | null>(null);
 
   const router = useRouter();
   const pathname = usePathname();
+  const labsRef = useRef<HTMLLIElement>(null);
 
-  /* ---------------- Nav Links ---------------- */
+  /* ---------------- Top-level nav links ---------------- */
 
-  const navLinks = [
-    { label: "Physics", path: "/physics" },
-    { label: "Chemistry", path: "/chemistry" },
-    { label: "Biology", path: "/biology" },
-    { label: "Computer Science", path: "/computer-science" },
+  const topLinks = [
+    { label: "Blog", path: "/blog" },
+    { label: "About", path: "/about" },
+    { label: "Contact", path: "/contact" },
   ];
+
+  /* ---------------- Close Labs dropdown on outside click ---------------- */
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (labsRef.current && !labsRef.current.contains(e.target as Node)) {
+        setLabsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  /* ---------------- Close mobile menu on navigation ---------------- */
+
+  useEffect(() => {
+    setMobileOpen(false);
+    setLabsOpen(false);
+    setMobileLabsOpen(false);
+  }, [pathname]);
 
   /* ---------------- Load User ---------------- */
 
@@ -75,8 +123,9 @@ export default function Navbar() {
     loadUser();
   }, [pathname]);
 
-  /* ---------------- Logout ---------------- */
-  /* logout moved to profile page */
+  /* ---------------- Helpers ---------------- */
+
+  const isLabsActive = labCategories.some((c) => pathname.startsWith(c.path));
 
   return (
     <>
@@ -114,11 +163,11 @@ export default function Navbar() {
 
           <motion.button
             aria-label="Toggle menu"
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
+            aria-expanded={mobileOpen}
+            onClick={() => setMobileOpen((v) => !v)}
             whileTap={{ scale: 0.95 }}
             className="
-              md:hidden
+              lg:hidden
               p-2
               rounded-md
               bg-white/10
@@ -131,7 +180,7 @@ export default function Navbar() {
               height="22"
               viewBox="0 0 24 24"
               fill="none"
-              animate={{ rotate: open ? 90 : 0 }}
+              animate={{ rotate: mobileOpen ? 90 : 0 }}
               transition={{
                 duration: 0.3,
                 ease: [0.4, 0, 0.2, 1],
@@ -144,14 +193,12 @@ export default function Navbar() {
                 strokeWidth="2"
                 strokeLinecap="round"
               />
-
               <path
                 d="M4 12H20"
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
               />
-
               <path
                 d="M4 18H20"
                 stroke="currentColor"
@@ -163,33 +210,101 @@ export default function Navbar() {
 
           {/* ---------------- Desktop Menu ---------------- */}
 
-          <ul className="hidden md:flex items-center gap-6">
-            {navLinks.map((item) => (
-              <li key={item.label}>
+          <ul className="hidden lg:flex items-center gap-1">
+            {/* Home */}
+            <li>
+              <Link
+                href="/"
+                className={`
+                  px-3 py-2 rounded-md transition text-sm font-medium
+                  ${pathname === "/" ? "bg-white/20 font-semibold" : "hover:bg-white/10"}
+                `}
+              >
+                Home
+              </Link>
+            </li>
+
+            {/* Labs Dropdown */}
+            <li ref={labsRef} className="relative">
+              <button
+                onClick={() => setLabsOpen((v) => !v)}
+                className={`
+                  flex items-center gap-1 px-3 py-2 rounded-md transition text-sm font-medium
+                  ${isLabsActive ? "bg-white/20 font-semibold" : "hover:bg-white/10"}
+                `}
+              >
+                Labs
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform duration-200 ${labsOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+
+              <AnimatePresence>
+                {labsOpen && (
+                  <motion.div
+                    variants={dropdownVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    className="
+                      absolute top-full left-0 mt-2
+                      w-56
+                      bg-white text-slate-800
+                      rounded-xl
+                      shadow-2xl
+                      border border-slate-100
+                      overflow-hidden
+                      z-50
+                    "
+                  >
+                    <div className="p-2 space-y-0.5">
+                      {labCategories.map((cat) => (
+                        <Link
+                          key={cat.path}
+                          href={cat.path}
+                          className={`
+                            flex items-center px-3 py-2.5 rounded-lg transition text-sm
+                            ${
+                              pathname.startsWith(cat.path)
+                                ? "bg-indigo-50 text-indigo-700 font-semibold"
+                                : "hover:bg-slate-50 text-slate-700"
+                            }
+                          `}
+                        >
+                          {cat.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </li>
+
+            {/* Top links: Blog, About, Contact */}
+            {topLinks.map((link) => (
+              <li key={link.label}>
                 <Link
-                  href={item.path}
+                  href={link.path}
                   className={`
-                    px-3 py-2 rounded-md transition
-                    ${
-                      pathname === item.path
-                        ? "bg-white/20 font-semibold"
-                        : "hover:bg-white/10"
-                    }
+                    px-3 py-2 rounded-md transition text-sm font-medium
+                    ${pathname === link.path ? "bg-white/20 font-semibold" : "hover:bg-white/10"}
                   `}
                 >
-                  {item.label}
+                  {link.label}
                 </Link>
               </li>
             ))}
 
+            {/* Auth / Avatar */}
             {!user ? (
-              <li>
+              <li className="ml-2">
                 <Link
                   href="/login"
                   className="
                     px-4 py-2 rounded-md
                     bg-white text-indigo-700
-                    font-semibold
+                    font-semibold text-sm
                     shadow-sm
                     hover:bg-slate-100
                     hover:shadow-md
@@ -200,32 +315,25 @@ export default function Navbar() {
                 </Link>
               </li>
             ) : (
-              <>
-                <li>
-                  <Link
-                    href="/profile"
-                    className="
-                      flex items-center gap-2
-                      p-1 rounded-full
-                      hover:bg-white/10
-                      transition
-                    "
-                  >
-                    <Image
-                      src={
-                        user.avatar ||
-                        "/images/avatars/avatar1.svg"
-                      }
-                      alt="profile"
-                      width={36}
-                      height={36}
-                      className="rounded-full object-cover"
-                    />
-                  </Link>
-                </li>
-
-                {/* logout button moved to profile page */}
-              </>
+              <li className="ml-2">
+                <Link
+                  href="/profile"
+                  className="
+                    flex items-center gap-2
+                    p-1 rounded-full
+                    hover:bg-white/10
+                    transition
+                  "
+                >
+                  <Image
+                    src={user.avatar || "/images/avatars/avatar1.svg"}
+                    alt="profile"
+                    width={36}
+                    height={36}
+                    className="rounded-full object-cover"
+                  />
+                </Link>
+              </li>
             )}
           </ul>
         </div>
@@ -233,16 +341,15 @@ export default function Navbar() {
         {/* ---------------- Mobile Menu ---------------- */}
 
         <AnimatePresence>
-          {open && (
+          {mobileOpen && (
             <motion.div
               variants={menuVariants}
               initial="hidden"
               animate="visible"
               exit="exit"
               className="
-                md:hidden
-                absolute top-[72px] right-4
-                w-56
+                lg:hidden
+                absolute top-[72px] right-4 left-4
                 bg-white text-slate-800
                 rounded-xl
                 shadow-2xl
@@ -250,36 +357,100 @@ export default function Navbar() {
                 z-50
               "
             >
-              <ul className="p-2 space-y-1">
-                {navLinks.map((item) => (
-                  <li key={item.label}>
+              <ul className="p-2 space-y-0.5">
+                {/* Home */}
+                <li>
+                  <Link
+                    href="/"
+                    onClick={() => setMobileOpen(false)}
+                    className={`
+                      block px-4 py-2.5 rounded-lg transition text-sm font-medium
+                      ${pathname === "/" ? "bg-indigo-100 text-indigo-700 font-semibold" : "hover:bg-slate-100"}
+                    `}
+                  >
+                    Home
+                  </Link>
+                </li>
+
+                {/* Labs Accordion */}
+                <li>
+                  <button
+                    onClick={() => setMobileLabsOpen((v) => !v)}
+                    className={`
+                      w-full flex items-center justify-between px-4 py-2.5 rounded-lg transition text-sm font-medium
+                      ${isLabsActive ? "bg-indigo-100 text-indigo-700 font-semibold" : "hover:bg-slate-100"}
+                    `}
+                  >
+                    <span>Labs</span>
+                    <ChevronDown
+                      size={14}
+                      className={`transition-transform duration-200 ${mobileLabsOpen ? "rotate-180" : ""}`}
+                    />
+                  </button>
+
+                  <AnimatePresence>
+                    {mobileLabsOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="pl-4 py-1 space-y-0.5">
+                          {labCategories.map((cat) => (
+                            <Link
+                              key={cat.path}
+                              href={cat.path}
+                              onClick={() => setMobileOpen(false)}
+                              className={`
+                                flex items-center px-4 py-2 rounded-lg transition text-sm
+                                ${
+                                  pathname.startsWith(cat.path)
+                                    ? "bg-indigo-50 text-indigo-700 font-semibold"
+                                    : "hover:bg-slate-50 text-slate-600"
+                                }
+                              `}
+                            >
+                              {cat.label}
+                            </Link>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </li>
+
+                {/* Top links */}
+                {topLinks.map((link) => (
+                  <li key={link.label}>
                     <Link
-                      href={item.path}
+                      href={link.path}
+                      onClick={() => setMobileOpen(false)}
                       className={`
-                        block px-4 py-2 rounded-lg transition
-                        ${
-                          pathname === item.path
-                            ? "bg-indigo-100 text-indigo-700 font-semibold"
-                            : "hover:bg-slate-100"
-                        }
+                        block px-4 py-2.5 rounded-lg transition text-sm font-medium
+                        ${pathname === link.path ? "bg-indigo-100 text-indigo-700 font-semibold" : "hover:bg-slate-100"}
                       `}
-                      onClick={() => setOpen(false)}
                     >
-                      {item.label}
+                      {link.label}
                     </Link>
                   </li>
                 ))}
 
+                {/* Divider */}
+                <li><hr className="my-1 border-slate-200" /></li>
+
+                {/* Auth */}
                 {!user ? (
                   <li>
                     <Link
                       href="/login"
-                      onClick={() => setOpen(false)}
+                      onClick={() => setMobileOpen(false)}
                       className="
                         block text-center
-                        px-4 py-2 rounded-lg
+                        px-4 py-2.5 rounded-lg
                         bg-indigo-600 text-white
-                        font-semibold
+                        font-semibold text-sm
                         hover:bg-indigo-700
                         transition
                       "
@@ -289,8 +460,20 @@ export default function Navbar() {
                   </li>
                 ) : (
                   <li>
-                    {/* logout moved to profile page */}
-                    <div className="w-full px-4 py-2 text-center text-sm text-slate-500">Signed in</div>
+                    <Link
+                      href="/profile"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-100 transition"
+                    >
+                      <Image
+                        src={user.avatar || "/images/avatars/avatar1.svg"}
+                        alt="profile"
+                        width={32}
+                        height={32}
+                        className="rounded-full object-cover"
+                      />
+                      <span className="text-sm font-medium text-slate-700">My Profile</span>
+                    </Link>
                   </li>
                 )}
               </ul>
