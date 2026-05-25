@@ -34,6 +34,7 @@ export function useDailyChallenge(labId: string) {
         if (res.ok) {
           const data = await res.json();
           setChallenge(data.challenge);
+          setAlreadyCompleted(!!data.alreadyCompleted);
         }
       } catch (err) {
         console.error("Failed to fetch challenge:", err);

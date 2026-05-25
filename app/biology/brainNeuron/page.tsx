@@ -12,14 +12,13 @@ const BrainNeuron = dynamic(() => import("@/app/components/biology/brainNeuron/B
 
 export default function BrainNeuronPage() {
   const { completeExperiment } = useLab("biology/brainNeuron", "biology", "exploration");
-  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
 
   return (
     <div className="min-h-screen bg-gray-950">
       <div className="p-2">
         <DailyChallengeCard labId="biology/brainNeuron" currentParams={{ neuronsExplored: 1 }} />
       </div>
-      <BrainNeuron />
+      <BrainNeuron onComplete={completeExperiment} />
     </div>
   );
 }

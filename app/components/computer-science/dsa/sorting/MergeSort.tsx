@@ -31,7 +31,7 @@ interface TreeNode {
   isMerged: boolean;
 }
 
-export default function MergeSortVisualizer() {
+export default function MergeSortVisualizer({ onComplete }: { onComplete?: () => void }) {
   // Chatbot 
   const { setExperimentData } = useChat();
 
@@ -251,6 +251,7 @@ export default function MergeSortVisualizer() {
     if (currentStepIndex >= steps.length - 1) {
       setIsPlaying(false);
       setShowCelebration(true);
+      if (onComplete) onComplete();
       setTimeout(() => setShowCelebration(false), 3000);
       return;
     }

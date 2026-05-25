@@ -27,7 +27,7 @@ ChartJS.register(
   Filler
 );
 
-export default function BloodTransfusionLab() {
+export default function BloodTransfusionLab({ onComplete }: { onComplete?: () => void }) {
   // Experiment Info
   const experimentInfo = {
     title: "Blood Group & Blood Transfusion Compatibility Simulator",
@@ -144,6 +144,8 @@ export default function BloodTransfusionLab() {
     setFlowData([]);
     setSurvivalData([]);
     timeRef.current = 0;
+    
+    if (onComplete) onComplete();
   };
 
   // Canvas Animation - Real-time Blood Transfusion Visualization

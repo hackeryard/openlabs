@@ -34,7 +34,7 @@ interface TreeNode {
   isPivot: boolean;
 }
 
-export default function QuickSortVisualizer() {
+export default function QuickSortVisualizer({ onComplete }: { onComplete?: () => void }) {
   // Chatbot
   const { setExperimentData } = useChat();
 
@@ -297,6 +297,7 @@ export default function QuickSortVisualizer() {
     if (currentStepIndex >= steps.length - 1) {
       setIsPlaying(false);
       setShowCelebration(true);
+      if (onComplete) onComplete();
       setTimeout(() => setShowCelebration(false), 3000);
       return;
     }

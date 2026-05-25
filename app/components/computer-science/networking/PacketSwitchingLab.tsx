@@ -26,7 +26,7 @@ const THEME = {
     inactive: "#cbd5e1",
 };
 
-export default function PacketSwitchingLab() {
+export default function PacketSwitchingLab({ onComplete }: { onComplete?: () => void }) {
     // Chatbot 
     const { setExperimentData } = useChat();
 
@@ -135,7 +135,15 @@ export default function PacketSwitchingLab() {
 
                 // 3. DELIVERY & CLEANUP
                 if (p.progress >= 1) {
-                    if (!p.isDropped) setMetrics(m => ({ ...m, delivered: m.delivered + 1 }));
+                    if (!p.isDropped) {
+                        setMetrics(m => {
+                            const newDelivered = m.delivered + 1;
+                            if (newDelivered >= 10 && onComplete) {
+                                onComplete();
+                            }
+                            return { ...m, delivered: newDelivered };
+                        });
+                    }
                     currentPackets.splice(i, 1);
                     continue;
                 }

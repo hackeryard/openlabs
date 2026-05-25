@@ -98,8 +98,6 @@ const parseMaze = (mazeConfig: string[][]): {
 
 // ==================== MAIN COMPONENT ====================
 export default function QLearningVisualizer() {
-  const { completeExperiment } = useLab("computer-science/ai-problem", "computerScience", "simulation");
-  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 15000); return () => clearTimeout(timer); }, []);
   const [selectedMaze, setSelectedMaze] = useState<keyof typeof MAZES>('simple');
   const [mazeData, setMazeData] = useState(parseMaze(MAZES.simple.grid));
   const [isRunning, setIsRunning] = useState(false);
@@ -107,6 +105,8 @@ export default function QLearningVisualizer() {
   const [showQValues, setShowQValues] = useState(false);
   const [highlightedCell, setHighlightedCell] = useState<Position | null>(null);
   
+  const { completeExperiment } = useLab("computer-science/ai-problem/maze-qlearn", "computerScience", "simulation");
+
   // Q-Learning state
   const [episode, setEpisode] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
@@ -156,6 +156,12 @@ export default function QLearningVisualizer() {
     setMazeData(newMazeData);
     resetSimulation();
   }, [selectedMaze]);
+
+  useEffect(() => {
+    if (successCount > 0) {
+      completeExperiment();
+    }
+  }, [successCount]);
 
   // Drawing on canvas
   useEffect(() => {
@@ -520,7 +526,7 @@ export default function QLearningVisualizer() {
       <main className="container mx-auto px-6 py-8">
         <div className="grid grid-cols-12 gap-8">
           <div className="col-span-12">
-            <DailyChallengeCard labId="computer-science/ai-problem" currentParams={{ episodesRun: episode, successRate: episode > 0 ? successCount / episode : 0 }} />
+            <DailyChallengeCard labId="computer-science/ai-problem/maze-qlearn" currentParams={{ episodesRun: episode, successRate: episode > 0 ? successCount / episode : 0 }} />
           </div>
           {/* Left Panel - Controls & Explanations */}
           <div className="col-span-12 lg:col-span-4 space-y-6">

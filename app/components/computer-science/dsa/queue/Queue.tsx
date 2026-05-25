@@ -12,7 +12,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useChat } from "@/app/components/ChatContext";
 
-const QueueVisualizer: React.FC = () => {
+const QueueVisualizer: React.FC<{ onComplete?: () => void }> = ({ onComplete }) => {
 
       // Chatbot 
       const { setExperimentData } = useChat();
@@ -54,6 +54,7 @@ const QueueVisualizer: React.FC = () => {
     setQueue([...queue, inputValue.trim()]);
     addLog(`Enqueued: ${inputValue}`, "success");
     setInputValue("");
+    if (queue.length + 1 >= 3 && onComplete) onComplete();
   };
 
   // Dequeue: Element aage se hat-ta hai (Front)

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useMemo } from "react"
+import { useState, useRef, useMemo, useEffect } from "react"
 import { Canvas, useFrame } from "@react-three/fiber"
 import { OrbitControls, Stars, Environment, Float, Instance, Instances, RoundedBox } from "@react-three/drei"
 import * as THREE from "three"
@@ -258,8 +258,19 @@ function Golgi({ active, onSelect }: any) {
 
 // --- MAIN SCENE ---
 
-export default function PlantCell() {
+export default function PlantCell({ onComplete }: { onComplete?: () => void }) {
   const [selected, setSelected] = useState<OrganelleType>(null)
+  const [explored, setExplored] = useState<Set<string>>(new Set())
+
+  useEffect(() => {
+    if (selected) {
+      setExplored(prev => {
+        const next = new Set(prev).add(selected)
+        if (next.size >= 3 && onComplete) onComplete()
+        return next
+      })
+    }
+  }, [selected, onComplete])
   
   // @ts-ignore
   const info = selected && ORGANELLE_INFO[selected] ? ORGANELLE_INFO[selected] : null

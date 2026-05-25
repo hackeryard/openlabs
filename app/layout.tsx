@@ -76,6 +76,7 @@ export const metadata: Metadata = {
     yandex: 'dec6f568bf371741',
     other: { bing: 'DB3814EA47FB786C9197CFE5A3FC3BFC' },
   },
+  applicationName: "OpenLabs",
 }
 
 export default function RootLayout({ children, }: { children: React.ReactNode }) {

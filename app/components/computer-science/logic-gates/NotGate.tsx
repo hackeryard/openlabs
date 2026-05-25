@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useChat } from "../../ChatContext";
 
-export default function NotGate() {
+export default function NotGate({ onComplete }: { onComplete?: () => void }) {
   // Chatbot 
     const { setExperimentData } = useChat();
   
@@ -16,6 +16,14 @@ export default function NotGate() {
       });
     }, []);
   const [a, setA] = useState(0);
+  const [explored, setExplored] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const newExplored = new Set(explored);
+    newExplored.add(String(a));
+    setExplored(newExplored);
+    if (newExplored.size === 2 && onComplete) onComplete();
+  }, [a]);
 
   const output = a ? 0 : 1;
 

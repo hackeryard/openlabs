@@ -7,13 +7,12 @@ import { useLab } from "@/app/hooks/useXP";
 import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 export default function Page() {
-  const { completeExperiment } = useLab("computer-science/networking", "computerScience", "exploration");
-  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
+  const { completeExperiment } = useLab("computer-science/networking/circuit-switching", "computerScience", "exploration");
 
   return (
     <>
-      <DailyChallengeCard labId="computer-science/networking" currentParams={{ protocolsExplored: 1 }} />
-      <CircuitSwitchingLab />
+      <DailyChallengeCard labId="computer-science/networking/circuit-switching" currentParams={{ protocolsExplored: 1 }} />
+      <CircuitSwitchingLab onComplete={completeExperiment} />
     </>
   );
 }

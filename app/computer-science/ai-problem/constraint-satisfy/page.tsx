@@ -7,8 +7,8 @@ import { useLab } from '@/app/hooks/useXP';
 import DailyChallengeCard from '@/app/components/DailyChallengeCard';
 
 export default function CSPLab() {
-  const { completeExperiment } = useLab("computer-science/ai-problem", "computerScience", "simulation");
-  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 15000); return () => clearTimeout(timer); }, []);
+  const { completeExperiment } = useLab("computer-science/ai-problem/constraint-satisfy", "computerScience", "simulation");
+
   // CSP Problem: Simple Graph Coloring with 5 nodes
   const [variables, setVariables] = useState(['A', 'B', 'C', 'D', 'E']);
   const [domains, setDomains] = useState({
@@ -85,6 +85,12 @@ export default function CSPLab() {
     setHighlightedLine(null);
     setExperimentPhase('initialization');
   };
+
+  useEffect(() => {
+    if (solved) {
+      completeExperiment();
+    }
+  }, [solved]);
 
   // Check if current assignment is consistent
   const isConsistent = (varName, value, currentAssignments) => {
@@ -360,7 +366,7 @@ export default function CSPLab() {
       <Head>
         <title>CSP Lab - Constraint Satisfaction Problem Visualizer</title>
       </Head>
-      <DailyChallengeCard labId="computer-science/ai-problem" currentParams={{ constraintChecks, solved, backtracks }} />
+      <DailyChallengeCard labId="computer-science/ai-problem/constraint-satisfy" currentParams={{ constraintChecks, solved, backtracks }} />
 
       {/* Experiment AIM Banner - Clearly Visible */}
       <AnimatePresence>

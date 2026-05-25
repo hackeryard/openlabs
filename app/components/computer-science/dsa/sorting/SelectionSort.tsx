@@ -20,7 +20,7 @@ interface Step {
   codeLine: number;
 }
 
-export default function SelectionSortVisualizer() {
+export default function SelectionSortVisualizer({ onComplete }: { onComplete?: () => void }) {
   const { setExperimentData } = useChat();
 
   useEffect(() => {
@@ -238,6 +238,7 @@ export default function SelectionSortVisualizer() {
 
     if (stepIndex >= steps.length - 1) {
       setIsPlaying(false);
+      if (onComplete) onComplete();
       return;
     }
 

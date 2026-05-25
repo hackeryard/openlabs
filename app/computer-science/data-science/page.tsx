@@ -37,8 +37,6 @@ const generateData = () => {
 };
 
 export default function AnomalyDetectionLab() {
-  const { completeExperiment } = useLab("computer-science/data-science", "computerScience", "exploration");
-  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 15000); return () => clearTimeout(timer); }, []);
   const [data, setData] = useState([]);
   const [selectedPoint, setSelectedPoint] = useState(null);
   const [threshold, setThreshold] = useState(150);
@@ -46,9 +44,17 @@ export default function AnomalyDetectionLab() {
   const [scanActive, setScanActive] = useState(false);
   const [detectedAnomalies, setDetectedAnomalies] = useState([]);
 
+  const { completeExperiment } = useLab("computer-science/data-science", "computerScience", "exploration");
+
   useEffect(() => {
     setData(generateData());
   }, []);
+
+  useEffect(() => {
+    if (detectedAnomalies.length > 0) {
+      completeExperiment();
+    }
+  }, [detectedAnomalies.length, completeExperiment]);
 
   // Auto-hide popup after 3 seconds when a point is selected
   useEffect(() => {

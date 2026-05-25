@@ -12,7 +12,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useChat } from "@/app/components/ChatContext";
 
-const StackVisualizer: React.FC = () => {
+const StackVisualizer: React.FC<{ onComplete?: () => void }> = ({ onComplete }) => {
 
   // Chatbot 
   const { setExperimentData } = useChat();
@@ -53,6 +53,7 @@ const StackVisualizer: React.FC = () => {
     setStack([...stack, inputValue.trim()]);
     addLog(`Pushed: ${inputValue}`, "success");
     setInputValue("");
+    if (stack.length + 1 >= 3 && onComplete) onComplete();
   };
 
   const pop = () => {

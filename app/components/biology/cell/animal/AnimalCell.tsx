@@ -280,8 +280,19 @@ function ER({ active, onSelect }: any) {
 
 // --- MAIN SCENE ---
 
-export default function Ultimate3DCell() {
+export default function Ultimate3DCell({ onComplete }: { onComplete?: () => void }) {
   const [selected, setSelected] = useState<OrganelleType>(null)
+  const [explored, setExplored] = useState<Set<string>>(new Set())
+
+  useEffect(() => {
+    if (selected) {
+      setExplored(prev => {
+        const next = new Set(prev).add(selected)
+        if (next.size >= 3 && onComplete) onComplete()
+        return next
+      })
+    }
+  }, [selected, onComplete])
   
   // @ts-ignore
   const info = selected && ORGANELLE_INFO[selected] ? ORGANELLE_INFO[selected] : null

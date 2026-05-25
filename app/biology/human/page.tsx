@@ -14,7 +14,6 @@ const AnatomyScene = dynamic(
 )
 
 export default function Page() {
-  const { completeExperiment } = useLab("biology/human", "biology", "exploration");
   // Chatbot 
   const { setExperimentData } = useChat();
 
@@ -25,14 +24,25 @@ export default function Page() {
       extraContext: ``,
     });
   }, []);
-  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
   const [selectedOrgan, setSelectedOrgan] = useState("")
   const [type, setType] = useState<"human" | "animal">("human")
+  const { completeExperiment } = useLab("biology/human", "biology", "exploration");
+  const [explored, setExplored] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (selectedOrgan) {
+      setExplored(prev => {
+        const next = new Set(prev).add(selectedOrgan);
+        if (next.size >= 3) completeExperiment();
+        return next;
+      });
+    }
+  }, [selectedOrgan, completeExperiment]);
 
   return (
     <div className="grid md:grid-cols-3 h-screen">
       <div className="md:col-span-3 p-2">
-        <DailyChallengeCard labId="biology/human" currentParams={{ structuresExplored: selectedOrgan ? 1 : 0 }} />
+        <DailyChallengeCard labId="biology/human" currentParams={{ structuresExplored: explored.size }} />
       </div>
       {/* <ProceduralAnatomy /> */}
 

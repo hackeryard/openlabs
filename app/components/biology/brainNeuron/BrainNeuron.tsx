@@ -72,7 +72,7 @@ interface FrequencyBands {
   gamma: number;
 }
 
-export default function BrainNeuronSimulator() {
+export default function BrainNeuronSimulator({ onComplete }: { onComplete?: () => void }) {
   // ==================== STATE MANAGEMENT ====================
   const [experimentActive, setExperimentActive] = useState(false);
   const [showTutorial, setShowTutorial] = useState(true);
@@ -80,6 +80,17 @@ export default function BrainNeuronSimulator() {
   const [stimulusType, setStimulusType] = useState('visual');
   const [neuronActivity, setNeuronActivity] = useState('normal');
   const [recordingTime, setRecordingTime] = useState(0);
+  const [exploredRegions, setExploredRegions] = useState<Set<string>>(new Set(['prefrontal']));
+
+  useEffect(() => {
+    if (selectedRegion) {
+      setExploredRegions(prev => {
+        const next = new Set(prev).add(selectedRegion);
+        if (next.size >= 3 && onComplete) onComplete();
+        return next;
+      });
+    }
+  }, [selectedRegion, onComplete]);
   
   // Canvas ref for 2D visualization
   const canvasRef = useRef<HTMLCanvasElement>(null);

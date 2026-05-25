@@ -7,7 +7,7 @@ import ProfileSetupBannerClient from '../components/ProfileSetupBannerClient'
 
 export const metadata: Metadata = {
   title: 'OpenLabs - Virtual Lab Experience Platform for Science & Technology',
-  description: 'Welcome to OpenLabs - A gateway to interactive science and technology education. Explore virtual labs in physics, chemistry, biology and computer science.',
+  description: 'Explore free virtual science labs for Physics, Chemistry, Biology and Computer Science. Perform interactive experiments and learn STEM concepts with OpenLabs.',
   keywords: [
     'science education', 'interactive learning', 'virtual labs', 'STEM education',
     'physics labs', 'chemistry experiments', 'biology simulations', 'computer science tools',
@@ -28,6 +28,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
+  applicationName: "OpenLabs",
 }
 
 // 1. Centralized FAQ Data for UI and Schema

@@ -6,8 +6,7 @@ import { useLab } from '@/app/hooks/useXP';
 import DailyChallengeCard from '@/app/components/DailyChallengeCard';
 
 export default function BlockchainGraphVisualizer() {
-  const { completeExperiment } = useLab("computer-science/blockchain", "computerScience", "exploration");
-  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 15000); return () => clearTimeout(timer); }, []);
+  const { completeExperiment } = useLab('computer-science/blockchain/block', 'computerScience', 'exploration');
   // ==================== STATE MANAGEMENT ====================
   // Blockchain Core
   const [blocks, setBlocks] = useState([]);
@@ -330,6 +329,7 @@ export default function BlockchainGraphVisualizer() {
         } else {
           clearInterval(interval);
           setConsensusStatus('recovered');
+          completeExperiment();
           return prev;
         }
       });
@@ -697,7 +697,7 @@ export default function BlockchainGraphVisualizer() {
   // ==================== RENDER ====================
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white">
-      <DailyChallengeCard labId="computer-science/blockchain" currentParams={{ blocksCreated: blocks.length, transactionsCreated: transactions.length }} />
+      <DailyChallengeCard labId="computer-science/blockchain/block" currentParams={{ blocksCreated: blocks.length, transactionsCreated: transactions.length }} />
       {/* Header */}
       <header className="bg-gray-800/50 backdrop-blur border-b border-gray-700 p-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">

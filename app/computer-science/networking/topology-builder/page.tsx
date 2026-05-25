@@ -6,13 +6,12 @@ import { useLab } from "@/app/hooks/useXP";
 import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 export default function Page() {
-  const { completeExperiment } = useLab("computer-science/networking", "computerScience", "exploration");
-  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
+  const { completeExperiment } = useLab("computer-science/networking/topology-builder", "computerScience", "exploration");
 
   return (
     <>
-      <DailyChallengeCard labId="computer-science/networking" currentParams={{ topologiesBuilt: 1 }} />
-      <TopologyBuilder />
+      <DailyChallengeCard labId="computer-science/networking/topology-builder" currentParams={{ topologiesBuilt: 1 }} />
+      <TopologyBuilder onComplete={completeExperiment} />
     </>
   );
 }
