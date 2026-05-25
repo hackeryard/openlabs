@@ -19,11 +19,10 @@ export default function ElectronicConfigurationPage() {
       extraContext: ``,
     });
   }, []);
-  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
   return (
     <>
       <DailyChallengeCard labId="chemistry/chemicalbonds" currentParams={{ bondsExplored: 1 }} />
-      <ChemicalBondTypes />
+      <ChemicalBondTypes onComplete={completeExperiment} />
     </>
   )
 }

@@ -28,8 +28,9 @@ function Electron({ position }) {
 }
 
 /* ====================== COMPONENT ====================== */
-export default function ChemicalBondTypes() {
+export default function ChemicalBondTypes({ onComplete }) {
   const [enDiff, setEnDiff] = useState(1.5);
+  const [explored, setExplored] = useState(new Set());
 
   const predictedBond =
     enDiff >= 1.7
@@ -37,6 +38,14 @@ export default function ChemicalBondTypes() {
       : enDiff >= 0.4
       ? "Polar Covalent Bond"
       : "Non-Polar Covalent Bond";
+
+  React.useEffect(() => {
+    setExplored(prev => {
+      const next = new Set(prev).add(predictedBond);
+      if (next.size >= 3 && onComplete) onComplete();
+      return next;
+    });
+  }, [predictedBond, onComplete]);
 
   return (
     <div className="bg-white border rounded-xl p-6 space-y-12 shadow-sm">

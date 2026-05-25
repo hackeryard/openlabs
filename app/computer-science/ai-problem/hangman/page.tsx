@@ -1,8 +1,8 @@
 "use client";
 // src/components/computer-science/ai-problem/Hangman.jsx
 import React, { useState, useEffect } from "react";
-import { useLab } from "@/app/hooks/useXP";
 import DailyChallengeCard from "@/app/components/DailyChallengeCard";
+import { useLab } from "@/app/hooks/useXP";
 
 // Word database with categories and hints
 const WORD_DATABASE = {
@@ -39,14 +39,13 @@ const WORD_DATABASE = {
 };
 
 export default function Hangman() {
-  const { completeExperiment } = useLab("computer-science/ai-problem", "computerScience", "simulation");
-  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
   const [activeTab, setActiveTab] = useState("demo");
   const [difficulty, setDifficulty] = useState("medium");
+  const { completeExperiment } = useLab("computer-science/ai-problem/hangman", "computerScience", "simulation");
 
   return (
     <div className="max-w-6xl mx-auto p-4">
-      <DailyChallengeCard labId="computer-science/ai-problem" currentParams={{ gamesPlayed: 1 }} />
+      <DailyChallengeCard labId="computer-science/ai-problem/hangman" currentParams={{ gamesPlayed: 1, wordsGuessed: 1 }} />
       {/* Header */}
       <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 rounded-t-xl shadow-lg">
         <h1 className="text-3xl font-bold">🎮 Hangman Visual Learning Lab</h1>
@@ -113,7 +112,7 @@ export default function Hangman() {
             </div>
             
             {/* Game Area with key to force re-render on difficulty change */}
-            <GameArea key={difficulty} difficulty={difficulty} />
+            <GameArea key={difficulty} difficulty={difficulty} onComplete={completeExperiment} />
           </div>
         )}
       </div>
@@ -433,7 +432,7 @@ play(Word, [o | [r,p]]) → play(Word, [o,r,p])`,
 // ==========================================
 // GAME AREA - Fully Dynamic with Word Changes
 // ==========================================
-function GameArea({ difficulty }) {
+function GameArea({ difficulty, onComplete }) {
   // Function to get random word
   const getRandomWord = () => {
     const words = WORD_DATABASE[difficulty];
@@ -545,6 +544,7 @@ function GameArea({ difficulty }) {
       if (secretWord.every(l => newGuesses.includes(l))) {
         setGameWon(true);
         setMessage('🎉 CONGRATULATIONS! YOU WON! 🎉');
+        if (onComplete) onComplete();
       }
     } else {
       const newWrong = wrongCount + 1;

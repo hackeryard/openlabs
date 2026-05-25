@@ -29,7 +29,7 @@ interface HeapNode {
   isActive: boolean;
 }
 
-export default function HeapSortVisualizer() {
+export default function HeapSortVisualizer({ onComplete }: { onComplete?: () => void }) {
   // Chatbot 
   const { setExperimentData } = useChat();
 
@@ -289,6 +289,7 @@ export default function HeapSortVisualizer() {
     if (currentStepIndex >= steps.length - 1) {
       setIsPlaying(false);
       setShowCelebration(true);
+      if (onComplete) onComplete();
       setTimeout(() => setShowCelebration(false), 3000);
       return;
     }

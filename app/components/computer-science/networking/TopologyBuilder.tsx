@@ -40,7 +40,7 @@ const DEVICE_COLORS = {
     switch: "bg-emerald-600 shadow-emerald-500/20",
 };
 
-export default function TopologyBuilder() {
+export default function TopologyBuilder({ onComplete }: { onComplete?: () => void }) {
     // Chatbot 
     const { setExperimentData } = useChat();
 
@@ -142,6 +142,7 @@ export default function TopologyBuilder() {
             const node = path[path.length - 1];
             if (node === endNode) {
                 setSimulatingPath(path);
+                if (onComplete) onComplete();
                 setTimeout(() => setSimulatingPath(null), 5000);
                 return;
             }

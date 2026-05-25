@@ -14,6 +14,9 @@ export async function GET(req: Request) {
 
     await connectDB();
 
+    // Clear all previous challenges from database
+    await (DailyChallenge as any).deleteMany({});
+
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
 

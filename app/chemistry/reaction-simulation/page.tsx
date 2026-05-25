@@ -24,11 +24,10 @@ export default function ChemistryPage() {
       extraContext: ``,
     });
   }, []);
-  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 15000); return () => clearTimeout(timer); }, []);
   return (
     <>
       <DailyChallengeCard labId="chemistry/reaction-simulation" currentParams={{ reactionsRun: 1, temperature: 25, yield: 0 }} />
-      <ReactionSimulation />
+      <ReactionSimulation onComplete={completeExperiment} />
     </>
   )
 }

@@ -411,7 +411,7 @@ const ReactionAnalysis = ({ reactionId }) => {
 
 // --- 4. MAIN COMPONENT ---
 
-export default function ReactionSimulation() {
+export default function ReactionSimulation({ onComplete }) {
   const [activeReactionId, setActiveReactionId] = useState("neutralization");
   const [animationPhase, setAnimationPhase] = useState("idle"); 
   const progress = useRef(0);
@@ -437,6 +437,7 @@ export default function ReactionSimulation() {
     setTimeout(() => {
         setAnimationPhase("reacted");
         setTarget3DProgress(1); 
+        if (onComplete) onComplete();
     }, 1500);
   };
 

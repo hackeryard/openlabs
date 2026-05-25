@@ -193,7 +193,7 @@ const dataFlowSteps = [
   }
 ];
 
-export default function OSIModel2D() {
+export default function OSIModel2D({ onComplete }: { onComplete?: () => void }) {
   const [selectedLayer, setSelectedLayer] = useState<Layer | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mode, setMode] = useState<Mode>("send");
@@ -216,6 +216,7 @@ export default function OSIModel2D() {
         } else {
           setActiveLayer(null);
           setPacketAnimation(false);
+          if (onComplete) onComplete();
         }
       }, 1000);
       return () => clearTimeout(timer);

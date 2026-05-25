@@ -1,18 +1,15 @@
 "use client";
 
 import MergeSort from "@/app/components/computer-science/dsa/sorting/MergeSort";
-import { useEffect } from "react";
-import { useLab } from "@/app/hooks/useXP";
 import DailyChallengeCard from "@/app/components/DailyChallengeCard";
+import { useLab } from "@/app/hooks/useXP";
 
 export default function Page() {
-  const { completeExperiment } = useLab("computer-science/dsa", "computerScience", "exploration");
-  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
-
+  const { completeExperiment } = useLab("computer-science/dsa/sorting/merge-sort", "computerScience", "simulation");
   return (
     <div>
-      <DailyChallengeCard labId="computer-science/dsa" currentParams={{ algorithmsRun: 1, structuresExplored: 1 }} />
-      <MergeSort />
+      <DailyChallengeCard labId="computer-science/dsa/sorting/merge-sort" currentParams={{ arraysSorted: 1, splitsMade: 1, mergesMade: 1 }} />
+      <MergeSort onComplete={completeExperiment} />
     </div>
   );
 }

@@ -27,7 +27,7 @@ interface PassStats {
   comparisons: number;
 }
 
-export default function BubbleSortVisualizer() {
+export default function BubbleSortVisualizer({ onComplete }: { onComplete?: () => void }) {
   // Chatbot 
   const { setExperimentData } = useChat();
 
@@ -358,6 +358,7 @@ export default function BubbleSortVisualizer() {
     if (currentStepIndex >= steps.length - 1) {
       setIsPlaying(false);
       setShowCelebration(true);
+      if (onComplete) onComplete();
       setTimeout(() => setShowCelebration(false), 3000);
       return;
     }

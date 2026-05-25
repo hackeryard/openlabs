@@ -14,7 +14,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 type ListType = "singly" | "doubly" | "circular" | "circular-doubly";
 
-const UniversalLinkedList: React.FC = () => {
+const UniversalLinkedList: React.FC<{ onComplete?: () => void }> = ({ onComplete }) => {
   const [list, setList] = useState<string[]>([]);
   const [type, setType] = useState<ListType>("singly");
   const [inputValue, setInputValue] = useState<string>("");
@@ -43,6 +43,7 @@ const UniversalLinkedList: React.FC = () => {
     setList(newList);
     addLog(`Added ${inputValue} at index ${insertIdx}`, "success");
     setInputValue("");
+    if (newList.length >= 3 && onComplete) onComplete();
   };
 
   const deleteNode = (index: number) => {

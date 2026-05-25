@@ -547,8 +547,6 @@ const NetworkGraph2D = ({
 
 // ==================== MAIN COMPONENT ====================
 export default function SocialNetworkAnalyzer() {
-  const { completeExperiment } = useLab("computer-science/data-analyzer", "computerScience", "exploration");
-  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 15000); return () => clearTimeout(timer); }, []);
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
   const [originalData, setOriginalData] = useState<GraphData>({ nodes: [], links: [] });
   const [cleanLevel, setCleanLevel] = useState(0);
@@ -579,6 +577,14 @@ export default function SocialNetworkAnalyzer() {
       analysis
     });
   }, []);
+
+  const { completeExperiment } = useLab("computer-science/data-analyzer", "computerScience", "exploration");
+
+  useEffect(() => {
+    if (cleanLevel === 100) {
+      completeExperiment();
+    }
+  }, [cleanLevel, completeExperiment]);
 
   useEffect(() => {
     if (originalData.nodes.length > 0) {

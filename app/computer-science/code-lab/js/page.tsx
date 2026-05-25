@@ -9,7 +9,6 @@ import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 export default function DebuggerPage() {
     const { completeExperiment } = useLab("computer-science/code-lab/js", "computerScience", "editor");
-    useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
     // Chatbot 
     const { setExperimentData } = useChat();
 
@@ -52,6 +51,7 @@ console.log('5: End');`
             const result = await simulateEventLoop(editorCode);
             setSnapshots(result);
             setOpenDebugger(true);
+            completeExperiment();
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to run code');
             console.error('Debugger error:', err);

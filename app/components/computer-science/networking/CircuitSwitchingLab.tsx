@@ -25,7 +25,7 @@ const THEME = {
     inactive: "#cbd5e1",
 };
 
-export default function CircuitSwitchingLab() {
+export default function CircuitSwitchingLab({ onComplete }: { onComplete?: () => void }) {
     // Chatbot 
     const { setExperimentData } = useChat();
 
@@ -110,7 +110,13 @@ export default function CircuitSwitchingLab() {
                 s.progress += s.speed;
 
                 if (s.progress >= 1) {
-                    setMetrics(m => ({ ...m, totalData: m.totalData + 100 })); // Large chunk of data
+                    setMetrics(m => {
+                        const newTotalData = m.totalData + 100;
+                        if (newTotalData >= 1000 && onComplete) {
+                            onComplete();
+                        }
+                        return { ...m, totalData: newTotalData };
+                    }); // Large chunk of data
                     s.progress = 0; // In circuit switching, data is continuous
                 }
                 drawStream(ctx, s);

@@ -22,11 +22,10 @@ export default function Page() {
       extraContext: ``,
     });
   }, []);
-  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
   return (
     <main className="flex flex-col justify-center">
       <DailyChallengeCard labId="biology/cell/plant" currentParams={{ organellesExplored: 1 }} />
-      <PlantCell />
+      <PlantCell onComplete={completeExperiment} />
     </main>
   )
 }

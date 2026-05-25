@@ -32,7 +32,7 @@ ChartJS.register(
   Filler
 );
 
-export default function WaterQualityLab() {
+export default function WaterQualityLab({ onComplete }: { onComplete?: () => void }) {
   // ==================== STATE MANAGEMENT ====================
   const [step, setStep] = useState(1);
   const [showTutorial, setShowTutorial] = useState(true);
@@ -678,7 +678,11 @@ const barOptions: ChartOptions<'bar'> = {
                 className="action-btn"
                 onClick={() => {
                   setLabNotes([`✅ ${experimentSteps[step-1].action} completed`, ...labNotes].slice(0, 5));
-                  if (step < 8) setStep(step + 1);
+                  if (step < 8) {
+                    setStep(step + 1);
+                  } else {
+                    if (onComplete) onComplete();
+                  }
                 }}
               >
                 {experimentSteps[step-1].action}

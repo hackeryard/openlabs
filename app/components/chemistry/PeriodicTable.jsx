@@ -8,10 +8,21 @@ import ElementModal from "./ElementModal";
 import SearchBar from "./SearchBar";
 import Filters from "./Filters";
 
-export default function PeriodicTable() {
+export default function PeriodicTable({ onComplete }) {
   const [selected, setSelected] = useState(null);
   const [activeCategories, setActiveCategories] = useState(new Set());
   const [querySelected, setQuerySelected] = useState(null);
+  const [explored, setExplored] = useState(new Set());
+
+  useEffect(() => {
+    if (selected) {
+      setExplored(prev => {
+        const next = new Set(prev).add(selected.symbol);
+        if (next.size >= 3 && onComplete) onComplete();
+        return next;
+      });
+    }
+  }, [selected, onComplete]);
 
   /* ---------------- Categories ---------------- */
   const categories = useMemo(() => {

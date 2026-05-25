@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useChat } from "../../ChatContext";
 
-export default function OrGateVisualizer() {
+export default function OrGateVisualizer({ onComplete }: { onComplete?: () => void }) {
   // Chatbot 
   const { setExperimentData } = useChat();
 
@@ -17,6 +17,14 @@ export default function OrGateVisualizer() {
   }, []);
   const [a, setA] = useState(0);
   const [b, setB] = useState(0);
+  const [explored, setExplored] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const newExplored = new Set(explored);
+    newExplored.add(`${a}-${b}`);
+    setExplored(newExplored);
+    if (newExplored.size === 4 && onComplete) onComplete();
+  }, [a, b]);
 
   const output = a || b ? 1 : 0;
 

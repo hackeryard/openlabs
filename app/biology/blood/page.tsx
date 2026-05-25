@@ -12,12 +12,12 @@ const BloodTransfusionLab = dynamic(() => import("@/app/components/biology/blood
 
 export default function BloodPage() {
   const { completeExperiment } = useLab("biology/blood", "biology", "exploration");
-  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
+
   return (
     <main className="min-h-screen">
       <div className="max-w-[1600px] mx-auto">
         <DailyChallengeCard labId="biology/blood" currentParams={{ bloodGroupTested: true }} />
-        <BloodTransfusionLab />
+        <BloodTransfusionLab onComplete={completeExperiment} />
       </div>
     </main>
   )

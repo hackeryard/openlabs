@@ -10,7 +10,6 @@ import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 export default function AtomPage() {
   const { completeExperiment } = useLab("chemistry/periodictable", "chemistry", "exploration");
-  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
   // Chatbot 
   const { setExperimentData } = useChat();
 
@@ -20,6 +19,7 @@ export default function AtomPage() {
       theory: "",
       extraContext: ``,
     });
+    completeExperiment();
   }, []);
   const { atomicNumber } = useParams();
   const Z = Number(atomicNumber);

@@ -21,7 +21,7 @@ interface Step {
   newMinValue?: number;
 }
 
-export default function SelectionSortVisualizer() {
+export default function InsertionSortVisualizer({ onComplete }: { onComplete?: () => void }) {
   const { setExperimentData } = useChat();
 
   useEffect(() => {
@@ -223,6 +223,7 @@ export default function SelectionSortVisualizer() {
     if (currentStepIndex >= steps.length - 1) {
       setIsPlaying(false);
       setShowCelebration(true);
+      if (onComplete) onComplete();
       setTimeout(() => setShowCelebration(false), 3000);
       return;
     }

@@ -20,7 +20,6 @@ export default function ElectronicConfigurationPage() {
       extraContext: ``,
     });
   }, []);
-  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 10000); return () => clearTimeout(timer); }, []);
   const { atomicNumber } = useParams();
   const Z = Number(atomicNumber);
 
@@ -43,6 +42,7 @@ export default function ElectronicConfigurationPage() {
         atomicNumber={atomicNumber}
         symbol={element.symbol}
         name={element.name}
+        onComplete={completeExperiment}
       />
     </>
   )

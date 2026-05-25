@@ -6,15 +6,15 @@ import { useLab } from "@/app/hooks/useXP";
 import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
 export default function RuleChaining() {
-  const { completeExperiment } = useLab("computer-science/ai-problem", "computerScience", "exploration");
-  useEffect(() => { const timer = setTimeout(() => completeExperiment(), 15000); return () => clearTimeout(timer); }, []);
   const [activeTab, setActiveTab] = useState("forward");
   const [animationSpeed, setAnimationSpeed] = useState(1000);
+
+  const { completeExperiment } = useLab("computer-science/ai-problem/forward-backward", "computerScience", "exploration");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white p-6">
       <div className="max-w-7xl mx-auto">
-        <DailyChallengeCard labId="computer-science/ai-problem" currentParams={{ chainsExplored: 1 }} />
+        <DailyChallengeCard labId="computer-science/ai-problem/forward-backward" currentParams={{ chainsExplored: 1 }} />
         {/* Header with light/dark gradient */}
         <motion.div 
           initial={{ y: -50, opacity: 0 }}
@@ -74,8 +74,8 @@ export default function RuleChaining() {
 
           {/* Main Content */}
           <div className="lg:col-span-2">
-            {activeTab === "forward" && <ForwardChainingDemo speed={animationSpeed} />}
-            {activeTab === "backward" && <BackwardChainingDemo speed={animationSpeed} />}
+            {activeTab === "forward" && <ForwardChainingDemo speed={animationSpeed} onComplete={completeExperiment} />}
+            {activeTab === "backward" && <BackwardChainingDemo speed={animationSpeed} onComplete={completeExperiment} />}
             {activeTab === "compare" && <ComparisonView speed={animationSpeed} />}
           </div>
         </div>
@@ -197,7 +197,7 @@ function RuleBase() {
 // ==========================================
 // FORWARD CHAINING DEMO with diagrams
 // ==========================================
-function ForwardChainingDemo({ speed }) {
+function ForwardChainingDemo({ speed, onComplete = () => {} }: { speed: number; onComplete?: () => void }) {
   const [facts, setFacts] = useState(["has hair", "gives milk", "eats meat", "tawny color", "stripes"]);
   const [inferred, setInferred] = useState([]);
   const [isRunning, setIsRunning] = useState(false);
@@ -232,6 +232,7 @@ function ForwardChainingDemo({ speed }) {
     
     setCurrentRule(null);
     setIsRunning(false);
+    if (onComplete) onComplete();
   };
 
   const reset = () => {
@@ -406,7 +407,7 @@ function ForwardChainingDemo({ speed }) {
 // ==========================================
 // BACKWARD CHAINING DEMO with diagrams
 // ==========================================
-function BackwardChainingDemo({ speed }) {
+function BackwardChainingDemo({ speed, onComplete = () => {} }: { speed: number; onComplete?: () => void }) {
   const [goal, setGoal] = useState("tiger");
   const [steps, setSteps] = useState([]);
   const [isRunning, setIsRunning] = useState(false);
@@ -462,6 +463,7 @@ function BackwardChainingDemo({ speed }) {
     const result = await prove(goal);
     setFound(result);
     setIsRunning(false);
+    if (onComplete) onComplete();
   };
 
   const reset = () => {

@@ -195,7 +195,11 @@ export default function ElectronicConfiguration({
   atomicNumber,
   symbol,
   name,
+  onComplete,
 }) {
+  React.useEffect(() => {
+    if (onComplete) onComplete();
+  }, [onComplete]);
   if (!atomicNumber) return null;
 
   const {
