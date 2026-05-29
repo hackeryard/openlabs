@@ -19,7 +19,6 @@ export default function AtomPage() {
       theory: "",
       extraContext: ``,
     });
-    completeExperiment();
   }, []);
   const { atomicNumber } = useParams();
   const Z = Number(atomicNumber);

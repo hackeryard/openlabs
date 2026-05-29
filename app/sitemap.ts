@@ -2,6 +2,8 @@ import { MetadataRoute } from 'next'
 import { connectDB } from '@/app/lib/mongodb'
 import Blog from '@/app/models/Blog'
 
+export const revalidate = 43200 // revalidate every 12 hours
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.openlabs.org.in'
 
