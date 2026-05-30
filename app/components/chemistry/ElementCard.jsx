@@ -6,22 +6,23 @@ import { motion } from "framer-motion";
 
 export default function ElementCard({ element, onOpen }) {
   if (!element) return null;
-  const { atomicNumber, symbol, name, category } = element;
+  const { atomicNumber, symbol, name, category, atomicMass } = element;
 
   const categoryColors = {
-    "alkali metal": "bg-red-300",
-    "alkaline earth metal": "bg-orange-300",
-    lanthanide: "bg-amber-300",
-    actinide: "bg-yellow-300",
-    "noble gas": "bg-blue-300",
-    "transition metal": "bg-indigo-300",
-    "post-transition metal": "bg-slate-300",
-    metalloid: "bg-emerald-300",
-    nonmetal: "bg-lime-300",
-    halogen: "bg-violet-300",
+    "alkali-metal": "border-rose-200 bg-rose-50 text-rose-700 hover:border-rose-400 hover:shadow-rose-100",
+    "alkaline-earth": "border-orange-200 bg-orange-50 text-orange-700 hover:border-orange-400 hover:shadow-orange-100",
+    lanthanide: "border-amber-200 bg-amber-50 text-amber-700 hover:border-amber-400 hover:shadow-amber-100",
+    actinide: "border-yellow-200 bg-yellow-50 text-yellow-700 hover:border-yellow-400 hover:shadow-yellow-100",
+    "noble-gas": "border-sky-200 bg-sky-50 text-sky-700 hover:border-sky-400 hover:shadow-sky-100",
+    "transition-metal": "border-indigo-200 bg-indigo-50 text-indigo-700 hover:border-indigo-400 hover:shadow-indigo-100",
+    "post-transition": "border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-400 hover:shadow-slate-100",
+    metalloid: "border-teal-200 bg-teal-50 text-teal-700 hover:border-teal-400 hover:shadow-teal-100",
+    nonmetal: "border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-400 hover:shadow-emerald-100",
+    halogen: "border-violet-200 bg-violet-50 text-violet-700 hover:border-violet-400 hover:shadow-violet-100",
   };
 
-  const colorClass = categoryColors[category] || "bg-gray-300";
+  const colorClass = categoryColors[category] || "border-slate-200 bg-white text-slate-700 hover:border-indigo-300";
+  const dotClass = colorClass.split(" ").find((token) => token.startsWith("text-"))?.replace("text-", "bg-") || "bg-slate-400";
 
   return (
     <motion.button
@@ -30,7 +31,7 @@ export default function ElementCard({ element, onOpen }) {
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.85, y: -6 }}
 
-      whileHover={{ scale: 1.12 }}
+      whileHover={{ scale: 1.08, y: -2 }}
       whileTap={{ scale: 0.95 }}
 
       transition={{
@@ -43,13 +44,13 @@ export default function ElementCard({ element, onOpen }) {
       data-period={element.period}
       data-group={element.group}
 
-      className={`group relative w-full aspect-square p-1 sm:p-1.5 md:p-2 
-        rounded-xl border-2 border-gray-200 
-        bg-gradient-to-br from-white to-slate-50 
-        shadow-sm hover:shadow-lg hover:border-blue-400 
-        transform-gpu transition-all 
+      className={`group relative w-full aspect-square p-0.5 sm:p-1.5 lg:p-2
+        rounded-lg border bg-white sm:rounded-2xl
+        shadow-none hover:shadow-md sm:shadow-sm sm:hover:shadow-lg
+        transform-gpu transition-all duration-200
         text-left flex flex-col justify-between items-center overflow-hidden
-        focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-300`
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2
+        ${colorClass}`
       }
 
       aria-label={`${name} (${symbol}), atomic number ${atomicNumber}`}
@@ -57,27 +58,30 @@ export default function ElementCard({ element, onOpen }) {
       type="button"
     >
       {/* Atomic number */}
-      <div className="absolute top-0 left-0 rounded px-2 py-0.5 text-[0.65rem] font-semibold text-gray-700">
+      <div className="hidden sm:block absolute top-1.5 left-2 text-[9px] sm:text-[10px] font-black font-mono text-slate-500">
         {atomicNumber}
       </div>
 
       {/* Category dot */}
       <span
-        className={`absolute top-1 right-0 w-3 h-3 rounded-xl border border-white ${colorClass}`}
+        className={`hidden sm:block absolute top-2 right-2 h-2 w-2 rounded-full ring-2 ring-white ${dotClass}`}
         aria-hidden="true"
       />
 
       {/* Symbol */}
       <div className="flex-grow flex items-center justify-center w-full">
-        <div className="text-lg sm:text-xl md:text-2xl font-extrabold text-center text-gray-900 group-hover:text-blue-600 tracking-tight">
+        <div className="text-[10px] min-[380px]:text-xs sm:text-xl md:text-2xl font-black text-center tracking-tight leading-none">
           {symbol}
         </div>
       </div>
 
       {/* Name */}
-      <div className="w-full text-center mt-2">
-        <div className="text-xs sm:text-sm text-gray-600 truncate px-1">
+      <div className="hidden sm:block w-full text-center">
+        <div className="text-[9px] sm:text-[10px] text-slate-600 font-bold truncate px-1 leading-tight">
           {name}
+        </div>
+        <div className="hidden xl:block text-[8px] text-slate-400 font-mono truncate mt-0.5">
+          {atomicMass}
         </div>
       </div>
     </motion.button>
