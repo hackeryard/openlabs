@@ -1,48 +1,62 @@
 import React from "react";
-import EducationalLandingLayout from "@/components/EducationalLandingLayout";
-import { EducationalContent } from "@/types/education";
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "Hooke's Law - Physics Lab | OpenLabs",
-  description: "Mass–spring system: observe oscillations and measure period.",
+  title: "Hooke's Law Simulator | Mass Spring Physics Lab | OpenLabs",
+  description:
+    "Interactive Hooke's Law simulator for exploring spring force, stiffness, mass, displacement, oscillation, and period.",
 };
 
-const content: EducationalContent = {
-  slug: "hookelaw",
-  subject: "Physics",
-  title: "Hooke's Law",
-  description: "Mass–spring system: observe oscillations and measure period.",
-  difficulty: "Beginner",
-  estimatedTime: "15 mins",
-  heroDescription: "Explore our interactive Hooke's Law simulation to understand the fundamental concepts in physics.",
-  theory: {
-    content: "<p>This educational simulation provides an interactive environment to explore the theory and mechanics of Hooke's Law. By experimenting with variables in real-time, you can intuitively grasp complex scientific concepts.</p>"
-  },
-  learningObjectives: [
-    "Understand the core principles of Hooke's Law.",
-    "Observe real-time changes by manipulating simulation parameters.",
-    "Apply theoretical knowledge to practical scenarios."
-  ],
-  realWorldApplications: [
-    "Education and academia",
-    "Applied science and engineering",
-    "Research and development"
-  ],
-  howItWorks: "Launch the lab to interact with the environment. Use the controls to adjust parameters and observe the outcomes immediately.",
-  faqs: [
-    {
-      question: "What will I learn from this simulation?",
-      answer: "You will learn the fundamental mechanics of Hooke's Law through interactive experimentation."
-    },
-    {
-      question: "Do I need prior knowledge?",
-      answer: "While some basic understanding of physics helps, the simulation is designed to be intuitive for all learners."
-    }
-  ],
-  relatedExperiments: []
-};
-
-export default function Page() {
-  return <EducationalLandingLayout content={content} launchUrl="/labs/physics/hookelaw" />;
+export default function HookesLawPage() {
+  return (
+    <PhysicsExperimentLanding
+      slug="hookelaw"
+      title="Hooke's Law"
+      description="Mass-spring system: observe oscillations and measure period."
+      heroDescription="Investigate how springs respond to force. Adjust the mass, stiffness, damping, and displacement to see elastic behavior and oscillation in real time."
+      theory="Hooke's Law states that the restoring force of an ideal spring is proportional to its displacement from equilibrium. The negative sign shows that the force acts opposite the stretch or compression."
+      formula="F = -kx"
+      formulaLabel="Spring force"
+      launchUrl="/labs/physics/hookelaw"
+      heroImageUrl="/images/physics/hookes-law-hero.png"
+      visualLabel="Spring model"
+      visualDetail="Mass, stiffness, damping, period"
+      accent={{ primary: "#0f766e", secondary: "#16a34a", warm: "#ea580c" }}
+      learningObjectives={[
+        "Understand the relationship between force and displacement.",
+        "Observe how spring constant affects motion.",
+        "Compare mass-spring period with simulated oscillation.",
+        "Explore damping and energy loss in a spring system.",
+      ]}
+      applications={[
+        "Vehicle suspension systems",
+        "Mechanical vibration analysis",
+        "Force sensors and spring scales",
+        "Engineering material testing",
+      ]}
+      faqs={[
+        {
+          question: "What does Hooke's Law explain?",
+          answer:
+            "It explains how an ideal spring pushes or pulls back with a force proportional to displacement from equilibrium.",
+        },
+        {
+          question: "What is the spring constant?",
+          answer:
+            "The spring constant k measures stiffness. A larger k means more force is needed for the same stretch.",
+        },
+        {
+          question: "What happens when mass increases?",
+          answer:
+            "Increasing mass usually makes the oscillation slower, increasing the period of the mass-spring system.",
+        },
+        {
+          question: "Why include damping?",
+          answer:
+            "Damping models friction or resistance that removes energy and reduces oscillation amplitude over time.",
+        },
+      ]}
+    />
+  );
 }

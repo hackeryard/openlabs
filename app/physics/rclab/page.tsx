@@ -1,48 +1,62 @@
 import React from "react";
-import EducationalLandingLayout from "@/components/EducationalLandingLayout";
-import { EducationalContent } from "@/types/education";
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "RC Lab - Physics Lab | OpenLabs",
-  description: "RC circuit charging / discharging experiments.",
+  title: "RC Circuit Lab | Charging and Discharging Simulator | OpenLabs",
+  description:
+    "Interactive RC circuit simulator for capacitor charging, discharging, resistance, capacitance, voltage, and time constant.",
 };
 
-const content: EducationalContent = {
-  slug: "rclab",
-  subject: "Physics",
-  title: "RC Lab",
-  description: "RC circuit charging / discharging experiments.",
-  difficulty: "Beginner",
-  estimatedTime: "15 mins",
-  heroDescription: "Explore our interactive RC Lab simulation to understand the fundamental concepts in physics.",
-  theory: {
-    content: "<p>This educational simulation provides an interactive environment to explore the theory and mechanics of RC Lab. By experimenting with variables in real-time, you can intuitively grasp complex scientific concepts.</p>"
-  },
-  learningObjectives: [
-    "Understand the core principles of RC Lab.",
-    "Observe real-time changes by manipulating simulation parameters.",
-    "Apply theoretical knowledge to practical scenarios."
-  ],
-  realWorldApplications: [
-    "Education and academia",
-    "Applied science and engineering",
-    "Research and development"
-  ],
-  howItWorks: "Launch the lab to interact with the environment. Use the controls to adjust parameters and observe the outcomes immediately.",
-  faqs: [
-    {
-      question: "What will I learn from this simulation?",
-      answer: "You will learn the fundamental mechanics of RC Lab through interactive experimentation."
-    },
-    {
-      question: "Do I need prior knowledge?",
-      answer: "While some basic understanding of physics helps, the simulation is designed to be intuitive for all learners."
-    }
-  ],
-  relatedExperiments: []
-};
-
-export default function Page() {
-  return <EducationalLandingLayout content={content} launchUrl="/labs/physics/rclab" />;
+export default function RCLabPage() {
+  return (
+    <PhysicsExperimentLanding
+      slug="rclab"
+      title="RC Lab"
+      description="RC circuit charging and discharging experiments."
+      heroDescription="Explore how capacitors charge and discharge through resistors. Adjust circuit values and watch voltage change over time."
+      theory="An RC circuit contains a resistor and capacitor. When connected to a source, the capacitor charges gradually; when discharged, its voltage falls exponentially."
+      formula="tau = R C"
+      formulaLabel="Time constant"
+      launchUrl="/labs/physics/rclab"
+      heroImageUrl="/images/physics/rc-lab-hero.png"
+      visualLabel="Circuit model"
+      visualDetail="Resistance, capacitance, voltage"
+      accent={{ primary: "#475569", secondary: "#0ea5e9", warm: "#f97316" }}
+      learningObjectives={[
+        "Understand capacitor charging and discharging.",
+        "Relate resistance and capacitance to time constant.",
+        "Interpret voltage-time curves.",
+        "Connect exponential behavior with circuit response.",
+      ]}
+      applications={[
+        "Timing circuits",
+        "Signal filtering",
+        "Camera flash systems",
+        "Power supply smoothing",
+      ]}
+      faqs={[
+        {
+          question: "What is an RC circuit?",
+          answer:
+            "An RC circuit combines a resistor and capacitor, producing time-dependent voltage changes.",
+        },
+        {
+          question: "What is the time constant?",
+          answer:
+            "The time constant tau = R C sets how quickly the capacitor charges or discharges.",
+        },
+        {
+          question: "Why is the curve exponential?",
+          answer:
+            "The charging or discharging rate depends on the remaining voltage difference, creating exponential behavior.",
+        },
+        {
+          question: "What happens if capacitance increases?",
+          answer:
+            "Increasing capacitance increases the time constant, so voltage changes more slowly.",
+        },
+      ]}
+    />
+  );
 }

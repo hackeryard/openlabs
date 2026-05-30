@@ -1,88 +1,63 @@
 import React from "react";
-import EducationalLandingLayout from "@/components/EducationalLandingLayout";
-import { EducationalContent } from "@/types/education";
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
 export const metadata: Metadata = {
   title: "Projectile Motion Experiment - Physics Simulation | OpenLabs",
-  description: "Learn the physics behind projectile motion, launch angles, velocity, and gravity. Launch our interactive simulation to visualize and calculate trajectories.",
+  description:
+    "Learn projectile motion, launch angles, velocity, gravity, range, maximum height, and time of flight with an interactive physics simulation.",
   keywords: ["projectile motion", "physics experiment", "kinematics simulation", "launch angle", "time of flight"],
 };
 
-const content: EducationalContent = {
-  slug: "projectilemotion",
-  subject: "Physics",
-  title: "Projectile Motion",
-  description: "Simulate trajectories and measure range & time-of-flight in our interactive physics lab.",
-  difficulty: "Beginner",
-  estimatedTime: "15 mins",
-  heroDescription: "Explore the fascinating world of kinematics. Understand how initial velocity, launch angle, and gravity dictate the path of a projectile through the air.",
-  theory: {
-    content: `
-      <p>Projectile motion is a form of motion experienced by an object or particle (a projectile) that is projected in a gravitational field, such as from Earth's surface, and moves along a curved path under the action of gravity only.</p>
-      <p>In the absence of air resistance, the path of a projectile is a parabola. The motion can be broken down into two independent one-dimensional motions: horizontal (constant velocity) and vertical (constant acceleration due to gravity).</p>
-      <h3>Key Concepts</h3>
-      <ul>
-        <li><strong>Initial Velocity ($v_0$):</strong> The speed at which the object is launched.</li>
-        <li><strong>Launch Angle ($\\theta$):</strong> The angle relative to the horizontal plane.</li>
-        <li><strong>Gravity ($g$):</strong> The constant downward acceleration, approximately $9.81 m/s^2$ on Earth.</li>
-      </ul>
-    `
-  },
-  learningObjectives: [
-    "Understand the independence of horizontal and vertical motion.",
-    "Calculate the maximum height, range, and time of flight of a projectile.",
-    "Analyze the effect of changing the launch angle on the projectile's trajectory.",
-    "Recognize that a 45-degree angle yields the maximum range in a vacuum."
-  ],
-  mathematicalFoundations: {
-    equations: [
-      "x(t) = v_0 \\cdot \\cos(\\theta) \\cdot t",
-      "y(t) = v_0 \\cdot \\sin(\\theta) \\cdot t - \\frac{1}{2}gt^2",
-      "R = \\frac{v_0^2 \\cdot \\sin(2\\theta)}{g}",
-      "H = \\frac{v_0^2 \\cdot \\sin^2(\\theta)}{2g}"
-    ],
-    explanation: "These kinematic equations describe the horizontal position (x), vertical position (y), maximum range (R), and maximum height (H) of a projectile launched from the ground."
-  },
-  realWorldApplications: [
-    "Sports: Predicting the path of a basketball or golf ball.",
-    "Aerospace: Calculating rocket trajectories during launch.",
-    "Engineering: Designing water fountains or irrigation sprinklers.",
-    "Forensics: Analyzing accident scenes to determine vehicle speeds."
-  ],
-  howItWorks: "In this interactive lab, you can adjust the initial velocity, launch angle, and mass of the projectile. As you launch the object, the simulation traces its parabolic path in real-time. You can pause the simulation, step forward in time, and use the built-in ruler and stopwatch to measure distances and times to verify the kinematic equations.",
-  faqs: [
-    {
-      question: "What is projectile motion?",
-      answer: "Projectile motion is the motion of an object thrown or projected into the air, subject to only the acceleration of gravity. The object is called a projectile, and its path is called its trajectory."
-    },
-    {
-      question: "Why does the launch angle affect the range?",
-      answer: "The launch angle determines the ratio of vertical to horizontal velocity. A higher angle keeps the projectile in the air longer, but a lower angle gives it more horizontal speed. An angle of 45 degrees optimally balances these two factors for maximum range (without air resistance)."
-    },
-    {
-      question: "How does air resistance change the trajectory?",
-      answer: "Air resistance provides a force opposite to the direction of motion, slowing the projectile down. This causes the trajectory to be non-parabolic, reducing both the maximum height and the maximum range."
-    },
-    {
-      question: "Does the mass of the object affect projectile motion?",
-      answer: "In a vacuum (no air resistance), all objects fall at the same rate regardless of mass. Therefore, mass does not affect the trajectory. However, when air resistance is present, heavier objects are less affected by it than lighter objects of the same size."
-    }
-  ],
-  relatedExperiments: [
-    {
-      title: "Free Fall Lab",
-      href: "/physics/freefall",
-      description: "Explore 1D vertical motion under gravity."
-    },
-    {
-      title: "Simple Pendulum",
-      href: "/physics/simplependulum",
-      description: "Analyze periodic motion and the effect of gravity on a pendulum."
-    }
-  ]
-};
-
 export default function ProjectileMotionPage() {
-  return <EducationalLandingLayout content={content} launchUrl="/labs/physics/projectilemotion" />;
+  return (
+    <PhysicsExperimentLanding
+      slug="projectilemotion"
+      title="Projectile Motion"
+      description="Simulate trajectories and measure range and time of flight in an interactive physics lab."
+      heroDescription="Explore kinematics by changing launch speed, angle, and gravity. Watch the projectile trace a path through space and connect the curve with the equations behind it."
+      theory="Projectile motion describes an object launched into a gravitational field. In the ideal model without air resistance, horizontal motion stays uniform while vertical motion accelerates downward, producing a parabolic trajectory."
+      formula="R = v0^2 sin(2theta) / g"
+      formulaLabel="Range relationship"
+      launchUrl="/labs/physics/projectilemotion"
+      heroImageUrl="/images/physics/projectile-motion-hero.png"
+      visualLabel="Trajectory model"
+      visualDetail="Angle, velocity, range, height"
+      accent={{ primary: "#2563eb", secondary: "#0891b2", warm: "#f97316" }}
+      learningObjectives={[
+        "Separate horizontal and vertical components of motion.",
+        "Measure range, maximum height, and time of flight.",
+        "Analyze how launch angle changes trajectory shape.",
+        "Connect simulated paths with kinematic equations.",
+      ]}
+      applications={[
+        "Sports ball trajectories",
+        "Water fountains and sprinklers",
+        "Aerospace launch analysis",
+        "Accident and forensics reconstruction",
+      ]}
+      faqs={[
+        {
+          question: "What is projectile motion?",
+          answer:
+            "Projectile motion is the motion of an object launched into the air and acted on mainly by gravity. Its path is called a trajectory.",
+        },
+        {
+          question: "Why does launch angle affect range?",
+          answer:
+            "The angle controls the balance between vertical lift and horizontal speed. Near 45 degrees gives maximum range in the ideal no-air-resistance model.",
+        },
+        {
+          question: "Does mass affect projectile motion?",
+          answer:
+            "In a vacuum, mass does not change the trajectory. With air resistance, shape and mass can influence how quickly the object slows down.",
+        },
+        {
+          question: "Why is the path curved?",
+          answer:
+            "Horizontal velocity continues while gravity accelerates the object downward, combining into a curved parabolic path.",
+        },
+      ]}
+    />
+  );
 }

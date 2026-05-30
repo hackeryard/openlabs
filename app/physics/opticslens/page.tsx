@@ -1,48 +1,62 @@
 import React from "react";
-import EducationalLandingLayout from "@/components/EducationalLandingLayout";
-import { EducationalContent } from "@/types/education";
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "Optics Lens - Physics Lab | OpenLabs",
-  description: "Optical Lens lab.",
+  title: "Optics Lens Simulator | Image Formation Physics Lab | OpenLabs",
+  description:
+    "Interactive optics lens simulator for exploring focal length, object distance, image distance, magnification, and ray diagrams.",
 };
 
-const content: EducationalContent = {
-  slug: "opticslens",
-  subject: "Physics",
-  title: "Optics Lens",
-  description: "Optical Lens lab.",
-  difficulty: "Beginner",
-  estimatedTime: "15 mins",
-  heroDescription: "Explore our interactive Optics Lens simulation to understand the fundamental concepts in physics.",
-  theory: {
-    content: "<p>This educational simulation provides an interactive environment to explore the theory and mechanics of Optics Lens. By experimenting with variables in real-time, you can intuitively grasp complex scientific concepts.</p>"
-  },
-  learningObjectives: [
-    "Understand the core principles of Optics Lens.",
-    "Observe real-time changes by manipulating simulation parameters.",
-    "Apply theoretical knowledge to practical scenarios."
-  ],
-  realWorldApplications: [
-    "Education and academia",
-    "Applied science and engineering",
-    "Research and development"
-  ],
-  howItWorks: "Launch the lab to interact with the environment. Use the controls to adjust parameters and observe the outcomes immediately.",
-  faqs: [
-    {
-      question: "What will I learn from this simulation?",
-      answer: "You will learn the fundamental mechanics of Optics Lens through interactive experimentation."
-    },
-    {
-      question: "Do I need prior knowledge?",
-      answer: "While some basic understanding of physics helps, the simulation is designed to be intuitive for all learners."
-    }
-  ],
-  relatedExperiments: []
-};
-
-export default function Page() {
-  return <EducationalLandingLayout content={content} launchUrl="/labs/physics/opticslens" />;
+export default function OpticsLensPage() {
+  return (
+    <PhysicsExperimentLanding
+      slug="opticslens"
+      title="Optics Lens"
+      description="Explore optical lens behavior and image formation."
+      heroDescription="Use a virtual lens bench to see how object distance and focal length determine image position, size, and orientation."
+      theory="Lens optics studies how curved transparent surfaces bend light. Ray diagrams and the lens equation help predict where images form and whether they are magnified or inverted."
+      formula="1/f = 1/do + 1/di"
+      formulaLabel="Thin lens equation"
+      launchUrl="/labs/physics/opticslens"
+      heroImageUrl="/images/physics/optics-lens-hero.png"
+      visualLabel="Lens model"
+      visualDetail="Focal length, image distance, magnification"
+      accent={{ primary: "#0891b2", secondary: "#2563eb", warm: "#eab308" }}
+      learningObjectives={[
+        "Trace how rays form images through a lens.",
+        "Relate focal length to image distance.",
+        "Explore magnification and image orientation.",
+        "Connect lens equations with ray diagrams.",
+      ]}
+      applications={[
+        "Cameras and projectors",
+        "Eyeglasses and vision correction",
+        "Microscopes and telescopes",
+        "Optical instrument design",
+      ]}
+      faqs={[
+        {
+          question: "What does a lens do?",
+          answer:
+            "A lens bends light through refraction, causing rays to converge or diverge and form images.",
+        },
+        {
+          question: "What is focal length?",
+          answer:
+            "Focal length is the distance from the lens to the focal point where parallel rays meet or appear to spread from.",
+        },
+        {
+          question: "What is magnification?",
+          answer:
+            "Magnification describes how large the image is compared with the object.",
+        },
+        {
+          question: "Why use ray diagrams?",
+          answer:
+            "Ray diagrams provide a visual method for predicting image position, size, and orientation.",
+        },
+      ]}
+    />
+  );
 }

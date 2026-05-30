@@ -1,48 +1,62 @@
 import React from "react";
-import EducationalLandingLayout from "@/components/EducationalLandingLayout";
-import { EducationalContent } from "@/types/education";
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "Energy Conservation - Physics Lab | OpenLabs",
-  description: "Investigate energy transformation and conservation.",
+  title: "Energy Conservation Simulator | Interactive Physics Lab | OpenLabs",
+  description:
+    "Investigate energy transformation and conservation with an interactive browser-based physics simulation.",
 };
 
-const content: EducationalContent = {
-  slug: "energyconservation",
-  subject: "Physics",
-  title: "Energy Conservation",
-  description: "Investigate energy transformation and conservation.",
-  difficulty: "Beginner",
-  estimatedTime: "15 mins",
-  heroDescription: "Explore our interactive Energy Conservation simulation to understand the fundamental concepts in physics.",
-  theory: {
-    content: "<p>This educational simulation provides an interactive environment to explore the theory and mechanics of Energy Conservation. By experimenting with variables in real-time, you can intuitively grasp complex scientific concepts.</p>"
-  },
-  learningObjectives: [
-    "Understand the core principles of Energy Conservation.",
-    "Observe real-time changes by manipulating simulation parameters.",
-    "Apply theoretical knowledge to practical scenarios."
-  ],
-  realWorldApplications: [
-    "Education and academia",
-    "Applied science and engineering",
-    "Research and development"
-  ],
-  howItWorks: "Launch the lab to interact with the environment. Use the controls to adjust parameters and observe the outcomes immediately.",
-  faqs: [
-    {
-      question: "What will I learn from this simulation?",
-      answer: "You will learn the fundamental mechanics of Energy Conservation through interactive experimentation."
-    },
-    {
-      question: "Do I need prior knowledge?",
-      answer: "While some basic understanding of physics helps, the simulation is designed to be intuitive for all learners."
-    }
-  ],
-  relatedExperiments: []
-};
-
-export default function Page() {
-  return <EducationalLandingLayout content={content} launchUrl="/labs/physics/energyconservation" />;
+export default function EnergyConservationPage() {
+  return (
+    <PhysicsExperimentLanding
+      slug="energyconservation"
+      title="Energy Conservation"
+      description="Investigate energy transformation and conservation."
+      heroDescription="Track how energy changes form while the total stays consistent in an ideal system. Use the lab to connect motion with energy accounting."
+      theory="The law of conservation of energy says that energy cannot be created or destroyed, only transformed from one form to another. In mechanics, kinetic and potential energy often trade places during motion."
+      formula="E = KE + PE"
+      formulaLabel="Total mechanical energy"
+      launchUrl="/labs/physics/energyconservation"
+      heroImageUrl="/images/physics/energy-conservation-hero.png"
+      visualLabel="Energy model"
+      visualDetail="Kinetic, potential, total energy"
+      accent={{ primary: "#16a34a", secondary: "#0f766e", warm: "#f59e0b" }}
+      learningObjectives={[
+        "Identify kinetic and potential energy changes.",
+        "Observe how total energy behaves in an ideal system.",
+        "Connect height, speed, and energy transformation.",
+        "Recognize where losses appear in real systems.",
+      ]}
+      applications={[
+        "Roller coaster design",
+        "Mechanical system analysis",
+        "Renewable energy demonstrations",
+        "Sports and motion studies",
+      ]}
+      faqs={[
+        {
+          question: "What is conserved in energy conservation?",
+          answer:
+            "The total energy of an isolated system is conserved, even as energy changes form.",
+        },
+        {
+          question: "What is kinetic energy?",
+          answer:
+            "Kinetic energy is energy of motion. It increases as speed increases.",
+        },
+        {
+          question: "What is potential energy?",
+          answer:
+            "Potential energy is stored energy due to position, height, or configuration.",
+        },
+        {
+          question: "Why can real systems lose mechanical energy?",
+          answer:
+            "Friction and air resistance convert some mechanical energy into heat, sound, or deformation.",
+        },
+      ]}
+    />
+  );
 }

@@ -88,8 +88,9 @@ export default function Footer() {
       <motion.div
         variants={item}
         className="mt-6 text-center text-xs text-slate-400"
+        suppressHydrationWarning
       >
-        © {new Date().getFullYear()} OpenLabs — Built with ❤️
+        OpenLabs - Built for interactive learning
       </motion.div>
     </motion.footer>
   );

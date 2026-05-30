@@ -1,48 +1,62 @@
 import React from "react";
-import EducationalLandingLayout from "@/components/EducationalLandingLayout";
-import { EducationalContent } from "@/types/education";
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "Wave Optics - Physics Lab | OpenLabs",
-  description: "Diffraction & interference lab (Fraunhofer).",
+  title: "Wave Optics Simulator | Diffraction and Interference Lab | OpenLabs",
+  description:
+    "Interactive wave optics simulator for exploring diffraction, interference, wavelength, slit spacing, and intensity patterns.",
 };
 
-const content: EducationalContent = {
-  slug: "waveoptics",
-  subject: "Physics",
-  title: "Wave Optics",
-  description: "Diffraction & interference lab (Fraunhofer).",
-  difficulty: "Beginner",
-  estimatedTime: "15 mins",
-  heroDescription: "Explore our interactive Wave Optics simulation to understand the fundamental concepts in physics.",
-  theory: {
-    content: "<p>This educational simulation provides an interactive environment to explore the theory and mechanics of Wave Optics. By experimenting with variables in real-time, you can intuitively grasp complex scientific concepts.</p>"
-  },
-  learningObjectives: [
-    "Understand the core principles of Wave Optics.",
-    "Observe real-time changes by manipulating simulation parameters.",
-    "Apply theoretical knowledge to practical scenarios."
-  ],
-  realWorldApplications: [
-    "Education and academia",
-    "Applied science and engineering",
-    "Research and development"
-  ],
-  howItWorks: "Launch the lab to interact with the environment. Use the controls to adjust parameters and observe the outcomes immediately.",
-  faqs: [
-    {
-      question: "What will I learn from this simulation?",
-      answer: "You will learn the fundamental mechanics of Wave Optics through interactive experimentation."
-    },
-    {
-      question: "Do I need prior knowledge?",
-      answer: "While some basic understanding of physics helps, the simulation is designed to be intuitive for all learners."
-    }
-  ],
-  relatedExperiments: []
-};
-
-export default function Page() {
-  return <EducationalLandingLayout content={content} launchUrl="/labs/physics/waveoptics" />;
+export default function WaveOpticsPage() {
+  return (
+    <PhysicsExperimentLanding
+      slug="waveoptics"
+      title="Wave Optics"
+      description="Diffraction and interference lab for wave behavior."
+      heroDescription="Study how light behaves as a wave. Adjust wavelength and aperture settings to observe interference, diffraction, and changing intensity patterns."
+      theory="Wave optics explains light behavior using wave principles. Interference occurs when waves combine, while diffraction describes spreading around openings or edges."
+      formula="d sin(theta) = m lambda"
+      formulaLabel="Interference condition"
+      launchUrl="/labs/physics/waveoptics"
+      heroImageUrl="/images/physics/wave-optics-hero.png"
+      visualLabel="Wave model"
+      visualDetail="Wavelength, slits, intensity"
+      accent={{ primary: "#7c3aed", secondary: "#0891b2", warm: "#f59e0b" }}
+      learningObjectives={[
+        "Observe interference and diffraction patterns.",
+        "Relate wavelength to fringe spacing.",
+        "Explore how slit width and spacing affect intensity.",
+        "Connect wave equations with visual patterns.",
+      ]}
+      applications={[
+        "Optical instruments",
+        "Spectroscopy",
+        "Laser experiments",
+        "Microscopy and imaging",
+      ]}
+      faqs={[
+        {
+          question: "What is interference?",
+          answer:
+            "Interference happens when waves overlap and combine to create brighter or darker regions.",
+        },
+        {
+          question: "What is diffraction?",
+          answer:
+            "Diffraction is the spreading of waves when they pass through a narrow opening or around an obstacle.",
+        },
+        {
+          question: "How does wavelength affect fringes?",
+          answer:
+            "Longer wavelengths generally produce wider fringe spacing in an interference pattern.",
+        },
+        {
+          question: "Why does intensity vary?",
+          answer:
+            "Intensity changes because waves add constructively in some places and destructively in others.",
+        },
+      ]}
+    />
+  );
 }

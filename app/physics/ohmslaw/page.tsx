@@ -1,48 +1,62 @@
 import React from "react";
-import EducationalLandingLayout from "@/components/EducationalLandingLayout";
-import { EducationalContent } from "@/types/education";
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "Ohm's Law - Physics Lab | OpenLabs",
-  description: "Explore V–I behavior with virtual instruments.",
+  title: "Ohm's Law Simulator | Voltage Current Resistance Lab | OpenLabs",
+  description:
+    "Explore Ohm's Law with an interactive circuit simulator for voltage, current, resistance, and V-I behavior.",
 };
 
-const content: EducationalContent = {
-  slug: "ohmslaw",
-  subject: "Physics",
-  title: "Ohm's Law",
-  description: "Explore V–I behavior with virtual instruments.",
-  difficulty: "Beginner",
-  estimatedTime: "15 mins",
-  heroDescription: "Explore our interactive Ohm's Law simulation to understand the fundamental concepts in physics.",
-  theory: {
-    content: "<p>This educational simulation provides an interactive environment to explore the theory and mechanics of Ohm's Law. By experimenting with variables in real-time, you can intuitively grasp complex scientific concepts.</p>"
-  },
-  learningObjectives: [
-    "Understand the core principles of Ohm's Law.",
-    "Observe real-time changes by manipulating simulation parameters.",
-    "Apply theoretical knowledge to practical scenarios."
-  ],
-  realWorldApplications: [
-    "Education and academia",
-    "Applied science and engineering",
-    "Research and development"
-  ],
-  howItWorks: "Launch the lab to interact with the environment. Use the controls to adjust parameters and observe the outcomes immediately.",
-  faqs: [
-    {
-      question: "What will I learn from this simulation?",
-      answer: "You will learn the fundamental mechanics of Ohm's Law through interactive experimentation."
-    },
-    {
-      question: "Do I need prior knowledge?",
-      answer: "While some basic understanding of physics helps, the simulation is designed to be intuitive for all learners."
-    }
-  ],
-  relatedExperiments: []
-};
-
-export default function Page() {
-  return <EducationalLandingLayout content={content} launchUrl="/labs/physics/ohmslaw" />;
+export default function OhmsLawPage() {
+  return (
+    <PhysicsExperimentLanding
+      slug="ohmslaw"
+      title="Ohm's Law"
+      description="Explore V-I behavior with virtual instruments."
+      heroDescription="Build intuition for circuits by changing voltage and resistance, then observing how current responds through virtual instruments."
+      theory="Ohm's Law describes the relationship between voltage, current, and resistance in an ideal conductor. If resistance stays constant, current changes directly with voltage."
+      formula="V = I R"
+      formulaLabel="Circuit relationship"
+      launchUrl="/labs/physics/ohmslaw"
+      heroImageUrl="/images/physics/ohms-law-hero.png"
+      visualLabel="Circuit model"
+      visualDetail="Voltage, current, resistance"
+      accent={{ primary: "#0ea5e9", secondary: "#2563eb", warm: "#f59e0b" }}
+      learningObjectives={[
+        "Relate voltage, current, and resistance.",
+        "Interpret V-I behavior from virtual readings.",
+        "Predict current when voltage or resistance changes.",
+        "Connect circuit equations with instrument measurements.",
+      ]}
+      applications={[
+        "Basic circuit design",
+        "Electronics troubleshooting",
+        "Power supply testing",
+        "Sensor and resistor networks",
+      ]}
+      faqs={[
+        {
+          question: "What does Ohm's Law state?",
+          answer:
+            "Ohm's Law states that voltage equals current multiplied by resistance: V = I R.",
+        },
+        {
+          question: "What happens if resistance increases?",
+          answer:
+            "For the same voltage, increasing resistance reduces current.",
+        },
+        {
+          question: "Is Ohm's Law always valid?",
+          answer:
+            "It works well for ohmic materials with constant resistance, but not all devices have linear V-I behavior.",
+        },
+        {
+          question: "Why use virtual instruments?",
+          answer:
+            "Virtual meters make it easier to observe current and voltage changes safely while experimenting.",
+        },
+      ]}
+    />
+  );
 }
