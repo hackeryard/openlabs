@@ -1,31 +1,29 @@
-'use client'
+import React from "react";
+import EducationalLandingLayout from "@/components/EducationalLandingLayout";
+import { EducationalContent } from "@/types/education";
+import { Metadata } from "next";
 
-import { useChat } from "@/app/components/ChatContext";
-import dynamic from "next/dynamic"
-import { useEffect } from "react";
-import { useLab } from "@/app/hooks/useXP";
-import DailyChallengeCard from "@/app/components/DailyChallengeCard";
+export const metadata: Metadata = {
+  title: "Plant Cell Simulation | OpenLabs",
+  description: "Interactive plant cell explorer.",
+};
 
-const PlantCell = dynamic(() => import("@/app/components/biology/cell/plant/PlantCell"), {
-  ssr: false,
-})
+const content: EducationalContent = {
+  slug: "plant",
+  subject: "Biology",
+  title: "Plant Cell",
+  description: "Interactive plant cell explorer.",
+  difficulty: "Beginner",
+  estimatedTime: "15 mins",
+  heroDescription: "Explore the organelles of a plant cell in this interactive 3D simulation.",
+  theory: { content: "<p>Plant cells are eukaryotic cells with a true nucleus along with specialized structures called organelles that carry out certain specific functions. Unlike animal cells, they have a cell wall and chloroplasts.</p>" },
+  learningObjectives: ["Identify plant cell organelles.", "Understand the function of the cell wall and chloroplasts."],
+  realWorldApplications: ["Agriculture", "Botany research"],
+  howItWorks: "Interact with the 3D model to explore different parts of the plant cell.",
+  faqs: [{ question: "What is a plant cell?", answer: "A eukaryotic cell that contains a cell wall, chloroplasts, and a large central vacuole." }],
+  relatedExperiments: []
+};
 
 export default function Page() {
-  const { completeExperiment } = useLab("biology/cell/plant", "biology", "exploration");
-  // Chatbot 
-  const { setExperimentData } = useChat();
-
-  useEffect(() => {
-    setExperimentData({
-      title: "3D structure model of plant cell.",
-      theory: "",
-      extraContext: ``,
-    });
-  }, []);
-  return (
-    <main className="flex flex-col justify-center">
-      <DailyChallengeCard labId="biology/cell/plant" currentParams={{ organellesExplored: 1 }} />
-      <PlantCell onComplete={completeExperiment} />
-    </main>
-  )
+  return <EducationalLandingLayout content={content} launchUrl="/labs/biology/cell/plant" />;
 }

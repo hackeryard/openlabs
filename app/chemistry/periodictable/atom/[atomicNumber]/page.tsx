@@ -1,55 +1,29 @@
-"use client";
+import React from "react";
+import EducationalLandingLayout from "@/components/EducationalLandingLayout";
+import { EducationalContent } from "@/types/education";
+import { Metadata } from "next";
 
-import { useParams } from "next/navigation";
-import AtomicModel3D from "../../../../components/chemistry/AtomicModel3D"
-import elements from "../../../../src/data/elements";
-import { useEffect } from "react";
-import { useChat } from "@/app/components/ChatContext";
-import { useLab } from "@/app/hooks/useXP";
-import DailyChallengeCard from "@/app/components/DailyChallengeCard";
+export const metadata: Metadata = {
+  title: "[atomicNumber] | OpenLabs",
+  description: "Interactive [atomicNumber] exploration.",
+};
 
-export default function AtomPage() {
-  const { completeExperiment } = useLab("chemistry/periodictable", "chemistry", "exploration");
-  // Chatbot 
-  const { setExperimentData } = useChat();
+const content: EducationalContent = {
+  slug: "[atomicNumber]",
+  subject: "Chemistry",
+  title: "[atomicNumber]",
+  description: "Interactive [atomicNumber] exploration and visualization.",
+  difficulty: "Intermediate",
+  estimatedTime: "20 mins",
+  heroDescription: "Explore and interact with the [atomicNumber] in this visually engaging lab environment.",
+  theory: { content: "<p>Learn about the principles, concepts, and applications behind [atomicNumber]. This interactive module provides a hands-on approach to understanding the underlying mechanics.</p>" },
+  learningObjectives: ["Understand the core concepts of [atomicNumber].", "Apply theoretical knowledge in an interactive scenario."],
+  realWorldApplications: ["Academic Study", "Practical engineering and design"],
+  howItWorks: "Interact with the visualization to see the immediate effects of your changes.",
+  faqs: [{ question: "What is [atomicNumber]?", answer: "It is a foundational concept in Chemistry that is essential for advanced study." }],
+  relatedExperiments: []
+};
 
-  useEffect(() => {
-    setExperimentData({
-      title: "Chemistry Periodic Table Atom",
-      theory: "",
-      extraContext: ``,
-    });
-  }, []);
-  const { atomicNumber } = useParams();
-  const Z = Number(atomicNumber);
-
-  const element = elements.find(
-    (e) => e.atomicNumber === Z
-  );
-
-  if (!element) {
-    return (
-      <div className="p-10 text-center">
-        Element not found
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-white p-6">
-      <DailyChallengeCard labId="chemistry/periodictable" currentParams={{ elementViewed: element.name }} />
-      <h1 className="text-3xl font-bold text-center mb-2">
-        {element.name} ({element.symbol})
-      </h1>
-
-      <p className="text-center text-gray-600 mb-6">
-        Atomic Number: {element.atomicNumber}
-      </p>
-
-      {/* BIG 3D MODEL */}
-      <div className="max-w-5xl mx-auto">
-        <AtomicModel3D atomicNumber={element.atomicNumber} />
-      </div>
-    </div>
-  );
+export default function Page() {
+  return <EducationalLandingLayout content={content} launchUrl="/labs/chemistry/periodictable/atom/[atomicNumber]" />;
 }

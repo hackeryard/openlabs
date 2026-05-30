@@ -14,6 +14,11 @@ const publicPaths = [
 
 const publicPrefixes = [
   '/blog',
+  '/physics',
+  '/chemistry',
+  '/biology',
+  '/computer-science',
+  '/maths',
 ];
 
 export function middleware(request: NextRequest) {

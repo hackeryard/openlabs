@@ -1,17 +1,29 @@
-"use client";
+import React from "react";
+import EducationalLandingLayout from "@/components/EducationalLandingLayout";
+import { EducationalContent } from "@/types/education";
+import { Metadata } from "next";
 
-import StackVisualizer from "@/app/components/computer-science/dsa/stack/Stack";
-import { useEffect } from "react";
-import { useLab } from "@/app/hooks/useXP";
-import DailyChallengeCard from "@/app/components/DailyChallengeCard";
+export const metadata: Metadata = {
+  title: "Stack | OpenLabs",
+  description: "Interactive Stack exploration.",
+};
+
+const content: EducationalContent = {
+  slug: "stack",
+  subject: "Computer Science",
+  title: "Stack",
+  description: "Interactive Stack exploration and visualization.",
+  difficulty: "Intermediate",
+  estimatedTime: "20 mins",
+  heroDescription: "Explore and interact with the Stack in this visually engaging lab environment.",
+  theory: { content: "<p>Learn about the principles, concepts, and applications behind Stack. This interactive module provides a hands-on approach to understanding the underlying mechanics.</p>" },
+  learningObjectives: ["Understand the core concepts of Stack.", "Apply theoretical knowledge in an interactive scenario."],
+  realWorldApplications: ["Academic Study", "Practical engineering and design"],
+  howItWorks: "Interact with the visualization to see the immediate effects of your changes.",
+  faqs: [{ question: "What is Stack?", answer: "It is a foundational concept in Computer Science that is essential for advanced study." }],
+  relatedExperiments: []
+};
 
 export default function Page() {
-  const { completeExperiment } = useLab("computer-science/dsa/stack", "computerScience", "exploration");
-
-  return (
-    <div>
-      <DailyChallengeCard labId="computer-science/dsa/stack" currentParams={{ algorithmsRun: 1, structuresExplored: 1 }} />
-      <StackVisualizer onComplete={completeExperiment} />
-    </div>
-  );
+  return <EducationalLandingLayout content={content} launchUrl="/labs/computer-science/dsa/stack" />;
 }

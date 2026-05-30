@@ -1,42 +1,29 @@
- "use client";
+import React from "react";
+import EducationalLandingLayout from "@/components/EducationalLandingLayout";
+import { EducationalContent } from "@/types/education";
+import { Metadata } from "next";
 
-import dynamic from "next/dynamic";
-import { useEffect } from "react";
-import { useChat } from "@/app/components/ChatContext";
-import { useLab } from "@/app/hooks/useXP";
-import DailyChallengeCard from "@/app/components/DailyChallengeCard";
+export const metadata: Metadata = {
+  title: "Osi Model | OpenLabs",
+  description: "Interactive Osi Model exploration.",
+};
 
-const OSIModel = dynamic(
-  () => import("@/app/components/computer-science/networking/osi-model/OSIModel"),
-  { ssr: false }
-);
-const OSIModel2D = dynamic(
-  () => import("@/app/components/computer-science/networking/osi-model/OSIModel2D"),
-  { ssr: false }
-);
+const content: EducationalContent = {
+  slug: "osi-model",
+  subject: "Computer Science",
+  title: "Osi Model",
+  description: "Interactive Osi Model exploration and visualization.",
+  difficulty: "Intermediate",
+  estimatedTime: "20 mins",
+  heroDescription: "Explore and interact with the Osi Model in this visually engaging lab environment.",
+  theory: { content: "<p>Learn about the principles, concepts, and applications behind Osi Model. This interactive module provides a hands-on approach to understanding the underlying mechanics.</p>" },
+  learningObjectives: ["Understand the core concepts of Osi Model.", "Apply theoretical knowledge in an interactive scenario."],
+  realWorldApplications: ["Academic Study", "Practical engineering and design"],
+  howItWorks: "Interact with the visualization to see the immediate effects of your changes.",
+  faqs: [{ question: "What is Osi Model?", answer: "It is a foundational concept in Computer Science that is essential for advanced study." }],
+  relatedExperiments: []
+};
 
-export default function OSIPage() {
-  const { completeExperiment } = useLab("computer-science/networking/osi-model", "computerScience", "exploration");
-  const { setExperimentData } = useChat();
-
-  useEffect(() => {
-    setExperimentData({
-      title: "OSI Model",
-      theory:
-        "Interactive OSI model visualization showing encapsulation/decapsulation, PDUs, devices, and common protocols across 7 layers.",
-      extraContext:
-        "Use TCP/UDP and Sender/Receiver mode to see how data flows through layers. Click any layer card to open details (function, protocols, devices, example, quiz).",
-    });
-  }, [setExperimentData]);
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-6">
-      <h1 className="text-4xl font-bold mb-6 text-center">
-        OSI Model Interactive Visualization
-      </h1>
-      <DailyChallengeCard labId="computer-science/networking/osi-model" currentParams={{ protocolsExplored: 1 }} />
-      {/* <OSIModel /> */}
-      <OSIModel2D onComplete={completeExperiment} />
-    </div>
-  );
+export default function Page() {
+  return <EducationalLandingLayout content={content} launchUrl="/labs/computer-science/networking/osi-model" />;
 }

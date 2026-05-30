@@ -1,17 +1,29 @@
-"use client";
+import React from "react";
+import EducationalLandingLayout from "@/components/EducationalLandingLayout";
+import { EducationalContent } from "@/types/education";
+import { Metadata } from "next";
 
-import NotGate from "@/app/components/computer-science/logic-gates/NotGate";
-import { useEffect } from "react";
-import { useLab } from "@/app/hooks/useXP";
-import DailyChallengeCard from "@/app/components/DailyChallengeCard";
+export const metadata: Metadata = {
+  title: "Not Gate | OpenLabs",
+  description: "Interactive Not Gate exploration.",
+};
+
+const content: EducationalContent = {
+  slug: "not-gate",
+  subject: "Computer Science",
+  title: "Not Gate",
+  description: "Interactive Not Gate exploration and visualization.",
+  difficulty: "Intermediate",
+  estimatedTime: "20 mins",
+  heroDescription: "Explore and interact with the Not Gate in this visually engaging lab environment.",
+  theory: { content: "<p>Learn about the principles, concepts, and applications behind Not Gate. This interactive module provides a hands-on approach to understanding the underlying mechanics.</p>" },
+  learningObjectives: ["Understand the core concepts of Not Gate.", "Apply theoretical knowledge in an interactive scenario."],
+  realWorldApplications: ["Academic Study", "Practical engineering and design"],
+  howItWorks: "Interact with the visualization to see the immediate effects of your changes.",
+  faqs: [{ question: "What is Not Gate?", answer: "It is a foundational concept in Computer Science that is essential for advanced study." }],
+  relatedExperiments: []
+};
 
 export default function Page() {
-  const { completeExperiment } = useLab("computer-science/logic-gates/not-gate", "computerScience", "exploration");
-
-  return (
-    <div>
-      <DailyChallengeCard labId="computer-science/logic-gates/not-gate" currentParams={{ inputsToggled: 1, trueOutputsAchieved: 1 }} />
-      <NotGate onComplete={completeExperiment} />
-    </div>
-  );
+  return <EducationalLandingLayout content={content} launchUrl="/labs/computer-science/logic-gates/not-gate" />;
 }

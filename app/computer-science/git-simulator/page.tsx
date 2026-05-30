@@ -1,53 +1,48 @@
-"use client";
+import React from "react";
+import EducationalLandingLayout from "@/components/EducationalLandingLayout";
+import { EducationalContent } from "@/types/education";
+import { Metadata } from "next";
 
-import { useEffect, useState } from "react";
-import { RepoState } from "@/app/types/gitSimualtor";
-import TerminalInput from "@/app/components/computer-science/git-simulator/TerminalInput";
-import RepoStatePanel from "@/app/components/computer-science/git-simulator/RepoStatePanel";
-import CommitGraph from "@/app/components/computer-science/git-simulator/CommitGraph";
-import { executeCommand } from "./utils/executeCommand";
-import { useChat } from "@/app/components/ChatContext";
-import { useLab } from "@/app/hooks/useXP";
-import DailyChallengeCard from "@/app/components/DailyChallengeCard";
-
-const initialState: RepoState = {
-  objects: {},
-  refs: {},
-  HEAD: null,
-  index: {},
-  workingDir: {},
-  initialized: false,
+export const metadata: Metadata = {
+  title: "Git Simulator - Computer-science Lab | OpenLabs",
+  description: "Learn version control visually.",
 };
 
-export default function GitVisualizerPage() {
-  const { completeExperiment } = useLab("computer-science/git-simulator", "computerScience", "simulation");
-  // Chatbot 
-  const { setExperimentData } = useChat();
+const content: EducationalContent = {
+  slug: "git-simulator",
+  subject: "Computer-science",
+  title: "Git Simulator",
+  description: "Learn version control visually.",
+  difficulty: "Beginner",
+  estimatedTime: "15 mins",
+  heroDescription: "Explore our interactive Git Simulator simulation to understand the fundamental concepts in computer-science.",
+  theory: {
+    content: "<p>This educational simulation provides an interactive environment to explore the theory and mechanics of Git Simulator. By experimenting with variables in real-time, you can intuitively grasp complex scientific concepts.</p>"
+  },
+  learningObjectives: [
+    "Understand the core principles of Git Simulator.",
+    "Observe real-time changes by manipulating simulation parameters.",
+    "Apply theoretical knowledge to practical scenarios."
+  ],
+  realWorldApplications: [
+    "Education and academia",
+    "Applied science and engineering",
+    "Research and development"
+  ],
+  howItWorks: "Launch the lab to interact with the environment. Use the controls to adjust parameters and observe the outcomes immediately.",
+  faqs: [
+    {
+      question: "What will I learn from this simulation?",
+      answer: "You will learn the fundamental mechanics of Git Simulator through interactive experimentation."
+    },
+    {
+      question: "Do I need prior knowledge?",
+      answer: "While some basic understanding of computer-science helps, the simulation is designed to be intuitive for all learners."
+    }
+  ],
+  relatedExperiments: []
+};
 
-  useEffect(() => {
-    setExperimentData({
-      title: "Git Simulator",
-      theory: "A simulator interface which show the effect of git commands on the reposetory.",
-      extraContext: ``,
-    });
-  }, []);
-  const [state, setState] = useState<RepoState>(initialState);
-
-  const handleCommand = (command: string) => {
-    const { newState, output } = executeCommand(state, command);
-    setState(newState);
-    completeExperiment();
-    return { output };
-  };
-
-  return (
-    <div className="p-6 space-y-6">
-      <DailyChallengeCard labId="computer-science/git-simulator" currentParams={{ commandsRun: 1, branchesCreated: Object.keys(state.refs).length }} />
-      <TerminalInput onCommand={handleCommand} />
-
-      <RepoStatePanel state={state} />
-
-      <CommitGraph state={state} />
-    </div>
-  );
+export default function Page() {
+  return <EducationalLandingLayout content={content} launchUrl="/labs/computer-science/git-simulator" />;
 }

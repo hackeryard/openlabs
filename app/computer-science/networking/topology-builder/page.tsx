@@ -1,17 +1,29 @@
-"use client";
+import React from "react";
+import EducationalLandingLayout from "@/components/EducationalLandingLayout";
+import { EducationalContent } from "@/types/education";
+import { Metadata } from "next";
 
-import TopologyBuilder from "@/app/components/computer-science/networking/TopologyBuilder";
-import React, { useEffect } from "react";
-import { useLab } from "@/app/hooks/useXP";
-import DailyChallengeCard from "@/app/components/DailyChallengeCard";
+export const metadata: Metadata = {
+  title: "Topology Builder | OpenLabs",
+  description: "Interactive Topology Builder exploration.",
+};
+
+const content: EducationalContent = {
+  slug: "topology-builder",
+  subject: "Computer Science",
+  title: "Topology Builder",
+  description: "Interactive Topology Builder exploration and visualization.",
+  difficulty: "Intermediate",
+  estimatedTime: "20 mins",
+  heroDescription: "Explore and interact with the Topology Builder in this visually engaging lab environment.",
+  theory: { content: "<p>Learn about the principles, concepts, and applications behind Topology Builder. This interactive module provides a hands-on approach to understanding the underlying mechanics.</p>" },
+  learningObjectives: ["Understand the core concepts of Topology Builder.", "Apply theoretical knowledge in an interactive scenario."],
+  realWorldApplications: ["Academic Study", "Practical engineering and design"],
+  howItWorks: "Interact with the visualization to see the immediate effects of your changes.",
+  faqs: [{ question: "What is Topology Builder?", answer: "It is a foundational concept in Computer Science that is essential for advanced study." }],
+  relatedExperiments: []
+};
 
 export default function Page() {
-  const { completeExperiment } = useLab("computer-science/networking/topology-builder", "computerScience", "exploration");
-
-  return (
-    <>
-      <DailyChallengeCard labId="computer-science/networking/topology-builder" currentParams={{ topologiesBuilt: 1 }} />
-      <TopologyBuilder onComplete={completeExperiment} />
-    </>
-  );
+  return <EducationalLandingLayout content={content} launchUrl="/labs/computer-science/networking/topology-builder" />;
 }
