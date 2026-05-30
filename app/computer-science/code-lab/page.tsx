@@ -1,48 +1,94 @@
+"use client";
+
 import React from "react";
-import EducationalLandingLayout from "@/components/EducationalLandingLayout";
-import { EducationalContent } from "@/types/education";
-import { Metadata } from "next";
+import Link from "next/link";
+import { motion, Variants } from "framer-motion";
 
-export const metadata: Metadata = {
-  title: "Code Lab - Computer-science Lab | OpenLabs",
-  description: "Interactive code editor and runner.",
-};
+/* ---------------- Animations ---------------- */
 
-const content: EducationalContent = {
-  slug: "code-lab",
-  subject: "Computer-science",
-  title: "Code Lab",
-  description: "Interactive code editor and runner.",
-  difficulty: "Beginner",
-  estimatedTime: "15 mins",
-  heroDescription: "Explore our interactive Code Lab simulation to understand the fundamental concepts in computer-science.",
-  theory: {
-    content: "<p>This educational simulation provides an interactive environment to explore the theory and mechanics of Code Lab. By experimenting with variables in real-time, you can intuitively grasp complex scientific concepts.</p>"
-  },
-  learningObjectives: [
-    "Understand the core principles of Code Lab.",
-    "Observe real-time changes by manipulating simulation parameters.",
-    "Apply theoretical knowledge to practical scenarios."
-  ],
-  realWorldApplications: [
-    "Education and academia",
-    "Applied science and engineering",
-    "Research and development"
-  ],
-  howItWorks: "Launch the lab to interact with the environment. Use the controls to adjust parameters and observe the outcomes immediately.",
-  faqs: [
-    {
-      question: "What will I learn from this simulation?",
-      answer: "You will learn the fundamental mechanics of Code Lab through interactive experimentation."
+const container: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
     },
-    {
-      question: "Do I need prior knowledge?",
-      answer: "While some basic understanding of computer-science helps, the simulation is designed to be intuitive for all learners."
-    }
-  ],
-  relatedExperiments: []
+  },
 };
 
-export default function Page() {
-  return <EducationalLandingLayout content={content} launchUrl="/labs/computer-science/code-lab" />;
+const item: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: [0.16, 1, 0.3, 1], // easeOut
+    },
+  },
+};
+
+const cards = [
+  {
+    href: "/computer-science/code-lab/html-css-js",
+    title: "HTML | CSS | JS",
+    desc: "Interactive lab for previewing the code written in HTML CSS and JS.",
+  },
+  {
+    href: "/computer-science/code-lab/js",
+    title: "JavaScript",
+    desc: "Interactive lab for previewing the code written in JavaScript.",
+  },
+];
+
+export default function CodeLab() {
+  return (
+    <main className="min-h-screen p-6">
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={container}
+        className="max-w-6xl mx-auto"
+      >
+        {/* -------- Header -------- */}
+        <motion.h1 variants={item} className="text-2xl font-bold">
+          Code Visualisation
+        </motion.h1>
+
+        <motion.p variants={item} className="text-gray-600 mb-6">
+          Coding related experiments.
+        </motion.p>
+
+        {/* -------- Grid -------- */}
+        <motion.div
+          layout
+          variants={container}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          {cards.map((card) => (
+            <motion.div
+              key={card.href}
+              variants={item}
+              whileHover={{ y: -6, scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{
+                duration: 0.25,
+                ease: [0.4, 0, 0.2, 1],
+              }}
+            >
+              <Link
+                href={card.href}
+                className="block h-full bg-white rounded-xl border-2 border-gray-100 hover:border-indigo-200 shadow-sm hover:shadow-lg p-5 transition"
+              >
+                <h3 className="text-lg font-semibold">{card.title}</h3>
+                <p className="text-sm text-gray-500 mt-2">
+                  {card.desc}
+                </p>
+              </Link>
+            </motion.div>
+          ))}
+        </motion.div>
+      </motion.div>
+    </main>
+  );
 }
