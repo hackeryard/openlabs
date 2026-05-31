@@ -345,7 +345,7 @@ function ProgressDriver({ targetProgress, progress }) {
 
 // --- 3. REACTION ANALYSIS COMPONENT ---
 
-const ReactionAnalysis = ({ reactionId }) => {
+export const ReactionAnalysis = ({ reactionId }) => {
     const details = REACTION_DETAILS[reactionId] || REACTION_DETAILS.water;
     
     return (
@@ -411,7 +411,25 @@ const ReactionAnalysis = ({ reactionId }) => {
 
 // --- 4. MAIN COMPONENT ---
 
-export default function ReactionSimulation({ onComplete }) {
+// --- 4. REACTION TELEMETRY CONSTANTS ---
+export const REACTION_TELEMETRY = {
+  water: { temp: 2500, yield: 98 },
+  magnesium_burn: { temp: 3100, yield: 95 },
+  salt: { temp: 800, yield: 92 },
+  ammonia: { temp: 450, yield: 15 },
+  methane: { temp: 1950, yield: 96 },
+  zinc_acid: { temp: 45, yield: 90 },
+  displacement: { temp: 35, yield: 88 },
+  neutralization: { temp: 55, yield: 99 },
+  marble_acid: { temp: 40, yield: 85 },
+  peroxide: { temp: 80, yield: 92 },
+  thermite: { temp: 2500, yield: 94 },
+  precipitation: { temp: 25, yield: 97 },
+  ethanol_burn: { temp: 1920, yield: 95 },
+  limestone: { temp: 900, yield: 90 },
+};
+
+export default function ReactionSimulation({ onComplete, onStateChange }) {
   const [activeReactionId, setActiveReactionId] = useState("neutralization");
   const [animationPhase, setAnimationPhase] = useState("idle"); 
   const progress = useRef(0);
@@ -422,6 +440,14 @@ export default function ReactionSimulation({ onComplete }) {
 
   useEffect(() => {
     resetSimulation();
+    if (onStateChange) {
+      onStateChange({
+        activeReactionId,
+        temperature: 25,
+        yield: 0,
+        runReaction: false
+      });
+    }
   }, [activeReactionId]);
 
   const resetSimulation = () => {
@@ -429,6 +455,14 @@ export default function ReactionSimulation({ onComplete }) {
     setTarget3DProgress(0);
     progress.current = 0;
     atomRefs.current = [];
+    if (onStateChange) {
+      onStateChange({
+        activeReactionId,
+        temperature: 25,
+        yield: 0,
+        runReaction: false
+      });
+    }
   };
 
   const startReaction = () => {
@@ -438,94 +472,113 @@ export default function ReactionSimulation({ onComplete }) {
         setAnimationPhase("reacted");
         setTarget3DProgress(1); 
         if (onComplete) onComplete();
+
+        const stats = REACTION_TELEMETRY[activeReactionId] || { temp: 25, yield: 0 };
+        if (onStateChange) {
+          onStateChange({
+            activeReactionId,
+            temperature: stats.temp,
+            yield: stats.yield,
+            runReaction: true
+          });
+        }
     }, 1500);
   };
 
   const currentData = REACTIONS_DATA[activeReactionId];
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto p-4 space-y-6 select-none">
+    <div className="w-full space-y-6 select-none text-left">
       
-      {/* Animated Header & Controls */}
+      {/* Premium Light-Theme Controls Panel */}
       <motion.div 
-        initial={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0, y: -15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="bg-white rounded-xl shadow-lg border border-gray-100 p-4 sm:p-6 flex flex-col md:flex-row justify-between gap-6 items-center"
+        transition={{ duration: 0.4 }}
+        className="bg-white rounded-3xl p-6 shadow-md border border-slate-200 flex flex-col md:flex-row justify-between gap-6 items-center"
       >
-        <div className="flex-1 w-full text-center md:text-left">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight flex flex-col sm:flex-row items-center justify-center md:justify-start gap-2 sm:gap-3">
+        <div className="flex-1 w-full text-left space-y-1">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <span className="px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-150 text-[10px] font-black uppercase tracking-wider">
+              Control Panel
+            </span>
+          </div>
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex flex-wrap items-center gap-2">
              {currentData.name}
-             <span className="hidden sm:inline text-gray-300">|</span>
-             <span className="text-xs sm:text-sm font-mono text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+             <span className="text-gray-300">|</span>
+             <span className="text-xs font-mono font-bold text-indigo-600 bg-indigo-50 border border-indigo-100/50 px-2.5 py-0.5 rounded-full">
                 {currentData.equation}
              </span>
           </h2>
-          <p className="text-gray-500 mt-2 text-xs sm:text-sm">{currentData.description}</p>
+          <p className="text-slate-500 text-xs sm:text-sm font-medium">{currentData.description}</p>
         </div>
 
         <div className="flex flex-col gap-3 w-full md:w-auto min-w-[240px]">
-           <label className="text-xs font-bold text-gray-400 uppercase tracking-wider hidden md:block">Configuration</label>
+           <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Select Reaction Configuration</label>
            <select 
              value={activeReactionId}
              onChange={(e) => setActiveReactionId(e.target.value)}
-             className="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none"
+             className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none shadow-sm cursor-pointer"
            >
              {Object.entries(REACTIONS_DATA).map(([key, data]) => (
-               <option key={key} value={key}>{data.name}</option>
+               <option key={key} value={key} className="font-semibold text-slate-800">{data.name}</option>
              ))}
            </select>
 
-           <div className="flex gap-2 h-12">
+           <div className="flex gap-2.5 h-11">
               <motion.button
-                 whileTap={{ scale: 0.95 }}
+                 whileTap={{ scale: 0.97 }}
                  onClick={resetSimulation}
                  disabled={animationPhase === 'idle'}
-                 className="flex-1 rounded-lg font-bold text-sm bg-gray-100 text-gray-500 hover:bg-gray-200 disabled:opacity-50 transition-colors"
+                 className="flex-1 rounded-xl font-extrabold text-xs bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700 disabled:opacity-50 transition-all border border-slate-200/60 shadow-sm"
               >
-                Reset
+                Reset System
               </motion.button>
               <motion.button
-                 whileTap={{ scale: 0.95 }}
+                 whileTap={{ scale: 0.97 }}
                  onClick={startReaction}
                  disabled={animationPhase !== 'idle'}
-                 className={`flex-1 rounded-lg font-bold text-sm text-white shadow-lg transition-all
+                 className={`flex-1 rounded-xl font-extrabold text-xs text-white shadow-md transition-all
                     ${animationPhase === 'idle' 
-                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 hover:shadow-blue-500/30' 
-                        : 'bg-gray-400 cursor-not-allowed'}`}
+                        ? 'bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 shadow-indigo-500/20' 
+                        : 'bg-slate-400 cursor-not-allowed'}`}
               >
-                {animationPhase === 'idle' ? 'React!' : 'Processing...'}
+                {animationPhase === 'idle' 
+                  ? 'Initiate Reaction!' 
+                  : animationPhase === 'pouring' 
+                    ? 'Simulating...' 
+                    : 'Reaction Complete'}
               </motion.button>
            </div>
         </div>
       </motion.div>
-
-      {/* 3-COLUMN LAYOUT */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-auto lg:h-full">
+ 
+      {/* Side-by-Side Dual Viewports Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
-        {/* Col 1: Lab Bench */}
+        {/* Beaker Macro Viewport */}
         <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="h-[400px] lg:h-full shadow-2xl rounded-xl overflow-hidden"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.15 }}
+            className="h-[380px] sm:h-[420px] shadow-lg rounded-3xl overflow-hidden border border-slate-800 bg-slate-950/90 relative"
         >
           <MacroView reactionId={activeReactionId} animationPhase={animationPhase} />
         </motion.div>
-
-        {/* Col 2: Atomic Simulation */}
+ 
+        {/* 3D Atomic Simulation Viewport */}
         <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="h-[400px] lg:h-full bg-black rounded-xl overflow-hidden relative shadow-2xl ring-4 ring-gray-900"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+            className="h-[380px] sm:h-[420px] bg-black rounded-3xl overflow-hidden relative shadow-lg border border-slate-900"
         >
             <div className="absolute top-4 left-4 z-10">
-                <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Atomic View</div>
-                <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${target3DProgress === 1 ? 'bg-green-500 animate-pulse' : 'bg-gray-500'}`} />
-                    <span className="text-xs font-bold text-white/90">
-                        {target3DProgress === 1 ? 'Bonding Active' : 'Stable'}
+                <div className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-0.5">Microscopic View</div>
+                <div className="flex items-center gap-2 bg-black/45 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
+                    <div className={`w-1.5 h-1.5 rounded-full ${target3DProgress === 1 ? 'bg-emerald-500 animate-pulse' : 'bg-slate-500'}`} />
+                    <span className="text-[10px] font-bold text-white/95 tracking-wide">
+                        {target3DProgress === 1 ? 'Product Phase: Bonding Active' : 'Reactant Phase: Balanced'}
                     </span>
                 </div>
             </div>
@@ -541,7 +594,7 @@ export default function ReactionSimulation({ onComplete }) {
               <spotLight position={[10, 10, 10]} angle={0.3} penumbra={1} intensity={2} castShadow />
               <pointLight position={[-5, -5, -5]} intensity={0.5} color="#6366f1" />
               <Stars radius={100} depth={50} count={1000} factor={4} saturation={0} fade />
-
+ 
               <Float speed={2} rotationIntensity={0.2} floatIntensity={0.2}>
                 <Center>
                   <group>
@@ -558,48 +611,38 @@ export default function ReactionSimulation({ onComplete }) {
                         setRef={(el) => (atomRefs.current[index] = el)}
                       />
                     ))}
-
+ 
                     <BondSystem atomRefs={atomRefs} currentData={currentData} progress={progress} />
-
+ 
                   </group>
                 </Center>
               </Float>
-
+ 
               <EffectComposer disableNormalPass>
                 <Bloom luminanceThreshold={0.6} intensity={1.0} radius={0.5} />
                 <Vignette eskil={false} offset={0.1} darkness={0.7} />
                 <Noise opacity={0.04} />
               </EffectComposer>
-
+ 
               <OrbitControls 
                   enablePan={false} 
                   enableZoom={false} 
                   enableRotate={true}
               />
             </Canvas>
-
+ 
             <div className="absolute bottom-4 left-4 flex gap-2 pointer-events-none flex-wrap max-w-[95%]">
                 {Array.from(new Set(currentData.atoms.map(a => JSON.stringify({e: a.element, c: a.color}))))
                     .map(s => JSON.parse(s))
                     .map((item) => (
-                    <div key={item.e} className="flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-2 py-1 rounded-md text-[10px] font-bold text-white/90 border border-white/5 shadow-lg">
-                        <div className="w-2 h-2 rounded-full border border-white/20" style={{backgroundColor: item.c}}></div>
+                    <div key={item.e} className="flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-extrabold text-white/90 border border-white/5 shadow-md">
+                        <div className="w-1.5 h-1.5 rounded-full border border-white/20" style={{backgroundColor: item.c}}></div>
                         <span>{item.e}</span>
                     </div>
                 ))}
             </div>
         </motion.div>
-
-        {/* Col 3: Reaction Analysis */}
-        <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
-            className="h-auto lg:h-full"
-        >
-            <ReactionAnalysis reactionId={activeReactionId} />
-        </motion.div>
-
+ 
       </div>
     </div>
   );

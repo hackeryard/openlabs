@@ -1,31 +1,29 @@
-'use client'
+import React from "react";
+import EducationalLandingLayout from "@/components/EducationalLandingLayout";
+import { EducationalContent } from "@/types/education";
+import { Metadata } from "next";
 
-import { useChat } from "@/app/components/ChatContext";
-import dynamic from "next/dynamic"
-import { useEffect } from "react";
-import { useLab } from "@/app/hooks/useXP";
-import DailyChallengeCard from "@/app/components/DailyChallengeCard";
+export const metadata: Metadata = {
+  title: "Animal Cell Simulation | OpenLabs",
+  description: "Interactive animal cell explorer.",
+};
 
-const AnimalCell = dynamic(() => import("@/app/components/biology/cell/animal/AnimalCell"), {
-  ssr: false,
-})
+const content: EducationalContent = {
+  slug: "animal",
+  subject: "Biology",
+  title: "Animal Cell",
+  description: "Interactive animal cell explorer.",
+  difficulty: "Beginner",
+  estimatedTime: "15 mins",
+  heroDescription: "Explore the organelles of an animal cell in this interactive 3D simulation.",
+  theory: { content: "<p>Animal cells are typical of the eukaryotic cell, enclosed by a plasma membrane and containing a membrane-bound nucleus and organelles.</p>" },
+  learningObjectives: ["Identify animal cell organelles.", "Understand their functions."],
+  realWorldApplications: ["Medicine", "Cell biology research"],
+  howItWorks: "Interact with the 3D model to explore different parts of the animal cell.",
+  faqs: [{ question: "What is an animal cell?", answer: "A type of eukaryotic cell that lacks a cell wall and has a true, membrane-bound nucleus." }],
+  relatedExperiments: []
+};
 
 export default function Page() {
-  const { completeExperiment } = useLab("biology/cell/animal", "biology", "exploration");
-  // Chatbot 
-  const { setExperimentData } = useChat();
-
-  useEffect(() => {
-    setExperimentData({
-      title: "3D structure model of animal cell.",
-      theory: "",
-      extraContext: ``,
-    });
-  }, []);
-  return (
-    <main className="flex flex-col justify-center">
-      <DailyChallengeCard labId="biology/cell/animal" currentParams={{ organellesExplored: 1 }} />
-      <AnimalCell onComplete={completeExperiment} />
-    </main>
-  )
+  return <EducationalLandingLayout content={content} launchUrl="/labs/biology/cell/animal" />;
 }

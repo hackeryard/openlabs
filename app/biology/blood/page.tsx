@@ -1,24 +1,48 @@
-"use client";
+import React from "react";
+import EducationalLandingLayout from "@/components/EducationalLandingLayout";
+import { EducationalContent } from "@/types/education";
+import { Metadata } from "next";
 
-import dynamic from "next/dynamic"
-import { useEffect } from "react"
-import { useLab } from "@/app/hooks/useXP"
-import DailyChallengeCard from "@/app/components/DailyChallengeCard"
+export const metadata: Metadata = {
+  title: "Blood Components - Biology Lab | OpenLabs",
+  description: "Examine human blood components.",
+};
 
-const BloodTransfusionLab = dynamic(() => import("@/app/components/biology/blood/blood"), {
-  ssr: false,
-  loading: () => <div className="flex items-center justify-center min-h-screen"><p className="text-lg">Loading Blood Transfusion Lab...</p></div>
-})
+const content: EducationalContent = {
+  slug: "blood",
+  subject: "Biology",
+  title: "Blood Components",
+  description: "Examine human blood components.",
+  difficulty: "Beginner",
+  estimatedTime: "15 mins",
+  heroDescription: "Explore our interactive Blood Components simulation to understand the fundamental concepts in biology.",
+  theory: {
+    content: "<p>This educational simulation provides an interactive environment to explore the theory and mechanics of Blood Components. By experimenting with variables in real-time, you can intuitively grasp complex scientific concepts.</p>"
+  },
+  learningObjectives: [
+    "Understand the core principles of Blood Components.",
+    "Observe real-time changes by manipulating simulation parameters.",
+    "Apply theoretical knowledge to practical scenarios."
+  ],
+  realWorldApplications: [
+    "Education and academia",
+    "Applied science and engineering",
+    "Research and development"
+  ],
+  howItWorks: "Launch the lab to interact with the environment. Use the controls to adjust parameters and observe the outcomes immediately.",
+  faqs: [
+    {
+      question: "What will I learn from this simulation?",
+      answer: "You will learn the fundamental mechanics of Blood Components through interactive experimentation."
+    },
+    {
+      question: "Do I need prior knowledge?",
+      answer: "While some basic understanding of biology helps, the simulation is designed to be intuitive for all learners."
+    }
+  ],
+  relatedExperiments: []
+};
 
-export default function BloodPage() {
-  const { completeExperiment } = useLab("biology/blood", "biology", "exploration");
-
-  return (
-    <main className="min-h-screen">
-      <div className="max-w-[1600px] mx-auto">
-        <DailyChallengeCard labId="biology/blood" currentParams={{ bloodGroupTested: true }} />
-        <BloodTransfusionLab onComplete={completeExperiment} />
-      </div>
-    </main>
-  )
+export default function Page() {
+  return <EducationalLandingLayout content={content} launchUrl="/labs/biology/blood" />;
 }

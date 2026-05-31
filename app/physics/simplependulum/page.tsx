@@ -1,16 +1,61 @@
-import React from 'react'
-import dynamic from 'next/dynamic'
+import React from "react";
+import type { Metadata } from "next";
+import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
-const SimplePendulum = dynamic(() => import('../../components/physics/SimplePendulum'), { ssr: false, loading: () => <p className="p-6">Loading Simple Pendulum…</p> })
+export const metadata: Metadata = {
+  title: "Simple Pendulum Simulator Online | Interactive Physics Lab | OpenLabs",
+  description:
+    "Interactive simple pendulum simulator with length, gravity, damping, period, and angle controls for browser-based physics learning.",
+};
 
 export default function SimplePendulumPage() {
   return (
-    <main className="min-h-screen p-6">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-bold">Simple Pendulum</h1>
-        <p className="text-gray-600 mb-4">Interactive pendulum lab.</p>
-        <SimplePendulum />
-      </div>
-    </main>
-  )
+    <PhysicsExperimentLanding
+      slug="simplependulum"
+      title="Simple Pendulum"
+      description="Simulate pendulum motion and compare theory vs measured period."
+      heroDescription="Study pendulum motion with a focused browser lab. Change the setup, observe the swing, and compare the result with the standard period relationship used in physics."
+      theory="A simple pendulum is a bob suspended from a fixed point by a light string or rod. When it is displaced and released, gravity pulls it back toward equilibrium, creating repeated oscillation. The simulator lets you experiment with that motion instead of only reading the formula."
+      formula="T = 2pi sqrt(L / g)"
+      launchUrl="/labs/physics/simplependulum"
+      heroImageUrl="/images/physics/simple-pendulum-hero-v2.png"
+      visualLabel="Pendulum motion"
+      visualDetail="Length, gravity, damping, period"
+      accent={{ primary: "#2f7d6d", secondary: "#1491a6", warm: "#d86f45" }}
+      learningObjectives={[
+        "Explore how length changes the time period of a pendulum.",
+        "Compare theoretical period with observed simulation behavior.",
+        "See how gravity and damping affect oscillation in real time.",
+        "Connect pendulum motion with simple harmonic motion concepts.",
+      ]}
+      applications={[
+        "Clock mechanisms and timing systems",
+        "Seismology demonstrations",
+        "Engineering vibration models",
+        "Classroom physics experiments",
+      ]}
+      faqs={[
+        {
+          question: "What does a simple pendulum simulator show?",
+          answer:
+            "It shows how a pendulum swings under gravity and how length, gravitational acceleration, damping, and starting angle change the motion.",
+        },
+        {
+          question: "Which formula is used for pendulum period?",
+          answer:
+            "For small angles, the period is commonly estimated with T = 2pi sqrt(L / g), where L is length and g is gravitational acceleration.",
+        },
+        {
+          question: "Does the bob mass affect the period?",
+          answer:
+            "In the ideal simple pendulum model, bob mass does not affect the period. Length and gravity are the main factors.",
+        },
+        {
+          question: "Why does damping matter?",
+          answer:
+            "Damping represents energy loss from air resistance or friction. More damping makes the swing amplitude decrease faster over time.",
+        },
+      ]}
+    />
+  );
 }

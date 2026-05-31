@@ -194,7 +194,8 @@ export default function EditBlogPage({ params }: { params: { slug: string } }) {
 
             <div className="space-y-2">
               <label className="block text-sm font-bold text-slate-700">Slug</label>
-              <input type="text" name="slug" value={formData.slug} onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none" readOnly title="Slugs cannot be changed after creation easily." />
+              <input type="text" name="slug" value={formData.slug} onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
+              <p className="text-xs text-amber-600 font-medium mt-1">Warning: Changing the slug will break any existing links to this post.</p>
             </div>
 
             <div className="space-y-2">

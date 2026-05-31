@@ -1,17 +1,11 @@
-"use client";
+import React from "react";
+import LogicGateLanding from "../LogicGateLanding";
+import { createLogicGateMetadata, gateContent } from "../gateContent";
 
-import XnorGate from "@/app/components/computer-science/logic-gates/XnorGate";
-import { useEffect } from "react";
-import { useLab } from "@/app/hooks/useXP";
-import DailyChallengeCard from "@/app/components/DailyChallengeCard";
+const gate = gateContent["xnor-gate"];
+
+export const metadata = createLogicGateMetadata(gate);
 
 export default function Page() {
-  const { completeExperiment } = useLab("computer-science/logic-gates/xnor-gate", "computerScience", "exploration");
-
-  return (
-    <div>
-      <DailyChallengeCard labId="computer-science/logic-gates/xnor-gate" currentParams={{ inputsToggled: 1, trueOutputsAchieved: 1 }} />
-      <XnorGate onComplete={completeExperiment} />
-    </div>
-  );
+  return <LogicGateLanding gate={gate} />;
 }

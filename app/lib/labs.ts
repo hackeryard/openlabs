@@ -8,6 +8,7 @@ export interface Lab {
   subject: "physics" | "chemistry" | "biology" | "computerScience" | "mathematics"
   type: LabType
   challengeParams: string[]
+  challengeEnabled: boolean
   description: string
 }
 
@@ -20,6 +21,7 @@ export const LABS: Lab[] = [
     subject: "physics",
     type: "simulation",
     challengeParams: ["time", "velocity", "height"],
+    challengeEnabled: true,
     description: "Free fall motion under gravity",
   },
   {
@@ -28,6 +30,7 @@ export const LABS: Lab[] = [
     subject: "physics",
     type: "simulation",
     challengeParams: ["range", "maxHeight", "time"],
+    challengeEnabled: true,
     description: "Projectile motion analysis",
   },
   {
@@ -36,6 +39,7 @@ export const LABS: Lab[] = [
     subject: "physics",
     type: "simulation",
     challengeParams: ["period", "frequency"],
+    challengeEnabled: true,
     description: "Pendulum oscillation experiment",
   },
   {
@@ -44,6 +48,7 @@ export const LABS: Lab[] = [
     subject: "physics",
     type: "simulation",
     challengeParams: ["extension", "force"],
+    challengeEnabled: true,
     description: "Spring force and extension",
   },
   {
@@ -52,6 +57,7 @@ export const LABS: Lab[] = [
     subject: "physics",
     type: "simulation",
     challengeParams: ["current", "voltage", "resistance"],
+    challengeEnabled: true,
     description: "Voltage, current, and resistance",
   },
   {
@@ -60,6 +66,7 @@ export const LABS: Lab[] = [
     subject: "physics",
     type: "simulation",
     challengeParams: ["kineticEnergy", "potentialEnergy"],
+    challengeEnabled: true,
     description: "Conservation of mechanical energy",
   },
   {
@@ -68,6 +75,7 @@ export const LABS: Lab[] = [
     subject: "physics",
     type: "simulation",
     challengeParams: ["timeConstant", "voltage"],
+    challengeEnabled: true,
     description: "RC circuit charge and discharge",
   },
   {
@@ -76,6 +84,7 @@ export const LABS: Lab[] = [
     subject: "physics",
     type: "exploration",
     challengeParams: ["wavelength", "frequency"],
+    challengeEnabled: true,
     description: "Speed of light experiments",
   },
   {
@@ -84,6 +93,7 @@ export const LABS: Lab[] = [
     subject: "physics",
     type: "simulation",
     challengeParams: ["distance", "time", "speed"],
+    challengeEnabled: true,
     description: "Constant velocity motion",
   },
   {
@@ -92,8 +102,10 @@ export const LABS: Lab[] = [
     subject: "physics",
     type: "exploration",
     challengeParams: ["fringeWidth", "wavelength"],
+    challengeEnabled: true,
     description: "Wave optics and diffraction",
   },
+
 
   // ─── CHEMISTRY ─────────────────────────────────────────
   {
@@ -102,6 +114,7 @@ export const LABS: Lab[] = [
     subject: "chemistry",
     type: "exploration",
     challengeParams: ["elementsVisited", "groupExplored", "periodExplored"],
+    challengeEnabled: true,
     description: "Interactive periodic table explorer",
   },
   {
@@ -110,6 +123,7 @@ export const LABS: Lab[] = [
     subject: "chemistry",
     type: "exploration",
     challengeParams: ["bondsExplored"],
+    challengeEnabled: true,
     description: "Ionic, covalent, and metallic bonding",
   },
   {
@@ -118,6 +132,7 @@ export const LABS: Lab[] = [
     subject: "chemistry",
     type: "exploration",
     challengeParams: ["elementsVisualized"],
+    challengeEnabled: true,
     description: "Atomic structure and electron configuration",
   },
   {
@@ -126,6 +141,7 @@ export const LABS: Lab[] = [
     subject: "chemistry",
     type: "simulation",
     challengeParams: ["reactionsRun", "temperature", "yield"],
+    challengeEnabled: true,
     description: "Chemical reaction builder",
   },
   {
@@ -134,6 +150,7 @@ export const LABS: Lab[] = [
     subject: "chemistry",
     type: "exploration",
     challengeParams: ["labExplored"],
+    challengeEnabled: true,
     description: "Test water quality parameters",
   },
 
@@ -144,6 +161,7 @@ export const LABS: Lab[] = [
     subject: "biology",
     type: "exploration",
     challengeParams: ["bloodGroupTested"],
+    challengeEnabled: true,
     description: "Blood group and transfusion compatibility",
   },
   {
@@ -152,6 +170,7 @@ export const LABS: Lab[] = [
     subject: "biology",
     type: "exploration",
     challengeParams: ["neuronsExplored"],
+    challengeEnabled: true,
     description: "3D Brain Neuron Simulation",
   },
   {
@@ -160,6 +179,7 @@ export const LABS: Lab[] = [
     subject: "biology",
     type: "exploration",
     challengeParams: ["organellesExplored"],
+    challengeEnabled: true,
     description: "3D interactive animal cell",
   },
   {
@@ -168,6 +188,7 @@ export const LABS: Lab[] = [
     subject: "biology",
     type: "exploration",
     challengeParams: ["organellesExplored"],
+    challengeEnabled: true,
     description: "3D interactive plant cell",
   },
   {
@@ -176,6 +197,7 @@ export const LABS: Lab[] = [
     subject: "biology",
     type: "exploration",
     challengeParams: ["structuresExplored"],
+    challengeEnabled: true,
     description: "Human anatomy explorer",
   },
 
@@ -186,6 +208,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "editor",
     challengeParams: ["codeRuns", "consoleOutputMatched"],
+    challengeEnabled: true,
     description: "Live web code editor",
   },
   {
@@ -194,6 +217,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "editor",
     challengeParams: ["stepsDebugged", "variablesInspected"],
+    challengeEnabled: true,
     description: "JavaScript step-through debugger",
   },
   {
@@ -202,6 +226,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["arraysSorted", "swapsMade", "comparisonsMade"],
+    challengeEnabled: true,
     description: "Visualize Bubble Sort algorithm",
   },
   {
@@ -210,6 +235,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["arraysSorted", "splitsMade", "mergesMade"],
+    challengeEnabled: true,
     description: "Visualize Merge Sort algorithm",
   },
   {
@@ -218,6 +244,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["arraysSorted", "swapsMade", "comparisonsMade", "partitionsMade"],
+    challengeEnabled: true,
     description: "Visualize Quick Sort algorithm",
   },
   {
@@ -226,6 +253,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["arraysSorted", "swapsMade", "comparisonsMade"],
+    challengeEnabled: true,
     description: "Visualize Selection Sort algorithm",
   },
   {
@@ -234,6 +262,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["arraysSorted", "shiftsMade", "comparisonsMade"],
+    challengeEnabled: true,
     description: "Visualize Insertion Sort algorithm",
   },
   {
@@ -242,6 +271,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["arraysSorted", "swapsMade", "comparisonsMade"],
+    challengeEnabled: true,
     description: "Visualize Heap Sort algorithm",
   },
   {
@@ -250,6 +280,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["algorithmsRun", "structuresExplored", "nodesAdded", "nodesDeleted"],
+    challengeEnabled: true,
     description: "Visualize Linked List operations",
   },
   {
@@ -258,6 +289,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["algorithmsRun", "structuresExplored", "enqueues", "dequeues"],
+    challengeEnabled: true,
     description: "Visualize Queue operations",
   },
   {
@@ -266,6 +298,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["algorithmsRun", "structuresExplored", "pushes", "pops"],
+    challengeEnabled: true,
     description: "Visualize Stack operations",
   },
   {
@@ -274,6 +307,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["inputsToggled", "trueOutputsAchieved"],
+    challengeEnabled: true,
     description: "Interactive AND Logic Gate",
   },
   {
@@ -282,6 +316,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["inputsToggled", "trueOutputsAchieved"],
+    challengeEnabled: true,
     description: "Interactive OR Logic Gate",
   },
   {
@@ -290,6 +325,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["inputsToggled", "trueOutputsAchieved"],
+    challengeEnabled: true,
     description: "Interactive NOT Logic Gate",
   },
   {
@@ -298,6 +334,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["inputsToggled", "trueOutputsAchieved"],
+    challengeEnabled: true,
     description: "Interactive NAND Logic Gate",
   },
   {
@@ -306,6 +343,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["inputsToggled", "trueOutputsAchieved"],
+    challengeEnabled: true,
     description: "Interactive NOR Logic Gate",
   },
   {
@@ -314,6 +352,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["inputsToggled", "trueOutputsAchieved"],
+    challengeEnabled: true,
     description: "Interactive XOR Logic Gate",
   },
   {
@@ -322,6 +361,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["inputsToggled", "trueOutputsAchieved"],
+    challengeEnabled: true,
     description: "Interactive XNOR Logic Gate",
   },
   {
@@ -330,6 +370,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["gamesPlayed", "wordsGuessed"],
+    challengeEnabled: true,
     description: "AI Agent solving Hangman",
   },
   {
@@ -338,6 +379,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "exploration",
     challengeParams: ["stepsTaken", "restarts", "globalMaxFound"],
+    challengeEnabled: true,
     description: "Visualize Hill Climbing AI Algorithm",
   },
   {
@@ -346,14 +388,16 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["episodesRun", "successRate"],
+    challengeEnabled: true,
     description: "RL Agent solving a maze",
   },
   {
-    id: "computer-science/blockchain/block",
+    id: "computer-science/blockchain",
     name: "Blockchain Explorer",
     subject: "computerScience",
     type: "exploration",
     challengeParams: ["blocksCreated", "transactionsCreated"],
+    challengeEnabled: true,
     description: "Blockchain technology explorer",
   },
   {
@@ -362,6 +406,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["commandsRun", "branchesCreated"],
+    challengeEnabled: true,
     description: "Interactive Git version control",
   },
   {
@@ -370,6 +415,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "exploration",
     challengeParams: ["protocolsExplored", "layersExplored"],
+    challengeEnabled: true,
     description: "Explore the 7 layers of OSI model",
   },
   {
@@ -378,6 +424,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["packetsRouted", "routersTraversed"],
+    challengeEnabled: true,
     description: "Simulate packet switching in networks",
   },
   {
@@ -386,6 +433,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["circuitsEstablished", "callsCompleted"],
+    challengeEnabled: true,
     description: "Simulate circuit switching networks",
   },
   {
@@ -394,6 +442,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "simulation",
     challengeParams: ["nodesAdded", "linksAdded", "pingSuccess"],
+    challengeEnabled: true,
     description: "Build and test network topologies",
   },
   {
@@ -402,6 +451,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "exploration",
     challengeParams: ["datasetsAnalyzed", "chartsGenerated"],
+    challengeEnabled: true,
     description: "Data visualization and analysis",
   },
   {
@@ -410,6 +460,7 @@ export const LABS: Lab[] = [
     subject: "computerScience",
     type: "exploration",
     challengeParams: ["experimentsRun"],
+    challengeEnabled: true,
     description: "Data science and ML experiments",
   },
 ]

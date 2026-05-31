@@ -1,17 +1,11 @@
-"use client";
+import React from "react";
+import DsaLanding from "../DsaLanding";
+import { createDsaMetadata, dsaContent } from "../dsaContent";
 
-import StackVisualizer from "@/app/components/computer-science/dsa/stack/Stack";
-import { useEffect } from "react";
-import { useLab } from "@/app/hooks/useXP";
-import DailyChallengeCard from "@/app/components/DailyChallengeCard";
+const content = dsaContent.stack;
+
+export const metadata = createDsaMetadata(content);
 
 export default function Page() {
-  const { completeExperiment } = useLab("computer-science/dsa/stack", "computerScience", "exploration");
-
-  return (
-    <div>
-      <DailyChallengeCard labId="computer-science/dsa/stack" currentParams={{ algorithmsRun: 1, structuresExplored: 1 }} />
-      <StackVisualizer onComplete={completeExperiment} />
-    </div>
-  );
+  return <DsaLanding content={content} />;
 }

@@ -1,39 +1,39 @@
 "use client"
 
 import { useGLTF } from "@react-three/drei"
-import { useEffect } from "react"
+import { useMemo } from "react"
 
-// Preload the model
-useGLTF.preload("/models/skeleton.glb")
+useGLTF.preload("/models/human.glb")
+useGLTF.preload("/models/animal.glb")
 
-export default function Model({ type, onSelect }: any) {
-  const path = "/models/human.glb"
+interface ModelProps {
+  type: "human" | "animal"
+  onSelect: (name: string) => void
+}
 
-  try {
-    const gltf = useGLTF(path)
-    const scene = gltf.scene.clone()
+export default function Model({ type, onSelect }: ModelProps) {
+  const path =
+    type === "human"
+      ? "/models/human.glb"
+      : "/models/animal.glb"
 
-    useEffect(() => {
-      scene.traverse((child: any) => {
-        if (child.isMesh) {
-          child.cursor = "pointer"
-          child.onClick = () => {
-            if (child.name) {
-              onSelect(child.name)
-            }
+  const gltf = useGLTF(path)
+
+  const scene = useMemo(() => {
+    const clonedScene = gltf.scene.clone()
+
+    clonedScene.traverse((child: any) => {
+      if (child.isMesh) {
+        child.userData.onClick = () => {
+          if (child.name) {
+            onSelect(child.name)
           }
         }
-      })
-    }, [scene, onSelect])
+      }
+    })
 
-    return <primitive object={scene} scale={1.4} />
-  } catch (error) {
-    console.error("Error loading model:", error)
-    return (
-      <mesh position={[0, 0, 0]}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color={"#ff0000"} />
-      </mesh>
-    )
-  }
+    return clonedScene
+  }, [gltf, onSelect])
+
+  return <primitive object={scene} scale={1.4} />
 }

@@ -1,17 +1,11 @@
-"use client";
+import React from "react";
+import LogicGateLanding from "../LogicGateLanding";
+import { createLogicGateMetadata, gateContent } from "../gateContent";
 
-import OrGate from "@/app/components/computer-science/logic-gates/OrGate";
-import { useEffect } from "react";
-import { useLab } from "@/app/hooks/useXP";
-import DailyChallengeCard from "@/app/components/DailyChallengeCard";
+const gate = gateContent["or-gate"];
+
+export const metadata = createLogicGateMetadata(gate);
 
 export default function Page() {
-  const { completeExperiment } = useLab("computer-science/logic-gates/or-gate", "computerScience", "exploration");
-
-  return (
-    <div>
-      <DailyChallengeCard labId="computer-science/logic-gates/or-gate" currentParams={{ inputsToggled: 1, trueOutputsAchieved: 1 }} />
-      <OrGate onComplete={completeExperiment} />
-    </div>
-  );
+  return <LogicGateLanding gate={gate} />;
 }

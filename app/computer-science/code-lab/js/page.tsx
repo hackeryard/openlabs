@@ -1,289 +1,460 @@
-"use client";
+import React from "react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import {
+  ArrowRight,
+  BrainCircuit,
+  CheckCircle2,
+  ChevronRight,
+  Code2,
+  FileCode2,
+  GitBranch,
+  Globe2,
+  MonitorPlay,
+  Sparkles,
+  TerminalSquare,
+  TimerReset,
+} from "lucide-react";
 
-import { useState, useCallback, useEffect } from "react";
-import DebuggerModal from "@/app/components/computer-science/code-lab/js/DebuggerModal";
-import { Memory, RuntimeSnapshot, StackFrame, Task } from "@/app/types/jsDebugger";
-import { useChat } from "@/app/components/ChatContext";
-import { useLab } from "@/app/hooks/useXP";
-import DailyChallengeCard from "@/app/components/DailyChallengeCard";
+const pageUrl = "https://www.openlabs.org.in/computer-science/code-lab/js";
+const launchUrl = "/labs/computer-science/code-lab/js";
 
-export default function DebuggerPage() {
-    const { completeExperiment } = useLab("computer-science/code-lab/js", "computerScience", "editor");
-    // Chatbot 
-    const { setExperimentData } = useChat();
+const breadcrumbs = [
+  { label: "Home", href: "/" },
+  { label: "Computer Science", href: "/computer-science" },
+  { label: "Code Lab", href: "/computer-science/code-lab" },
+  { label: "JavaScript", href: "/computer-science/code-lab/js" },
+];
 
-    useEffect(() => {
-        setExperimentData({
-            title: "Javascript code compiler visualizer.",
-            theory: "",
-            extraContext: ``,
-        });
-    }, []);
-    const [editorCode, setEditorCode] = useState<string>(
-        `// Event Loop Demo
-console.log('1: Start');
+export const metadata: Metadata = {
+  title: "JavaScript Code Lab - Event Loop Visualizer | OpenLabs",
+  description:
+    "Learn JavaScript with a free interactive code lab. Write JS, run examples, visualize the event loop, call stack, task queue, microtasks and console output.",
+  keywords: [
+    "JavaScript code lab",
+    "JavaScript event loop visualizer",
+    "online JavaScript editor",
+    "learn JavaScript online",
+    "JavaScript call stack visualizer",
+    "microtask queue JavaScript",
+    "interactive JavaScript debugger",
+    "OpenLabs computer science lab",
+  ],
+  alternates: {
+    canonical: "/computer-science/code-lab/js",
+  },
+  openGraph: {
+    title: "JavaScript Code Lab - Event Loop Visualizer | OpenLabs",
+    description:
+      "Practice JavaScript and visualize runtime behavior including the call stack, Web APIs, task queue, microtasks, and console output.",
+    url: pageUrl,
+    siteName: "OpenLabs",
+    type: "website",
+    images: [
+      {
+        url: "/images/og-image.svg",
+        width: 1200,
+        height: 630,
+        alt: "OpenLabs JavaScript Code Lab",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "JavaScript Code Lab - Event Loop Visualizer | OpenLabs",
+    description:
+      "Write JavaScript and watch the event loop, stack, queues, and output step by step.",
+    images: ["/images/twitter-image.svg"],
+  },
+};
 
-setTimeout(function timeout() {
-    console.log('2: Timeout');
-}, 0);
+const features = [
+  {
+    icon: FileCode2,
+    title: "JavaScript editor",
+    description:
+      "Write and modify JavaScript snippets directly in the browser with a focused coding workspace.",
+  },
+  {
+    icon: BrainCircuit,
+    title: "Runtime visualization",
+    description:
+      "See how JavaScript code moves through the call stack, Web APIs, queues, and output.",
+  },
+  {
+    icon: TimerReset,
+    title: "Event loop practice",
+    description:
+      "Understand promises, microtasks, callbacks, and setTimeout behavior through step-by-step flow.",
+  },
+  {
+    icon: TerminalSquare,
+    title: "Debugging feedback",
+    description:
+      "Inspect console behavior and execution order so asynchronous JavaScript becomes easier to reason about.",
+  },
+];
 
-Promise.resolve()
-    .then(function promise1() {
-        console.log('3: Promise 1');
-    })
-    .then(function promise2() {
-        console.log('4: Promise 2');
-    });
+const learningObjectives = [
+  "Understand how JavaScript executes synchronous and asynchronous code.",
+  "Visualize the relationship between the call stack, task queue, microtask queue, and Web APIs.",
+  "Practice promise chains, callbacks, setTimeout, and console output order.",
+  "Build stronger debugging habits before moving into frameworks and full-stack projects.",
+];
 
-console.log('5: End');`
-    );
+const useCases = [
+  "JavaScript event loop classroom demonstrations",
+  "Beginner programming and web development practice",
+  "Interview preparation for async JavaScript concepts",
+  "Computer science practicals on runtime behavior",
+];
 
-    const [openDebugger, setOpenDebugger] = useState(false);
-    const [snapshots, setSnapshots] = useState<RuntimeSnapshot[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+const faqs = [
+  {
+    question: "What is the JavaScript Code Lab?",
+    answer:
+      "It is an interactive OpenLabs coding environment where learners can write JavaScript and visualize runtime behavior such as the call stack, task queue, microtask queue, Web APIs, and console output.",
+  },
+  {
+    question: "Can this lab help me understand the JavaScript event loop?",
+    answer:
+      "Yes. The lab is designed around event loop visualization, so learners can see how synchronous code, promises, callbacks, and timers execute in order.",
+  },
+  {
+    question: "Do I need to install Node.js or any editor?",
+    answer:
+      "No installation is required. The JavaScript lab runs in the browser, making it useful for students, teachers, and self-learners.",
+  },
+  {
+    question: "Who should use this JavaScript visualizer?",
+    answer:
+      "It is helpful for beginners learning JavaScript, students preparing for exams, and developers reviewing asynchronous JavaScript before interviews.",
+  },
+];
 
-    const handleRun = useCallback(async () => {
-        setIsLoading(true);
-        setError(null);
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    name: "JavaScript Code Lab",
+    description: metadata.description,
+    url: pageUrl,
+    learningResourceType: "Interactive coding lab",
+    educationalLevel: "Beginner to Intermediate",
+    teaches: [
+      "JavaScript",
+      "Event loop",
+      "Call stack",
+      "Microtask queue",
+      "Asynchronous programming",
+    ],
+    provider: {
+      "@type": "Organization",
+      name: "OpenLabs",
+      url: "https://www.openlabs.org.in",
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://www.openlabs.org.in/",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Computer Science",
+        item: "https://www.openlabs.org.in/computer-science",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: "Code Lab",
+        item: "https://www.openlabs.org.in/computer-science/code-lab",
+      },
+      {
+        "@type": "ListItem",
+        position: 4,
+        name: "JavaScript Code Lab",
+        item: pageUrl,
+      },
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  },
+];
 
-        try {
-            const result = await simulateEventLoop(editorCode);
-            setSnapshots(result);
-            setOpenDebugger(true);
-            completeExperiment();
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Failed to run code');
-            console.error('Debugger error:', err);
-        } finally {
-            setIsLoading(false);
-        }
-    }, [editorCode]);
+export default function Page() {
+  return (
+    <main className="min-h-screen bg-[#fafafa] text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
+      {jsonLd.map((schema, index) => (
+        <script
+          key={index}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
 
-    return (
-        <>
-            <DailyChallengeCard labId="computer-science/code-lab/js" currentParams={{ codeRun: snapshots.length > 0 }} />
-            {error && (
-                <div className="fixed top-20 right-4 bg-red-600 text-white p-4 rounded-lg z-50 shadow-lg">
-                    <p className="font-semibold">Error:</p>
-                    <p className="text-sm">{error}</p>
-                </div>
-            )}
+      <section className="relative border-b border-slate-200 bg-white">
+        <nav
+          aria-label="Breadcrumb"
+          className="absolute left-0 right-0 top-5 mx-auto max-w-6xl px-6 lg:px-8"
+        >
+          <ol className="flex flex-wrap items-center gap-1 text-xs font-semibold text-slate-500">
+            {breadcrumbs.map((breadcrumb, index) => {
+              const isLast = index === breadcrumbs.length - 1;
 
-            <DebuggerModal
-                open={openDebugger}
-                onClose={() => setOpenDebugger(false)}
-                snapshots={snapshots}
-                sourceCode={editorCode}
-            />
-
-            <div className="h-screen w-full bg-[#1a1b26] text-white flex flex-col">
-                {/* Top Bar */}
-                <div className="h-14 border-b border-[#2a2b36] flex items-center justify-between px-6 bg-[#0f0f17]">
-                    <div className="text-lg font-semibold text-blue-400">⚡ Event Loop Visualizer</div>
-
-                    <button
-                        onClick={handleRun}
-                        disabled={isLoading}
-                        className={`bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-md text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
+              return (
+                <li key={breadcrumb.href} className="flex items-center gap-1">
+                  {isLast ? (
+                    <span className="text-slate-800" aria-current="page">
+                      {breadcrumb.label}
+                    </span>
+                  ) : (
+                    <Link
+                      href={breadcrumb.href}
+                      className="transition hover:text-indigo-700"
                     >
-                        {isLoading ? 'Visualizing...' : 'Visualize Event Loop'}
-                    </button>
-                </div>
+                      {breadcrumb.label}
+                    </Link>
+                  )}
+                  {!isLast && (
+                    <ChevronRight className="h-3.5 w-3.5 text-slate-300" />
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        </nav>
 
-                {/* Editor */}
-                <div className="flex-1 p-6">
-                    <div className="w-full h-full bg-[#0f0f17] border border-[#2a2b36] rounded-lg overflow-hidden font-mono text-sm flex">
-                        {/* Line numbers */}
-                        <div className="bg-[#1a1b26] p-4 text-right text-[#4a4b56] select-none border-r border-[#2a2b36]">
-                            {editorCode.split('\n').map((_, i) => (
-                                <div key={i} className="leading-6">{i + 1}</div>
-                            ))}
-                        </div>
-                        <textarea
-                            value={editorCode}
-                            onChange={(e) => setEditorCode(e.target.value)}
-                            className="flex-1 bg-[#0f0f17] p-4 font-mono text-sm resize-none outline-none text-[#d4d4d8]"
-                            spellCheck={false}
-                            placeholder="Enter JavaScript code here..."
-                            style={{ lineHeight: '1.5rem' }}
-                        />
-                    </div>
-                </div>
+        <div className="mx-auto grid max-w-6xl gap-12 px-6 py-16 md:grid-cols-[1.05fr_0.95fr] md:items-center md:py-20 lg:px-8">
+          <div>
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-700">
+              <Code2 className="h-4 w-4" />
+              Computer Science Code Lab
             </div>
-        </>
-    );
-}
+            <h1 className="max-w-3xl text-4xl font-black leading-tight tracking-tight text-slate-950 md:text-5xl">
+              JavaScript Code Lab With Event Loop Visualizer
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+              Learn JavaScript by writing code and watching how it executes. Visualize
+              the call stack, Web APIs, task queue, microtask queue, promises,
+              timers, and console output in an interactive OpenLabs workspace.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href={launchUrl}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-indigo-700 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+              >
+                Launch JavaScript Lab
+                <ArrowRight className="h-5 w-5" />
+              </Link>
+              <Link
+                href="/computer-science/code-lab"
+                className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-6 py-3 text-base font-bold text-slate-700 transition hover:border-indigo-200 hover:text-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+              >
+                View All Code Labs
+              </Link>
+            </div>
+          </div>
 
-/* ================= EVENT LOOP SIMULATION ================= */
+          <div className="rounded-2xl border border-slate-200 bg-slate-950 p-4 shadow-2xl shadow-indigo-950/10">
+            <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-3">
+              <div className="flex gap-2">
+                <span className="h-3 w-3 rounded-full bg-red-400" />
+                <span className="h-3 w-3 rounded-full bg-amber-300" />
+                <span className="h-3 w-3 rounded-full bg-emerald-400" />
+              </div>
+              <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+                Event Loop Visualizer
+              </span>
+            </div>
+            <div className="grid gap-4 md:grid-cols-[1.05fr_0.95fr]">
+              <div className="rounded-lg border border-white/10 bg-white/[0.03] p-3">
+                <div className="mb-3 flex items-center gap-2 text-xs font-bold text-slate-300">
+                  <Sparkles className="h-3.5 w-3.5 text-cyan-300" />
+                  script.js
+                </div>
+                <div className="space-y-3 font-mono text-xs">
+                  <div className="text-slate-400">console.log("1: Start");</div>
+                  <div className="text-indigo-200">setTimeout(callback, 0);</div>
+                  <div className="text-cyan-200">Promise.resolve().then(task);</div>
+                  <div className="text-emerald-200">console.log("5: End");</div>
+                </div>
+              </div>
+              <div className="space-y-3">
+                {[
+                  { label: "Call Stack", width: "w-9/12", color: "bg-indigo-300/70" },
+                  { label: "Microtask Queue", width: "w-11/12", color: "bg-cyan-300/70" },
+                  { label: "Task Queue", width: "w-7/12", color: "bg-emerald-300/70" },
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    className="rounded-lg border border-white/10 bg-white/[0.03] p-3"
+                  >
+                    <div className="mb-2 flex items-center gap-2 text-xs font-bold text-slate-300">
+                      <GitBranch className="h-3.5 w-3.5 text-cyan-300" />
+                      {item.label}
+                    </div>
+                    <span className={`block h-2 rounded ${item.width} ${item.color}`} />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="mt-4 rounded-lg bg-white p-4 text-slate-900">
+              <div className="mb-3 flex items-center gap-2 text-sm font-bold text-slate-700">
+                <MonitorPlay className="h-4 w-4 text-indigo-600" />
+                Console Output
+              </div>
+              <div className="rounded-lg bg-slate-100 p-3 font-mono text-xs leading-6 text-slate-700">
+                1: Start<br />
+                5: End<br />
+                3: Promise 1<br />
+                2: Timeout
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-async function simulateEventLoop(code: string): Promise<RuntimeSnapshot[]> {
-    const lines = code.split('\n');
-    const snapshots: RuntimeSnapshot[] = [];
+      <section className="mx-auto max-w-6xl px-6 py-14 lg:px-8">
+        <div className="grid gap-5 md:grid-cols-4">
+          {features.map((feature) => {
+            const Icon = feature.icon;
+            return (
+              <article
+                key={feature.title}
+                className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-indigo-200 hover:shadow-md"
+              >
+                <Icon className="mb-4 h-6 w-6 text-indigo-600" />
+                <h2 className="text-lg font-bold text-slate-900">{feature.title}</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  {feature.description}
+                </p>
+              </article>
+            );
+          })}
+        </div>
+      </section>
 
-    // State
-    const memory: Memory = {};
-    const stack: StackFrame[] = [{
-        id: 'global',
-        name: 'global',
-        locals: memory,
-        type: 'global'
-    }];
+      <section className="border-y border-slate-200 bg-white">
+        <div className="mx-auto grid max-w-6xl gap-10 px-6 py-14 md:grid-cols-[0.85fr_1.15fr] lg:px-8">
+          <div>
+            <span className="text-sm font-bold uppercase tracking-widest text-indigo-600">
+              Learn by visualizing
+            </span>
+            <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950">
+              A practical JavaScript editor for understanding async code
+            </h2>
+            <p className="mt-4 text-base leading-7 text-slate-600">
+              JavaScript can feel invisible when callbacks, promises, and timers run
+              out of order. This lab turns execution into a visual flow so learners
+              can connect code with runtime behavior.
+            </p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {learningObjectives.map((objective) => (
+              <div key={objective} className="flex gap-3 rounded-lg bg-slate-50 p-4">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 flex-none text-emerald-500" />
+                <p className="text-sm font-medium leading-6 text-slate-700">
+                  {objective}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-    const taskQueue: Task[] = [];
-    const microtaskQueue: Task[] = [];
-    const webAPIs: Task[] = [];
+      <section className="mx-auto grid max-w-6xl gap-10 px-6 py-14 md:grid-cols-2 lg:px-8">
+        <div>
+          <div className="mb-5 flex items-center gap-3">
+            <Globe2 className="h-6 w-6 text-cyan-600" />
+            <h2 className="text-2xl font-black tracking-tight text-slate-950">
+              Where this lab helps
+            </h2>
+          </div>
+          <ul className="space-y-3">
+            {useCases.map((useCase) => (
+              <li
+                key={useCase}
+                className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700"
+              >
+                {useCase}
+              </li>
+            ))}
+          </ul>
+        </div>
 
-    let timeoutId = 0;
-    let promiseId = 0;
-    let domOutput: string[] = [];
+        <div>
+          <div className="mb-5 flex items-center gap-3">
+            <MonitorPlay className="h-6 w-6 text-indigo-600" />
+            <h2 className="text-2xl font-black tracking-tight text-slate-950">
+              How the interactive lab works
+            </h2>
+          </div>
+          <p className="rounded-xl border border-slate-200 bg-white p-6 text-base leading-7 text-slate-600 shadow-sm">
+            Open the lab, edit the JavaScript example, and run the visualizer. The
+            lab creates snapshots of the stack, queues, Web APIs, and console output
+            so each step of execution becomes easier to inspect.
+          </p>
+        </div>
+      </section>
 
-    for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        const trimmedLine = line.trim();
-
-        if (trimmedLine === '' || trimmedLine.startsWith('//')) {
-            snapshots.push(createSnapshot(i, memory, stack, taskQueue, microtaskQueue, webAPIs, domOutput, line));
-            continue;
-        }
-
-        // Simulate console.log
-        if (trimmedLine.includes('console.log')) {
-            const match = trimmedLine.match(/console\.log\((.*)\)/);
-            if (match) {
-                const value = match[1].replace(/['"]/g, '');
-                domOutput.push(`[Console] ${value}`);
-            }
-        }
-
-        // Simulate setTimeout
-        else if (trimmedLine.includes('setTimeout')) {
-            const match = trimmedLine.match(/setTimeout\(function\s+(\w+)/);
-            if (match) {
-                const callbackName = match[1];
-                timeoutId++;
-
-                // Add to Web APIs
-                webAPIs.push({
-                    id: `timeout-${timeoutId}`,
-                    type: 'setTimeout',
-                    name: callbackName,
-                    callback: callbackName,
-                    line: i + 1,
-                    status: 'pending'
-                });
-
-                // Add to task queue (simulating after delay)
-                taskQueue.push({
-                    id: `task-${timeoutId}`,
-                    type: 'task',
-                    name: callbackName,
-                    callback: callbackName,
-                    line: i + 1,
-                    status: 'pending'
-                });
-            }
-        }
-
-        // Simulate Promises
-        else if (trimmedLine.includes('Promise.resolve()')) {
-            promiseId++;
-
-            // Promise executor runs synchronously
-            stack.push({
-                id: `executor-${promiseId}`,
-                name: 'Promise executor',
-                locals: {},
-                type: 'executor'
-            });
-
-            // Add snapshot for promise creation
-            snapshots.push(createSnapshot(i, memory, stack, taskQueue, microtaskQueue, webAPIs, domOutput, line));
-
-            // Then callbacks go to microtask queue
-            let j = i + 1;
-            while (j < lines.length && lines[j].trim().includes('.then')) {
-                const thenLine = lines[j].trim();
-                const thenMatch = thenLine.match(/\.then\(function\s+(\w+)/);
-                if (thenMatch) {
-                    const thenName = thenMatch[1];
-                    microtaskQueue.push({
-                        id: `micro-${promiseId}-${j}`,
-                        type: 'then',
-                        name: thenName,
-                        callback: thenName,
-                        line: j + 1,
-                        status: 'pending'
-                    });
-                }
-                j++;
-            }
-
-            // Pop promise executor
-            stack.pop();
-        }
-
-        // Add snapshot after processing
-        snapshots.push(createSnapshot(i, memory, stack, taskQueue, microtaskQueue, webAPIs, domOutput, line));
-
-        // Process microtasks after each line
-        while (microtaskQueue.length > 0) {
-            const microtask = microtaskQueue.shift();
-            if (microtask) {
-                stack.push({
-                    id: microtask.id,
-                    name: microtask.name,
-                    locals: {},
-                    type: microtask.type === 'then' ? 'then' : 'promise'
-                });
-
-                snapshots.push(createSnapshot(i, memory, stack, taskQueue, microtaskQueue, webAPIs, domOutput, `// Running microtask: ${microtask.name}`));
-
-                stack.pop();
-            }
-        }
-    }
-
-    // Process remaining tasks
-    while (taskQueue.length > 0) {
-        const task = taskQueue.shift();
-        if (task) {
-            stack.push({
-                id: task.id,
-                name: task.name,
-                locals: {},
-                type: 'function'
-            });
-
-            snapshots.push(createSnapshot(lines.length - 1, memory, stack, taskQueue, microtaskQueue, webAPIs, domOutput, `// Running task: ${task.name}`));
-
-            stack.pop();
-        }
-    }
-
-    return snapshots;
-}
-
-function createSnapshot(
-    lineIndex: number,
-    memory: Memory,
-    stack: StackFrame[],
-    taskQueue: Task[],
-    microtaskQueue: Task[],
-    webAPIs: Task[],
-    domOutput: string[],
-    line: string
-): RuntimeSnapshot {
-    return {
-        id: lineIndex,
-        line: lineIndex + 1,
-        memory: { ...memory },
-        stack: stack.map(frame => ({ ...frame })),
-        taskQueue: taskQueue.map(task => ({ ...task })),
-        microtaskQueue: microtaskQueue.map(task => ({ ...task })),
-        webAPIs: webAPIs.map(api => ({ ...api })),
-        dom: domOutput.join('\n'),
-        timestamp: Date.now(),
-        sourceLine: line
-    };
+      <section className="border-t border-slate-200 bg-white">
+        <div className="mx-auto max-w-6xl px-6 py-14 lg:px-8">
+          <h2 className="text-3xl font-black tracking-tight text-slate-950">
+            JavaScript Code Lab FAQs
+          </h2>
+          <div className="mt-8 grid gap-4 md:grid-cols-1">
+            {faqs.map((faq) => (
+              <details
+                key={faq.question}
+                className="group overflow-hidden rounded-xl border border-slate-200 bg-[#fafafa] shadow-sm transition-all duration-300 open:border-indigo-200 open:bg-white open:shadow-md open:shadow-indigo-950/5"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-base font-bold text-slate-900 transition hover:text-indigo-700">
+                  <span>{faq.question}</span>
+                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400 transition group-open:border-indigo-100 group-open:bg-indigo-50 group-open:text-indigo-600">
+                    <ChevronRight className="h-4 w-4 transition-transform duration-300 group-open:rotate-90" />
+                  </span>
+                </summary>
+                <div className="border-t border-slate-100 px-5 pb-5 pt-1">
+                  <p className="text-sm leading-6 text-slate-600">{faq.answer}</p>
+                </div>
+              </details>
+            ))}
+          </div>
+          <div className="mt-10 rounded-xl bg-slate-950 px-6 py-7 text-white md:flex md:items-center md:justify-between">
+            <div>
+              <h2 className="text-2xl font-black">Ready to visualize JavaScript?</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-300">
+                Run code, inspect execution order, and make async JavaScript feel
+                concrete through live runtime snapshots.
+              </p>
+            </div>
+            <Link
+              href={launchUrl}
+              className="mt-5 inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-indigo-50 md:mt-0"
+            >
+              Open JavaScript Visualizer
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
 }

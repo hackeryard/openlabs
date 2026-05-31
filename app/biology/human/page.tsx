@@ -1,63 +1,48 @@
-"use client"
+import React from "react";
+import EducationalLandingLayout from "@/components/EducationalLandingLayout";
+import { EducationalContent } from "@/types/education";
+import { Metadata } from "next";
 
-import { useState, Suspense, useEffect } from "react"
-import ProceduralAnatomy from "@/app/components/biology/human/HumanBody"
-import dynamic from "next/dynamic"
-import InfoPanel from "@/app/components/biology/human/InfoPanel"
-import { useChat } from "@/app/components/ChatContext"
-import { useLab } from "@/app/hooks/useXP"
-import DailyChallengeCard from "@/app/components/DailyChallengeCard"
+export const metadata: Metadata = {
+  title: "Human Anatomy - Biology Lab | OpenLabs",
+  description: "Explore the human body systems.",
+};
 
-const AnatomyScene = dynamic(
-  () => import("@/app/components/biology/human/AnatomyScene"),
-  { ssr: false, loading: () => <div className="w-full h-full flex items-center justify-center bg-gray-900 text-white">Loading 3D model...</div> }
-)
+const content: EducationalContent = {
+  slug: "human",
+  subject: "Biology",
+  title: "Human Anatomy",
+  description: "Explore the human body systems.",
+  difficulty: "Beginner",
+  estimatedTime: "15 mins",
+  heroDescription: "Explore our interactive Human Anatomy simulation to understand the fundamental concepts in biology.",
+  theory: {
+    content: "<p>This educational simulation provides an interactive environment to explore the theory and mechanics of Human Anatomy. By experimenting with variables in real-time, you can intuitively grasp complex scientific concepts.</p>"
+  },
+  learningObjectives: [
+    "Understand the core principles of Human Anatomy.",
+    "Observe real-time changes by manipulating simulation parameters.",
+    "Apply theoretical knowledge to practical scenarios."
+  ],
+  realWorldApplications: [
+    "Education and academia",
+    "Applied science and engineering",
+    "Research and development"
+  ],
+  howItWorks: "Launch the lab to interact with the environment. Use the controls to adjust parameters and observe the outcomes immediately.",
+  faqs: [
+    {
+      question: "What will I learn from this simulation?",
+      answer: "You will learn the fundamental mechanics of Human Anatomy through interactive experimentation."
+    },
+    {
+      question: "Do I need prior knowledge?",
+      answer: "While some basic understanding of biology helps, the simulation is designed to be intuitive for all learners."
+    }
+  ],
+  relatedExperiments: []
+};
 
 export default function Page() {
-  // Chatbot 
-  const { setExperimentData } = useChat();
-
-  useEffect(() => {
-    setExperimentData({
-      title: "3D Structure model of human anatomy.",
-      theory: "",
-      extraContext: ``,
-    });
-  }, []);
-  const [selectedOrgan, setSelectedOrgan] = useState("")
-  const [type, setType] = useState<"human" | "animal">("human")
-  const { completeExperiment } = useLab("biology/human", "biology", "exploration");
-  const [explored, setExplored] = useState<Set<string>>(new Set());
-
-  useEffect(() => {
-    if (selectedOrgan) {
-      setExplored(prev => {
-        const next = new Set(prev).add(selectedOrgan);
-        if (next.size >= 3) completeExperiment();
-        return next;
-      });
-    }
-  }, [selectedOrgan, completeExperiment]);
-
-  return (
-    <div className="grid md:grid-cols-3 h-screen">
-      <div className="md:col-span-3 p-2">
-        <DailyChallengeCard labId="biology/human" currentParams={{ structuresExplored: explored.size }} />
-      </div>
-      {/* <ProceduralAnatomy /> */}
-
-      <div className="md:col-span-2">
-        <AnatomyScene type={type} onSelect={setSelectedOrgan} />
-      </div>
-
-      <div className="border-l">
-        <div className="flex gap-2 p-2">
-          <button onClick={() => setType("human")}>Human</button>
-          <button onClick={() => setType("animal")}>Animal</button>
-        </div>
-        <InfoPanel organ={selectedOrgan} />
-      </div>
-
-    </div>
-  )
+  return <EducationalLandingLayout content={content} launchUrl="/labs/biology/human" />;
 }

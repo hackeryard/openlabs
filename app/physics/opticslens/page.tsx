@@ -1,16 +1,62 @@
-import React from 'react'
-import dynamic from 'next/dynamic'
+import React from "react";
+import type { Metadata } from "next";
+import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
-const OpticsLensLab = dynamic(() => import('../../components/physics/OpticsLensLab'), { ssr: false, loading: () => <p className="p-6">Loading projectile motion…</p> })
+export const metadata: Metadata = {
+  title: "Optics Lens Simulator | Image Formation Physics Lab | OpenLabs",
+  description:
+    "Interactive optics lens simulator for exploring focal length, object distance, image distance, magnification, and ray diagrams.",
+};
 
-export default function ProjectileMotionPage() {
+export default function OpticsLensPage() {
   return (
-    <main className="min-h-screen p-6">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-bold">Projectile Motion</h1>
-        <p className="text-gray-600 mb-4">2D projectile motion virtual lab.</p>
-        <OpticsLensLab />
-      </div>
-    </main>
-  )
+    <PhysicsExperimentLanding
+      slug="opticslens"
+      title="Optics Lens"
+      description="Explore optical lens behavior and image formation."
+      heroDescription="Use a virtual lens bench to see how object distance and focal length determine image position, size, and orientation."
+      theory="Lens optics studies how curved transparent surfaces bend light. Ray diagrams and the lens equation help predict where images form and whether they are magnified or inverted."
+      formula="1/f = 1/do + 1/di"
+      formulaLabel="Thin lens equation"
+      launchUrl="/labs/physics/opticslens"
+      heroImageUrl="/images/physics/optics-lens-hero.png"
+      visualLabel="Lens model"
+      visualDetail="Focal length, image distance, magnification"
+      accent={{ primary: "#0891b2", secondary: "#2563eb", warm: "#eab308" }}
+      learningObjectives={[
+        "Trace how rays form images through a lens.",
+        "Relate focal length to image distance.",
+        "Explore magnification and image orientation.",
+        "Connect lens equations with ray diagrams.",
+      ]}
+      applications={[
+        "Cameras and projectors",
+        "Eyeglasses and vision correction",
+        "Microscopes and telescopes",
+        "Optical instrument design",
+      ]}
+      faqs={[
+        {
+          question: "What does a lens do?",
+          answer:
+            "A lens bends light through refraction, causing rays to converge or diverge and form images.",
+        },
+        {
+          question: "What is focal length?",
+          answer:
+            "Focal length is the distance from the lens to the focal point where parallel rays meet or appear to spread from.",
+        },
+        {
+          question: "What is magnification?",
+          answer:
+            "Magnification describes how large the image is compared with the object.",
+        },
+        {
+          question: "Why use ray diagrams?",
+          answer:
+            "Ray diagrams provide a visual method for predicting image position, size, and orientation.",
+        },
+      ]}
+    />
+  );
 }

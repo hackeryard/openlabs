@@ -1,0 +1,53 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { RepoState } from "@/app/types/gitSimualtor";
+import TerminalInput from "@/app/components/computer-science/git-simulator/TerminalInput";
+import RepoStatePanel from "@/app/components/computer-science/git-simulator/RepoStatePanel";
+import CommitGraph from "@/app/components/computer-science/git-simulator/CommitGraph";
+import { executeCommand } from "./utils/executeCommand";
+import { useChat } from "@/app/components/ChatContext";
+import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
+
+const initialState: RepoState = {
+  objects: {},
+  refs: {},
+  HEAD: null,
+  index: {},
+  workingDir: {},
+  initialized: false,
+};
+
+export default function GitVisualizerPage() {
+  const { completeExperiment } = useLab("computer-science/git-simulator", "computerScience", "simulation");
+  // Chatbot 
+  const { setExperimentData } = useChat();
+
+  useEffect(() => {
+    setExperimentData({
+      title: "Git Simulator",
+      theory: "A simulator interface which show the effect of git commands on the reposetory.",
+      extraContext: ``,
+    });
+  }, []);
+  const [state, setState] = useState<RepoState>(initialState);
+
+  const handleCommand = (command: string) => {
+    const { newState, output } = executeCommand(state, command);
+    setState(newState);
+    completeExperiment();
+    return { output };
+  };
+
+  return (
+    <div className="p-6 space-y-6">
+      <DailyChallengeCard labId="computer-science/git-simulator" currentParams={{ commandsRun: 1, branchesCreated: Object.keys(state.refs).length }} />
+      <TerminalInput onCommand={handleCommand} />
+
+      <RepoStatePanel state={state} />
+
+      <CommitGraph state={state} />
+    </div>
+  );
+}

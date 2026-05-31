@@ -1,5 +1,5 @@
 // AUTO-GENERATED FILE — DO NOT EDIT MANUALLY
-const elements = [
+export const elements = [
   {
     "atomicNumber": 1,
     "symbol": "H",

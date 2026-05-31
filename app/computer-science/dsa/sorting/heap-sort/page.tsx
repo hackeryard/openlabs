@@ -1,17 +1,11 @@
-"use client";
+import React from "react";
+import DsaLanding from "../../DsaLanding";
+import { createDsaMetadata, dsaContent } from "../../dsaContent";
 
-import HeapSort from "@/app/components/computer-science/dsa/sorting/HeapSort";
-import { useEffect } from "react";
-import { useLab } from "@/app/hooks/useXP";
-import DailyChallengeCard from "@/app/components/DailyChallengeCard";
+const content = dsaContent["heap-sort"];
+
+export const metadata = createDsaMetadata(content);
 
 export default function Page() {
-  const { completeExperiment } = useLab("computer-science/dsa/sorting/heap-sort", "computerScience", "exploration");
-
-  return (
-    <div>
-      <DailyChallengeCard labId="computer-science/dsa/sorting/heap-sort" currentParams={{ algorithmsRun: 1, structuresExplored: 1 }} />
-      <HeapSort onComplete={completeExperiment} />
-    </div>
-  );
+  return <DsaLanding content={content} />;
 }

@@ -1,17 +1,11 @@
-"use client";
+import React from "react";
+import DsaLanding from "../../DsaLanding";
+import { createDsaMetadata, dsaContent } from "../../dsaContent";
 
-import InsertionSort from "@/app/components/computer-science/dsa/sorting/InsertionSort";
-import { useEffect } from "react";
-import { useLab } from "@/app/hooks/useXP";
-import DailyChallengeCard from "@/app/components/DailyChallengeCard";
+const content = dsaContent["insertion-sort"];
+
+export const metadata = createDsaMetadata(content);
 
 export default function Page() {
-  const { completeExperiment } = useLab("computer-science/dsa/sorting/insertion-sort", "computerScience", "exploration");
-
-  return (
-    <div>
-      <DailyChallengeCard labId="computer-science/dsa/sorting/insertion-sort" currentParams={{ algorithmsRun: 1, structuresExplored: 1 }} />
-      <InsertionSort onComplete={completeExperiment} />
-    </div>
-  );
+  return <DsaLanding content={content} />;
 }

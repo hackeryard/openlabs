@@ -1,331 +1,478 @@
-"use client";
-import React, { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useLab } from '@/app/hooks/useXP';
-import DailyChallengeCard from '@/app/components/DailyChallengeCard';
+import React from "react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import {
+  Activity,
+  ArrowRight,
+  BarChart3,
+  CheckCircle2,
+  ChevronRight,
+  Code2,
+  Database,
+  Globe2,
+  MonitorPlay,
+  Radar,
+  ScatterChart,
+  Sparkles,
+  Target,
+} from "lucide-react";
 
-// ==================== UTILS: STATISTICAL MODELS ====================
-const generateData = () => {
-  const points = [];
-  // Cluster 1: Regular User Behavior
-  for (let i = 0; i < 80; i++) {
-    points.push({
-      id: `p-${i}`,
-      x: 300 + Math.random() * 100,
-      y: 200 + Math.random() * 100,
-      z: 50 + Math.random() * 50,
-      amount: Math.random() * 50,
-      type: 'normal',
-      label: 'Standard Transaction',
-      detected: false
-    });
-  }
-  // Cluster 2: Business Expenses
-  for (let i = 0; i < 40; i++) {
-    points.push({
-      id: `b-${i}`,
-      x: 500 + Math.random() * 80,
-      y: 400 + Math.random() * 80,
-      z: 100 + Math.random() * 30,
-      amount: 200 + Math.random() * 100,
-      type: 'normal',
-      label: 'Business Expense',
-      detected: false
-    });
-  }
-  return points;
+const pageUrl = "https://www.openlabs.org.in/computer-science/data-science";
+const launchUrl = "/labs/computer-science/data-science";
+
+const breadcrumbs = [
+  { label: "Home", href: "/" },
+  { label: "Computer Science", href: "/computer-science" },
+  { label: "Data Science", href: "/computer-science/data-science" },
+];
+
+export const metadata: Metadata = {
+  title: "Data Science Anomaly Detection Lab | OpenLabs",
+  description:
+    "Learn data science with an interactive anomaly detection lab. Explore outliers, thresholds, scatter plots, fraud detection, statistical data visualization.",
+  keywords: [
+    "data science lab",
+    "anomaly detection visualizer",
+    "outlier detection",
+    "interactive data visualization",
+    "fraud detection data science",
+    "statistical analysis lab",
+    "scatter plot visualizer",
+    "OpenLabs computer science lab",
+  ],
+  alternates: {
+    canonical: "/computer-science/data-science",
+  },
+  openGraph: {
+    title: "Data Science Anomaly Detection Lab | OpenLabs",
+    description:
+      "Visualize data points, adjust detection thresholds, inject anomalies, and learn how outlier detection works.",
+    url: pageUrl,
+    siteName: "OpenLabs",
+    type: "website",
+    images: [
+      {
+        url: "/images/og-image.svg",
+        width: 1200,
+        height: 630,
+        alt: "OpenLabs Data Science Anomaly Detection Lab",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Data Science Anomaly Detection Lab | OpenLabs",
+    description:
+      "Explore anomaly detection, thresholds, outliers, and statistical visualization in an interactive lab.",
+    images: ["/images/twitter-image.svg"],
+  },
 };
 
-export default function AnomalyDetectionLab() {
-  const [data, setData] = useState([]);
-  const [selectedPoint, setSelectedPoint] = useState(null);
-  const [threshold, setThreshold] = useState(150);
-  const [view, setView] = useState('2d');
-  const [scanActive, setScanActive] = useState(false);
-  const [detectedAnomalies, setDetectedAnomalies] = useState([]);
+const features = [
+  {
+    icon: ScatterChart,
+    title: "Data visualization",
+    description:
+      "Inspect clusters, outliers, and suspicious points through a visual scatter plot interface.",
+  },
+  {
+    icon: Target,
+    title: "Threshold tuning",
+    description:
+      "Adjust detection sensitivity and see how false positives and missed anomalies change.",
+  },
+  {
+    icon: Radar,
+    title: "Anomaly scanning",
+    description:
+      "Run a monitoring scan to flag unusual data points and understand detection flow.",
+  },
+  {
+    icon: BarChart3,
+    title: "Detection insights",
+    description:
+      "Compare normal traffic, threats, detected anomalies, and remaining suspicious data.",
+  },
+];
 
-  const { completeExperiment } = useLab("computer-science/data-science", "computerScience", "exploration");
+const learningObjectives = [
+  "Understand how anomaly detection identifies data points outside normal patterns.",
+  "Explore the role of thresholds, distance, and anomaly scores in outlier detection.",
+  "Visualize how fraud or suspicious network activity can appear in a dataset.",
+  "Practice interpreting data science model output through charts and metrics.",
+];
 
-  useEffect(() => {
-    setData(generateData());
-  }, []);
+const useCases = [
+  "Fraud detection in transactions",
+  "Network security monitoring",
+  "Outlier analysis in datasets",
+  "Data science classroom demonstrations",
+];
 
-  useEffect(() => {
-    if (detectedAnomalies.length > 0) {
-      completeExperiment();
-    }
-  }, [detectedAnomalies.length, completeExperiment]);
+const faqs = [
+  {
+    question: "What is the Data Science Anomaly Detection Lab?",
+    answer:
+      "It is an interactive OpenLabs data science lab where learners explore clusters, outliers, detection thresholds, anomaly scores, and monitoring behavior.",
+  },
+  {
+    question: "What is anomaly detection?",
+    answer:
+      "Anomaly detection is the process of finding data points that differ significantly from normal patterns, often used for fraud, security, and quality monitoring.",
+  },
+  {
+    question: "Why does the threshold matter?",
+    answer:
+      "A stricter threshold can catch more suspicious points but may create false positives, while a relaxed threshold may miss real anomalies.",
+  },
+  {
+    question: "Who should use this data science lab?",
+    answer:
+      "It is useful for students, teachers, beginner data analysts, and anyone learning how statistical visualization supports real-world detection systems.",
+  },
+];
 
-  // Auto-hide popup after 3 seconds when a point is selected
-  useEffect(() => {
-    if (selectedPoint) {
-      const timer = setTimeout(() => {
-        setSelectedPoint(null);
-      }, 3000); // 3 seconds
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    name: "Data Science Anomaly Detection Lab",
+    description: metadata.description,
+    url: pageUrl,
+    learningResourceType: "Interactive data science lab",
+    educationalLevel: "Beginner to Intermediate",
+    teaches: [
+      "Data science",
+      "Anomaly detection",
+      "Outlier detection",
+      "Data visualization",
+      "Threshold tuning",
+    ],
+    provider: {
+      "@type": "Organization",
+      name: "OpenLabs",
+      url: "https://www.openlabs.org.in",
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://www.openlabs.org.in/",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Computer Science",
+        item: "https://www.openlabs.org.in/computer-science",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: "Data Science",
+        item: pageUrl,
+      },
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  },
+];
 
-      return () => clearTimeout(timer);
-    }
-  }, [selectedPoint]);
-
-  // ==================== ANOMALY DETECTION LOGIC ====================
-  const processedData = useMemo(() => {
-    const centerX = 350;
-    const centerY = 250;
-    
-    return data.map(p => {
-      const distance = Math.sqrt(Math.pow(p.x - centerX, 2) + Math.pow(p.y - centerY, 2));
-      const isAnomaly = distance > threshold;
-      return {
-        ...p,
-        distance,
-        isAnomaly,
-        anomalyScore: (distance / 500).toFixed(2)
-      };
-    });
-  }, [data, threshold]);
-
-  // Monitor effect - detects anomalies when scan is active
-  useEffect(() => {
-    let interval;
-    if (scanActive) {
-      interval = setInterval(() => {
-        // Find undetected anomalies
-        const undetectedAnomalies = processedData.filter(p => 
-          p.isAnomaly && !p.detected
-        );
-        
-        if (undetectedAnomalies.length > 0) {
-          // Randomly select one undetected anomaly to "discover"
-          const randomIndex = Math.floor(Math.random() * undetectedAnomalies.length);
-          const newAnomaly = undetectedAnomalies[randomIndex];
-          
-          setDetectedAnomalies(prev => [...prev, newAnomaly.id]);
-          
-          // Update the data to mark this point as detected
-          setData(prevData => 
-            prevData.map(point => 
-              point.id === newAnomaly.id 
-                ? { ...point, detected: true }
-                : point
-            )
-          );
-        }
-      }, 800); // Detect new anomaly every 800ms
-    }
-    
-    return () => clearInterval(interval);
-  }, [scanActive, processedData]);
-
-  const injectAttack = () => {
-    const attackPoint = {
-      id: `attack-${Date.now()}`,
-      x: 100 + Math.random() * 700,
-      y: 100 + Math.random() * 400,
-      z: 200,
-      amount: 5000,
-      type: 'malicious',
-      label: 'Suspicious Foreign IP',
-      detected: false
-    };
-    setData(prev => [...prev, attackPoint]);
-  };
-
-  const resetMonitor = () => {
-    setScanActive(false);
-    setDetectedAnomalies([]);
-    setData(prevData => 
-      prevData.map(point => ({ ...point, detected: false }))
-    );
-    setSelectedPoint(null); // Hide popup immediately when reset is clicked
-  };
-
+export default function Page() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-8 font-sans">
-      <DailyChallengeCard labId="computer-science/data-science" currentParams={{ anomaliesDetected: detectedAnomalies.length, threshold }} />
-      <header className="mb-8 flex justify-between items-end">
-        <div>
-          <h1 className="text-4xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-fuchsia-500">
-            ANOMALY DETECTION LAB
-          </h1>
-          <p className="text-slate-400">Statistical Outlier Analysis for Fraud & Network Security</p>
-        </div>
-        <div className="flex gap-4">
-          <button onClick={injectAttack} className="bg-red-500/20 border border-red-500 text-red-500 px-4 py-2 rounded-full hover:bg-red-500 hover:text-white transition">
-            Inject Malicious Packet
-          </button>
-          <button onClick={() => {
-            setData(generateData());
-            resetMonitor();
-          }} className="bg-slate-800 px-4 py-2 rounded-full border border-slate-700">
-            Reset Dataset
-          </button>
-        </div>
-      </header>
+    <main className="min-h-screen bg-[#fafafa] text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
+      {jsonLd.map((schema, index) => (
+        <script
+          key={index}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
 
-      <div className="grid grid-cols-12 gap-6">
-        {/* Sidebar Controls */}
-        <div className="col-span-3 space-y-6">
-          <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-            <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-4">Sensitivity Threshold</h2>
-            <input 
-              type="range" min="50" max="400" value={threshold} 
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setThreshold(Number(e.target.value))}
-              className="w-full accent-cyan-500"
-            />
-            <div className="flex justify-between text-xs mt-2 font-mono">
-              <span>RELAXED</span>
-              <span className="text-cyan-400">{threshold}px</span>
-              <span>STRICT</span>
-            </div>
-            <p className="text-xs text-slate-500 mt-4 leading-relaxed">
-              *Lowering threshold increases <strong>False Positives</strong>. Raising it increases <strong>Security Risk</strong>.
-            </p>
-          </div>
+      <section className="relative border-b border-slate-200 bg-white">
+        <nav
+          aria-label="Breadcrumb"
+          className="absolute left-0 right-0 top-5 mx-auto max-w-6xl px-6 lg:px-8"
+        >
+          <ol className="flex flex-wrap items-center gap-1 text-xs font-semibold text-slate-500">
+            {breadcrumbs.map((breadcrumb, index) => {
+              const isLast = index === breadcrumbs.length - 1;
 
-          <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-            <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-4">Detection Insights</h2>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-xs">Normal Traffic</span>
-                <span className="text-cyan-400 font-mono">{processedData.filter(d => !d.isAnomaly).length}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-red-400">Total Threats</span>
-                <span className="text-red-400 font-mono">{processedData.filter(d => d.isAnomaly).length}</span>
-              </div>
-              <div className="flex justify-between items-center pt-2 border-t border-slate-800">
-                <span className="text-xs text-yellow-400">Detected</span>
-                <span className="text-yellow-400 font-mono">{detectedAnomalies.length}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-xs text-slate-500">Remaining</span>
-                <span className="text-slate-500 font-mono">{processedData.filter(d => d.isAnomaly).length - detectedAnomalies.length}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Monitor Status */}
-          <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500">Monitor Status</h2>
-              <span className={`px-2 py-1 rounded-full text-xs ${scanActive ? 'bg-green-500/20 text-green-400' : 'bg-slate-800 text-slate-400'}`}>
-                {scanActive ? 'ACTIVE' : 'STANDBY'}
-              </span>
-            </div>
-            <div className="flex gap-2">
-              <button 
-                onClick={() => setScanActive(true)}
-                disabled={scanActive}
-                className="flex-1 bg-cyan-500 text-slate-950 px-4 py-2 rounded-full font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                START
-              </button>
-              <button 
-                onClick={resetMonitor}
-                className="flex-1 bg-slate-800 text-slate-300 px-4 py-2 rounded-full font-bold text-sm hover:bg-slate-700"
-              >
-                RESET
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Visualizer */}
-        <div className="col-span-9 relative bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden h-[600px]">
-          {/* Grid Background */}
-          <div className="absolute inset-0 opacity-20 pointer-events-none" 
-               style={{ backgroundImage: 'linear-gradient(#334155 1px, transparent 1px), linear-gradient(90deg, #334155 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-          
-          {/* The Data Plot */}
-          <svg className="w-full h-full">
-            <AnimatePresence>
-              {processedData.map((point) => {
-                // Determine point color based on status
-                let fillColor = '#22d3ee'; // default cyan for normal
-                if (point.isAnomaly) {
-                  fillColor = detectedAnomalies.includes(point.id) ? '#ef4444' : '#f97316'; // red if detected, orange if undetected
-                }
-                
-                return (
-                  <motion.circle
-                    key={point.id}
-                    initial={{ r: 0 }}
-                    animate={{ 
-                      r: selectedPoint?.id === point.id ? 12 : (point.isAnomaly ? 7 : 5),
-                      cx: point.x,
-                      cy: point.y,
-                      fill: fillColor,
-                    }}
-                    whileHover={{ r: 15, strokeWidth: 2, stroke: '#fff' }}
-                    className="cursor-crosshair"
-                    onClick={() => setSelectedPoint(point)}
-                  />
-                );
-              })}
-            </AnimatePresence>
-
-            {/* Radar Scan Animation */}
-            {scanActive && (
-              <motion.circle
-                cx="350" cy="250"
-                initial={{ r: 0, opacity: 0.5 }}
-                animate={{ r: 800, opacity: 0 }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="fill-none stroke-cyan-500 stroke-1"
-              />
-            )}
-
-            {/* Detection Pulse Effect */}
-            {scanActive && detectedAnomalies.map((id, index) => {
-              const point = processedData.find(p => p.id === id);
-              if (!point) return null;
               return (
-                <motion.circle
-                  key={`pulse-${id}`}
-                  cx={point.x}
-                  cy={point.y}
-                  initial={{ r: 10, opacity: 0.8 }}
-                  animate={{ r: 30, opacity: 0 }}
-                  transition={{ duration: 1, repeat: Infinity }}
-                  className="fill-none stroke-red-500 stroke-2"
-                />
+                <li key={breadcrumb.href} className="flex items-center gap-1">
+                  {isLast ? (
+                    <span className="text-slate-800" aria-current="page">
+                      {breadcrumb.label}
+                    </span>
+                  ) : (
+                    <Link
+                      href={breadcrumb.href}
+                      className="transition hover:text-indigo-700"
+                    >
+                      {breadcrumb.label}
+                    </Link>
+                  )}
+                  {!isLast && (
+                    <ChevronRight className="h-3.5 w-3.5 text-slate-300" />
+                  )}
+                </li>
               );
             })}
-          </svg>
+          </ol>
+        </nav>
 
-          {/* Point Info Overlay */}
-          <AnimatePresence>
-            {selectedPoint && (
-              <motion.div 
-                initial={{ x: 20, opacity: 0 }} 
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: 20, opacity: 0 }}
-                className="absolute top-6 right-6 w-64 bg-slate-950/90 border border-slate-700 p-6 rounded-xl backdrop-blur-md shadow-2xl"
+        <div className="mx-auto grid max-w-6xl gap-12 px-6 py-16 md:grid-cols-[1.05fr_0.95fr] md:items-center md:py-20 lg:px-8">
+          <div>
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-700">
+              <Code2 className="h-4 w-4" />
+              Computer Science Data Science Lab
+            </div>
+            <h1 className="max-w-3xl text-4xl font-black leading-tight tracking-tight text-slate-950 md:text-5xl">
+              Data Science Lab for Anomaly Detection and Visualization
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+              Learn data science by exploring how statistical monitoring detects
+              unusual points. Tune thresholds, inspect scatter plots, inject
+              suspicious data, and visualize anomaly scores in an interactive
+              OpenLabs workspace.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href={launchUrl}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-indigo-700 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
               >
-                <h3 className={`text-lg font-bold ${selectedPoint.isAnomaly ? 'text-red-400' : 'text-cyan-400'}`}>
-                  {selectedPoint.isAnomaly ? '⚠️ ANOMALY' : '✓ VERIFIED'}
-                  {selectedPoint.detected && selectedPoint.isAnomaly && ' 🔴 DETECTED'}
-                </h3>
-                <div className="mt-4 space-y-2 text-xs font-mono">
-                  <p><span className="text-slate-500">Source:</span> {selectedPoint.label}</p>
-                  <p><span className="text-slate-500">Z-Score:</span> {selectedPoint.anomalyScore}</p>
-                  <p><span className="text-slate-500">Vector:</span> [{Math.round(selectedPoint.x)}, {Math.round(selectedPoint.y)}]</p>
-                  <p><span className="text-slate-500">Status:</span> {selectedPoint.detected ? 'Detected' : (selectedPoint.isAnomaly ? 'Undetected' : 'Normal')}</p>
+                Launch Data Science Lab
+                <ArrowRight className="h-5 w-5" />
+              </Link>
+              <Link
+                href="/computer-science"
+                className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-6 py-3 text-base font-bold text-slate-700 transition hover:border-indigo-200 hover:text-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+              >
+                View Computer Science Labs
+              </Link>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 bg-slate-950 p-4 shadow-2xl shadow-indigo-950/10">
+            <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-3">
+              <div className="flex gap-2">
+                <span className="h-3 w-3 rounded-full bg-red-400" />
+                <span className="h-3 w-3 rounded-full bg-amber-300" />
+                <span className="h-3 w-3 rounded-full bg-emerald-400" />
+              </div>
+              <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+                Anomaly Detection
+              </span>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-[1.05fr_0.95fr]">
+              <div className="rounded-lg border border-white/10 bg-white/[0.03] p-4">
+                <div className="mb-4 flex items-center gap-2 text-xs font-bold text-slate-300">
+                  <Sparkles className="h-3.5 w-3.5 text-cyan-300" />
+                  Scatter Plot
                 </div>
-                <div className="mt-4 pt-4 border-t border-slate-800">
-                  <p className="text-[10px] text-slate-400 italic">
-                    {selectedPoint.isAnomaly 
-                      ? selectedPoint.detected
-                        ? "Detected by monitoring system: This anomalous point has been flagged for investigation."
-                        : "Undetected anomaly: This point is outside normal parameters but hasn't been caught by monitoring yet."
-                      : "Data point matches historical distribution patterns."}
+                <div className="relative h-52 rounded-lg bg-white/[0.04]">
+                  {[
+                    "left-16 top-20 bg-cyan-300",
+                    "left-24 top-24 bg-cyan-300",
+                    "left-20 top-32 bg-cyan-300",
+                    "left-32 top-20 bg-cyan-300",
+                    "left-36 top-28 bg-cyan-300",
+                    "right-20 bottom-16 bg-indigo-300",
+                    "right-24 bottom-24 bg-indigo-300",
+                    "right-12 bottom-20 bg-indigo-300",
+                    "right-14 top-10 bg-red-400",
+                    "left-10 bottom-8 bg-amber-300",
+                  ].map((className, index) => (
+                    <span
+                      key={index}
+                      className={`absolute h-3 w-3 rounded-full shadow-lg ${className}`}
+                    />
+                  ))}
+                  <span className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/30" />
+                  <span className="absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full border border-red-300/20" />
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {[
+                  { label: "Normal Traffic", value: "120", color: "bg-cyan-300/70" },
+                  { label: "Anomaly Score", value: "0.82", color: "bg-amber-300/80" },
+                  { label: "Threats Flagged", value: "09", color: "bg-red-400/80" },
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    className="rounded-lg border border-white/10 bg-white/[0.03] p-3"
+                  >
+                    <div className="mb-2 flex items-center justify-between gap-3 text-xs font-bold text-slate-300">
+                      <span className="flex items-center gap-2">
+                        <Activity className="h-3.5 w-3.5 text-cyan-300" />
+                        {item.label}
+                      </span>
+                      <span className="font-mono text-white">{item.value}</span>
+                    </div>
+                    <span className={`block h-2 rounded ${item.color}`} />
+                  </div>
+                ))}
+                <div className="rounded-lg bg-white p-3 text-slate-900">
+                  <div className="mb-2 flex items-center gap-2 text-sm font-bold text-slate-700">
+                    <Radar className="h-4 w-4 text-indigo-600" />
+                    Scan Threshold
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-slate-200">
+                    <span className="block h-full w-8/12 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-500" />
+                  </div>
+                  <p className="mt-2 text-xs font-semibold text-slate-500">
+                    stricter threshold catches more outliers
                   </p>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 py-14 lg:px-8">
+        <div className="grid gap-5 md:grid-cols-4">
+          {features.map((feature) => {
+            const Icon = feature.icon;
+            return (
+              <article
+                key={feature.title}
+                className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-indigo-200 hover:shadow-md"
+              >
+                <Icon className="mb-4 h-6 w-6 text-indigo-600" />
+                <h2 className="text-lg font-bold text-slate-900">{feature.title}</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  {feature.description}
+                </p>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="border-y border-slate-200 bg-white">
+        <div className="mx-auto grid max-w-6xl gap-10 px-6 py-14 md:grid-cols-[0.85fr_1.15fr] lg:px-8">
+          <div>
+            <span className="text-sm font-bold uppercase tracking-widest text-indigo-600">
+              Learn by analyzing
+            </span>
+            <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950">
+              Understand outlier detection through live data science feedback
+            </h2>
+            <p className="mt-4 text-base leading-7 text-slate-600">
+              The lab turns anomaly detection into a visible workflow: generate a
+              dataset, adjust sensitivity, scan for unusual points, and interpret
+              the resulting metrics like a data analyst.
+            </p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {learningObjectives.map((objective) => (
+              <div key={objective} className="flex gap-3 rounded-lg bg-slate-50 p-4">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 flex-none text-emerald-500" />
+                <p className="text-sm font-medium leading-6 text-slate-700">
+                  {objective}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto grid max-w-6xl gap-10 px-6 py-14 md:grid-cols-1 lg:px-8">
+        <div>
+          <div className="mb-5 flex items-center gap-3">
+            <Globe2 className="h-6 w-6 text-cyan-600" />
+            <h2 className="text-2xl font-black tracking-tight text-slate-950">
+              Where this lab helps
+            </h2>
+          </div>
+          <ul className="space-y-3">
+            {useCases.map((useCase) => (
+              <li
+                key={useCase}
+                className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700"
+              >
+                {useCase}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <div className="mb-5 flex items-center gap-3">
+            <Database className="h-6 w-6 text-indigo-600" />
+            <h2 className="text-2xl font-black tracking-tight text-slate-950">
+              How the interactive lab works
+            </h2>
+          </div>
+          <p className="rounded-xl border border-slate-200 bg-white p-6 text-base leading-7 text-slate-600 shadow-sm">
+            Open the lab, review the generated dataset, adjust the sensitivity
+            threshold, and run the monitor. The visualization highlights normal
+            clusters, suspicious outliers, and detected anomalies so the model
+            behavior becomes easier to explain.
+          </p>
+        </div>
+      </section>
+
+      <section className="border-t border-slate-200 bg-white">
+        <div className="mx-auto max-w-6xl px-6 py-14 lg:px-8">
+          <h2 className="text-3xl font-black tracking-tight text-slate-950">
+            Data Science Lab FAQs
+          </h2>
+          <div className="mt-8 grid grid-cols-1 gap-4">
+            {faqs.map((faq) => (
+              <details
+                key={faq.question}
+                className="group overflow-hidden rounded-xl border border-slate-200 bg-[#fafafa] shadow-sm transition-all duration-300 open:border-indigo-200 open:bg-white open:shadow-md open:shadow-indigo-950/5"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-base font-bold text-slate-900 transition hover:text-indigo-700">
+                  <span>{faq.question}</span>
+                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400 transition group-open:border-indigo-100 group-open:bg-indigo-50 group-open:text-indigo-600">
+                    <ChevronRight className="h-4 w-4 transition-transform duration-300 group-open:rotate-90" />
+                  </span>
+                </summary>
+                <div className="border-t border-slate-100 px-5 pb-5 pt-1">
+                  <p className="text-sm leading-6 text-slate-600">{faq.answer}</p>
+                </div>
+              </details>
+            ))}
+          </div>
+          <div className="mt-10 rounded-xl bg-slate-950 px-6 py-7 text-white md:flex md:items-center md:justify-between">
+            <div>
+              <h2 className="text-2xl font-black">
+                Ready to detect anomalies visually?
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-slate-300">
+                Launch the lab, scan the dataset, and learn how data science models
+                separate normal patterns from unusual behavior.
+              </p>
+            </div>
+            <Link
+              href={launchUrl}
+              className="mt-5 inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-indigo-50 md:mt-0"
+            >
+              Open Data Science Lab
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }

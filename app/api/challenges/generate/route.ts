@@ -3,27 +3,32 @@ import { connectDB } from "@/app/lib/mongodb";
 import DailyChallenge from "@/app/models/DailyChallenge";
 import { LABS } from "@/app/lib/labs";
 
+export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
 
 export async function GET(req: Request) {
   try {
-    const authHeader = req.headers.get("x-cron-secret");
-    if (authHeader !== process.env.CRON_SECRET) {
+    const authHeader = req.headers.get("authorization");
+    const xCronSecret = req.headers.get("x-cron-secret");
+    
+    if (
+      authHeader !== `Bearer ${process.env.CRON_SECRET}` &&
+      xCronSecret !== process.env.CRON_SECRET
+    ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     await connectDB();
 
-    // Clear all previous challenges from database
-    await (DailyChallenge as any).deleteMany({});
-
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
+
+    await (DailyChallenge as any).deleteMany({ date: { $lt: today } });
 
     let generated = 0;
     let failed = 0;
 
-    for (const lab of LABS) {
+    for (const lab of LABS.filter(l => l.challengeEnabled)) {
       try {
         const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
           method: "POST",

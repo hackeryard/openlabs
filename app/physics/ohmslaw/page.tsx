@@ -1,16 +1,62 @@
-import React from 'react'
-import dynamic from 'next/dynamic'
+import React from "react";
+import type { Metadata } from "next";
+import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
-const OhmsLaw = dynamic(() => import('../../components/physics/OhmsLaw'), { ssr: false, loading: () => <p className="p-6">Loading Ohm's law…</p> })
+export const metadata: Metadata = {
+  title: "Ohm's Law Simulator | Voltage Current Resistance Lab | OpenLabs",
+  description:
+    "Explore Ohm's Law with an interactive circuit simulator for voltage, current, resistance, and V-I behavior.",
+};
 
 export default function OhmsLawPage() {
   return (
-    <main className="min-h-screen p-6">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-bold">Ohm's Law</h1>
-        <p className="text-gray-600 mb-4">Ohm’s law virtual lab.</p>
-        <OhmsLaw />
-      </div>
-    </main>
-  )
+    <PhysicsExperimentLanding
+      slug="ohmslaw"
+      title="Ohm's Law"
+      description="Explore V-I behavior with virtual instruments."
+      heroDescription="Build intuition for circuits by changing voltage and resistance, then observing how current responds through virtual instruments."
+      theory="Ohm's Law describes the relationship between voltage, current, and resistance in an ideal conductor. If resistance stays constant, current changes directly with voltage."
+      formula="V = I R"
+      formulaLabel="Circuit relationship"
+      launchUrl="/labs/physics/ohmslaw"
+      heroImageUrl="/images/physics/ohms-law-hero.png"
+      visualLabel="Circuit model"
+      visualDetail="Voltage, current, resistance"
+      accent={{ primary: "#0ea5e9", secondary: "#2563eb", warm: "#f59e0b" }}
+      learningObjectives={[
+        "Relate voltage, current, and resistance.",
+        "Interpret V-I behavior from virtual readings.",
+        "Predict current when voltage or resistance changes.",
+        "Connect circuit equations with instrument measurements.",
+      ]}
+      applications={[
+        "Basic circuit design",
+        "Electronics troubleshooting",
+        "Power supply testing",
+        "Sensor and resistor networks",
+      ]}
+      faqs={[
+        {
+          question: "What does Ohm's Law state?",
+          answer:
+            "Ohm's Law states that voltage equals current multiplied by resistance: V = I R.",
+        },
+        {
+          question: "What happens if resistance increases?",
+          answer:
+            "For the same voltage, increasing resistance reduces current.",
+        },
+        {
+          question: "Is Ohm's Law always valid?",
+          answer:
+            "It works well for ohmic materials with constant resistance, but not all devices have linear V-I behavior.",
+        },
+        {
+          question: "Why use virtual instruments?",
+          answer:
+            "Virtual meters make it easier to observe current and voltage changes safely while experimenting.",
+        },
+      ]}
+    />
+  );
 }
