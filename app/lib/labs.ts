@@ -392,7 +392,7 @@ export const LABS: Lab[] = [
     description: "RL Agent solving a maze",
   },
   {
-    id: "computer-science/blockchain/block",
+    id: "computer-science/blockchain",
     name: "Blockchain Explorer",
     subject: "computerScience",
     type: "exploration",

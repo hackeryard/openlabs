@@ -2,6 +2,7 @@
 
 import React from "react";
 import { motion, Variants } from "framer-motion";
+import Link from "next/link";
 
 /* ---------------- Animations ---------------- */
 
@@ -26,6 +27,24 @@ const item: Variants = {
     },
   },
 };
+const footerLinks = [
+  {
+    label: "Physics",
+    url: "/physics",
+  },
+  {
+    label: "Chemistry",
+    url: "/chemistry",
+  },
+  {
+    label: "Biology",
+    url: "/biology",
+  },
+  {
+    label: "Computer Science",
+    url: "/computer-science",
+  },
+];
 
 export default function Footer() {
   return (
@@ -51,21 +70,19 @@ export default function Footer() {
         {/* -------- Explore -------- */}
         <motion.div variants={item}>
           <div className="font-semibold">Explore</div>
-          <ul className="mt-2 text-sm text-slate-200 space-y-1">
-            {["Physics", "Chemistry", "Biology"].map((itemName) => (
-              <motion.li
-                key={itemName}
-                whileHover={{ x: 4 }}
-                transition={{
-                  duration: 0.2,
-                  ease: [0.4, 0, 0.2, 1],
-                }}
-                className="cursor-default"
+
+          <div className="mt-2 text-sm text-slate-200 space-y-1 flex flex-col">
+            {footerLinks.map((item) => (
+              <Link
+                key={item.label}
+                href={item.url}
+                aria-label={item.label}
+                className="hover:text-white transition-colors"
               >
-                {itemName}
-              </motion.li>
+                {item.label}
+              </Link>
             ))}
-          </ul>
+          </div>
         </motion.div>
 
         {/* -------- Connect -------- */}

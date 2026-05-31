@@ -1,198 +1,106 @@
 import React from "react";
-import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowRight,
+  BarChart3,
+  Binary,
+  BookOpenCheck,
   CheckCircle2,
   ChevronRight,
   Code2,
-  FilePlus2,
   GitBranch,
-  GitCommitHorizontal,
-  GitMerge,
-  Globe2,
+  Layers3,
   MonitorPlay,
+  Route,
   Sparkles,
-  TerminalSquare,
 } from "lucide-react";
+import type { DsaContent } from "./dsaContent";
 
-const pageUrl = "https://www.openlabs.org.in/computer-science/git-simulator";
-const launchUrl = "/labs/computer-science/git-simulator";
-
-const breadcrumbs = [
-  { label: "Home", href: "/" },
-  { label: "Computer Science", href: "/computer-science" },
-  { label: "Git Simulator", href: "/computer-science/git-simulator" },
-];
-
-export const metadata: Metadata = {
-  title: "Git Simulator - Learn Version Control Visually | OpenLabs",
-  description:
-    "Practice Git commands in a free interactive simulator. Learn git init, add, commit, branches, staging area, working directory and commit graph visually.",
-  keywords: [
-    "Git simulator",
-    "learn Git online",
-    "interactive Git tutorial",
-    "Git commit visualizer",
-    "Git branch simulator",
-    "version control lab",
-    "Git staging area",
-    "OpenLabs computer science lab",
-  ],
-  alternates: {
-    canonical: "/computer-science/git-simulator",
-  },
-  openGraph: {
-    title: "Git Simulator - Learn Version Control Visually | OpenLabs",
-    description:
-      "Run Git commands and watch the working directory, staging area, refs, HEAD, and commit graph update in real time.",
-    url: pageUrl,
-    siteName: "OpenLabs",
-    type: "website",
-    images: [
-      {
-        url: "/images/og-image.svg",
-        width: 1200,
-        height: 630,
-        alt: "OpenLabs Git Simulator",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Git Simulator - Learn Version Control Visually | OpenLabs",
-    description:
-      "Practice Git commands and visualize repository state, staging, branches, and commits.",
-    images: ["/images/twitter-image.svg"],
-  },
+type Props = {
+  content: DsaContent;
 };
 
-const features = [
-  {
-    icon: TerminalSquare,
-    title: "Command practice",
-    description:
-      "Type Git commands in a guided terminal and see how each command changes the repository.",
-  },
-  {
-    icon: FilePlus2,
-    title: "Working directory",
-    description:
-      "Understand file changes before staging, committing, and moving through a version control workflow.",
-  },
-  {
-    icon: GitCommitHorizontal,
-    title: "Commit graph",
-    description:
-      "Visualize commits as repository history so snapshots and branches become easier to reason about.",
-  },
-  {
-    icon: GitBranch,
-    title: "Branches and refs",
-    description:
-      "Learn HEAD, refs, and branches by watching them update as commands run.",
-  },
-];
+function buildJsonLd(content: DsaContent) {
+  const pageUrl = `https://www.openlabs.org.in/computer-science/dsa/${content.route}`;
 
-const learningObjectives = [
-  "Understand what happens during git init, add, commit, status, branch, and checkout.",
-  "See the difference between the working directory, staging area, and committed history.",
-  "Learn how HEAD, refs, and branches point to commits in a repository.",
-  "Practice version control workflows before using Git on real projects.",
-];
-
-const useCases = [
-  "Computer science Git practicals",
-  "Beginner software development training",
-  "Version control classroom demonstrations",
-  "Interview and project workflow preparation",
-];
-
-const faqs = [
-  {
-    question: "What is the OpenLabs Git Simulator?",
-    answer:
-      "It is an interactive version control lab where learners run Git commands and see the repository state, staging area, refs, HEAD, and commit graph update visually.",
-  },
-  {
-    question: "Can I learn Git without installing it?",
-    answer:
-      "Yes. The simulator runs in the browser, so beginners can practice core Git concepts before installing Git or working in a real repository.",
-  },
-  {
-    question: "Which Git concepts does this lab teach?",
-    answer:
-      "The lab focuses on command flow, repository initialization, file changes, staging, commits, branches, refs, HEAD, and visual commit history.",
-  },
-  {
-    question: "Who should use this Git visualizer?",
-    answer:
-      "It is useful for students, beginner developers, teachers, and anyone who wants to understand Git workflows through hands-on visual feedback.",
-  },
-];
-
-const jsonLd = [
-  {
-    "@context": "https://schema.org",
-    "@type": "LearningResource",
-    name: "Git Simulator",
-    description: metadata.description,
-    url: pageUrl,
-    learningResourceType: "Interactive version control simulator",
-    educationalLevel: "Beginner to Intermediate",
-    teaches: [
-      "Git",
-      "Version control",
-      "Commits",
-      "Branches",
-      "Staging area",
-      "Repository history",
-    ],
-    provider: {
-      "@type": "Organization",
-      name: "OpenLabs",
-      url: "https://www.openlabs.org.in",
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "LearningResource",
+      name: `${content.name} Visualizer`,
+      description: content.metaDescription,
+      url: pageUrl,
+      learningResourceType: "Interactive DSA visualizer",
+      educationalLevel: "Beginner to Intermediate",
+      teaches: [
+        content.name,
+        content.category,
+        "Data structures and algorithms",
+        "Algorithm visualization",
+        "Computer science fundamentals",
+      ],
+      provider: {
+        "@type": "Organization",
+        name: "OpenLabs",
+        url: "https://www.openlabs.org.in",
+      },
     },
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: "https://www.openlabs.org.in/",
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Computer Science",
-        item: "https://www.openlabs.org.in/computer-science",
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: "Git Simulator",
-        item: pageUrl,
-      },
-    ],
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer,
-      },
-    })),
-  },
-];
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: "https://www.openlabs.org.in/",
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Computer Science",
+          item: "https://www.openlabs.org.in/computer-science",
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: "DSA",
+          item: "https://www.openlabs.org.in/computer-science/dsa",
+        },
+        {
+          "@type": "ListItem",
+          position: 4,
+          name: content.name,
+          item: pageUrl,
+        },
+      ],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: content.faqs.map((faq) => ({
+        "@type": "Question",
+        name: faq.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: faq.answer,
+        },
+      })),
+    },
+  ];
+}
 
-export default function Page() {
+export default function DsaLanding({ content }: Props) {
+  const launchUrl = `/labs/computer-science/dsa/${content.route}`;
+  const pageUrl = `/computer-science/dsa/${content.route}`;
+  const jsonLd = buildJsonLd(content);
+  const breadcrumbs = [
+    { label: "Home", href: "/" },
+    { label: "Computer Science", href: "/computer-science" },
+    { label: "DSA", href: "/computer-science/dsa" },
+    { label: content.name, href: pageUrl },
+  ];
+
   return (
     <main className="min-h-screen bg-[#fafafa] text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
       {jsonLd.map((schema, index) => (
@@ -239,29 +147,29 @@ export default function Page() {
           <div>
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-sm font-semibold text-indigo-700">
               <Code2 className="h-4 w-4" />
-              Computer Science Version Control Lab
+              Computer Science DSA Lab
             </div>
             <h1 className="max-w-3xl text-4xl font-black leading-tight tracking-tight text-slate-950 md:text-5xl">
-              Git Simulator for Visual Version Control Practice
+              {content.name} Visualizer for Interactive DSA Practice
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-              Learn Git by running commands and watching the repository change.
-              Visualize the working directory, staging area, commits, refs, HEAD,
-              branches, and commit graph in one interactive OpenLabs workspace.
+              {content.heroDescription} Learn the concept, operation flow,
+              complexity, and real-world use cases through a focused OpenLabs
+              interactive visualizer.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href={launchUrl}
                 className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-base font-bold text-white shadow-sm transition hover:bg-indigo-700 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
               >
-                Launch Git Simulator
+                Launch {content.name} Lab
                 <ArrowRight className="h-5 w-5" />
               </Link>
               <Link
-                href="/computer-science"
+                href="/computer-science/dsa"
                 className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-6 py-3 text-base font-bold text-slate-700 transition hover:border-indigo-200 hover:text-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
               >
-                View Computer Science Labs
+                View All DSA Labs
               </Link>
             </div>
           </div>
@@ -274,57 +182,49 @@ export default function Page() {
                 <span className="h-3 w-3 rounded-full bg-emerald-400" />
               </div>
               <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
-                Git Visualizer
+                DSA Visualizer
               </span>
             </div>
             <div className="grid gap-4 md:grid-cols-[1.05fr_0.95fr]">
               <div className="rounded-lg border border-white/10 bg-white/[0.03] p-3">
                 <div className="mb-3 flex items-center gap-2 text-xs font-bold text-slate-300">
                   <Sparkles className="h-3.5 w-3.5 text-cyan-300" />
-                  terminal
+                  {content.badge}
                 </div>
-                <div className="space-y-3 font-mono text-xs">
-                  <div className="text-slate-400">$ git init</div>
-                  <div className="text-indigo-200">$ git add index.html</div>
-                  <div className="text-cyan-200">$ git commit -m "first commit"</div>
-                  <div className="text-emerald-200">$ git branch feature-ui</div>
+                <div className="flex min-h-40 items-center justify-center gap-2">
+                  {[0, 1, 2, 3, 4].map((item) => (
+                    <div
+                      key={item}
+                      className="flex h-16 w-12 items-end justify-center rounded-md border border-indigo-300/40 bg-indigo-300/10"
+                    >
+                      <span
+                        className="w-6 rounded-t bg-gradient-to-t from-indigo-500 to-cyan-300"
+                        style={{ height: `${32 + item * 9}px` }}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <div className="rounded-lg bg-white p-3 text-center font-mono text-xs font-bold text-slate-900">
+                  {content.complexity}
                 </div>
               </div>
 
               <div className="space-y-3">
-                {[
-                  { label: "Working Directory", width: "w-10/12", color: "bg-indigo-300/70" },
-                  { label: "Staging Area", width: "w-8/12", color: "bg-cyan-300/70" },
-                  { label: "HEAD -> main", width: "w-11/12", color: "bg-emerald-300/70" },
-                ].map((item) => (
+                {content.visualSteps.map((step, index) => (
                   <div
-                    key={item.label}
+                    key={step}
                     className="rounded-lg border border-white/10 bg-white/[0.03] p-3"
                   >
                     <div className="mb-2 flex items-center gap-2 text-xs font-bold text-slate-300">
-                      <GitBranch className="h-3.5 w-3.5 text-cyan-300" />
-                      {item.label}
+                      <Route className="h-3.5 w-3.5 text-cyan-300" />
+                      Step {index + 1}
                     </div>
-                    <span className={`block h-2 rounded ${item.width} ${item.color}`} />
+                    <div className="flex items-center gap-3">
+                      <span className="h-2 w-2 rounded-full bg-emerald-300" />
+                      <span className="text-sm font-semibold text-white">{step}</span>
+                    </div>
                   </div>
                 ))}
-              </div>
-            </div>
-
-            <div className="mt-4 rounded-lg bg-white p-4 text-slate-900">
-              <div className="mb-3 flex items-center gap-2 text-sm font-bold text-slate-700">
-                <MonitorPlay className="h-4 w-4 text-indigo-600" />
-                Commit Graph
-              </div>
-              <div className="flex items-center gap-3 rounded-lg bg-slate-100 p-4">
-                <span className="h-3 w-3 rounded-full bg-indigo-600" />
-                <span className="h-0.5 w-12 bg-slate-300" />
-                <span className="h-3 w-3 rounded-full bg-cyan-500" />
-                <span className="h-0.5 w-12 bg-slate-300" />
-                <span className="h-3 w-3 rounded-full bg-emerald-500" />
-                <span className="ml-auto rounded bg-slate-900 px-2 py-1 font-mono text-xs text-white">
-                  main
-                </span>
               </div>
             </div>
           </div>
@@ -333,7 +233,29 @@ export default function Page() {
 
       <section className="mx-auto max-w-6xl px-6 py-14 lg:px-8">
         <div className="grid gap-5 md:grid-cols-4">
-          {features.map((feature) => {
+          {[
+            {
+              icon: BookOpenCheck,
+              title: "Concept",
+              description: content.definition,
+            },
+            {
+              icon: Layers3,
+              title: "Operation flow",
+              description: content.behavior,
+            },
+            {
+              icon: BarChart3,
+              title: "Complexity",
+              description: content.complexity,
+            },
+            {
+              icon: Binary,
+              title: "Visualization",
+              description:
+                "Watch each operation update the structure or algorithm state step by step.",
+            },
+          ].map((feature) => {
             const Icon = feature.icon;
             return (
               <article
@@ -355,19 +277,18 @@ export default function Page() {
         <div className="mx-auto grid max-w-6xl gap-10 px-6 py-14 md:grid-cols-[0.85fr_1.15fr] lg:px-8">
           <div>
             <span className="text-sm font-bold uppercase tracking-widest text-indigo-600">
-              Learn by commanding
+              Learn by visualizing
             </span>
             <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950">
-              A practical Git visualizer for understanding repository state
+              Understand {content.name} through step-by-step interaction
             </h2>
             <p className="mt-4 text-base leading-7 text-slate-600">
-              Git becomes easier when each command has visible consequences. This
-              simulator turns command-line version control into a clear flow across
-              files, staging, commits, refs, branches, and history.
+              {content.behavior} The lab makes every state change visible, helping
+              students connect DSA theory with practical algorithm behavior.
             </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            {learningObjectives.map((objective) => (
+            {content.learningObjectives.map((objective) => (
               <div key={objective} className="flex gap-3 rounded-lg bg-slate-50 p-4">
                 <CheckCircle2 className="mt-0.5 h-5 w-5 flex-none text-emerald-500" />
                 <p className="text-sm font-medium leading-6 text-slate-700">
@@ -382,13 +303,13 @@ export default function Page() {
       <section className="mx-auto grid max-w-6xl gap-10 px-6 py-14 md:grid-cols-2 lg:px-8">
         <div>
           <div className="mb-5 flex items-center gap-3">
-            <Globe2 className="h-6 w-6 text-cyan-600" />
+            <GitBranch className="h-6 w-6 text-cyan-600" />
             <h2 className="text-2xl font-black tracking-tight text-slate-950">
-              Where this lab helps
+              Where this concept is used
             </h2>
           </div>
           <ul className="space-y-3">
-            {useCases.map((useCase) => (
+            {content.useCases.map((useCase) => (
               <li
                 key={useCase}
                 className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700"
@@ -401,15 +322,15 @@ export default function Page() {
 
         <div>
           <div className="mb-5 flex items-center gap-3">
-            <GitMerge className="h-6 w-6 text-indigo-600" />
+            <MonitorPlay className="h-6 w-6 text-indigo-600" />
             <h2 className="text-2xl font-black tracking-tight text-slate-950">
               How the interactive lab works
             </h2>
           </div>
           <p className="rounded-xl border border-slate-200 bg-white p-6 text-base leading-7 text-slate-600 shadow-sm">
-            Open the simulator, run a Git command, and review the output. The lab
-            updates the repository panel and commit graph so you can understand what
-            changed after each command.
+            Open the {content.name} lab, run the available operation controls, and
+            watch the visual state update immediately. Use the animation to trace
+            the operation order, compare complexity, and verify your understanding.
           </p>
         </div>
       </section>
@@ -417,10 +338,10 @@ export default function Page() {
       <section className="border-t border-slate-200 bg-white">
         <div className="mx-auto max-w-6xl px-6 py-14 lg:px-8">
           <h2 className="text-3xl font-black tracking-tight text-slate-950">
-            Git Simulator FAQs
+            {content.name} FAQs
           </h2>
           <div className="mt-8 grid gap-4 md:grid-cols-1">
-            {faqs.map((faq) => (
+            {content.faqs.map((faq) => (
               <details
                 key={faq.question}
                 className="group overflow-hidden rounded-xl border border-slate-200 bg-[#fafafa] shadow-sm transition-all duration-300 open:border-indigo-200 open:bg-white open:shadow-md open:shadow-indigo-950/5"
@@ -439,17 +360,19 @@ export default function Page() {
           </div>
           <div className="mt-10 rounded-xl bg-slate-950 px-6 py-7 text-white md:flex md:items-center md:justify-between">
             <div>
-              <h2 className="text-2xl font-black">Ready to practice Git visually?</h2>
+              <h2 className="text-2xl font-black">
+                Ready to practice {content.name}?
+              </h2>
               <p className="mt-2 text-sm leading-6 text-slate-300">
-                Run commands, inspect repository state, and understand version
-                control before using Git on real projects.
+                Launch the visualizer, trace each step, and build confidence with
+                data structures and algorithms through hands-on learning.
               </p>
             </div>
             <Link
               href={launchUrl}
               className="mt-5 inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-indigo-50 md:mt-0"
             >
-              Open Git Simulator
+              Open {content.name} Visualizer
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
