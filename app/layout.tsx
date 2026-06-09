@@ -11,6 +11,7 @@ import Script from 'next/script'
 
 const Navbar = dynamic(() => import('./components/Navbar'), { ssr: false })
 const Footer = dynamic(() => import('./components/Footer'), { ssr: false })
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.openlabs.org.in'
 
 export const metadata: Metadata = {
   title: {
@@ -31,7 +32,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://www.openlabs.org.in'),
+  metadataBase: new URL(siteUrl),
   alternates: {
     canonical: '/',
   },

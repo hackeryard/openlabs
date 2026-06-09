@@ -149,10 +149,13 @@ export default function Navbar() {
               layout
               className="flex items-center gap-3 cursor-pointer"
             >
-              <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center font-bold">
-                OL
-              </div>
-
+              <Image
+                src={'/images/logo.png'}
+                alt="OpanLabs Logo"
+                width={40}
+                height={40}
+                className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center font-bold"
+              />
               <div className="text-xl font-extrabold tracking-tight">
                 OpenLabs
               </div>
@@ -265,10 +268,9 @@ export default function Navbar() {
                           href={cat.path}
                           className={`
                             flex items-center px-3 py-2.5 rounded-lg transition text-sm
-                            ${
-                              pathname.startsWith(cat.path)
-                                ? "bg-indigo-50 text-indigo-700 font-semibold"
-                                : "hover:bg-slate-50 text-slate-700"
+                            ${pathname.startsWith(cat.path)
+                              ? "bg-indigo-50 text-indigo-700 font-semibold"
+                              : "hover:bg-slate-50 text-slate-700"
                             }
                           `}
                         >
@@ -405,10 +407,9 @@ export default function Navbar() {
                               onClick={() => setMobileOpen(false)}
                               className={`
                                 flex items-center px-4 py-2 rounded-lg transition text-sm
-                                ${
-                                  pathname.startsWith(cat.path)
-                                    ? "bg-indigo-50 text-indigo-700 font-semibold"
-                                    : "hover:bg-slate-50 text-slate-600"
+                                ${pathname.startsWith(cat.path)
+                                  ? "bg-indigo-50 text-indigo-700 font-semibold"
+                                  : "hover:bg-slate-50 text-slate-600"
                                 }
                               `}
                             >
