@@ -7,7 +7,7 @@ import ProfileSetupBannerClient from '../components/ProfileSetupBannerClient'
 
 export const metadata: Metadata = {
   title: 'OpenLabs - Virtual Lab Experience Platform for Science & Technology',
-  description: 'Explore free virtual science labs for Physics, Chemistry, Biology and Computer Science. Perform interactive experiments and learn STEM concepts with OpenLabs.',
+  description: 'Explore virtual science labs for Physics, Chemistry, Biology and Computer Science. Perform interactive experiments and learn STEM concepts with OpenLabs.',
   keywords: [
     'science education', 'interactive learning', 'virtual labs', 'STEM education',
     'physics labs', 'chemistry experiments', 'biology simulations', 'computer science tools',
