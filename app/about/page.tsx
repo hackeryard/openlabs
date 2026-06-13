@@ -1,32 +1,43 @@
-"use client";
-
 import React from "react";
-import { motion, Variants } from "framer-motion";
-import { Beaker, Users, Target, Globe, Sparkles, GraduationCap, Heart, Zap, Terminal, Atom, Trophy, Calculator } from "lucide-react";
+import type { Metadata } from "next";
+import { Beaker, Users, Target, Globe, Sparkles, GraduationCap, Heart, Zap, Calculator } from "lucide-react";
 
-/* ---------------- Animations ---------------- */
-const container: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
+export const metadata: Metadata = {
+  title: "About OpenLabs - Free Virtual Labs for STEM Education",
+  description: "Learn about OpenLabs, a free virtual lab platform helping students and teachers explore physics, chemistry, biology, computer science, and mathematics through browser-based simulations.",
+  alternates: {
+    canonical: "/about",
+  },
+  openGraph: {
+    title: "About OpenLabs - Free Virtual Labs for STEM Education",
+    description: "Meet the mission and team behind OpenLabs, an interactive STEM learning platform for free virtual labs.",
+    url: "/about",
+    type: "website",
+    images: [
+      {
+        url: "/images/og-image.svg",
+        width: 1200,
+        height: 630,
+        alt: "OpenLabs virtual lab platform overview",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About OpenLabs - Free Virtual Labs for STEM Education",
+    description: "Learn about the OpenLabs mission, values, roadmap, and team.",
+    images: ["/images/twitter-image.svg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
-const item: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
-  },
-};
-
-/* ---------------- Data ---------------- */
 const stats = [
   { value: "25+", label: "Virtual Labs", icon: Beaker, color: "text-blue-500", bg: "bg-blue-50" },
   { value: "4", label: "Subjects Covered", icon: GraduationCap, color: "text-emerald-500", bg: "bg-emerald-50" },
-  { value: "100%", label: "Free & Open", icon: Heart, color: "text-rose-500", bg: "bg-rose-50" },
+  { value: "100%", label: "Free and Open", icon: Heart, color: "text-rose-500", bg: "bg-rose-50" },
   { value: "24/7", label: "Global Access", icon: Globe, color: "text-indigo-500", bg: "bg-indigo-50" },
 ];
 
@@ -52,7 +63,7 @@ const values = [
   {
     icon: Sparkles,
     title: "AI-Powered Guidance",
-    description: "Our built-in AI assistant helps explain concepts, answers questions, and guides experiments in real-time.",
+    description: "Our built-in AI assistant helps explain concepts, answers questions, and guides experiments in real time.",
     gradient: "from-purple-100 to-pink-50",
     border: "group-hover:border-purple-200",
     iconColor: "text-purple-600",
@@ -61,7 +72,7 @@ const values = [
   {
     icon: Users,
     title: "Always Expanding",
-    description: "New labs, subjects, and features ship continuously. From Physics to Computer Science — OpenLabs grows with what students actually need.",
+    description: "New labs, subjects, and features ship continuously. From Physics to Computer Science, OpenLabs grows with what students actually need.",
     gradient: "from-emerald-100 to-teal-50",
     border: "group-hover:border-emerald-200",
     iconColor: "text-emerald-600",
@@ -72,106 +83,130 @@ const values = [
 const team = [
   {
     name: "Rahul Rajput",
-    role: "Founder & Lead Developer",
-    bio: "\"Technology shouldn't just deliver information; it should deliver experiences. OpenLabs is my attempt to ensure that the thrill of scientific discovery is never gated by geography or funding.\"",
+    role: "Founder and Lead Developer",
+    bio: "\"Technology should not just deliver information; it should deliver experiences. OpenLabs is my attempt to ensure that the thrill of scientific discovery is never gated by geography or funding.\"",
     initials: "RR",
     gradient: "from-indigo-600 to-cyan-500",
   },
   {
     name: "Aditya Kumar",
     role: "Core Team Member",
-    bio: "\"Design isn't just how it looks — it's how it works. Every interaction on OpenLabs is crafted to feel effortless, so students focus on the science, not the interface.\"",
+    bio: "\"Design is not just how it looks. It is how it works. Every interaction on OpenLabs is crafted to feel effortless, so students focus on the science, not the interface.\"",
     initials: "AK",
     gradient: "from-blue-600 to-teal-500",
   },
   {
     name: "Md Azharuddin Khan",
     role: "Core Team Member",
-    bio: "\"Performance is a feature. Whether you're on a flagship phone or a budget laptop in a school lab, the simulations should run without compromise.\"",
+    bio: "\"Performance is a feature. Whether you are on a flagship phone or a budget laptop in a school lab, the simulations should run without compromise.\"",
     initials: "AK",
     gradient: "from-emerald-600 to-emerald-400",
   },
   {
     name: "Anshika Gaur",
     role: "Core Team Member",
-    bio: "\"Science education fails when accuracy fails. Every virtual experiment on OpenLabs is grounded in real principles — if the numbers don't match the textbook, we fix it.\"",
+    bio: "\"Science education fails when accuracy fails. Every virtual experiment on OpenLabs is grounded in real principles. If the numbers do not match the textbook, we fix it.\"",
     initials: "AG",
     gradient: "from-purple-600 to-pink-500",
-  }
+  },
 ];
+
+const aboutSchema = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "@id": "https://www.openlabs.org.in/about#webpage",
+  url: "https://www.openlabs.org.in/about",
+  name: "About OpenLabs",
+  description: metadata.description,
+  isPartOf: {
+    "@type": "WebSite",
+    "@id": "https://www.openlabs.org.in/#website",
+    name: "OpenLabs",
+    url: "https://www.openlabs.org.in/",
+  },
+  mainEntity: {
+    "@type": "EducationalOrganization",
+    name: "OpenLabs",
+    url: "https://www.openlabs.org.in/",
+    description: "Free browser-based virtual labs and interactive STEM simulations for students and educators.",
+    founder: {
+      "@type": "Person",
+      name: "Rahul Rajput",
+    },
+    knowsAbout: ["Physics", "Chemistry", "Biology", "Computer Science", "Mathematics", "Virtual labs"],
+  },
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://www.openlabs.org.in/",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "About",
+      item: "https://www.openlabs.org.in/about",
+    },
+  ],
+};
 
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-[#f8fafc] text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
-      {/* Light Cinematic Hero Section */}
-      <section className="relative pt-16 pb-24 overflow-hidden border-b border-slate-200/60 bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
+      <section className="relative overflow-hidden border-b border-slate-200/60 bg-white px-6 pb-24 pt-16 sm:px-8">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-indigo-50/80 via-white to-white" />
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-blue-100/50 rounded-[100%] blur-[120px] mix-blend-multiply pointer-events-none" />
-
-        {/* Animated Grid */}
-        <div className="absolute inset-0 bg-[url('/images/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-[0.03] invert" />
-
-        <div className="relative max-w-5xl mx-auto px-6 sm:px-8 text-center z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 text-slate-900">
-              Brilliant Minds<br />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500">
-                Shouldn't Be Limited By Hardware
-              </span>
-            </h1>
-
-            <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-              OpenLabs gives every student access to high-fidelity virtual labs — no equipment, no budget, no limits. Just pure scientific discovery.
-            </p>
-          </motion.div>
+        <div className="absolute left-1/2 top-1/3 h-[400px] w-[800px] -translate-x-1/2 rounded-[100%] bg-blue-100/50 blur-[120px] mix-blend-multiply pointer-events-none" />
+        <div className="relative z-10 mx-auto max-w-5xl text-center">
+          <h1 className="mb-6 text-5xl font-black tracking-tight text-slate-900 md:text-7xl">
+            Brilliant Minds<br />
+            <span className="bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500 bg-clip-text text-transparent">
+              Should Not Be Limited By Hardware
+            </span>
+          </h1>
+          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-slate-600 md:text-xl">
+            OpenLabs gives every student access to high-fidelity virtual labs: no equipment, no budget barrier, no limits. Just pure scientific discovery.
+          </p>
         </div>
       </section>
 
-      {/* Floating Stats Bar */}
-      <section className="relative z-20 -mt-12 max-w-5xl mx-auto px-6 sm:px-8">
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={container}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4"
-        >
+      <section aria-label="OpenLabs platform statistics" className="relative z-20 mx-auto -mt-12 max-w-5xl px-6 sm:px-8">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {stats.map((stat) => (
-            <motion.div
-              key={stat.label}
-              variants={item}
-              className="bg-white/80 backdrop-blur-xl border border-slate-200 rounded-2xl p-6 text-center shadow-lg shadow-slate-200/50"
-            >
-              <div className={`w-12 h-12 rounded-xl ${stat.bg} flex items-center justify-center mx-auto mb-3`}>
-                <stat.icon className={`w-6 h-6 ${stat.color}`} />
+            <div key={stat.label} className="rounded-2xl border border-slate-200 bg-white/90 p-6 text-center shadow-lg shadow-slate-200/50 backdrop-blur-xl">
+              <div className={`mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl ${stat.bg}`}>
+                <stat.icon className={`h-6 w-6 ${stat.color}`} aria-hidden="true" />
               </div>
-              <div className="text-3xl font-black text-slate-900 mb-1">{stat.value}</div>
-              <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">{stat.label}</div>
-            </motion.div>
+              <div className="mb-1 text-3xl font-black text-slate-900">{stat.value}</div>
+              <div className="text-xs font-bold uppercase tracking-wider text-slate-500">{stat.label}</div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </section>
 
-      {/* The Story & Mission */}
-      <section className="py-32 relative overflow-hidden bg-[#f8fafc]">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="space-y-8"
-            >
+      <section className="relative overflow-hidden bg-[#f8fafc] py-32">
+        <div className="mx-auto max-w-7xl px-6 sm:px-8">
+          <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
+            <div className="space-y-8">
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 tracking-tight">Our Origin Story</h2>
-                <div className="h-1.5 w-20 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full" />
+                <h2 className="mb-6 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">Our Origin Story</h2>
+                <div className="h-1.5 w-20 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500" />
               </div>
-
-              <div className="space-y-6 text-slate-600 text-lg leading-relaxed">
+              <div className="space-y-6 text-lg leading-relaxed text-slate-600">
                 <p>
                   OpenLabs was born from a simple, frustrating observation: millions of brilliant students worldwide study advanced science from static textbooks without ever touching real lab equipment.
                 </p>
@@ -179,99 +214,69 @@ export default function AboutPage() {
                   Not because they lack curiosity, but simply because their schools lack resources. The gap between theory and practice was too wide.
                 </p>
                 <p>
-                  We set out to change that. OpenLabs provides free, browser-based, high-fidelity virtual labs covering Physics, Chemistry, Biology, and Computer Science. You don&apos;t just read about Hooke&apos;s Law—you build the mass-spring system, measure the oscillations, and see the math come alive.
+                  We set out to change that. OpenLabs provides free, browser-based, high-fidelity virtual labs covering Physics, Chemistry, Biology, and Computer Science. You do not just read about Hooke's Law. You build the mass-spring system, measure the oscillations, and see the math come alive.
                 </p>
               </div>
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="relative"
-            >
-              <div className="absolute inset-0 bg-gradient-to-tr from-indigo-200/50 to-purple-200/50 blur-3xl rounded-full" />
-              <div className="relative rounded-3xl overflow-hidden border border-slate-200 bg-white/60 backdrop-blur-md p-8 shadow-xl shadow-indigo-100/50 space-y-4">
+            <div className="relative">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-indigo-200/50 to-purple-200/50 blur-3xl" />
+              <div className="relative space-y-4 rounded-3xl border border-slate-200 bg-white/70 p-8 shadow-xl shadow-indigo-100/50 backdrop-blur-md">
                 {[
                   { subject: "Physics Labs", count: "10", color: "bg-blue-500" },
                   { subject: "Chemistry Labs", count: "4", color: "bg-emerald-500" },
                   { subject: "Biology Labs", count: "3", color: "bg-rose-500" },
                   { subject: "Computer Science Labs", count: "10+", color: "bg-indigo-500" },
-                ].map((s) => (
-                  <div key={s.subject} className="flex items-center justify-between bg-white rounded-2xl px-5 py-4 border border-slate-100 shadow-sm">
+                ].map((subject) => (
+                  <div key={subject.subject} className="flex items-center justify-between rounded-2xl border border-slate-100 bg-white px-5 py-4 shadow-sm">
                     <div className="flex items-center gap-3">
-                      <div className={`w-2.5 h-2.5 rounded-full ${s.color}`} />
-                      <span className="text-slate-700 font-medium">{s.subject}</span>
+                      <div className={`h-2.5 w-2.5 rounded-full ${subject.color}`} />
+                      <span className="font-medium text-slate-700">{subject.subject}</span>
                     </div>
-                    <span className="text-2xl font-black text-slate-900">{s.count}</span>
+                    <span className="text-2xl font-black text-slate-900">{subject.count}</span>
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Core Principles Grid */}
-      <section className="py-24 bg-white border-y border-slate-200/60 relative">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 tracking-tight">Core Principles</h2>
-            <p className="text-slate-600 max-w-2xl mx-auto text-lg">The foundational ideas that drive every feature we build.</p>
+      <section className="relative border-y border-slate-200/60 bg-white py-24">
+        <div className="mx-auto max-w-7xl px-6 sm:px-8">
+          <div className="mb-16 text-center">
+            <h2 className="mb-4 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">Core Principles</h2>
+            <p className="mx-auto max-w-2xl text-lg text-slate-600">The foundational ideas that drive every feature we build.</p>
           </div>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={container}
-            className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          >
-            {values.map((v) => (
-              <motion.div
-                key={v.title}
-                variants={item}
-                className={`group relative bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 overflow-hidden transition-all duration-500 hover:-translate-y-1`}
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${v.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-                <div className={`absolute inset-0 border-2 border-transparent ${v.border} rounded-3xl transition-colors duration-500 pointer-events-none`} />
-
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {values.map((value) => (
+              <div key={value.title} className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-200/50">
+                <div className={`absolute inset-0 bg-gradient-to-br ${value.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
+                <div className={`absolute inset-0 rounded-3xl border-2 border-transparent ${value.border} pointer-events-none transition-colors duration-300`} />
                 <div className="relative z-10">
-                  <div className={`w-14 h-14 rounded-2xl ${v.iconBg} border border-white flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform duration-500`}>
-                    <v.icon className={`w-6 h-6 ${v.iconColor}`} />
+                  <div className={`mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-white ${value.iconBg} shadow-sm transition-transform duration-300 group-hover:scale-105`}>
+                    <value.icon className={`h-6 w-6 ${value.iconColor}`} aria-hidden="true" />
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-3">{v.title}</h3>
-                  <p className="text-slate-600 leading-relaxed group-hover:text-slate-700 transition-colors">
-                    {v.description}
-                  </p>
+                  <h3 className="mb-3 text-xl font-bold text-slate-900">{value.title}</h3>
+                  <p className="leading-relaxed text-slate-600 transition-colors group-hover:text-slate-700">{value.description}</p>
                 </div>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* What's Coming */}
       <section className="bg-[#f8fafc]">
-        <div className="max-w-6xl mx-auto px-6 sm:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="px-8 py-10"
-          >
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 text-center mb-10 tracking-tight">
-              What's Coming to OpenLabs
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="mx-auto max-w-6xl px-6 sm:px-8">
+          <div className="px-8 py-10">
+            <h2 className="mb-10 text-center text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">What's Coming to OpenLabs</h2>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               {[
                 {
                   Icon: Calculator,
                   title: "Mathematics Labs",
-                  description: "Interactive algebra, calculus, and geometry labs — the next full subject coming to OpenLabs.",
+                  description: "Interactive algebra, calculus, and geometry labs are the next full subject coming to OpenLabs.",
                   color: "bg-emerald-50 border-emerald-100",
                   iconColor: "text-emerald-600",
                   iconBg: "bg-emerald-100",
@@ -279,7 +284,7 @@ export default function AboutPage() {
                 {
                   Icon: Users,
                   title: "Collaborative Labs",
-                  description: "Run experiments together in real-time. Share parameters, compare results, learn as a team.",
+                  description: "Run experiments together in real time. Share parameters, compare results, and learn as a team.",
                   color: "bg-blue-50 border-blue-100",
                   iconColor: "text-blue-600",
                   iconBg: "bg-blue-100",
@@ -294,66 +299,40 @@ export default function AboutPage() {
                 },
               ].map((item) => (
                 <div key={item.title} className={`rounded-2xl border p-6 ${item.color}`}>
-                  <div className={`w-12 h-12 rounded-xl ${item.iconBg} flex items-center justify-center mb-4`}>
-                    <item.Icon className={`w-5 h-5 ${item.iconColor}`} />
+                  <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl ${item.iconBg}`}>
+                    <item.Icon className={`h-5 w-5 ${item.iconColor}`} aria-hidden="true" />
                   </div>
-                  <h3 className="font-bold text-slate-900 mb-2">{item.title}</h3>
-                  <p className="text-sm text-slate-600 leading-relaxed">{item.description}</p>
+                  <h3 className="mb-2 font-bold text-slate-900">{item.title}</h3>
+                  <p className="text-sm leading-relaxed text-slate-600">{item.description}</p>
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Founder / Team */}
-      <section className="py-32 relative bg-[#f8fafc]">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 tracking-tight">Meet the Team</h2>
-            <p className="text-slate-600 max-w-2xl mx-auto text-lg">The minds building the future of interactive science education.</p>
-          </motion.div>
+      <section className="relative bg-[#f8fafc] py-32">
+        <div className="mx-auto max-w-7xl px-6 text-center sm:px-8">
+          <div className="mb-16">
+            <h2 className="mb-4 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">Meet the Team</h2>
+            <p className="mx-auto max-w-2xl text-lg text-slate-600">The minds building the future of interactive science education.</p>
+          </div>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={container}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
-          >
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
             {team.map((member) => (
-              <motion.div key={member.name} variants={item} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 hover:shadow-xl hover:shadow-indigo-100 transition-all duration-300 flex flex-col h-full group">
-                <div className="relative inline-block mb-6 mx-auto group-hover:scale-105 transition-transform duration-300">
-                  <div className="absolute inset-0 bg-indigo-100 blur-xl rounded-full" />
-                  <div className="relative w-20 h-20 mx-auto rounded-full border-[3px] border-white bg-slate-50 flex items-center justify-center overflow-hidden shadow-md">
-                    <span className={`text-2xl font-black bg-clip-text text-transparent bg-gradient-to-br ${member.gradient}`}>{member.initials}</span>
+              <article key={member.name} className="group flex h-full flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:shadow-indigo-100">
+                <div className="relative mx-auto mb-6 inline-block transition-transform duration-300 group-hover:scale-105">
+                  <div className="absolute inset-0 rounded-full bg-indigo-100 blur-xl" />
+                  <div className="relative mx-auto flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-[3px] border-white bg-slate-50 shadow-md">
+                    <span className={`bg-gradient-to-br ${member.gradient} bg-clip-text text-2xl font-black text-transparent`}>{member.initials}</span>
                   </div>
                 </div>
-
-                <h3 className="text-xl font-bold text-slate-900 mb-1">{member.name}</h3>
-                <p className="text-indigo-600 font-bold tracking-wider uppercase text-xs mb-4">{member.role}</p>
-
-                <p className="text-sm text-slate-600 leading-relaxed mb-6 flex-grow italic">
-                  {member.bio}
-                </p>
-
-                {/* <div className="flex justify-center gap-3 mt-auto">
-                  <button className="px-4 py-2 rounded-full bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold transition-colors">
-                    GitHub
-                  </button>
-                  <button className="px-4 py-2 rounded-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold transition-colors">
-                    Twitter
-                  </button>
-                </div> */}
-              </motion.div>
+                <h3 className="mb-1 text-xl font-bold text-slate-900">{member.name}</h3>
+                <p className="mb-4 text-xs font-bold uppercase tracking-wider text-indigo-600">{member.role}</p>
+                <p className="mb-6 flex-grow text-sm italic leading-relaxed text-slate-600">{member.bio}</p>
+              </article>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
     </main>

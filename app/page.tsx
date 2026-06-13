@@ -1,32 +1,44 @@
 import React from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { CheckCircle2, ChevronDown, Atom, FlaskConical, Dna, Code2, Calculator } from 'lucide-react'
+import { CheckCircle2, ChevronDown } from 'lucide-react'
 import Hero from './components/Hero'
 import ProfileSetupBannerClient from '../components/ProfileSetupBannerClient'
 
 export const metadata: Metadata = {
-  title: 'OpenLabs - Virtual Lab Experience Platform for Science & Technology',
-  description: 'Explore virtual science labs for Physics, Chemistry, Biology and Computer Science. Perform interactive experiments and learn STEM concepts with OpenLabs.',
+  title: 'OpenLabs Virtual Labs for Interactive STEM Learning',
+  description: 'Use OpenLabs to explore interactive virtual labs for physics, chemistry, biology, computer science, and mathematics with guided simulations for students and teachers.',
   keywords: [
     'science education', 'interactive learning', 'virtual labs', 'STEM education',
     'physics labs', 'chemistry experiments', 'biology simulations', 'computer science tools',
     'mathematics interactive', 'educational platform', 'online learning'
   ],
   openGraph: {
-    title: 'OpenLabs - Interactive Science & Technology Learning',
-    description: 'Explore virtual labs in physics, chemistry, biology, computer science, and mathematics.',
+    title: 'OpenLabs Virtual Labs for Interactive STEM Learning',
+    description: 'Explore guided virtual labs in physics, chemistry, biology, computer science, and mathematics.',
     url: '/',
     type: 'website',
+    images: [
+      {
+        url: '/images/og-image.svg',
+        width: 1200,
+        height: 630,
+        alt: 'OpenLabs interactive virtual lab learning platform',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     images: ['/images/twitter-image.svg'],
-    title: 'OpenLabs - Interactive Science & Technology Learning',
-    description: 'Explore virtual labs in physics, chemistry, biology, computer science, and mathematics.',
+    title: 'OpenLabs Virtual Labs for Interactive STEM Learning',
+    description: 'Explore guided virtual labs in physics, chemistry, biology, computer science, and mathematics.',
   },
   alternates: {
     canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
   applicationName: "OpenLabs",
 }
@@ -39,7 +51,7 @@ const faqsData = [
   },
   {
     q: "Do I need any special software to use the labs?",
-    a: "No special software is required — labs run directly in modern web browsers on desktop or tablet devices. Some advanced 3D modules may perform best on recently updated browsers."
+    a: "No special software is required. Labs run directly in modern web browsers on desktop or tablet devices. Some advanced 3D modules may perform best on recently updated browsers."
   },
   {
     q: "Are the experiments safe to run at home?",
@@ -65,16 +77,63 @@ const faqSchema = {
   }))
 };
 
+const homeSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "https://www.openlabs.org.in/#webpage",
+  url: "https://www.openlabs.org.in/",
+  name: "OpenLabs Virtual Labs for Interactive STEM Learning",
+  description: metadata.description,
+  isPartOf: {
+    "@type": "WebSite",
+    "@id": "https://www.openlabs.org.in/#website",
+    name: "OpenLabs",
+    url: "https://www.openlabs.org.in/",
+  },
+  about: [
+    "Virtual labs",
+    "Physics simulations",
+    "Chemistry experiments",
+    "Biology learning",
+    "Computer science tools",
+    "Mathematics visualizations",
+  ],
+  audience: {
+    "@type": "EducationalAudience",
+    educationalRole: ["student", "teacher", "self-learner"],
+  },
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://www.openlabs.org.in/",
+    },
+  ],
+};
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#fafafa] selection:bg-indigo-100 selection:text-indigo-900 antialiased overflow-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* Client-only banner component */}
-      <script dangerouslySetInnerHTML={{ __html: "" }} />
       <ProfileSetupBannerClient />
       <Hero />
       <div className="relative pt-20 pb-32 px-4 sm:px-6 lg:px-8">
