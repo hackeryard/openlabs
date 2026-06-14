@@ -1,11 +1,12 @@
 import React from "react"
 import { Suspense } from "react"
 import ProfileView from "./ProfileViewClient"
+import UniversalLoader from "@/app/components/UniversalLoader"
 
 export default function ProfilePage() {
   return (
-    <main className="min-h-screen bg-gray-50 text-slate-900 p-6">
-      <Suspense fallback={<div>Loading profile...</div>}>
+    <main className="min-h-screen bg-[#fafafa] text-slate-800">
+      <Suspense fallback={<div className="pt-20"><UniversalLoader subject="default" customMessage="Loading your scientific profile..." /></div>}>
         <ProfileView />
       </Suspense>
     </main>
