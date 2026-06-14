@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     "OpenLabs computer science lab",
   ],
   alternates: {
-    canonical: "/computer-science/code-lab/js",
+    canonical: pageUrl,
   },
   openGraph: {
     title: "JavaScript Code Lab - Event Loop Visualizer | OpenLabs",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/images/og-image.svg",
+        url: "https://www.openlabs.org.in/images/og-image.svg",
         width: 1200,
         height: 630,
         alt: "OpenLabs JavaScript Code Lab",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     title: "JavaScript Code Lab - Event Loop Visualizer | OpenLabs",
     description:
       "Write JavaScript and watch the event loop, stack, queues, and output step by step.",
-    images: ["/images/twitter-image.svg"],
+    images: ["https://www.openlabs.org.in/images/twitter-image.svg"],
   },
 };
 

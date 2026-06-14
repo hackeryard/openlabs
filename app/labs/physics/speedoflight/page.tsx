@@ -1,9 +1,14 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 
-const SpeedOfLightLab = dynamic(() => import('@/app/components/physics/SpeedOfLightLab'), { ssr: false, loading: () => <p className="p-6">Loading Wave Optics…</p> })
+import UniversalLoader from '@/app/components/UniversalLoader'
 
-export default function WaveOpticsPage() {
+const SpeedOfLightLab = dynamic(() => import('@/app/components/physics/SpeedOfLightLab'), { 
+  ssr: false, 
+  loading: () => <UniversalLoader subject="physics" customMessage="Loading Speed of Light simulation..." /> 
+})
+
+export default function SpeedOfLightPage() {
   return (
     <main className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto">

@@ -1,9 +1,14 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 
-const FreeFallLab = dynamic(() => import('@/app/components/physics/FreeFallLab'), { ssr: false, loading: () => <p className="p-6">Loading Hooke's law…</p> })
+import UniversalLoader from '@/app/components/UniversalLoader'
 
-export default function HookeLawPage() {
+const FreeFallLab = dynamic(() => import('@/app/components/physics/FreeFallLab'), { 
+  ssr: false, 
+  loading: () => <UniversalLoader subject="physics" customMessage="Loading Free Fall simulation..." /> 
+})
+
+export default function FreeFallPage() {
   return (
     <main className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto">

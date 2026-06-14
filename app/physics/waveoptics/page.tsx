@@ -1,4 +1,3 @@
-import React from "react";
 import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
@@ -6,6 +5,41 @@ export const metadata: Metadata = {
   title: "Wave Optics Simulator | Diffraction and Interference Lab | OpenLabs",
   description:
     "Interactive wave optics simulator for exploring diffraction, interference, wavelength, slit spacing, and intensity patterns.",
+  keywords: [
+    "wave optics",
+    "diffraction simulator",
+    "interference patterns",
+    "optics lab",
+    "wavelength",
+    "physics simulation"
+  ],
+  alternates: {
+    canonical: "https://www.openlabs.org.in/physics/waveoptics",
+  },
+  openGraph: {
+    title: "Wave Optics Simulator | Diffraction and Interference Lab | OpenLabs",
+    description:
+      "Interactive wave optics simulator for exploring diffraction, interference, wavelength, slit spacing, and intensity patterns.",
+    url: "https://www.openlabs.org.in/physics/waveoptics",
+    type: "website",
+    images: [
+      {
+        url: "https://www.openlabs.org.in/images/physics/wave-optics-hero.png",
+        alt: "Wave Optics Simulator | OpenLabs",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Wave Optics Simulator | Diffraction and Interference Lab | OpenLabs",
+    description:
+      "Interactive wave optics simulator for exploring diffraction, interference, wavelength, slit spacing, and intensity patterns.",
+    images: ["https://www.openlabs.org.in/images/physics/wave-optics-hero.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function WaveOpticsPage() {

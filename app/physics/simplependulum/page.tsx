@@ -1,4 +1,3 @@
-import React from "react";
 import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
@@ -6,6 +5,41 @@ export const metadata: Metadata = {
   title: "Simple Pendulum Simulator Online | Interactive Physics Lab | OpenLabs",
   description:
     "Interactive simple pendulum simulator with length, gravity, damping, period, and angle controls for browser-based physics learning.",
+  keywords: [
+    "simple pendulum",
+    "pendulum simulator",
+    "harmonic motion",
+    "physics lab",
+    "period formula",
+    "interactive physics"
+  ],
+  alternates: {
+    canonical: "https://www.openlabs.org.in/physics/simplependulum",
+  },
+  openGraph: {
+    title: "Simple Pendulum Simulator Online | Interactive Physics Lab | OpenLabs",
+    description:
+      "Interactive simple pendulum simulator with length, gravity, damping, period, and angle controls for browser-based physics learning.",
+    url: "https://www.openlabs.org.in/physics/simplependulum",
+    type: "website",
+    images: [
+      {
+        url: "https://www.openlabs.org.in/images/physics/simple-pendulum-hero-v2.png",
+        alt: "Simple Pendulum Simulator | OpenLabs",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Simple Pendulum Simulator Online | Interactive Physics Lab | OpenLabs",
+    description:
+      "Interactive simple pendulum simulator with length, gravity, damping, period, and angle controls for browser-based physics learning.",
+    images: ["https://www.openlabs.org.in/images/physics/simple-pendulum-hero-v2.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function SimplePendulumPage() {

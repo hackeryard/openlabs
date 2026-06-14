@@ -1,12 +1,45 @@
-import React from "react";
 import EducationalLandingLayout from "@/components/EducationalLandingLayout";
 import { EducationalContent } from "@/types/education";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Chemical Bonds - Chemistry Simulation | OpenLabs",
-  description: "Explore ionic, covalent, and metallic bonds. Use our interactive 3D simulation to build molecules and understand molecular geometry.",
-  keywords: ["chemical bonds", "covalent bond", "ionic bond", "chemistry simulation", "molecular geometry"],
+  title: "Chemical Bonds - Interactive Chemistry Lab | OpenLabs",
+  description: "Explore ionic, covalent, and metallic bonds in an interactive lab. Build molecules, compare bond types, and understand molecular geometry.",
+  keywords: [
+    "chemical bonds",
+    "covalent bond",
+    "ionic bond",
+    "metallic bond",
+    "molecular geometry",
+    "chemistry lab",
+    "electron sharing",
+    "bond polarity"
+  ],
+  alternates: {
+    canonical: "https://www.openlabs.org.in/chemistry/chemicalbonds",
+  },
+  openGraph: {
+    title: "Chemical Bonds - Interactive Chemistry Lab | OpenLabs",
+    description: "Explore ionic, covalent, and metallic bonding through our guided chemistry lab simulation.",
+    url: "https://www.openlabs.org.in/chemistry/chemicalbonds",
+    type: "website",
+    images: [
+      {
+        url: "https://www.openlabs.org.in/images/chemistry/chemical-bonds-hero.png",
+        alt: "OpenLabs Chemical Bonds Interactive Chemistry Lab"
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Chemical Bonds - Interactive Chemistry Lab | OpenLabs",
+    description: "Build molecules and compare bond types with our interactive chemistry bonding lab.",
+    images: ["https://www.openlabs.org.in/images/chemistry/chemical-bonds-hero.png"]
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 const content: EducationalContent = {

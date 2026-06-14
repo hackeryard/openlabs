@@ -64,6 +64,23 @@ export default function SchemaMarkup({ title, description, url, subject, faqs }:
     },
   };
 
+  const learningResourceSchema = {
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    name: `${title} Interactive Lab`,
+    description: description,
+    url: url,
+    learningResourceType: "Simulation",
+    teaches: `${subject}, ${title}, interactive experiment, data observation`,
+    isAccessibleForFree: true,
+    inLanguage: "en",
+    provider: {
+      "@type": "Organization",
+      name: "OpenLabs",
+      url: "https://www.openlabs.org.in",
+    },
+  };
+
   return (
     <>
       <script
@@ -77,6 +94,10 @@ export default function SchemaMarkup({ title, description, url, subject, faqs }:
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(learningResourceSchema) }}
       />
     </>
   );

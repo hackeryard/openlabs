@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     "OpenLabs computer science lab",
   ],
   alternates: {
-    canonical: "/computer-science/code-lab/html-css-js",
+    canonical: pageUrl,
   },
   openGraph: {
     title: "HTML CSS JavaScript Code Lab - Live Web Editor | OpenLabs",
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/images/og-image.svg",
+        url: "https://www.openlabs.org.in/images/og-image.svg",
         width: 1200,
         height: 630,
         alt: "OpenLabs HTML CSS JavaScript Code Lab",
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     title: "HTML CSS JavaScript Code Lab - Live Web Editor | OpenLabs",
     description:
       "Build and test web pages in a browser-based HTML, CSS, and JavaScript coding lab.",
-    images: ["/images/twitter-image.svg"],
+    images: ["https://www.openlabs.org.in/images/twitter-image.svg"],
   },
 };
 

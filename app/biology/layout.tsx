@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-    title: 'Biology Virtual Labs & Interactive Experiments',
+    title: 'Biology Virtual Labs & Interactive Experiments | OpenLabs',
     description: 'Explore interactive biology experiments including cell structure, human anatomy, blood circulation, and brain neuron simulations.',
     keywords: [
         'biology experiments', 'interactive biology', 'cell structure', 'human anatomy',
@@ -9,19 +9,29 @@ export const metadata: Metadata = {
         'STEM biology', 'anatomy simulation', 'neuroscience', 'cellular biology'
     ],
     openGraph: {
-        title: 'Biology Experiments | OpenLabs',
+        title: 'Biology Virtual Labs & Interactive Experiments | OpenLabs',
         description: 'Explore interactive biology experiments including cell structure, human anatomy, blood circulation, and brain neuron simulations.',
-        url: '/biology',
+        url: 'https://www.openlabs.org.in/biology',
         type: 'website',
+        images: [{
+            url: 'https://www.openlabs.org.in/images/og-image.svg',
+            width: 1200,
+            height: 630,
+            alt: 'Biology Virtual Labs | OpenLabs'
+        }]
     },
     twitter: {
         card: 'summary_large_image',
-        images: ['/images/twitter-image.svg'],
-        title: 'Biology Experiments | OpenLabs',
+        images: ['https://www.openlabs.org.in/images/twitter-image.svg'],
+        title: 'Biology Virtual Labs & Interactive Experiments | OpenLabs',
         description: 'Explore interactive biology experiments including cell structure, human anatomy, blood circulation, and brain neuron simulations.',
     },
     alternates: {
-        canonical: '/biology',
+        canonical: 'https://www.openlabs.org.in/biology',
+    },
+    robots: {
+        index: true,
+        follow: true,
     },
 }
 

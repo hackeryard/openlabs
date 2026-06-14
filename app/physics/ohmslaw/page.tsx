@@ -1,4 +1,3 @@
-import React from "react";
 import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
@@ -6,6 +5,41 @@ export const metadata: Metadata = {
   title: "Ohm's Law Simulator | Voltage Current Resistance Lab | OpenLabs",
   description:
     "Explore Ohm's Law with an interactive circuit simulator for voltage, current, resistance, and V-I behavior.",
+  keywords: [
+    "ohm's law",
+    "circuit simulator",
+    "voltage current resistance",
+    "physics lab",
+    "electrical circuits",
+    "v-i relationship"
+  ],
+  alternates: {
+    canonical: "https://www.openlabs.org.in/physics/ohmslaw",
+  },
+  openGraph: {
+    title: "Ohm's Law Simulator | Voltage Current Resistance Lab | OpenLabs",
+    description:
+      "Explore Ohm's Law with an interactive circuit simulator for voltage, current, resistance, and V-I behavior.",
+    url: "https://www.openlabs.org.in/physics/ohmslaw",
+    type: "website",
+    images: [
+      {
+        url: "https://www.openlabs.org.in/images/physics/ohms-law-hero.png",
+        alt: "Ohm's Law Simulator | OpenLabs",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ohm's Law Simulator | Voltage Current Resistance Lab | OpenLabs",
+    description:
+      "Explore Ohm's Law with an interactive circuit simulator for voltage, current, resistance, and V-I behavior.",
+    images: ["https://www.openlabs.org.in/images/physics/ohms-law-hero.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function OhmsLawPage() {

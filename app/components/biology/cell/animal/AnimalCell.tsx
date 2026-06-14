@@ -280,25 +280,57 @@ function ER({ active, onSelect }: any) {
 
 // --- MAIN SCENE ---
 
-export default function Ultimate3DCell({ onComplete }: { onComplete?: () => void }) {
-  const [selected, setSelected] = useState<OrganelleType>(null)
-  const [explored, setExplored] = useState<Set<string>>(new Set())
+interface Ultimate3DCellProps {
+  selected?: OrganelleType;
+  onSelect?: (type: OrganelleType) => void;
+  onComplete?: () => void;
+  exploredList?: Set<string>;
+  onExploredChange?: (explored: Set<string>) => void;
+  standalone?: boolean;
+}
+
+export default function Ultimate3DCell({
+  selected: selectedProp,
+  onSelect: onSelectProp,
+  onComplete,
+  exploredList,
+  onExploredChange,
+  standalone = true,
+}: Ultimate3DCellProps) {
+  const [localSelected, setLocalSelected] = useState<OrganelleType>(null);
+  const selected = selectedProp !== undefined ? selectedProp : localSelected;
+
+  const setSelected = (type: OrganelleType) => {
+    if (onSelectProp) {
+      onSelectProp(type);
+    } else {
+      setLocalSelected(type);
+    }
+  };
+
+  const [localExplored, setLocalExplored] = useState<Set<string>>(new Set());
+  const explored = exploredList !== undefined ? exploredList : localExplored;
 
   useEffect(() => {
     if (selected) {
-      setExplored(prev => {
-        const next = new Set(prev).add(selected)
-        if (next.size >= 3 && onComplete) onComplete()
-        return next
-      })
+      const nextExplored = new Set(explored).add(selected);
+      if (exploredList === undefined) {
+        setLocalExplored(nextExplored);
+      }
+      if (onExploredChange) {
+        onExploredChange(nextExplored);
+      }
+      if (nextExplored.size >= 3 && onComplete) {
+        onComplete();
+      }
     }
-  }, [selected, onComplete])
+  }, [selected, onComplete, exploredList, onExploredChange]);
   
   // @ts-ignore
   const info = selected && ORGANELLE_INFO[selected] ? ORGANELLE_INFO[selected] : null
 
   return (
-    <div className="w-full h-screen bg-black relative overflow-hidden font-sans">
+    <div className={`w-full relative overflow-hidden font-sans rounded-2xl ${standalone ? "h-screen bg-black" : "h-[500px] md:h-[600px] bg-slate-950 border border-slate-800"}`}>
       
       <Canvas camera={{ position: [0, 0, 7], fov: 40 }}>
         <color attach="background" args={['#020617']} />
@@ -362,39 +394,41 @@ export default function Ultimate3DCell({ onComplete }: { onComplete?: () => void
       </Canvas>
 
       {/* --- UI OVERLAY --- */}
-      <div className="absolute top-0 left-0 w-full p-6 md:p-10 pointer-events-none flex flex-col justify-between h-full z-10">
-        <div className="pointer-events-auto">
-          <h1 className="text-3xl md:text-5xl font-bold text-white tracking-tighter drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">
-            ULTIMATE 3D CELL
-          </h1>
-          <p className="text-blue-200 text-sm md:text-base mt-2 max-w-md bg-black/30 backdrop-blur-sm p-2 rounded-lg border border-white/10">
-            A complete interactive model. Click on any structure—even the tiny dots or strings—to identify it.
-          </p>
-        </div>
+      {standalone && (
+        <div className="absolute top-0 left-0 w-full p-6 md:p-10 pointer-events-none flex flex-col justify-between h-full z-10">
+          <div className="pointer-events-auto">
+            <h1 className="text-3xl md:text-5xl font-bold text-white tracking-tighter drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">
+              ULTIMATE 3D CELL
+            </h1>
+            <p className="text-blue-200 text-sm md:text-base mt-2 max-w-md bg-black/30 backdrop-blur-sm p-2 rounded-lg border border-white/10">
+              A complete interactive model. Click on any structure—even the tiny dots or strings—to identify it.
+            </p>
+          </div>
 
-        <AnimatePresence>
-          {info && (
-            <motion.div
-              key={selected}
-              initial={{ opacity: 0, y: 50, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 50, scale: 0.95 }}
-              transition={{ type: "spring", bounce: 0.4 }}
-              className="pointer-events-auto max-w-md w-full bg-slate-900/90 backdrop-blur-xl border border-slate-700 p-6 rounded-2xl shadow-2xl self-end md:self-auto"
-            >
-              <div className="flex justify-between items-start mb-3">
-                <h2 className="text-2xl font-bold text-white" style={{ color: info.color }}>{info.title}</h2>
-                <button onClick={() => setSelected(null)} className="text-slate-400 hover:text-white bg-slate-800 rounded-full w-8 h-8 flex items-center justify-center transition-colors">✕</button>
-              </div>
-              <p className="text-slate-300 leading-relaxed text-sm md:text-base">{info.description}</p>
-              <div className="mt-4 flex items-center gap-2 text-xs text-slate-500 uppercase tracking-widest font-semibold">
-                <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: info.color }} />
-                Structure Identified
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+          <AnimatePresence>
+            {info && (
+              <motion.div
+                key={selected}
+                initial={{ opacity: 0, y: 50, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 50, scale: 0.95 }}
+                transition={{ type: "spring", bounce: 0.4 }}
+                className="pointer-events-auto max-w-md w-full bg-slate-900/90 backdrop-blur-xl border border-slate-700 p-6 rounded-2xl shadow-2xl self-end md:self-auto"
+              >
+                <div className="flex justify-between items-start mb-3">
+                  <h2 className="text-2xl font-bold text-white" style={{ color: info.color }}>{info.title}</h2>
+                  <button onClick={() => setSelected(null)} className="text-slate-400 hover:text-white bg-slate-800 rounded-full w-8 h-8 flex items-center justify-center transition-colors">✕</button>
+                </div>
+                <p className="text-slate-300 leading-relaxed text-sm md:text-base">{info.description}</p>
+                <div className="mt-4 flex items-center gap-2 text-xs text-slate-500 uppercase tracking-widest font-semibold">
+                  <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: info.color }} />
+                  Structure Identified
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
     </div>
   )
 }

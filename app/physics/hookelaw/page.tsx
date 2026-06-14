@@ -1,4 +1,3 @@
-import React from "react";
 import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
@@ -6,6 +5,41 @@ export const metadata: Metadata = {
   title: "Hooke's Law Simulator | Mass Spring Physics Lab | OpenLabs",
   description:
     "Interactive Hooke's Law simulator for exploring spring force, stiffness, mass, displacement, oscillation, and period.",
+  keywords: [
+    "hooke's law",
+    "spring simulator",
+    "mass-spring system",
+    "physics lab",
+    "oscillation",
+    "elastic force"
+  ],
+  alternates: {
+    canonical: "https://www.openlabs.org.in/physics/hookelaw",
+  },
+  openGraph: {
+    title: "Hooke's Law Simulator | Mass Spring Physics Lab | OpenLabs",
+    description:
+      "Interactive Hooke's Law simulator for exploring spring force, stiffness, mass, displacement, oscillation, and period.",
+    url: "https://www.openlabs.org.in/physics/hookelaw",
+    type: "website",
+    images: [
+      {
+        url: "https://www.openlabs.org.in/images/physics/hookes-law-hero.png",
+        alt: "Hooke's Law Simulator | OpenLabs",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Hooke's Law Simulator | Mass Spring Physics Lab | OpenLabs",
+    description:
+      "Interactive Hooke's Law simulator for exploring spring force, stiffness, mass, displacement, oscillation, and period.",
+    images: ["https://www.openlabs.org.in/images/physics/hookes-law-hero.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function HookesLawPage() {

@@ -1,7 +1,12 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 
-const WaveOptics = dynamic(() => import('@/app/components/physics/WaveOpticsLab'), { ssr: false, loading: () => <p className="p-6">Loading Wave Optics…</p> })
+import UniversalLoader from '@/app/components/UniversalLoader'
+
+const WaveOptics = dynamic(() => import('@/app/components/physics/WaveOpticsLab'), { 
+  ssr: false, 
+  loading: () => <UniversalLoader subject="physics" customMessage="Loading Wave Optics simulation..." /> 
+})
 
 export default function WaveOpticsPage() {
   return (

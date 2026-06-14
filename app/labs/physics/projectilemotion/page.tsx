@@ -1,7 +1,12 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 
-const ProjectileMotion = dynamic(() => import('@/app/components/physics/ProjectileMotion'), { ssr: false, loading: () => <p className="p-6">Loading projectile motion…</p> })
+import UniversalLoader from '@/app/components/UniversalLoader'
+
+const ProjectileMotion = dynamic(() => import('@/app/components/physics/ProjectileMotion'), { 
+  ssr: false, 
+  loading: () => <UniversalLoader subject="physics" customMessage="Loading Projectile Motion simulation..." /> 
+})
 
 export default function ProjectileMotionPage() {
   return (

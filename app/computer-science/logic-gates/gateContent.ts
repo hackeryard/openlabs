@@ -394,7 +394,7 @@ export function createLogicGateMetadata(gate: LogicGateContent): Metadata {
       "OpenLabs logic gates",
     ],
     alternates: {
-      canonical: `/computer-science/logic-gates/${gate.slug}`,
+      canonical: pageUrl,
     },
     openGraph: {
       title: gate.pageTitle,
@@ -404,7 +404,7 @@ export function createLogicGateMetadata(gate: LogicGateContent): Metadata {
       type: "website",
       images: [
         {
-          url: "/images/og-image.svg",
+          url: "https://www.openlabs.org.in/images/og-image.svg",
           width: 1200,
           height: 630,
           alt: `OpenLabs ${gate.name} Simulator`,
@@ -415,7 +415,7 @@ export function createLogicGateMetadata(gate: LogicGateContent): Metadata {
       card: "summary_large_image",
       title: gate.pageTitle,
       description: gate.metaDescription,
-      images: ["/images/twitter-image.svg"],
+      images: ["https://www.openlabs.org.in/images/twitter-image.svg"],
     },
   };
 }

@@ -4,8 +4,41 @@ import { EducationalContent } from "@/types/education";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Animal Cell Simulation | OpenLabs",
-  description: "Interactive animal cell explorer.",
+  title: "Animal Cell Simulation | Interactive Cell Biology Lab | OpenLabs",
+  description: "Interactive animal cell explorer with 3D visualization of organelles, nucleus, and cellular structures for biology education.",
+  keywords: [
+    "animal cell",
+    "cell organelles",
+    "cell membrane",
+    "nucleus",
+    "mitochondria",
+    "endoplasmic reticulum",
+    "eukaryotic cells",
+    "cell biology lab"
+  ],
+  alternates: {
+    canonical: "https://www.openlabs.org.in/biology/cell/animal",
+  },
+  openGraph: {
+    title: "Animal Cell Simulation | Interactive Cell Biology Lab | OpenLabs",
+    description: "Interactive animal cell explorer with 3D visualization of organelles, nucleus, and cellular structures for biology education.",
+    url: "https://www.openlabs.org.in/biology/cell/animal",
+    type: "website",
+    images: [{
+      url: "https://www.openlabs.org.in/images/biology/animal-cell-hero.png",
+      alt: "Animal Cell Simulation | OpenLabs"
+    }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Animal Cell Simulation | Interactive Cell Biology Lab | OpenLabs",
+    description: "Interactive animal cell explorer with 3D visualization of organelles, nucleus, and cellular structures for biology education.",
+    images: ["https://www.openlabs.org.in/images/biology/animal-cell-hero.png"]
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 const content: EducationalContent = {

@@ -1,4 +1,3 @@
-import React from "react";
 import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
@@ -6,6 +5,41 @@ export const metadata: Metadata = {
   title: "Uniform Motion Lab | Distance Time Physics Simulator | OpenLabs",
   description:
     "Interactive uniform motion simulator for exploring constant velocity, displacement, time, and distance-time graphs.",
+  keywords: [
+    "uniform motion",
+    "constant velocity",
+    "distance-time graph",
+    "physics lab",
+    "kinematics",
+    "motion simulation"
+  ],
+  alternates: {
+    canonical: "https://www.openlabs.org.in/physics/uniformmotionlab",
+  },
+  openGraph: {
+    title: "Uniform Motion Lab | Distance Time Physics Simulator | OpenLabs",
+    description:
+      "Interactive uniform motion simulator for exploring constant velocity, displacement, time, and distance-time graphs.",
+    url: "https://www.openlabs.org.in/physics/uniformmotionlab",
+    type: "website",
+    images: [
+      {
+        url: "https://www.openlabs.org.in/images/physics/uniform-motion-hero.png",
+        alt: "Uniform Motion Physics Simulator | OpenLabs",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Uniform Motion Lab | Distance Time Physics Simulator | OpenLabs",
+    description:
+      "Interactive uniform motion simulator for exploring constant velocity, displacement, time, and distance-time graphs.",
+    images: ["https://www.openlabs.org.in/images/physics/uniform-motion-hero.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function UniformMotionLabPage() {

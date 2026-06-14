@@ -464,7 +464,7 @@ export function createDsaMetadata(content: DsaContent): Metadata {
       "OpenLabs DSA",
     ],
     alternates: {
-      canonical: `/computer-science/dsa/${content.route}`,
+      canonical: pageUrl,
     },
     openGraph: {
       title: content.pageTitle,
@@ -474,7 +474,7 @@ export function createDsaMetadata(content: DsaContent): Metadata {
       type: "website",
       images: [
         {
-          url: "/images/og-image.svg",
+          url: "https://www.openlabs.org.in/images/og-image.svg",
           width: 1200,
           height: 630,
           alt: `OpenLabs ${content.name} Visualizer`,
@@ -485,7 +485,7 @@ export function createDsaMetadata(content: DsaContent): Metadata {
       card: "summary_large_image",
       title: content.pageTitle,
       description: content.metaDescription,
-      images: ["/images/twitter-image.svg"],
+      images: ["https://www.openlabs.org.in/images/twitter-image.svg"],
     },
   };
 }

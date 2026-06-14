@@ -46,7 +46,6 @@ async function getBlogs() {
       .select('slug title excerpt category author date readTime gradient border icon coverImage -_id')
       .lean();
     
-    // We need to serialize the MongoDB objects to plain JS objects for Server Components
     return JSON.parse(JSON.stringify(blogs)) || [];
   } catch (error) {
     console.error("Failed to fetch blogs directly:", error);

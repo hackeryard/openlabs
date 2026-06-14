@@ -1,4 +1,3 @@
-import React from "react";
 import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
@@ -7,6 +6,33 @@ export const metadata: Metadata = {
   description:
     "Learn projectile motion, launch angles, velocity, gravity, range, maximum height, and time of flight with an interactive physics simulation.",
   keywords: ["projectile motion", "physics experiment", "kinematics simulation", "launch angle", "time of flight"],
+  alternates: {
+    canonical: "https://www.openlabs.org.in/physics/projectilemotion",
+  },
+  openGraph: {
+    title: "Projectile Motion Experiment - Physics Simulation | OpenLabs",
+    description:
+      "Learn projectile motion, launch angles, velocity, gravity, range, maximum height, and time of flight with an interactive physics simulation.",
+    url: "https://www.openlabs.org.in/physics/projectilemotion",
+    type: "website",
+    images: [
+      {
+        url: "https://www.openlabs.org.in/images/physics/projectile-motion-hero.png",
+        alt: "Projectile Motion Simulator | OpenLabs",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Projectile Motion Experiment - Physics Simulation | OpenLabs",
+    description:
+      "Learn projectile motion, launch angles, velocity, gravity, range, maximum height, and time of flight with an interactive physics simulation.",
+    images: ["https://www.openlabs.org.in/images/physics/projectile-motion-hero.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function ProjectileMotionPage() {

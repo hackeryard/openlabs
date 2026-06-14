@@ -103,7 +103,7 @@ export default function ChemicalBondsLabPage() {
         {/* Dynamic Title Header Block */}
         <div className="space-y-2 text-left">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-150 text-[10px] font-black uppercase tracking-wider">
+            <span className="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] font-black uppercase tracking-wider">
               Simulation Sandbox
             </span>
           </div>
@@ -114,6 +114,9 @@ export default function ChemicalBondsLabPage() {
             Interact directly with molecular structures. Drag the slider to calibrate electronegativity, simulate electron transfer vs electron sharing, and examine three-dimensional geometries.
           </p>
         </div>
+
+        {/* Daily Challenge */}
+        <DailyChallengeCard labId="chemistry/chemicalbonds" currentParams={{ bondsExplored: explored.size }} />
 
         {/* Dashboard Grid Cockpit Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -135,7 +138,7 @@ export default function ChemicalBondsLabPage() {
                   <h3 className="font-extrabold text-slate-900 text-lg tracking-tight">
                     Electronegativity Difference Selector
                   </h3>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-2xl bg-indigo-50 border border-indigo-100 text-sm font-black font-mono text-indigo-755 shadow-sm">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-2xl bg-indigo-50 border border-indigo-100 text-sm font-black font-mono text-indigo-700 shadow-sm">
                     ΔEN = {enDiff.toFixed(1)}
                   </div>
                 </div>
@@ -163,7 +166,7 @@ export default function ChemicalBondsLabPage() {
                 {/* Simulated Result Indicator Alert */}
                 <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl flex items-center justify-between shadow-inner">
                   <div>
-                    <div className="text-[10px] text-slate-450 uppercase font-black tracking-wider font-mono">Current Stable Phase</div>
+                    <div className="text-[10px] text-slate-400 uppercase font-black tracking-wider font-mono">Current Stable Phase</div>
                     <div className="text-xl font-black text-indigo-600 tracking-tight mt-0.5">
                       {predictedBond}
                     </div>
@@ -268,11 +271,6 @@ export default function ChemicalBondsLabPage() {
           {/* Column 2: Challenge HUD & Calibration Manual Checklist (Right Column - lg:col-span-4) */}
           <div className="lg:col-span-4 flex flex-col space-y-6 w-full">
             
-            {/* Daily Challenges card */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-lg relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 to-teal-500" />
-              <DailyChallengeCard labId="chemistry/chemicalbonds" currentParams={{ bondsExplored: explored.size }} />
-            </div>
 
             {/* Lab Instrumentation Telemetry panel */}
             <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-md space-y-4 text-left">
@@ -284,13 +282,13 @@ export default function ChemicalBondsLabPage() {
               </h3>
               
               <div className="space-y-3.5 text-xs font-semibold">
-                <div className="flex justify-between items-center bg-slate-50 border border-slate-150 p-3 rounded-xl">
-                  <span className="text-slate-450 uppercase text-[9px] tracking-wider font-extrabold">Active Calibration</span>
+                <div className="flex justify-between items-center bg-slate-50 border border-slate-200 p-3 rounded-xl">
+                  <span className="text-slate-400 uppercase text-[9px] tracking-wider font-extrabold">Active Calibration</span>
                   <span className="text-slate-900 font-mono">{predictedBond}</span>
                 </div>
                 
-                <div className="flex justify-between items-center bg-slate-50 border border-slate-150 p-3 rounded-xl">
-                  <span className="text-slate-450 uppercase text-[9px] tracking-wider font-extrabold">Analyzed Characters</span>
+                <div className="flex justify-between items-center bg-slate-50 border border-slate-200 p-3 rounded-xl">
+                  <span className="text-slate-400 uppercase text-[9px] tracking-wider font-extrabold">Analyzed Characters</span>
                   <span className="text-indigo-600 font-bold font-mono bg-indigo-50 border border-indigo-100/60 px-2 py-0.5 rounded-lg">
                     {explored.size} / 3 Complete
                   </span>
@@ -332,7 +330,7 @@ export default function ChemicalBondsLabPage() {
 
               {explored.size >= 3 && (
                 <div className="mt-4 bg-emerald-50 border border-emerald-200 text-emerald-800 p-3.5 rounded-2xl flex items-center gap-2.5 shadow-inner">
-                  <Sparkles className="h-4.5 w-4.5 text-emerald-600 animate-pulse flex-shrink-0" />
+                  <Sparkles className="h-4 w-4 text-emerald-600 animate-pulse flex-shrink-0" />
                   <p className="text-[10px] font-bold leading-normal">
                     Experiment Complete! All chemical bond models analyzed successfully. XP granted!
                   </p>

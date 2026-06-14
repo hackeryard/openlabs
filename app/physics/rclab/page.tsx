@@ -1,4 +1,3 @@
-import React from "react";
 import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
@@ -6,6 +5,41 @@ export const metadata: Metadata = {
   title: "RC Circuit Lab | Charging and Discharging Simulator | OpenLabs",
   description:
     "Interactive RC circuit simulator for capacitor charging, discharging, resistance, capacitance, voltage, and time constant.",
+  keywords: [
+    "rc circuit",
+    "capacitor charging",
+    "resistor-capacitor",
+    "time constant",
+    "physics lab",
+    "circuit simulation"
+  ],
+  alternates: {
+    canonical: "https://www.openlabs.org.in/physics/rclab",
+  },
+  openGraph: {
+    title: "RC Circuit Lab | Charging and Discharging Simulator | OpenLabs",
+    description:
+      "Interactive RC circuit simulator for capacitor charging, discharging, resistance, capacitance, voltage, and time constant.",
+    url: "https://www.openlabs.org.in/physics/rclab",
+    type: "website",
+    images: [
+      {
+        url: "https://www.openlabs.org.in/images/physics/rc-lab-hero.png",
+        alt: "RC Circuit Lab Simulator | OpenLabs",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "RC Circuit Lab | Charging and Discharging Simulator | OpenLabs",
+    description:
+      "Interactive RC circuit simulator for capacitor charging, discharging, resistance, capacitance, voltage, and time constant.",
+    images: ["https://www.openlabs.org.in/images/physics/rc-lab-hero.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RCLabPage() {

@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     "OpenLabs computer science lab",
   ],
   alternates: {
-    canonical: "/computer-science/git-simulator",
+    canonical: "https://www.openlabs.org.in/computer-science/git-simulator",
   },
   openGraph: {
     title: "Git Simulator - Learn Version Control Visually | OpenLabs",

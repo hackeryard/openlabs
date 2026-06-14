@@ -7,17 +7,14 @@ import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
+import UniversalLoader from "@/app/components/UniversalLoader";
+
 // Dynamically import the Water Quality component
 const WaterQualityLab = dynamic(
   () => import("@/app/components/chemistry/Water-quality"),
   {
     ssr: false,
-    loading: () => (
-      <div className="flex flex-col items-center justify-center p-12 bg-white border border-slate-200 shadow-sm rounded-3xl h-[500px]">
-        <div className="w-10 h-10 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-slate-500 font-bold text-xs tracking-wider uppercase animate-pulse">Initializing Spectroscopic Sensor Array…</p>
-      </div>
-    ),
+    loading: () => <UniversalLoader subject="chemistry" customMessage="Initializing Spectroscopic Sensor Array..." />
   }
 );
 

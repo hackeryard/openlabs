@@ -1,4 +1,3 @@
-import React from "react";
 import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
@@ -6,6 +5,41 @@ export const metadata: Metadata = {
   title: "Speed of Light Lab | Interactive Physics Simulator | OpenLabs",
   description:
     "Interactive speed of light lab for exploring light propagation, media, refractive index, and measurement concepts.",
+  keywords: [
+    "speed of light",
+    "optical physics",
+    "refractive index",
+    "light propagation",
+    "physics lab",
+    "interactive simulation"
+  ],
+  alternates: {
+    canonical: "https://www.openlabs.org.in/physics/speedoflight",
+  },
+  openGraph: {
+    title: "Speed of Light Lab | Interactive Physics Simulator | OpenLabs",
+    description:
+      "Interactive speed of light lab for exploring light propagation, media, refractive index, and measurement concepts.",
+    url: "https://www.openlabs.org.in/physics/speedoflight",
+    type: "website",
+    images: [
+      {
+        url: "https://www.openlabs.org.in/images/physics/speed-of-light-hero.png",
+        alt: "Speed of Light Physics Lab | OpenLabs",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Speed of Light Lab | Interactive Physics Simulator | OpenLabs",
+    description:
+      "Interactive speed of light lab for exploring light propagation, media, refractive index, and measurement concepts.",
+    images: ["https://www.openlabs.org.in/images/physics/speed-of-light-hero.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function SpeedOfLightPage() {
