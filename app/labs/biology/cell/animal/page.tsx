@@ -462,7 +462,7 @@ export default function Page() {
 
                   {/* Completion Card */}
                   {exploredOrganelles.size >= 3 ? (
-                    <div className="bg-emerald-50 border border-emerald-250 rounded-xl p-3 flex items-center gap-3 text-xs text-emerald-700">
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center gap-3 text-xs text-emerald-700">
                       <Award className="w-5 h-5 text-emerald-600 shrink-0 animate-bounce" />
                       <div>
                         <span className="font-bold block">Experiment Checklist Met!</span>
@@ -534,7 +534,7 @@ export default function Page() {
                     </p>
                   </div>
 
-                  <div className="space-y-2 border-t border-slate-150 pt-3">
+                  <div className="space-y-2 border-t border-slate-200 pt-3">
                     <h4 className="text-xs uppercase font-bold text-slate-800">Animal vs. Plant Cells</h4>
                     <p className="text-slate-500 font-medium">
                       While both are eukaryotic, they contain fundamental differences:
@@ -547,7 +547,7 @@ export default function Page() {
                     </ul>
                   </div>
 
-                  <div className="space-y-2 border-t border-slate-150 pt-3">
+                  <div className="space-y-2 border-t border-slate-200 pt-3">
                     <h4 className="text-xs uppercase font-bold text-slate-800">The Fluid Mosaic Model</h4>
                     <p className="text-slate-500 font-medium">
                       The membrane is a double layer of phospholipids. Hydrophilic heads face outwards, and hydrophobic tails point inwards, creating a self-sealing barrier that maintains homeostasis.

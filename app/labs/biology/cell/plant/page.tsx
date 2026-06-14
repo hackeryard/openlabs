@@ -439,7 +439,7 @@ export default function Page() {
 
                   {/* Completion Card */}
                   {exploredOrganelles.size >= 3 ? (
-                    <div className="bg-emerald-50 border border-emerald-250 rounded-xl p-3 flex items-center gap-3 text-xs text-emerald-700">
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center gap-3 text-xs text-emerald-700">
                       <Award className="w-5 h-5 text-emerald-600 shrink-0 animate-bounce" />
                       <div>
                         <span className="font-bold block">Experiment Checklist Met!</span>
@@ -447,7 +447,7 @@ export default function Page() {
                       </div>
                     </div>
                   ) : (
-                    <div className="bg-slate-50 border border-slate-200 p-3 rounded-xl flex items-center gap-3 text-xs text-slate-505">
+                    <div className="bg-slate-50 border border-slate-200 p-3 rounded-xl flex items-center gap-3 text-xs text-slate-500">
                       <HelpCircle className="w-5 h-5 text-indigo-500 shrink-0" />
                       <div>
                         <span className="font-bold text-slate-700 block">Lab Target</span>
@@ -511,14 +511,14 @@ export default function Page() {
                     </p>
                   </div>
 
-                  <div className="space-y-2 border-t border-slate-150 pt-3">
+                  <div className="space-y-2 border-t border-slate-200 pt-3">
                     <h4 className="text-xs uppercase font-bold text-slate-800">The Power of Turgor Pressure</h4>
                     <p className="text-slate-500 font-medium font-normal">
                       The Large Central Vacuole absorbs water, expanding like a balloon inside the rigid Cellulose Cell Wall. This outward force is called **turgor pressure** and is what holds non-woody plants upright!
                     </p>
                   </div>
 
-                  <div className="space-y-2 border-t border-slate-150 pt-3">
+                  <div className="space-y-2 border-t border-slate-200 pt-3">
                     <h4 className="text-xs uppercase font-bold text-slate-800">Photosynthesis Machinery</h4>
                     <p className="text-slate-500 font-medium font-normal">
                       Chloroplasts capture photons using green chlorophyll pigment to build glucose molecules. This is an endothermic chemical pathway:

@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { Dna, Atom, FlaskConical, Cpu, Layers } from "lucide-react";
+import { motion } from "framer-motion";
 
 type SubjectType = "biology" | "chemistry" | "physics" | "computer-science" | "default";
 
 interface SubjectTheme {
   primary: string;
+  border: string;
   accent: string;
   bgGradient: string;
   glowColor: string;
@@ -18,9 +20,10 @@ interface SubjectTheme {
 const SUBJECT_THEMES: Record<SubjectType, SubjectTheme> = {
   biology: {
     primary: "text-emerald-600",
+    border: "border-emerald-500",
     accent: "bg-emerald-500",
-    bgGradient: "from-emerald-50/30 via-white to-slate-50/50",
-    glowColor: "bg-emerald-500/10",
+    bgGradient: "from-emerald-50/20 via-white to-slate-50/30",
+    glowColor: "bg-emerald-500/5",
     icon: Dna,
     statuses: [
       "Calibrating virtual microscope optics...",
@@ -40,9 +43,10 @@ const SUBJECT_THEMES: Record<SubjectType, SubjectTheme> = {
   },
   chemistry: {
     primary: "text-amber-600",
+    border: "border-amber-500",
     accent: "bg-amber-500",
-    bgGradient: "from-amber-50/30 via-white to-slate-50/50",
-    glowColor: "bg-amber-500/10",
+    bgGradient: "from-amber-50/20 via-white to-slate-50/30",
+    glowColor: "bg-amber-500/5",
     icon: FlaskConical,
     statuses: [
       "Sterilizing virtual glassware...",
@@ -62,9 +66,10 @@ const SUBJECT_THEMES: Record<SubjectType, SubjectTheme> = {
   },
   physics: {
     primary: "text-indigo-600",
+    border: "border-indigo-500",
     accent: "bg-indigo-500",
-    bgGradient: "from-indigo-50/30 via-white to-slate-50/50",
-    glowColor: "bg-indigo-500/10",
+    bgGradient: "from-indigo-50/20 via-white to-slate-50/30",
+    glowColor: "bg-indigo-500/5",
     icon: Atom,
     statuses: [
       "Calibrating gravitational field constants...",
@@ -84,9 +89,10 @@ const SUBJECT_THEMES: Record<SubjectType, SubjectTheme> = {
   },
   "computer-science": {
     primary: "text-purple-600",
+    border: "border-purple-500",
     accent: "bg-purple-500",
-    bgGradient: "from-purple-50/30 via-white to-slate-50/50",
-    glowColor: "bg-purple-500/10",
+    bgGradient: "from-purple-50/20 via-white to-slate-50/30",
+    glowColor: "bg-purple-500/5",
     icon: Cpu,
     statuses: [
       "Allocating virtual memory registers...",
@@ -106,9 +112,10 @@ const SUBJECT_THEMES: Record<SubjectType, SubjectTheme> = {
   },
   default: {
     primary: "text-violet-600",
+    border: "border-violet-500",
     accent: "bg-violet-500",
-    bgGradient: "from-violet-50/30 via-white to-slate-50/50",
-    glowColor: "bg-violet-500/10",
+    bgGradient: "from-violet-50/20 via-white to-slate-50/30",
+    glowColor: "bg-violet-500/5",
     icon: Layers,
     statuses: [
       "Loading virtual laboratory...",
@@ -155,7 +162,7 @@ export default function UniversalLoader({ subject = "default", customMessage }: 
 
   return (
     <div className={`w-full min-h-[420px] flex flex-col items-center justify-center p-8 bg-gradient-to-b ${theme.bgGradient} transition-colors duration-500`}>
-      <div className="relative max-w-lg w-full bg-white/90 backdrop-blur-md border border-slate-200/80 rounded-3xl p-8 md:p-10 shadow-xl flex flex-col items-center overflow-hidden">
+      <div className="relative max-w-lg w-full bg-white/80 backdrop-blur-md border border-slate-200/80 rounded-3xl p-8 md:p-10 shadow-lg flex flex-col items-center overflow-hidden">
         
         {/* Glow Effects */}
         <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full blur-3xl opacity-40 pointer-events-none ${theme.glowColor}`} />
@@ -163,28 +170,37 @@ export default function UniversalLoader({ subject = "default", customMessage }: 
         {/* Animated Icon and Orbit Rings */}
         <div className="relative w-24 h-24 mb-6 flex items-center justify-center">
           {/* Orbiting ring 1 */}
-          <div className={`absolute inset-0 rounded-full border-2 border-dashed opacity-30 animate-[spin_12s_linear_infinite] ${theme.primary}`} />
+          <div className={`absolute inset-0 rounded-full border-2 border-dashed opacity-30 animate-[spin_12s_linear_infinite] ${theme.border}`} />
           {/* Orbiting ring 2 */}
-          <div className={`absolute inset-2 rounded-full border border-dotted opacity-50 animate-[spin_8s_linear_infinite_reverse] ${theme.primary}`} />
+          <div className={`absolute inset-2 rounded-full border border-dotted opacity-50 animate-[spin_8s_linear_infinite_reverse] ${theme.border}`} />
           {/* Pulsing glow behind icon */}
-          <div className={`absolute w-12 h-12 rounded-full blur-md opacity-20 animate-pulse ${theme.accent}`} />
+          <div className={`absolute w-12 h-12 rounded-full blur-md opacity-25 animate-pulse ${theme.accent}`} />
           
           {/* Subject Icon */}
           <Icon className={`w-10 h-10 ${theme.primary} relative z-10 animate-pulse`} />
         </div>
 
         {/* Status text */}
-        <h3 className="text-base font-bold text-slate-800 tracking-wide text-center h-7 select-none">
+        <h3 className="text-sm font-bold text-slate-700 tracking-wide text-center h-7 select-none">
           {customMessage || theme.statuses[statusIndex]}
         </h3>
 
         {/* Progress bar */}
-        <div className="w-full bg-slate-100 h-1.5 rounded-full mt-4 overflow-hidden border border-slate-200/50">
-          <div className={`h-full rounded-full transition-all duration-300 w-[60%] animate-[pulse_1.5s_infinite] ${theme.accent} bg-gradient-to-r from-transparent to-white/40`} style={{ width: "100%" }} />
+        <div className="w-full bg-slate-100 h-1.5 rounded-full mt-4 overflow-hidden border border-slate-200/40 relative">
+          <motion.div 
+            className={`h-full rounded-full ${theme.accent} bg-gradient-to-r from-transparent to-white/40 absolute top-0`}
+            initial={{ left: "-40%", width: "40%" }}
+            animate={{ left: "100%" }}
+            transition={{
+              repeat: Infinity,
+              duration: 1.6,
+              ease: "easeInOut"
+            }}
+          />
         </div>
 
         {/* Fact Card */}
-        <div className="w-full bg-slate-50 border border-slate-200/60 rounded-2xl p-4 mt-6 flex flex-col gap-1.5 select-none relative z-10">
+        <div className="w-full bg-slate-50/50 border border-slate-200/60 rounded-2xl p-4 mt-6 flex flex-col gap-1.5 select-none relative z-10">
           <span className={`text-[10px] uppercase font-extrabold tracking-widest ${theme.primary}`}>
             Did You Know?
           </span>

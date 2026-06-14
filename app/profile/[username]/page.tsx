@@ -1,11 +1,15 @@
 import React from 'react'
+import { Suspense } from 'react'
 import ProfilePublicClient from './ProfilePublicClient'
+import UniversalLoader from '@/app/components/UniversalLoader'
 
 export default function PublicProfilePage({ params }: { params: { username: string } }) {
   return (
-    <main className="min-h-screen bg-gray-50 text-slate-900 p-6">
+    <main className="min-h-screen bg-[#fafafa] text-slate-800 py-10 px-4">
       <div className="max-w-4xl mx-auto">
-        <ProfilePublicClient username={params.username} />
+        <Suspense fallback={<div className="pt-20"><UniversalLoader subject="default" customMessage="Loading public profile..." /></div>}>
+          <ProfilePublicClient username={params.username} />
+        </Suspense>
       </div>
     </main>
   )
