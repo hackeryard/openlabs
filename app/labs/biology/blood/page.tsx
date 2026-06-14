@@ -5,9 +5,11 @@ import { useEffect } from "react"
 import { useLab } from "@/app/hooks/useXP"
 import DailyChallengeCard from "@/app/components/DailyChallengeCard"
 
+import UniversalLoader from "@/app/components/UniversalLoader"
+
 const BloodTransfusionLab = dynamic(() => import("@/app/components/biology/blood/blood"), {
   ssr: false,
-  loading: () => <div className="flex items-center justify-center min-h-screen"><p className="text-lg">Loading Blood Transfusion Lab...</p></div>
+  loading: () => <UniversalLoader subject="biology" customMessage="Loading Blood Transfusion Lab..." />
 })
 
 export default function BloodPage() {

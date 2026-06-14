@@ -1,32 +1,45 @@
-"use client";
-
 import React from "react";
-import Link from "next/link";
-import { motion, Variants } from "framer-motion";
+import ClientGrid from "../ClientGrid";
+import type { Metadata } from "next";
 
-/* ---------------- Animations ---------------- */
-
-const container: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.12,
-    },
+export const metadata: Metadata = {
+  title: "AI Problems & Solutions - Interactive Lab | OpenLabs",
+  description: "Explore artificial intelligence problems including search algorithms, constraint satisfaction, neural networks, and reinforcement learning through interactive visualization.",
+  keywords: [
+    "artificial intelligence",
+    "AI problems",
+    "search algorithms",
+    "constraint satisfaction",
+    "neural networks",
+    "reinforcement learning",
+    "AI simulation",
+    "machine learning education"
+  ],
+  alternates: {
+    canonical: "https://www.openlabs.org.in/computer-science/ai-problem",
+  },
+  openGraph: {
+    title: "AI Problems & Solutions - Interactive Lab | OpenLabs",
+    description: "Explore artificial intelligence problems including search algorithms, constraint satisfaction, neural networks, and reinforcement learning through interactive visualization.",
+    url: "https://www.openlabs.org.in/computer-science/ai-problem",
+    type: "website",
+    images: [{
+      url: "https://www.openlabs.org.in/images/computer-science/ai-problem-hero.png",
+      alt: "AI Problems Lab | OpenLabs"
+    }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AI Problems & Solutions - Interactive Lab | OpenLabs",
+    description: "Explore artificial intelligence problems including search algorithms, constraint satisfaction, neural networks, and reinforcement learning through interactive visualization.",
+    images: ["https://www.openlabs.org.in/images/computer-science/ai-problem-hero.png"]
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
-const item: Variants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.4,
-      ease: [0.16, 1, 0.3, 1], // easeOut
-    },
-  },
-};
 
 const cards = [
   {
@@ -72,52 +85,6 @@ const cards = [
 
 export default function Page() {
   return (
-    <main className="min-h-screen p-6">
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={container}
-        className="max-w-6xl mx-auto"
-      >
-        {/* -------- Header -------- */}
-        <motion.h1 variants={item} className="text-2xl font-bold">
-          Computer Science Experiments
-        </motion.h1>
-
-        <motion.p variants={item} className="text-gray-600 mb-6">
-          Coding and Tech related experiments.
-        </motion.p>
-
-        {/* -------- Grid -------- */}
-        <motion.div
-          layout
-          variants={container}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {cards.map((card) => (
-            <motion.div
-              key={card.href}
-              variants={item}
-              whileHover={{ y: -6, scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{
-                duration: 0.25,
-                ease: [0.4, 0, 0.2, 1],
-              }}
-            >
-              <Link
-                href={card.href}
-                className="block h-full bg-white rounded-xl border-2 border-gray-100 hover:border-indigo-200 shadow-sm hover:shadow-lg p-5 transition"
-              >
-                <h3 className="text-lg font-semibold">{card.title}</h3>
-                <p className="text-sm text-gray-500 mt-2">
-                  {card.desc}
-                </p>
-              </Link>
-            </motion.div>
-          ))}
-        </motion.div>
-      </motion.div>
-    </main>
+    <ClientGrid title="AI Problems & Solutions" description="Explore artificial intelligence problems with interactive visualizers." cards={cards} />
   );
 }

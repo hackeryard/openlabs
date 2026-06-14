@@ -1,7 +1,12 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 
-const SimplePendulum = dynamic(() => import('@/app/components/physics/SimplePendulum'), { ssr: false, loading: () => <p className="p-6">Loading Simple Pendulum…</p> })
+import UniversalLoader from '@/app/components/UniversalLoader'
+
+const SimplePendulum = dynamic(() => import('@/app/components/physics/SimplePendulum'), { 
+  ssr: false, 
+  loading: () => <UniversalLoader subject="physics" customMessage="Loading Simple Pendulum simulation..." /> 
+})
 
 export default function SimplePendulumPage() {
   return (

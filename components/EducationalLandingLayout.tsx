@@ -161,7 +161,7 @@ export default function EducationalLandingLayout({ content, launchUrl }: Props) 
               <h2 className="text-xl md:text-2xl font-black text-slate-950 mb-4 border-b border-slate-100 pb-2.5 flex items-center gap-2.5">
                 <BookOpen className="h-5 w-5 text-indigo-500" /> Theory & Core Foundations
               </h2>
-              <div className="prose prose-slate max-w-none text-slate-655 text-sm md:text-base leading-relaxed font-medium space-y-4" dangerouslySetInnerHTML={{ __html: content.theory.content }} />
+              <div className="prose prose-slate max-w-none text-slate-600 text-sm md:text-base leading-relaxed font-medium space-y-4" dangerouslySetInnerHTML={{ __html: content.theory.content }} />
             </div>
 
             {/* Mathematical Foundations Card */}
@@ -170,7 +170,7 @@ export default function EducationalLandingLayout({ content, launchUrl }: Props) 
                 <h2 className="text-xl md:text-2xl font-black text-slate-950 border-b border-slate-100 pb-2.5 flex items-center gap-2.5">
                   <Activity className="h-5 w-5 text-indigo-500" /> Mathematical Foundations
                 </h2>
-                <p className="text-slate-655 text-sm md:text-base font-medium leading-relaxed">
+                <p className="text-slate-600 text-sm md:text-base font-medium leading-relaxed">
                   {content.mathematicalFoundations.explanation}
                 </p>
                 <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl overflow-x-auto shadow-inner text-left font-mono">
@@ -188,7 +188,7 @@ export default function EducationalLandingLayout({ content, launchUrl }: Props) 
               <h2 className="text-xl md:text-2xl font-black text-slate-950 mb-4 border-b border-slate-100 pb-2.5 flex items-center gap-2.5">
                 <Gauge className="h-5 w-5 text-indigo-500" /> How The Simulation Works
               </h2>
-              <p className="text-slate-655 text-sm md:text-base leading-relaxed font-medium">
+              <p className="text-slate-600 text-sm md:text-base leading-relaxed font-medium">
                 {content.howItWorks}
               </p>
             </div>
@@ -241,7 +241,7 @@ export default function EducationalLandingLayout({ content, launchUrl }: Props) 
               </h3>
               <ul className="space-y-3.5">
                 {content.learningObjectives.map((obj, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-slate-655 text-xs font-medium">
+                  <li key={idx} className="flex items-start gap-2 text-slate-600 text-xs font-medium">
                     <span className="text-indigo-500 text-sm font-bold">•</span>
                     <span>{obj}</span>
                   </li>
@@ -256,7 +256,7 @@ export default function EducationalLandingLayout({ content, launchUrl }: Props) 
               </h3>
               <ul className="space-y-3.5">
                 {content.realWorldApplications.map((app, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-slate-655 text-xs font-medium">
+                  <li key={idx} className="flex items-start gap-2 text-slate-600 text-xs font-medium">
                     <span className="text-emerald-500 text-sm font-bold">✓</span>
                     <span>{app}</span>
                   </li>

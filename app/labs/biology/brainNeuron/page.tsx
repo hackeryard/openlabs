@@ -5,9 +5,11 @@ import { useEffect } from "react"
 import { useLab } from "@/app/hooks/useXP"
 import DailyChallengeCard from "@/app/components/DailyChallengeCard"
 
+import UniversalLoader from "@/app/components/UniversalLoader"
+
 const BrainNeuron = dynamic(() => import("@/app/components/biology/brainNeuron/BrainNeuron"), {
   ssr: false,
-  loading: () => <div className="flex items-center justify-center min-h-screen bg-gray-950 text-white">Loading Brain Neuron Simulation...</div>
+  loading: () => <UniversalLoader subject="biology" customMessage="Loading Brain Neuron Simulation..." />
 })
 
 export default function BrainNeuronPage() {

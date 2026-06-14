@@ -5,7 +5,40 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Blood Components - Biology Lab | OpenLabs",
-  description: "Examine human blood components.",
+  description: "Examine human blood components, types, and transfusion compatibility in this interactive biology simulation.",
+  keywords: [
+    "blood components",
+    "blood types",
+    "transfusion",
+    "hemoglobin",
+    "red blood cells",
+    "biology simulation",
+    "interactive lab",
+    "medical education"
+  ],
+  alternates: {
+    canonical: "https://www.openlabs.org.in/biology/blood",
+  },
+  openGraph: {
+    title: "Blood Components - Biology Lab | OpenLabs",
+    description: "Examine human blood components, types, and transfusion compatibility in this interactive biology simulation.",
+    url: "https://www.openlabs.org.in/biology/blood",
+    type: "website",
+    images: [{
+      url: "https://www.openlabs.org.in/images/biology/blood-hero.png",
+      alt: "Blood Components Lab | OpenLabs"
+    }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Blood Components - Biology Lab | OpenLabs",
+    description: "Examine human blood components, types, and transfusion compatibility in this interactive biology simulation.",
+    images: ["https://www.openlabs.org.in/images/biology/blood-hero.png"]
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 const content: EducationalContent = {

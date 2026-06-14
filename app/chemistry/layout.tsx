@@ -1,27 +1,37 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-    title: 'Chemistry Virtual Labs & Interactive Experiments',
-    description: 'Explore interactive chemistry experiments including periodic table, chemical bonds, reactions, and water quality analysis.',
+    title: 'Chemistry Virtual Labs | Interactive Chemistry Education | OpenLabs',
+    description: 'OpenLabs Chemistry offers interactive virtual labs for periodic trends, chemical bonding, reaction simulation, and water quality analysis.',
     keywords: [
-        'chemistry experiments', 'interactive chemistry', 'periodic table', 'chemical bonds',
-        'chemical reactions', 'water quality analysis', 'virtual chemistry lab', 'chemistry education',
-        'STEM chemistry', 'molecular simulations', 'element properties', 'reaction simulation'
+        'interactive chemistry', 'chemistry simulations', 'periodic table', 'chemical bond types',
+        'water quality analysis', 'reaction simulation', 'virtual chemistry lab', 'chemistry education',
+        'STEM learning', 'science virtual labs'
     ],
     openGraph: {
-        title: 'Chemistry Experiments | OpenLabs',
-        description: 'Explore interactive chemistry experiments including periodic table, chemical bonds, reactions, and water quality analysis.',
-        url: '/chemistry',
+        title: 'Chemistry Virtual Labs | Interactive Chemistry Education | OpenLabs',
+        description: 'Explore interactive periodic table simulations, molecular bonding labs, reaction kinetics, and water quality analysis with OpenLabs Chemistry.',
+        url: 'https://www.openlabs.org.in/chemistry',
         type: 'website',
+        images: [{
+            url: 'https://www.openlabs.org.in/images/og-image.svg',
+            width: 1200,
+            height: 630,
+            alt: 'Chemistry Virtual Labs | OpenLabs'
+        }]
     },
     twitter: {
         card: 'summary_large_image',
-        images: ['/images/twitter-image.svg'],
-        title: 'Chemistry Experiments | OpenLabs',
-        description: 'Explore interactive chemistry experiments including periodic table, chemical bonds, reactions, and water quality analysis.',
+        images: ['https://www.openlabs.org.in/images/twitter-image.svg'],
+        title: 'Chemistry Virtual Labs | Interactive Chemistry Education | OpenLabs',
+        description: 'Explore interactive periodic table simulations, molecular bonding labs, reaction kinetics, and water quality analysis with OpenLabs Chemistry.',
     },
     alternates: {
-        canonical: '/chemistry',
+        canonical: 'https://www.openlabs.org.in/chemistry',
+    },
+    robots: {
+        index: true,
+        follow: true,
     },
 }
 

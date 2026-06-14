@@ -1,7 +1,12 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 
-const OhmsLaw = dynamic(() => import('@/app/components/physics/OhmsLaw'), { ssr: false, loading: () => <p className="p-6">Loading Ohm's law…</p> })
+import UniversalLoader from '@/app/components/UniversalLoader'
+
+const OhmsLaw = dynamic(() => import('@/app/components/physics/OhmsLaw'), { 
+  ssr: false, 
+  loading: () => <UniversalLoader subject="physics" customMessage="Loading Ohm's Law simulation..." /> 
+})
 
 export default function OhmsLawPage() {
   return (

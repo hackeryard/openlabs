@@ -4,8 +4,41 @@ import { EducationalContent } from "@/types/education";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Plant Cell Simulation | OpenLabs",
-  description: "Interactive plant cell explorer.",
+  title: "Plant Cell Simulation | Interactive Botany Lab | OpenLabs",
+  description: "Interactive plant cell explorer with 3D visualization of chloroplasts, vacuoles, cell walls, and specialized organelles for biology education.",
+  keywords: [
+    "plant cell",
+    "chloroplasts",
+    "cell wall",
+    "vacuole",
+    "photosynthesis",
+    "plant organelles",
+    "botanical education",
+    "plant biology simulation"
+  ],
+  alternates: {
+    canonical: "https://www.openlabs.org.in/biology/cell/plant",
+  },
+  openGraph: {
+    title: "Plant Cell Simulation | Interactive Botany Lab | OpenLabs",
+    description: "Interactive plant cell explorer with 3D visualization of chloroplasts, vacuoles, cell walls, and specialized organelles for biology education.",
+    url: "https://www.openlabs.org.in/biology/cell/plant",
+    type: "website",
+    images: [{
+      url: "https://www.openlabs.org.in/images/biology/plant-cell-hero.png",
+      alt: "Plant Cell Simulation | OpenLabs"
+    }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Plant Cell Simulation | Interactive Botany Lab | OpenLabs",
+    description: "Interactive plant cell explorer with 3D visualization of chloroplasts, vacuoles, cell walls, and specialized organelles for biology education.",
+    images: ["https://www.openlabs.org.in/images/biology/plant-cell-hero.png"]
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 const content: EducationalContent = {

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-    title: 'Computer Science Tools & Interactive Learning',
+    title: 'Computer Science Tools & Interactive Learning | OpenLabs',
     description: 'Explore interactive computer science tools including code visualization, data structures, algorithms, networking, and blockchain simulations.',
     keywords: [
         'computer science tools', 'interactive coding', 'data structures', 'algorithms visualization',
@@ -9,19 +9,29 @@ export const metadata: Metadata = {
         'STEM computer science', 'code visualization', 'git simulator', 'logic gates'
     ],
     openGraph: {
-        title: 'Computer Science Tools | OpenLabs',
+        title: 'Computer Science Tools & Interactive Learning | OpenLabs',
         description: 'Explore interactive computer science tools including code visualization, data structures, algorithms, networking, and blockchain simulations.',
-        url: '/computer-science',
+        url: 'https://www.openlabs.org.in/computer-science',
         type: 'website',
+        images: [{
+            url: 'https://www.openlabs.org.in/images/og-image.svg',
+            width: 1200,
+            height: 630,
+            alt: 'Computer Science Virtual Labs | OpenLabs'
+        }]
     },
     twitter: {
         card: 'summary_large_image',
-        images: ['/images/twitter-image.svg'],
-        title: 'Computer Science Tools | OpenLabs',
+        images: ['https://www.openlabs.org.in/images/twitter-image.svg'],
+        title: 'Computer Science Tools & Interactive Learning | OpenLabs',
         description: 'Explore interactive computer science tools including code visualization, data structures, algorithms, networking, and blockchain simulations.',
     },
     alternates: {
-        canonical: '/computer-science',
+        canonical: 'https://www.openlabs.org.in/computer-science',
+    },
+    robots: {
+        index: true,
+        follow: true,
     },
 }
 

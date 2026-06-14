@@ -1,4 +1,3 @@
-import React from "react";
 import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
@@ -6,6 +5,41 @@ export const metadata: Metadata = {
   title: "Free Fall Simulator | Gravity Physics Lab | OpenLabs",
   description:
     "Interactive free fall simulator for exploring gravity, acceleration, velocity, height, and time in browser.",
+  keywords: [
+    "free fall",
+    "gravity simulator",
+    "acceleration",
+    "physics lab",
+    "motion analysis",
+    "interactive simulation"
+  ],
+  alternates: {
+    canonical: "https://www.openlabs.org.in/physics/freefall",
+  },
+  openGraph: {
+    title: "Free Fall Simulator | Gravity Physics Lab | OpenLabs",
+    description:
+      "Interactive free fall simulator for exploring gravity, acceleration, velocity, height, and time in browser.",
+    url: "https://www.openlabs.org.in/physics/freefall",
+    type: "website",
+    images: [
+      {
+        url: "https://www.openlabs.org.in/images/physics/free-fall-hero.png",
+        alt: "Free Fall Physics Simulator | OpenLabs",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Free Fall Simulator | Gravity Physics Lab | OpenLabs",
+    description:
+      "Interactive free fall simulator for exploring gravity, acceleration, velocity, height, and time in browser.",
+    images: ["https://www.openlabs.org.in/images/physics/free-fall-hero.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function FreeFallPage() {

@@ -21,15 +21,12 @@ import {
 } from 'lucide-react';
 import { REACTION_DETAILS } from '@/app/components/chemistry/reactions/reactionDetails';
 
+import UniversalLoader from '@/app/components/UniversalLoader'
+
 // Dynamic import of visual simulator to avoid SSR canvas errors
 const ReactionSimulation = dynamic(() => import('@/app/components/chemistry/reactions/ReactionSimulation'), {
   ssr: false,
-  loading: () => (
-    <div className="flex flex-col items-center justify-center p-12 bg-white border border-slate-200 shadow-sm rounded-3xl h-[500px]">
-      <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4" />
-      <p className="text-slate-500 font-bold text-xs tracking-wider uppercase animate-pulse">Initializing 3D Molecular Engine…</p>
-    </div>
-  ),
+  loading: () => <UniversalLoader subject="chemistry" customMessage="Initializing 3D Molecular Engine..." />
 })
 
 export default function ChemistryPage() {
@@ -106,7 +103,7 @@ export default function ChemistryPage() {
         {/* Dynamic Title Header Block */}
         <div className="space-y-2 text-left">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-150 text-[10px] font-black uppercase tracking-wider">
+            <span className="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] font-black uppercase tracking-wider">
               Simulation Sandbox
             </span>
           </div>
@@ -117,6 +114,12 @@ export default function ChemistryPage() {
             Synthesize compounds in a simulated environment. Select chemical configurations, trigger atomic rearrangement physics in real-time, and analyze thermodynamic parameters.
           </p>
         </div>
+
+        {/* Daily Challenge */}
+        <DailyChallengeCard 
+          labId="chemistry/reaction-simulation" 
+          currentParams={{ reactionsRun, temperature, yield: yieldVal }} 
+        />
 
         {/* Console Workspace Grid Cockpit */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -129,13 +132,7 @@ export default function ChemistryPage() {
           {/* Telemetry Instruments & Manual (Right Column - lg:col-span-4) */}
           <div className="lg:col-span-4 flex flex-col space-y-6 w-full text-left">
             
-            {/* Daily Challenge Card console integration */}
-            <div id="daily-challenge-panel" className="w-full">
-              <DailyChallengeCard 
-                labId="chemistry/reaction-simulation" 
-                currentParams={{ reactionsRun, temperature, yield: yieldVal }} 
-              />
-            </div>
+
 
             {/* Dynamic Telemetry Readings Dashboard */}
             <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-md space-y-4 text-left relative overflow-hidden" id="telemetry-panel">
@@ -150,33 +147,33 @@ export default function ChemistryPage() {
               
               <div className="grid grid-cols-3 gap-3.5 pt-1">
                 {/* 1. TEMPERATURE */}
-                <div className="flex flex-col justify-between items-center bg-slate-50 border border-slate-150 p-3 rounded-2xl shadow-inner text-center">
+                <div className="flex flex-col justify-between items-center bg-slate-50 border border-slate-200 p-3 rounded-2xl shadow-inner text-center">
                   <div className="w-7 h-7 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-500 mb-2">
                     <Thermometer className="h-4 w-4" />
                   </div>
-                  <span className="text-[9px] text-slate-450 uppercase font-black tracking-wider">System Temp</span>
+                  <span className="text-[9px] text-slate-400 uppercase font-black tracking-wider">System Temp</span>
                   <span className="text-base font-black font-mono text-slate-900 mt-1">
                     {temperature}°C
                   </span>
                 </div>
 
                 {/* 2. YIELD */}
-                <div className="flex flex-col justify-between items-center bg-slate-50 border border-slate-150 p-3 rounded-2xl shadow-inner text-center">
+                <div className="flex flex-col justify-between items-center bg-slate-50 border border-slate-200 p-3 rounded-2xl shadow-inner text-center">
                   <div className="w-7 h-7 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-500 mb-2">
                     <Percent className="h-4 w-4" />
                   </div>
-                  <span className="text-[9px] text-slate-450 uppercase font-black tracking-wider">Est. Yield</span>
+                  <span className="text-[9px] text-slate-400 uppercase font-black tracking-wider">Est. Yield</span>
                   <span className="text-base font-black font-mono text-slate-900 mt-1">
                     {yieldVal}%
                   </span>
                 </div>
 
                 {/* 3. SIMULATION RUNS */}
-                <div className="flex flex-col justify-between items-center bg-slate-50 border border-slate-150 p-3 rounded-2xl shadow-inner text-center">
+                <div className="flex flex-col justify-between items-center bg-slate-50 border border-slate-200 p-3 rounded-2xl shadow-inner text-center">
                   <div className="w-7 h-7 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-500 mb-2">
                     <FlaskConical className="h-4 w-4" />
                   </div>
-                  <span className="text-[9px] text-slate-450 uppercase font-black tracking-wider">Runs Executed</span>
+                  <span className="text-[9px] text-slate-400 uppercase font-black tracking-wider">Runs Executed</span>
                   <span className="text-base font-black font-mono text-indigo-600 mt-1">
                     {reactionsRun}
                   </span>
@@ -190,7 +187,7 @@ export default function ChemistryPage() {
                 </div>
               ) : (
                 <div className="text-[10px] font-bold text-indigo-700 leading-normal flex items-start gap-2 bg-indigo-50/40 p-3 rounded-xl border border-indigo-100/60 animate-pulse">
-                  <Sparkles className="h-4.5 w-4.5 text-indigo-600 flex-shrink-0 mt-0.5" />
+                  <Sparkles className="h-[18px] w-[18px] text-indigo-600 flex-shrink-0 mt-0.5" />
                   <span>Telemetry values actively dynamic. Real-time product synthesis complete!</span>
                 </div>
               )}
@@ -217,7 +214,7 @@ export default function ChemistryPage() {
 
                 <div className="space-y-4 text-xs font-semibold">
                   <div className="space-y-1">
-                    <span className="text-[9px] text-slate-450 uppercase font-black tracking-wider">Classification</span>
+                    <span className="text-[9px] text-slate-400 uppercase font-black tracking-wider">Classification</span>
                     <div className="text-sm font-black text-slate-800">{activeDetails.type}</div>
                     <div className={`text-[10px] font-bold ${activeDetails.energy.includes("Exo") ? "text-orange-600 bg-orange-50 px-2 py-0.5 rounded border border-orange-100 inline-block" : "text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-100 inline-block"}`}>
                       {activeDetails.energy}
@@ -225,14 +222,14 @@ export default function ChemistryPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <span className="text-[9px] text-slate-450 uppercase font-black tracking-wider">Real World Context</span>
+                    <span className="text-[9px] text-slate-400 uppercase font-black tracking-wider">Real World Context</span>
                     <p className="text-slate-700 bg-indigo-50/50 p-3 rounded-xl border border-indigo-100/50 leading-relaxed font-medium">
                       {activeDetails.context}
                     </p>
                   </div>
 
                   <div className="space-y-2">
-                    <span className="text-[9px] text-slate-450 uppercase font-black tracking-wider">Key Concepts</span>
+                    <span className="text-[9px] text-slate-400 uppercase font-black tracking-wider">Key Concepts</span>
                     <ul className="space-y-2 font-medium text-slate-600">
                       {activeDetails.facts.map((fact: string, i: number) => (
                         <li key={i} className="flex gap-2">

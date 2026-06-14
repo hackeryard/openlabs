@@ -5,7 +5,40 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Brain & Neurons - Biology Lab | OpenLabs",
-  description: "Understand neural networks and brain anatomy.",
+  description: "Understand neural networks, neuron structure, and brain anatomy through interactive simulation and visualization.",
+  keywords: [
+    "brain neurons",
+    "neural networks",
+    "neuroscience",
+    "synaptic transmission",
+    "action potential",
+    "neuron structure",
+    "biology simulation",
+    "interactive learning"
+  ],
+  alternates: {
+    canonical: "https://www.openlabs.org.in/biology/brainNeuron",
+  },
+  openGraph: {
+    title: "Brain & Neurons - Biology Lab | OpenLabs",
+    description: "Understand neural networks, neuron structure, and brain anatomy through interactive simulation and visualization.",
+    url: "https://www.openlabs.org.in/biology/brainNeuron",
+    type: "website",
+    images: [{
+      url: "https://www.openlabs.org.in/images/biology/brain-neuron-hero.png",
+      alt: "Brain & Neurons Lab | OpenLabs"
+    }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Brain & Neurons - Biology Lab | OpenLabs",
+    description: "Understand neural networks, neuron structure, and brain anatomy through interactive simulation and visualization.",
+    images: ["https://www.openlabs.org.in/images/biology/brain-neuron-hero.png"]
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 const content: EducationalContent = {

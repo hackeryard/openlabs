@@ -6,14 +6,11 @@ import { useLab } from '@/app/hooks/useXP';
 import DailyChallengeCard from '@/app/components/DailyChallengeCard';
 import { Atom } from 'lucide-react';
 
+import UniversalLoader from '@/app/components/UniversalLoader'
+
 const PeriodicTable = dynamic(() => import('@/app/components/chemistry/PeriodicTable'), {
   ssr: false,
-  loading: () => (
-    <div className="flex min-h-[420px] flex-col items-center justify-center rounded-3xl border border-slate-200 bg-white shadow-sm">
-      <div className="mb-4 h-10 w-10 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent" />
-      <p className="text-xs font-black uppercase tracking-wider text-slate-500">Loading periodic table...</p>
-    </div>
-  ),
+  loading: () => <UniversalLoader subject="chemistry" customMessage="Loading Periodic Table..." />
 })
 
 export default function PeriodicTablePage() {

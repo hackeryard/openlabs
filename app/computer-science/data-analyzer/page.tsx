@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     "OpenLabs computer science lab",
   ],
   alternates: {
-    canonical: "/computer-science/data-analyzer",
+    canonical: "https://www.openlabs.org.in/computer-science/data-analyzer",
   },
   openGraph: {
     title: "Data Analyzer Lab - Social Network Analysis Visualizer | OpenLabs",

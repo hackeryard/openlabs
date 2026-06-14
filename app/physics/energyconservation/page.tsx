@@ -1,4 +1,3 @@
-import React from "react";
 import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
@@ -6,6 +5,41 @@ export const metadata: Metadata = {
   title: "Energy Conservation Simulator | Interactive Physics Lab | OpenLabs",
   description:
     "Investigate energy transformation and conservation with an interactive browser-based physics simulation.",
+  keywords: [
+    "energy conservation",
+    "kinetic energy",
+    "potential energy",
+    "energy transformation",
+    "physics lab",
+    "mechanics simulation"
+  ],
+  alternates: {
+    canonical: "https://www.openlabs.org.in/physics/energyconservation",
+  },
+  openGraph: {
+    title: "Energy Conservation Simulator | Interactive Physics Lab | OpenLabs",
+    description:
+      "Investigate energy transformation and conservation with an interactive browser-based physics simulation.",
+    url: "https://www.openlabs.org.in/physics/energyconservation",
+    type: "website",
+    images: [
+      {
+        url: "https://www.openlabs.org.in/images/physics/energy-conservation-hero.png",
+        alt: "Energy Conservation Physics Simulator | OpenLabs",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Energy Conservation Simulator | Interactive Physics Lab | OpenLabs",
+    description:
+      "Investigate energy transformation and conservation with an interactive browser-based physics simulation.",
+    images: ["https://www.openlabs.org.in/images/physics/energy-conservation-hero.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function EnergyConservationPage() {

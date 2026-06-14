@@ -4,8 +4,41 @@ import { EducationalContent } from "@/types/education";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Algebra Visualizer - Maths Lab | OpenLabs",
-  description: "Visualize algebraic equations.",
+  title: "Algebra Visualizer - Interactive Mathematics Lab | OpenLabs",
+  description: "Visualize and solve algebraic equations through interactive simulation. Explore variables, expressions, and equation solving techniques.",
+  keywords: [
+    "algebra",
+    "algebra visualizer",
+    "equation solver",
+    "algebraic expressions",
+    "variable manipulation",
+    "equation visualization",
+    "mathematics education",
+    "interactive math lab"
+  ],
+  alternates: {
+    canonical: "https://www.openlabs.org.in/maths/alzebra",
+  },
+  openGraph: {
+    title: "Algebra Visualizer - Interactive Mathematics Lab | OpenLabs",
+    description: "Visualize and solve algebraic equations through interactive simulation. Explore variables, expressions, and equation solving techniques.",
+    url: "https://www.openlabs.org.in/maths/alzebra",
+    type: "website",
+    images: [{
+      url: "https://www.openlabs.org.in/images/maths/algebra-hero.png",
+      alt: "Algebra Visualizer Lab | OpenLabs"
+    }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Algebra Visualizer - Interactive Mathematics Lab | OpenLabs",
+    description: "Visualize and solve algebraic equations through interactive simulation. Explore variables, expressions, and equation solving techniques.",
+    images: ["https://www.openlabs.org.in/images/maths/algebra-hero.png"]
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 const content: EducationalContent = {

@@ -4,8 +4,41 @@ import { EducationalContent } from "@/types/education";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Human Anatomy - Biology Lab | OpenLabs",
-  description: "Explore the human body systems.",
+  title: "Human Anatomy - Interactive Body Systems Lab | OpenLabs",
+  description: "Explore the human body systems, organ structure, and anatomical organization through interactive 3D visualization and detailed diagrams.",
+  keywords: [
+    "human anatomy",
+    "body systems",
+    "organ structure",
+    "skeletal system",
+    "respiratory system",
+    "circulatory system",
+    "anatomy education",
+    "interactive medical simulation"
+  ],
+  alternates: {
+    canonical: "https://www.openlabs.org.in/biology/human",
+  },
+  openGraph: {
+    title: "Human Anatomy - Interactive Body Systems Lab | OpenLabs",
+    description: "Explore the human body systems, organ structure, and anatomical organization through interactive 3D visualization and detailed diagrams.",
+    url: "https://www.openlabs.org.in/biology/human",
+    type: "website",
+    images: [{
+      url: "https://www.openlabs.org.in/images/biology/human-anatomy-hero.png",
+      alt: "Human Anatomy Lab | OpenLabs"
+    }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Human Anatomy - Interactive Body Systems Lab | OpenLabs",
+    description: "Explore the human body systems, organ structure, and anatomical organization through interactive 3D visualization and detailed diagrams.",
+    images: ["https://www.openlabs.org.in/images/biology/human-anatomy-hero.png"]
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 const content: EducationalContent = {

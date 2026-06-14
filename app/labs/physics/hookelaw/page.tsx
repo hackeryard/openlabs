@@ -1,7 +1,12 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 
-const HookeLaw = dynamic(() => import('@/app/components/physics/HookeLaw'), { ssr: false, loading: () => <p className="p-6">Loading Hooke's law…</p> })
+import UniversalLoader from '@/app/components/UniversalLoader'
+
+const HookeLaw = dynamic(() => import('@/app/components/physics/HookeLaw'), { 
+  ssr: false, 
+  loading: () => <UniversalLoader subject="physics" customMessage="Loading Hooke's Law simulation..." /> 
+})
 
 export default function HookeLawPage() {
   return (

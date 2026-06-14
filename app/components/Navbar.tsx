@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 
@@ -68,7 +68,6 @@ export default function Navbar() {
   const [mobileLabsOpen, setMobileLabsOpen] = useState(false);
   const [user, setUser] = useState<any | null>(null);
 
-  const router = useRouter();
   const pathname = usePathname();
   const labsRef = useRef<HTMLLIElement>(null);
 
@@ -151,7 +150,7 @@ export default function Navbar() {
             >
               <Image
                 src={'/images/logo.png'}
-                alt="OpanLabs Logo"
+                alt="OpenLabs logo"
                 width={40}
                 height={40}
                 className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center font-bold"
@@ -167,6 +166,7 @@ export default function Navbar() {
           <motion.button
             aria-label="Toggle menu"
             aria-expanded={mobileOpen}
+            aria-controls="mobile-navigation"
             onClick={() => setMobileOpen((v) => !v)}
             whileTap={{ scale: 0.95 }}
             className="
@@ -231,6 +231,8 @@ export default function Navbar() {
             <li ref={labsRef} className="relative">
               <button
                 onClick={() => setLabsOpen((v) => !v)}
+                aria-expanded={labsOpen}
+                aria-haspopup="menu"
                 className={`
                   flex items-center gap-1 px-3 py-2 rounded-md transition text-sm font-medium
                   ${isLabsActive ? "bg-white/20 font-semibold" : "hover:bg-white/10"}
@@ -246,6 +248,7 @@ export default function Navbar() {
               <AnimatePresence>
                 {labsOpen && (
                   <motion.div
+                    role="menu"
                     variants={dropdownVariants}
                     initial="hidden"
                     animate="visible"
@@ -266,6 +269,7 @@ export default function Navbar() {
                         <Link
                           key={cat.path}
                           href={cat.path}
+                          role="menuitem"
                           className={`
                             flex items-center px-3 py-2.5 rounded-lg transition text-sm
                             ${pathname.startsWith(cat.path)
@@ -329,7 +333,7 @@ export default function Navbar() {
                 >
                   <Image
                     src={user.avatar || "/images/avatars/avatar1.svg"}
-                    alt="profile"
+                    alt="User profile"
                     width={36}
                     height={36}
                     className="rounded-full object-cover"
@@ -359,7 +363,7 @@ export default function Navbar() {
                 z-50
               "
             >
-              <ul className="p-2 space-y-0.5">
+              <ul id="mobile-navigation" className="p-2 space-y-0.5">
                 {/* Home */}
                 <li>
                   <Link
@@ -378,6 +382,8 @@ export default function Navbar() {
                 <li>
                   <button
                     onClick={() => setMobileLabsOpen((v) => !v)}
+                    aria-expanded={mobileLabsOpen}
+                    aria-controls="mobile-labs-menu"
                     className={`
                       w-full flex items-center justify-between px-4 py-2.5 rounded-lg transition text-sm font-medium
                       ${isLabsActive ? "bg-indigo-100 text-indigo-700 font-semibold" : "hover:bg-slate-100"}
@@ -397,6 +403,7 @@ export default function Navbar() {
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.2 }}
+                        id="mobile-labs-menu"
                         className="overflow-hidden"
                       >
                         <div className="pl-4 py-1 space-y-0.5">
@@ -468,7 +475,7 @@ export default function Navbar() {
                     >
                       <Image
                         src={user.avatar || "/images/avatars/avatar1.svg"}
-                        alt="profile"
+                        alt=""
                         width={32}
                         height={32}
                         className="rounded-full object-cover"

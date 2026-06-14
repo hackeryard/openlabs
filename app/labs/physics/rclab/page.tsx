@@ -1,7 +1,12 @@
 import dynamic from 'next/dynamic'
 import React from 'react'
 
-const RCLab = dynamic(() => import('@/app/components/physics/RCLab'), { ssr: false, loading: () => <p className="p-6">Loading RC Lab…</p> })
+import UniversalLoader from '@/app/components/UniversalLoader'
+
+const RCLab = dynamic(() => import('@/app/components/physics/RCLab'), { 
+  ssr: false, 
+  loading: () => <UniversalLoader subject="physics" customMessage="Loading RC Circuit Lab..." /> 
+})
 
 export default function RCLabPage() {
   return (

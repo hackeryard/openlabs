@@ -2,15 +2,14 @@
 import './globals.css'
 import React from 'react'
 import type { Metadata } from 'next'
-import dynamic from 'next/dynamic'
-import OpenLabsAI from './components/OpenLabsAI'
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
+import OpenLabsAILoader from './components/OpenLabsAILoader'
 import { ChatProvider } from './components/ChatContext'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from "@vercel/analytics/next"
 import Script from 'next/script'
 
-const Navbar = dynamic(() => import('./components/Navbar'), { ssr: false })
-const Footer = dynamic(() => import('./components/Footer'), { ssr: false })
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.openlabs.org.in'
 
 export const metadata: Metadata = {
@@ -100,12 +99,12 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
         <Analytics />
         <Navbar />
         <div className="mx-auto">
-          <main data-ol-page-root>
+          <div data-ol-page-root>
             <ChatProvider>
               {children}
-              <OpenLabsAI />
+              <OpenLabsAILoader />
             </ChatProvider>
-          </main>
+          </div>
         </div>
         <Footer />
         <SpeedInsights />

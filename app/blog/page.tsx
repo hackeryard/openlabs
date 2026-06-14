@@ -1,11 +1,42 @@
 import React from "react";
-import { Sparkles, BookOpen } from "lucide-react";
+import type { Metadata } from "next";
 import BlogGrid from "../components/blog/BlogGrid";
 import { connectDB } from '@/app/lib/mongodb';
 import Blog from '@/app/models/Blog';
 
-// Force dynamic or just use no-store in fetch to ensure fresh blog posts
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
+
+export const metadata: Metadata = {
+  title: "OpenLabs Blog - Virtual Labs, STEM Learning, and EdTech Updates",
+  description: "Read OpenLabs articles about virtual experiments, AI learning tools, STEM pedagogy, engineering updates, and the future of interactive science education.",
+  alternates: {
+    canonical: "/blog",
+  },
+  openGraph: {
+    title: "OpenLabs Blog - Virtual Labs, STEM Learning, and EdTech Updates",
+    description: "Deep dives into virtual experiments, AI learning tools, STEM pedagogy, and OpenLabs engineering updates.",
+    url: "/blog",
+    type: "website",
+    images: [
+      {
+        url: "/images/og-image.svg",
+        width: 1200,
+        height: 630,
+        alt: "OpenLabs blog and interactive learning updates",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "OpenLabs Blog - Virtual Labs, STEM Learning, and EdTech Updates",
+    description: "Read OpenLabs articles about virtual labs, AI learning tools, STEM pedagogy, and platform updates.",
+    images: ["/images/twitter-image.svg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 async function getBlogs() {
   try {
@@ -15,7 +46,6 @@ async function getBlogs() {
       .select('slug title excerpt category author date readTime gradient border icon coverImage -_id')
       .lean();
     
-    // We need to serialize the MongoDB objects to plain JS objects for Server Components
     return JSON.parse(JSON.stringify(blogs)) || [];
   } catch (error) {
     console.error("Failed to fetch blogs directly:", error);
@@ -23,11 +53,52 @@ async function getBlogs() {
   }
 }
 
+const blogSchema = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "@id": "https://www.openlabs.org.in/blog#blog",
+  url: "https://www.openlabs.org.in/blog",
+  name: "OpenLabs Blog",
+  description: metadata.description,
+  publisher: {
+    "@type": "EducationalOrganization",
+    name: "OpenLabs",
+    url: "https://www.openlabs.org.in/",
+  },
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://www.openlabs.org.in/",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Blog",
+      item: "https://www.openlabs.org.in/blog",
+    },
+  ],
+};
+
 export default async function BlogPage() {
   const posts = await getBlogs();
 
   return (
     <main className="min-h-screen bg-[#f8fafc] text-slate-900 selection:bg-indigo-100 selection:text-indigo-900 antialiased overflow-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
 
       {/* Light Cinematic Hero Section */}
       <section className="relative pt-20 pb-16 md:pt-32 md:pb-32 overflow-hidden border-b border-slate-200/80 bg-white">

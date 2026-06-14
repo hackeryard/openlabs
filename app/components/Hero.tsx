@@ -1,28 +1,7 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, Variants } from "framer-motion";
 import { Beaker, Atom, Dna, Code, ArrowRight } from "lucide-react";
-
-/* ---------------- Animations (Optimized for performance) ---------------- */
-const container: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
-  },
-};
-
-const item: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: "easeOut" },
-  },
-};
 
 const labsData = {
   "Physics": {
@@ -76,7 +55,7 @@ const mainButtons = [
 
 export default function Hero() {
   return (
-    <main className="min-h-screen bg-[#f8fafc]">
+    <div className="min-h-screen bg-[#f8fafc]">
       {/* -------- Hero Section -------- */}
       <section
         className="relative px-4 sm:px-6 lg:px-8 py-12 md:py-24 lg:py-32 flex items-center justify-center overflow-hidden"
@@ -87,14 +66,9 @@ export default function Hero() {
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[500px] bg-indigo-100/30 blur-[120px] rounded-full" />
         </div>
 
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="visible"
-          className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center"
-        >
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Content */}
-          <motion.div variants={item} className="text-center lg:text-left order-2 lg:order-1">
+          <div className="text-center lg:text-left order-2 lg:order-1">
             <span className="inline-block px-4 py-1.5 mb-6 text-sm font-bold tracking-wider text-indigo-700 uppercase bg-indigo-50 rounded-full">
               The Future of Learning
             </span>
@@ -119,21 +93,14 @@ export default function Hero() {
                 </Link>
               ))}
             </nav>
-          </motion.div>
+          </div>
 
           {/* Right Image/Illustration */}
-          <motion.div
-            variants={item}
-            className="order-1 lg:order-2 flex justify-center items-center relative"
-          >
+          <div className="order-1 lg:order-2 flex justify-center items-center relative">
             {/* Ambient Light Effect */}
             <div className="absolute w-64 h-64 bg-indigo-400/20 blur-3xl rounded-full" />
 
-            <motion.div
-              animate={{ y: [0, -15, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="relative z-10 w-full max-w-[300px] sm:max-w-[450px] lg:max-w-full"
-            >
+            <div className="relative z-10 w-full max-w-[300px] sm:max-w-[450px] lg:max-w-full">
               <Image
                 src="/images/scientist.png"
                 width={600}
@@ -141,11 +108,11 @@ export default function Hero() {
                 alt="3D Illustration of a scientist with floating chemicals"
                 className="w-full h-auto drop-shadow-2xl"
                 priority
-                sizes="(max-w-768px) 100vw, 50vw"
+                sizes="(max-width: 640px) 300px, (max-width: 1024px) 450px, 50vw"
               />
-            </motion.div>
-          </motion.div>
-        </motion.div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* -------- Lab Grid Section -------- */}
@@ -160,11 +127,8 @@ export default function Hero() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {Object.entries(labsData).map(([category, data]) => (
-              <motion.article
+              <article
                 key={category}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
                 className={`flex flex-col bg-white rounded-3xl overflow-hidden shadow-xl border border-slate-100 hover:shadow-2xl transition-all duration-300 group`}
               >
                 <div className={`bg-gradient-to-r ${data.color} p-6 text-white`}>
@@ -189,11 +153,11 @@ export default function Hero() {
                     </Link>
                   ))}
                 </div>
-              </motion.article>
+              </article>
             ))}
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

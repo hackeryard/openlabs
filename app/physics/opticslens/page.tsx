@@ -1,4 +1,3 @@
-import React from "react";
 import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
@@ -6,6 +5,41 @@ export const metadata: Metadata = {
   title: "Optics Lens Simulator | Image Formation Physics Lab | OpenLabs",
   description:
     "Interactive optics lens simulator for exploring focal length, object distance, image distance, magnification, and ray diagrams.",
+  keywords: [
+    "optics lens",
+    "lens simulator",
+    "image formation",
+    "thin lens equation",
+    "physics lab",
+    "ray diagrams"
+  ],
+  alternates: {
+    canonical: "https://www.openlabs.org.in/physics/opticslens",
+  },
+  openGraph: {
+    title: "Optics Lens Simulator | Image Formation Physics Lab | OpenLabs",
+    description:
+      "Interactive optics lens simulator for exploring focal length, object distance, image distance, magnification, and ray diagrams.",
+    url: "https://www.openlabs.org.in/physics/opticslens",
+    type: "website",
+    images: [
+      {
+        url: "https://www.openlabs.org.in/images/physics/optics-lens-hero.png",
+        alt: "Optics Lens Simulator | OpenLabs",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Optics Lens Simulator | Image Formation Physics Lab | OpenLabs",
+    description:
+      "Interactive optics lens simulator for exploring focal length, object distance, image distance, magnification, and ray diagrams.",
+    images: ["https://www.openlabs.org.in/images/physics/optics-lens-hero.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function OpticsLensPage() {

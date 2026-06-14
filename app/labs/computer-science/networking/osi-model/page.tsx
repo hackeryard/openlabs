@@ -6,13 +6,15 @@ import { useChat } from "@/app/components/ChatContext";
 import { useLab } from "@/app/hooks/useXP";
 import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
+import UniversalLoader from "@/app/components/UniversalLoader";
+
 const OSIModel = dynamic(
   () => import("@/app/components/computer-science/networking/osi-model/OSIModel"),
-  { ssr: false }
+  { ssr: false, loading: () => <UniversalLoader subject="computer-science" customMessage="Loading 3D OSI Model..." /> }
 );
 const OSIModel2D = dynamic(
   () => import("@/app/components/computer-science/networking/osi-model/OSIModel2D"),
-  { ssr: false }
+  { ssr: false, loading: () => <UniversalLoader subject="computer-science" customMessage="Loading OSI Model..." /> }
 );
 
 export default function OSIPage() {

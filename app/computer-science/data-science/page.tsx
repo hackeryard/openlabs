@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     "OpenLabs computer science lab",
   ],
   alternates: {
-    canonical: "/computer-science/data-science",
+    canonical: "https://www.openlabs.org.in/computer-science/data-science",
   },
   openGraph: {
     title: "Data Science Anomaly Detection Lab | OpenLabs",

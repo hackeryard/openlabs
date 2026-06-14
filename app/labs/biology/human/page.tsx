@@ -8,9 +8,11 @@ import { useChat } from "@/app/components/ChatContext"
 import { useLab } from "@/app/hooks/useXP"
 import DailyChallengeCard from "@/app/components/DailyChallengeCard"
 
+import UniversalLoader from "@/app/components/UniversalLoader"
+
 const AnatomyScene = dynamic(
   () => import("@/app/components/biology/human/AnatomyScene"),
-  { ssr: false, loading: () => <div className="w-full h-full flex items-center justify-center bg-gray-900 text-white">Loading 3D model...</div> }
+  { ssr: false, loading: () => <UniversalLoader subject="biology" customMessage="Loading 3D Anatomy Model..." /> }
 )
 
 export default function Page() {

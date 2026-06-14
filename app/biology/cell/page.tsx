@@ -5,7 +5,40 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Cell Structure - Biology Lab | OpenLabs",
-  description: "Interactive plant and animal cell explorer.",
+  description: "Interactive plant and animal cell explorer with detailed organelle visualization and structure analysis.",
+  keywords: [
+    "cell structure",
+    "organelles",
+    "eukaryotic cells",
+    "cell biology",
+    "plant cells",
+    "animal cells",
+    "cellular organization",
+    "interactive simulation"
+  ],
+  alternates: {
+    canonical: "https://www.openlabs.org.in/biology/cell",
+  },
+  openGraph: {
+    title: "Cell Structure - Biology Lab | OpenLabs",
+    description: "Interactive plant and animal cell explorer with detailed organelle visualization and structure analysis.",
+    url: "https://www.openlabs.org.in/biology/cell",
+    type: "website",
+    images: [{
+      url: "https://www.openlabs.org.in/images/biology/cell-hero.png",
+      alt: "Cell Structure Lab | OpenLabs"
+    }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Cell Structure - Biology Lab | OpenLabs",
+    description: "Interactive plant and animal cell explorer with detailed organelle visualization and structure analysis.",
+    images: ["https://www.openlabs.org.in/images/biology/cell-hero.png"]
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 const content: EducationalContent = {

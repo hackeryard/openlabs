@@ -1,9 +1,14 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 
-const UniformMotionLab = dynamic(() => import('@/app/components/physics/UniformMotionLab'), { ssr: false, loading: () => <p className="p-6">Loading Wave Optics…</p> })
+import UniversalLoader from '@/app/components/UniversalLoader'
 
-export default function WaveOpticsPage() {
+const UniformMotionLab = dynamic(() => import('@/app/components/physics/UniformMotionLab'), { 
+  ssr: false, 
+  loading: () => <UniversalLoader subject="physics" customMessage="Loading Uniform Motion simulation..." /> 
+})
+
+export default function UniformMotionPage() {
   return (
     <main className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto">

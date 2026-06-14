@@ -9,6 +9,8 @@ import { Metadata } from 'next';
 import { connectDB } from '@/app/lib/mongodb';
 import Blog from '@/app/models/Blog';
 
+export const revalidate = 3600;
+
 // TypeScript Types for better safety
 interface FAQ {
   question: string;
@@ -47,16 +49,53 @@ async function getBlogPost(slug: string): Promise<BlogPost | null> {
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const post = await getBlogPost(params.slug);
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.openlabs.org.in";
 
   if (!post) {
-    return { title: 'Post Not Found | OpenLabs' };
+    return {
+      title: 'Post Not Found | OpenLabs',
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
   }
+
+  const title = post.metaTitle || `${post.title} | OpenLabs Blog`;
+  const description = post.metaDescription || post.excerpt || `Read ${post.title} on the OpenLabs Blog.`;
+  const canonical = `/blog/${post.slug}`;
+  const image = post.coverImage || "/images/og-image.svg";
+
   return {
-    title: post.metaTitle || `${post.title} | OpenLabs Blog`,
-    description: post.metaDescription || post.excerpt,
+    title,
+    description,
     alternates: {
-      canonical: `${baseUrl}/blog/${post.slug}`,
+      canonical,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      type: "article",
+      publishedTime: post.date ? new Date(post.date).toISOString() : undefined,
+      authors: [post.author || "OpenLabs Team"],
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+    },
+    robots: {
+      index: true,
+      follow: true,
     },
   };
 }
@@ -87,8 +126,69 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     }))
   } : null;
 
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": `https://www.openlabs.org.in/blog/${post.slug}#article`,
+    url: `https://www.openlabs.org.in/blog/${post.slug}`,
+    headline: post.title,
+    description: post.metaDescription || post.excerpt || post.title,
+    image: post.coverImage ? [post.coverImage] : ["https://www.openlabs.org.in/images/og-image.svg"],
+    datePublished: post.date ? new Date(post.date).toISOString() : undefined,
+    author: {
+      "@type": "Person",
+      name: post.author || "OpenLabs Team",
+    },
+    publisher: {
+      "@type": "EducationalOrganization",
+      name: "OpenLabs",
+      url: "https://www.openlabs.org.in/",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://www.openlabs.org.in/images/logo.png",
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://www.openlabs.org.in/blog/${post.slug}`,
+    },
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://www.openlabs.org.in/",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Blog",
+        item: "https://www.openlabs.org.in/blog",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: post.title,
+        item: `https://www.openlabs.org.in/blog/${post.slug}`,
+      },
+    ],
+  };
+
   return (
     <main className="min-h-screen bg-[#fafafa] text-slate-900 selection:bg-indigo-100 selection:text-indigo-900 antialiased pt-20 pb-32">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       {faqSchema && (
         <script
           type="application/ld+json"
@@ -105,7 +205,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             href="/blog"
             className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-indigo-600 font-medium group transition-colors duration-200"
           >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200" />
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200" aria-hidden="true" />
             Back to publications
           </Link>
         </div>
@@ -126,19 +226,19 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           <div className="flex flex-wrap items-center gap-y-3 gap-x-6 text-sm text-slate-500 pt-4 border-t border-slate-200/60">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center">
-                <User className="w-4 h-4 text-slate-500" />
+                <User className="w-4 h-4 text-slate-500" aria-hidden="true" />
               </div>
               <span className="font-semibold text-slate-800">{post.author || 'OpenLabs Team'}</span>
             </div>
 
             <div className="flex items-center gap-1.5 text-slate-500">
-              <Calendar className="w-4 h-4" />
+              <Calendar className="w-4 h-4" aria-hidden="true" />
               <time dateTime={post.date}>{displayDate}</time>
             </div>
 
             {post.readTime && (
               <div className="flex items-center gap-1.5 text-slate-500">
-                <Clock className="w-4 h-4" />
+                <Clock className="w-4 h-4" aria-hidden="true" />
                 <span>{post.readTime}</span>
               </div>
             )}
@@ -154,7 +254,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               fill
               priority
               className="object-cover object-center transform hover:scale-[1.02] transition-transform duration-700"
-              sizes="(max-w-3xl) 100vw, 768px"
+              sizes="(max-width: 768px) 100vw, 960px"
             />
           </div>
         )}
@@ -196,7 +296,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                       {faq.question}
                     </span>
                     <span className="flex-shrink-0 w-6 h-6 rounded-full bg-slate-50 text-slate-400 group-hover:text-indigo-600 group-hover:bg-indigo-50 flex items-center justify-center transition-colors">
-                      <ChevronDown className="w-4 h-4 transform group-open:rotate-180 transition-transform duration-300 ease-in-out" />
+                      <ChevronDown className="w-4 h-4 transform group-open:rotate-180 transition-transform duration-300 ease-in-out" aria-hidden="true" />
                     </span>
                   </summary>
                   <div className="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-100 mt-2 pt-4">
