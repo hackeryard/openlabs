@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { nanoid } from "nanoid";
+import { analyticsService } from "@/lib/analytics";
 
 export interface Project {
   id: string;
@@ -137,6 +138,10 @@ export function useProjects(projectType: string) {
     if (res.status === 401) {
       router.push(`/login?next=${encodeURIComponent(currentPath)}`);
       return;
+    }
+
+    if (res.ok) {
+      analyticsService.trackProjectCreated(id);
     }
   };
 

@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, Suspense } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { User, Mail, Lock, Eye, EyeOff, UserPlus, ArrowRight, AlertCircle, CheckCircle2 } from "lucide-react";
 import { signIn } from "next-auth/react";
+import { analyticsService } from "@/lib/analytics";
 
 /* ================= TYPES ================= */
 
@@ -41,6 +42,11 @@ function SignupPageContent({ onSuccess }: SignupPageProps) {
   const [serverError, setServerError] = useState("");
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // Track signup page view / start
+  useEffect(() => {
+    analyticsService.trackSignupStarted();
+  }, []);
 
   /* ================= VALIDATION ================= */
 
@@ -91,6 +97,10 @@ function SignupPageContent({ onSuccess }: SignupPageProps) {
     if (!loading) setLoading(true);
     try {
       await Signup({ name, email, password });
+      
+      // Track signup completed event
+      analyticsService.trackSignupCompleted();
+      
       onSuccess?.();
 
       // Redirect to email verification page

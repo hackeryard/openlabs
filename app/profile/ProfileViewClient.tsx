@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, Variants } from "framer-motion";
+import { analyticsService } from "@/lib/analytics";
 import {
   Edit2,
   LogOut,
@@ -460,7 +461,10 @@ export default function ProfileViewClient() {
                     <button onClick={() => setEditing(true)} className="flex items-center justify-center w-12 h-12 bg-white hover:bg-slate-50 text-slate-700 rounded-2xl transition-all shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-0.5 duration-200 group">
                       <Edit2 size={18} className="group-hover:text-indigo-600 transition-colors" />
                     </button>
-                    <button onClick={() => fetch("/api/auth/logout", { method: "POST" }).then(() => router.push("/"))} className="flex items-center justify-center w-12 h-12 bg-white border border-slate-200 hover:bg-rose-50 hover:border-rose-200 text-slate-500 hover:text-rose-600 rounded-2xl transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 duration-200 group">
+                    <button onClick={() => {
+                      analyticsService.trackLogoutCompleted();
+                      fetch("/api/auth/logout", { method: "POST" }).then(() => router.push("/"));
+                    }} className="flex items-center justify-center w-12 h-12 bg-white border border-slate-200 hover:bg-rose-50 hover:border-rose-200 text-slate-500 hover:text-rose-600 rounded-2xl transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 duration-200 group">
                       <LogOut size={18} className="group-hover:scale-110 transition-transform" />
                     </button>
                   </>

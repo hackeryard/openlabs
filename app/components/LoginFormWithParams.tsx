@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from "lucide-react";
+import { analyticsService } from "@/lib/analytics";
 
 type FormErrors = {
   email?: string;
@@ -60,6 +61,9 @@ export default function LoginFormWithParams() {
         const data = await res.json();
         throw new Error(data.error || "Login failed");
       }
+
+      // Track successful login
+      analyticsService.trackLoginCompleted();
 
       router.push(nextPath);
       router.refresh();
