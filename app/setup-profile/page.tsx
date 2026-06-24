@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react"
 import { useRouter } from "next/navigation"
+import { analyticsService } from "@/lib/analytics"
 
 const AVATARS = [
   "/images/avatars/avatar1.png",
@@ -21,6 +22,10 @@ export default function SetupProfilePage() {
   const [error, setError] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const debounceRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    analyticsService.trackOnboardingStarted();
+  }, []);
 
   useEffect(() => {
     setError("")
@@ -92,6 +97,9 @@ export default function SetupProfilePage() {
         setSubmitting(false)
         return
       }
+
+      // Track onboarding completion
+      analyticsService.trackOnboardingCompleted();
 
       // Redirect to profile page
       router.push(`/profile`)

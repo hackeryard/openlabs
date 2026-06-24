@@ -9,6 +9,8 @@ import { ChatProvider } from './components/ChatContext'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from "@vercel/analytics/next"
 import Script from 'next/script'
+import ClarityProvider from '@/components/ClarityProvider'
+import ClarityTrackerObserver from '@/components/ClarityTrackerObserver'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.openlabs.org.in'
 
@@ -103,6 +105,8 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
             <ChatProvider>
               {children}
               <OpenLabsAILoader />
+              <ClarityProvider />
+              <ClarityTrackerObserver />
             </ChatProvider>
           </div>
         </div>
