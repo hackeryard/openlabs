@@ -27,7 +27,13 @@ jobs:
           echo "@hackeryard:registry=https://npm.pkg.github.com" >> ~/.npmrc
           echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ~/.npmrc
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Debug
+        run: |
+          test -n "$NODE_AUTH_TOKEN" && echo "NODE_AUTH_TOKEN exists"
+          test -n "$NPM_TOKEN" && echo "NPM_TOKEN exists"
 
       - run: yarn install --frozen-lockfile
 
