@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { useDailyChallenge } from "@/app/hooks/useDailyChallenge";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Trophy, 
-  Sparkles, 
-  CheckCircle2, 
-  AlertCircle, 
-  HelpCircle, 
-  ChevronRight, 
-  Flame, 
+import {
+  Trophy,
+  Sparkles,
+  CheckCircle2,
+  AlertCircle,
+  HelpCircle,
+  ChevronRight,
+  Flame,
   Award,
   TrendingUp
 } from "lucide-react";
@@ -85,7 +85,7 @@ export default function DailyChallengeCard({ labId, currentParams }) {
                       <HelpCircle className="w-3.5 h-3.5" />
                       {showHint ? "Hide Hint" : "Need a Hint?"}
                     </button>
-                    
+
                     <AnimatePresence>
                       {showHint && (
                         <motion.p
@@ -157,13 +157,13 @@ export default function DailyChallengeCard({ labId, currentParams }) {
                 <p className="text-emerald-100 text-sm font-medium">
                   Outstanding work. You solved the experiment's puzzle.
                 </p>
-                
+
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-3 pt-1">
                   <div className="flex items-center gap-1 bg-emerald-500/20 border border-emerald-500/30 px-3 py-1 rounded-full text-xs font-bold text-emerald-300">
                     <Flame className="w-3.5 h-3.5 text-orange-400" />
                     +{result.xpEarned} XP
                   </div>
-                  
+
                   {result.leveledUp && (
                     <div className="flex items-center gap-1 bg-amber-500/20 border border-amber-500/30 px-3 py-1 rounded-full text-xs font-bold text-amber-300">
                       <TrendingUp className="w-3.5 h-3.5 text-amber-400 animate-pulse" />

@@ -213,12 +213,12 @@ export const LABS: Lab[] = [
   },
   {
     id: "computer-science/code-lab/js",
-    name: "JS Visual Debugger",
+    name: "JS Event Loop Visualizer",
     subject: "computerScience",
     type: "editor",
-    challengeParams: ["stepsDebugged", "variablesInspected"],
+    challengeParams: ["predictCorrect", "examplesCompleted"],
     challengeEnabled: true,
-    description: "JavaScript step-through debugger",
+    description: "Interactive JavaScript event loop visualizer",
   },
   {
     id: "computer-science/dsa/sorting/bubble-sort",
