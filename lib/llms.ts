@@ -478,6 +478,7 @@ export function generateLlmsFullTxt(pages: PageMetadata[]) {
   lines.push("/biology/blood");
   lines.push("/biology/cell");
   lines.push("/biology/human");
+  lines.push("/biology/photosynthesis");
   lines.push("");
 
   lines.push("## Topic Cluster: Computer Science");
