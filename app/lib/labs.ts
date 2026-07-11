@@ -200,6 +200,15 @@ export const LABS: Lab[] = [
     challengeEnabled: true,
     description: "Human anatomy explorer",
   },
+  {
+    id: "biology/photosynthesis",
+    name: "Photosynthesis",
+    subject: "biology",
+    type: "simulation",
+    challengeParams: ["maxRateAchieved", "limitingFactorsIdentified"],
+    challengeEnabled: true,
+    description: "Explore variables affecting photosynthesis",
+  },
 
   // ─── COMPUTER SCIENCE ──────────────────────────────────
   {

@@ -14,6 +14,7 @@ import {
   Leaf,
   Microscope,
   UserRound,
+  Sun,
 } from "lucide-react";
 
 const container: Variants = {
@@ -62,6 +63,14 @@ const cards = [
     badge: "Plant Cytology",
     color: "green",
     icon: Leaf,
+  },
+  {
+    href: "/biology/photosynthesis",
+    title: "Photosynthesis Simulator",
+    desc: "Interact with Light, CO₂, and Water to understand Blackman's Law of Limiting Factors.",
+    badge: "Plant Processes",
+    color: "amber",
+    icon: Sun,
   },
   {
     href: "/biology/blood",
@@ -147,6 +156,7 @@ export default function BiologyPage() {
               card.color === "emerald" ? "bg-emerald-50 text-emerald-600 border-emerald-100 group-hover:border-emerald-400 group-hover:shadow-emerald-100/50" :
               card.color === "green" ? "bg-green-50 text-green-600 border-green-100 group-hover:border-green-400 group-hover:shadow-green-100/50" :
               card.color === "red" ? "bg-red-50 text-red-600 border-red-100 group-hover:border-red-400 group-hover:shadow-red-100/50" :
+              card.color === "amber" ? "bg-amber-50 text-amber-600 border-amber-100 group-hover:border-amber-400 group-hover:shadow-amber-100/50" :
               "bg-violet-50 text-violet-600 border-violet-100 group-hover:border-violet-400 group-hover:shadow-violet-100/50";
 
             return (
