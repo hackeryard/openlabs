@@ -70,3 +70,4 @@ There's no role field on `User`. `/admin/*` pages require a valid `auth-token` c
 - `next.config.cjs` is a near-empty leftover; `next.config.js` is the one actually loaded.
 - `eslint.config.js` doesn't meaningfully lint `app/**/*.{ts,tsx}` (see Linting caveat above).
 - Root-level `Microsoft/Windows/PowerShell/` directory and `delete-challenge.ts` at repo root look like accidental artifacts, not app code.
+- `app/lib/labs.ts` (the `LABS` registry) drifts from the actual `app/labs/**` route tree: `physics/opticslens` has a working route but no registry entry, and the whole `mathematics` subject (`app/labs/maths/alzebra`) has zero entries despite being a valid `subject` in the `Lab` type. Several `computer-science/ai-problem/*` subfolders are similarly unregistered. Run the `audit-labs-registry` skill before trusting `LABS` as a complete lab list.

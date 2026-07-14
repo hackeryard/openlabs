@@ -6,6 +6,7 @@ All notable changes to OpenLabs are documented in this file. Format loosely foll
 
 - Added a new Biology lab: photosynthesis simulation.
 - Added a simulator engine and core types for a JavaScript event-loop visualization lab.
+- Added `CLAUDE.md`, `AGENTS.md`, `CHANGELOG.md`, `REQUIREMENTS.md`, and six Claude Code skills (`new-lab`, `sync-docs`, `audit-labs-registry`, `seo-page`, `env-doctor`, `new-blog-post`); fixed several README inaccuracies (broken TOC anchor, wrong model filename, wrong AI chat env var).
 
 ## 2026-06-25 — Analytics & CI stabilization
 
