@@ -11,14 +11,28 @@ export default function PreviewPanel({ html, css, js }: PreviewProps) {
       <body>
         ${html}
         <script>
+          window.parent.postMessage({ type: "clear" }, "*");
           const log = console.log;
           console.log = (msg) => { window.parent.postMessage({ type: "log", msg: JSON.stringify(msg) }, "*"); log(msg); };
           window.onerror = (err) => { window.parent.postMessage({ type: "log", msg: "ERROR: " + err }, "*"); };
-          try { ${js} } catch (e) { console.log(e.message); }
+          try { ${js} } catch (e) {
+            if (e.name === "SecurityError") {
+              console.log("Storage access (localStorage/sessionStorage) is blocked in this sandboxed preview. Your code is fine — this is a preview-only limitation.");
+            } else {
+              console.log((e.name || "Error") + ": " + e.message);
+            }
+          }
         </script>
       </body>
     </html>
   `;
 
-  return <iframe title="preview" sandbox="allow-scripts" srcDoc={srcDoc} className="w-full h-full border-none" />;
+  return (
+    <iframe
+      title="preview"
+      sandbox="allow-scripts allow-modals allow-forms allow-popups"
+      srcDoc={srcDoc}
+      className="w-full h-full border-none"
+    />
+  );
 }

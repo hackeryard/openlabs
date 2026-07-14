@@ -12,7 +12,9 @@ export default function ConsolePanel() {
 
   useEffect(() => {
     const handleMessage = (e: MessageEvent<LogEvent>) => {
-      if (e.data?.type === "log") {
+      if (e.data?.type === "clear") {
+        setLogs([]);
+      } else if (e.data?.type === "log") {
         setLogs((prev) => [...prev, e.data.msg]);
       }
     };

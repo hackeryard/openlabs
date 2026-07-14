@@ -18,6 +18,8 @@ export function useProjects(projectType: string) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [activeId, setActiveId] = useState<string>("");
   const [initialized, setInitialized] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!initialized) {
@@ -40,6 +42,7 @@ export function useProjects(projectType: string) {
   // Load projects from DB
   // ---------------------------
   const loadProjectsFromDB = async () => {
+    setLoading(true);
     try {
       const res = await fetch(
         `/api/projects?projectType=${projectType}`
@@ -50,12 +53,16 @@ export function useProjects(projectType: string) {
         return;
       }
 
-      if (!res.ok) return;
+      if (!res.ok) {
+        setError("Failed to load projects. Please refresh.");
+        return;
+      }
 
       const data = await res.json();
 
       if (!Array.isArray(data)) {
         console.warn("Projects API returned non-array:", data);
+        setError("Failed to load projects. Please refresh.");
         return;
       }
 
@@ -69,6 +76,7 @@ export function useProjects(projectType: string) {
       }));
 
       setProjects(formatted);
+      setError(null);
 
       if (formatted.length > 0) {
         setActiveId(formatted[0].id);
@@ -76,14 +84,11 @@ export function useProjects(projectType: string) {
 
     } catch (err) {
       console.error("Failed to load projects", err);
+      setError("Failed to load projects. Please refresh.");
+    } finally {
+      setLoading(false);
     }
   };
-
-
-  // Load once on mount
-  // useEffect(() => {
-  //   loadProjectsFromDB();
-  // }, []);
 
   // ---------------------------
   // Active project
@@ -121,27 +126,41 @@ export function useProjects(projectType: string) {
 
     setProjects((prev) => [project, ...prev]);
     setActiveId(id);
+    setError(null);
 
-    const res = await fetch("/api/projects", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        projectId: id,
-        title: project.title,
-        html: "",
-        css: "",
-        js: "",
-        projectType: projectType,
-      }),
-    });
+    try {
+      const res = await fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          projectId: id,
+          title: project.title,
+          html: "",
+          css: "",
+          js: "",
+          projectType: projectType,
+        }),
+      });
 
-    if (res.status === 401) {
-      router.push(`/login?next=${encodeURIComponent(currentPath)}`);
-      return;
-    }
+      if (res.status === 401) {
+        router.push(`/login?next=${encodeURIComponent(currentPath)}`);
+        return;
+      }
 
-    if (res.ok) {
+      if (!res.ok) {
+        // Roll back the optimistic insert — it was never persisted.
+        setProjects((prev) => prev.filter((p) => p.id !== id));
+        setActiveId((cur) => (cur === id ? "" : cur));
+        setError("Failed to create project. Please try again.");
+        return;
+      }
+
       analyticsService.trackProjectCreated(id);
+    } catch (err) {
+      console.error("Failed to create project", err);
+      setProjects((prev) => prev.filter((p) => p.id !== id));
+      setActiveId((cur) => (cur === id ? "" : cur));
+      setError("Failed to create project. Please try again.");
     }
   };
 
@@ -149,22 +168,58 @@ export function useProjects(projectType: string) {
   // Delete project
   // ---------------------------
   const deleteProject = async (id: string) => {
-    // Remove locally first
+    const removedIndex = projects.findIndex((p) => p.id === id);
+    const removed = projects[removedIndex];
+    const wasActive = id === activeId;
+
+    // Remove locally first (optimistic)
     setProjects((prev) => prev.filter((p) => p.id !== id));
+    setError(null);
 
-    // Delete from DB
-    const res = await fetch(`/api/projects?projectId=${id}`, {
-      method: "DELETE",
-    });
+    try {
+      const res = await fetch(`/api/projects?projectId=${id}`, {
+        method: "DELETE",
+      });
 
-    if (res.status === 401) {
-      router.push(`/login?next=${encodeURIComponent(currentPath)}`);
-      return;
-    }
+      if (res.status === 401) {
+        router.push(`/login?next=${encodeURIComponent(currentPath)}`);
+        return;
+      }
 
-    // If deleting active project, clear activeId
-    if (id === activeId) {
-      setActiveId("");
+      if (!res.ok) {
+        // Roll back — the delete didn't actually happen server-side.
+        if (removed) {
+          setProjects((prev) => {
+            const next = [...prev];
+            next.splice(Math.max(0, removedIndex), 0, removed);
+            return next;
+          });
+        }
+        setError("Failed to delete project. Please try again.");
+        return;
+      }
+
+      if (wasActive) {
+        setActiveId("");
+        // If that was the last project, immediately refetch — the server
+        // auto-creates a fresh one when the list is empty, so we never sit
+        // with a dangling activeId and a no-op editor. If other projects
+        // remain, the hook's own effect auto-selects the first one.
+        const remaining = projects.filter((p) => p.id !== id);
+        if (remaining.length === 0) {
+          await loadProjectsFromDB();
+        }
+      }
+    } catch (err) {
+      console.error("Failed to delete project", err);
+      if (removed) {
+        setProjects((prev) => {
+          const next = [...prev];
+          next.splice(Math.max(0, removedIndex), 0, removed);
+          return next;
+        });
+      }
+      setError("Failed to delete project. Please try again.");
     }
   };
 
@@ -177,5 +232,8 @@ export function useProjects(projectType: string) {
     createProject,
     deleteProject,
     loadProjectsFromDB,
+    loading,
+    error,
+    setError,
   };
 }
