@@ -7,7 +7,9 @@
 [![React](https://img.shields.io/badge/react-18.2.0-61dafb?style=flat&logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/typescript-5.4.0-3178c6?style=flat&logo=typescript)](https://www.typescriptlang.org/)
 
-**OpenLabs** is a comprehensive, interactive platform providing in-browser science labs and visualizations across **Chemistry**, **Physics**, **Biology**, and **Computer Science**. Built with modern web technologies, it enables students, educators, and enthusiasts to conduct hands-on experiments and explore scientific concepts without requiring physical lab equipment.
+**OpenLabs** is a comprehensive, interactive platform providing in-browser science labs and visualizations across **Chemistry**, **Physics**, **Biology**, **Computer Science**, and **Maths**. Built with modern web technologies, it enables students, educators, and enthusiasts to conduct hands-on experiments and explore scientific concepts without requiring physical lab equipment.
+
+> Related docs: [CLAUDE.md](CLAUDE.md) (architecture notes for Claude Code), [AGENTS.md](AGENTS.md) (tool-agnostic agent instructions), [REQUIREMENTS.md](REQUIREMENTS.md) (functional/non-functional requirements), [CHANGELOG.md](CHANGELOG.md) (release history).
 
 ---
 
@@ -264,11 +266,14 @@ OpenLabs/
 │   │   ├── chat/                     # AI chat response endpoint
 │   │   └── agent/                    # AI agent service routing
 │   │
-│   ├── (maths)/                      # Math labs (algebra, etc.)
-│   ├── biology/                      # Biology labs & visualizations
-│   ├── chemistry/                    # Chemistry labs & periodic table
-│   ├── physics/                      # Physics experiments & simulations
-│   ├── computer-science/             # CS labs (DSA, Data Science, AI, etc.)
+│   ├── maths/                        # Math labs (algebra, etc.)
+│   ├── biology/                      # Biology landing/SEO pages
+│   ├── chemistry/                    # Chemistry landing/SEO pages
+│   ├── physics/                      # Physics landing/SEO pages
+│   ├── computer-science/             # CS landing/SEO pages
+│   ├── labs/                         # Actual interactive simulation routes, mirrored by
+│   │                                 #   subject (labs/physics, labs/biology, ...) — the
+│   │                                 #   landing pages above link here via `launchUrl`
 │   ├── profile/                      # User dashboard page & custom profile editor
 │   ├── blog/                         # Public Blog listing & article page layouts
 │   │
@@ -289,7 +294,7 @@ OpenLabs/
 │   │   ├── User.js                   # User model (auth & stats: levels, badges, streak)
 │   │   ├── OTP.js                    # OTP storage with expiry
 │   │   ├── Project.ts                # Project data model
-│   │   ├── Blog.js                   # Blog posts schema (coverImage, faqs, metadata)
+│   │   ├── Blog.ts                   # Blog posts schema (coverImage, faqs, metadata)
 │   │   └── DailyChallenge.js         # Daily generated challenge schema
 │   │
 │   ├── lib/                          # Utility libraries
@@ -316,9 +321,17 @@ OpenLabs/
 │   ├── globals.css                   # Global Tailwind styles
 │   └── favicon.ico                   # Favicon
 │
-├── src/
-│   └── data/
-│       └── elements.js               # Periodic table element data
+├── app/src/data/
+│   └── elements.js                   # Periodic table element data
+│
+├── components/                       # ROOT-LEVEL, distinct from app/components/
+│   ├── PhysicsExperimentLanding.tsx  # Shared landing-page layout used by SEO pages
+│   ├── EducationalLandingLayout.tsx  # Generic landing layout
+│   └── ClarityProvider.tsx           # Microsoft Clarity analytics init
+│
+├── lib/                              # ROOT-LEVEL, distinct from app/lib/
+│   ├── llms.ts                       # Generates /llms.txt & /llms-full.txt at request time
+│   └── analytics.ts                  # Analytics helpers
 │
 ├── public/                           # Static assets
 │   ├── images/                       # Images (logos, element visuals)
@@ -326,7 +339,7 @@ OpenLabs/
 │   └── models/                       # 3D model files
 │
 ├── scripts/
-│   └── guard.cjs                     # Pre-build/pre-dev guard
+│   └── guard.cjs                     # Pre-build/pre-dev guard (@hackeryard/mandatory-guard)
 │
 ├── configuration files
 │   ├── next.config.js                # Next.js configuration
@@ -427,8 +440,8 @@ Supports optional `?next=/path` query parameter to redirect users to their inten
 | GET | `/api/projects` | Fetch user projects (filtered by type) |
 | POST | `/api/projects` | Create or update project |
 | DELETE | `/api/projects` | Delete project |
-| POST | `/api/chat` | Send message to AI assistant |
-| POST | `/api/agent` | Route queries to external AI agent service |
+| POST | `/api/chat` | Send message to AI assistant (the one actually used by the UI) |
+| POST | `/api/agent` | ⚠️ Legacy — forwards to an external Flowise agent; not called from anywhere in the current UI |
 
 ---
 
@@ -472,20 +485,35 @@ OpenLabs includes a **production-ready authentication system** with email verifi
 Create `.env.local` with the following variables:
 
 ```env
-# JWT Configuration
+# JWT / session
 JWT_SECRET=your_secure_random_secret
+NEXTAUTH_SECRET=your_nextauth_secret        # falls back to JWT_SECRET if unset
 
 # MongoDB Atlas
 MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/OpenLabs?retryWrites=true&w=majority
 
-# Email Service (Gmail SMTP)
+# Google OAuth (NextAuth)
+GOOGLE_CLIENT_ID=your_google_oauth_client_id
+GOOGLE_CLIENT_SECRET=your_google_oauth_client_secret
+
+# Email Service (Gmail SMTP, used for OTP delivery)
 EMAIL_USER=your_email@gmail.com
 EMAIL_PASSWORD=your_app_specific_password
 
-# Website Information
-WEBSITE_NAME=OpenLabs
-WEBSITE_URL=https://yourdomain.com
+# Admin panel & cron
+ADMIN_SECRET=your_admin_panel_shared_secret  # gates /admin/* API routes
+CRON_SECRET=your_cron_secret                 # protects /api/challenges/generate
+
+# AI chat (OpenAI SDK pointed at OpenRouter)
+CHATBOT_API_KEY=your_openrouter_api_key
+
+# Cloudinary (blog cover images, avatars)
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 ```
+
+Note: `.env`/`.env.local` may also contain `NVAPI`, `NVBASEURL`, `GLM_API_KEY`, `GLM_BASE_URL`, `CHATBOT_API_BASE_URL` from earlier experiments with alternate LLM providers — these are **not read by any current code path** and can be left unset.
 
 ### Gmail Setup Instructions
 
@@ -748,6 +776,10 @@ The JavaScript debugger allows students to visualize code execution with runtime
 
 ---
 
+## Creating New Labs 🧩
+
+A lab in OpenLabs is not just one page — it's a landing page, a simulation route, a component, and a registry entry. Skipping a step means the lab won't get XP/challenge support or won't show up in navigation.
+
 ### Step-by-Step Guide
 
 #### 1. Create the Route Page
@@ -786,10 +818,15 @@ export default function NewLabPage() {
 }
 ```
 
-#### 4. Add Navigation Link
+> **Note:** In practice, most labs also have a separate public SEO/marketing landing page at `app/<subject>/<lab-slug>/page.tsx` (exporting `Metadata`, rendering a shared landing layout from the root `components/` dir) that links to the actual simulation route above via a `launchUrl`. See an existing lab (e.g. `app/physics/freefall/` + `app/labs/physics/freefall/`) for the pattern before adding a new one.
+
+#### 4. Register the Lab
+Add an entry to the `LABS` array in [`app/lib/labs.ts`](app/lib/labs.ts) (`id`, `name`, `subject`, `type: simulation|exploration|editor`, `challengeParams`, `challengeEnabled`, `description`). This is what drives XP rewards and daily-challenge generation — a lab isn't fully wired up without it.
+
+#### 5. Add Navigation Link
 Update [app/components/Navbar.tsx](app/components/Navbar.tsx) to include your new lab in the navigation menu.
 
-#### 5. Add Static Assets
+#### 6. Add Static Assets
 Store any images or data files in `public/`:
 
 ```bash
@@ -863,16 +900,8 @@ Vercel is the recommended platform (creators of Next.js):
    - Framework: Next.js
    - Build Command: `yarn build`
    - Output Directory: `.`
-5. **Add environment variables** in Vercel dashboard:
-   ```
-   JWT_SECRET
-   MONGO_URI
-   EMAIL_USER
-   EMAIL_PASSWORD
-   WEBSITE_URL
-   WEBSITE_NAME
-   ```
-6. **Deploy** — Vercel automatically deploys on push to main branch
+5. **Add environment variables** in Vercel dashboard (see the full list in [Authentication System → Environment Configuration](#environment-configuration)): `JWT_SECRET`, `NEXTAUTH_SECRET`, `MONGO_URI`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `EMAIL_USER`, `EMAIL_PASSWORD`, `ADMIN_SECRET`, `CRON_SECRET`, `CHATBOT_API_KEY`, `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, and `NPM_TOKEN` (needed at build time for the private `@hackeryard` package).
+6. **Deploy** — Vercel automatically deploys on push to main branch. Note `vercel.json` also registers a daily cron (`0 0 * * *`) hitting `/api/challenges/generate`.
 
 ### Alternative Hosting
 
@@ -1261,13 +1290,15 @@ OpenLabsAI is a context-aware AI assistant integrated across all platform labs, 
 
 Create `.env.local` with:
 ```env
-# OpenAI Configuration
-OPENAI_API_KEY=sk-your-api-key-here
+# Routed through OpenRouter via the OpenAI SDK, model gpt-4o-mini
+CHATBOT_API_KEY=your_openrouter_api_key
 ```
 
+Usage is capped at 10 queries/day/user, enforced server-side in `app/api/chat`.
+
 ### API Endpoints Used
-- `POST /api/chat` — Send message to AI assistant
-- `POST /api/agent` — Route complex queries to external agent service
+- `POST /api/chat` — Send message to AI assistant (the live endpoint)
+- `POST /api/agent` — ⚠️ legacy external-agent route, currently unused by the UI
 
 ### Component Architecture
 
@@ -1361,7 +1392,7 @@ For direct inquiries about licensing or partnerships:
 
 ### Version History
 
-Detailed changes per release are tracked in [CHANGELOG.md](CHANGELOG.md) (if available) or in [GitHub Releases](https://github.com/hackeryard/openlabs/releases).
+Detailed changes are tracked in [CHANGELOG.md](CHANGELOG.md), generated from git history and grouped by date (the project doesn't use version tags/releases).
 
 ### Latest Updates
 
@@ -1421,4 +1452,4 @@ OpenLabs is built with ❤️ using:
 
 **Built for curious minds, by educators, for learning. 🎓**
 
-*Last Updated: May 24, 2026 (v4.0)*
+*Last Updated: July 14, 2026*

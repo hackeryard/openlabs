@@ -130,6 +130,7 @@ export default function Navbar() {
     <>
       <motion.nav
         layout
+        data-site-navbar
         className="
           fixed top-0 left-0 w-full
           bg-gradient-to-r from-indigo-600 via-blue-600 to-sky-500

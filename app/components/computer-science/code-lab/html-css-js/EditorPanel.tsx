@@ -16,6 +16,7 @@ interface EditorPanelProps {
   setTitle: (value: string) => void;
   onDelete?: () => void;
   deleting?: boolean;
+  onSave?: () => void;
 }
 
 type TabType = "html" | "css" | "js";
@@ -31,6 +32,7 @@ export default function EditorPanel({
   setTitle,
   onDelete,
   deleting = false,
+  onSave,
 }: EditorPanelProps) {
 
   const [tab, setTab] = useState<TabType>("html");
@@ -98,6 +100,11 @@ export default function EditorPanel({
           language={active.lang}
           value={active.val}
           onChange={(value) => active.change(value || "")}
+          onMount={(editor, monaco) => {
+            editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
+              onSave?.();
+            });
+          }}
           options={{
             minimap: { enabled: false },
             fontSize: 14,
