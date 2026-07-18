@@ -7,27 +7,42 @@ import { Brain, CheckCircle2, XCircle, ArrowRight, Lightbulb } from 'lucide-reac
 interface PredictModePanelProps {
   expectedOutput: string[];
   onCorrect: () => void;
+  /** Called on every submission attempt, correct or not — used by the
+   * parent to reveal the real console output once the user has answered. */
+  onSubmit?: () => void;
   explanation: string;
 }
 
-export default function PredictModePanel({ expectedOutput, onCorrect, explanation }: PredictModePanelProps) {
+// Splits a free-form prediction into individual output values. Accepts
+// commas, newlines, "→", ">" and "->"/"-->" style arrows as separators, and
+// compares case-insensitively so e.g. "a, f, c" matches "A, F, C".
+function parsePrediction(raw: string): string[] {
+  return raw
+    .replace(/-+>/g, ',')
+    .split(/[,\n→>]+/)
+    .map(s => s.trim())
+    .filter(s => s.length > 0);
+}
+
+function normalize(s: string): string {
+  return s.trim().toLowerCase();
+}
+
+export default function PredictModePanel({ expectedOutput, onCorrect, onSubmit, explanation }: PredictModePanelProps) {
   const [prediction, setPrediction] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
 
   const handleSubmit = () => {
-    // Parse user's prediction: split by commas, newlines, arrows, or spaces
-    const userLines = prediction
-      .split(/[,\n→>]+/)
-      .map(s => s.trim())
-      .filter(s => s.length > 0);
+    const userLines = parsePrediction(prediction);
 
     const correct =
       userLines.length === expectedOutput.length &&
-      userLines.every((line, i) => line === expectedOutput[i]);
+      userLines.every((line, i) => normalize(line) === normalize(expectedOutput[i]));
 
     setIsCorrect(correct);
     setSubmitted(true);
+    onSubmit?.();
 
     if (correct) {
       onCorrect();
@@ -41,13 +56,10 @@ export default function PredictModePanel({ expectedOutput, onCorrect, explanatio
   };
 
   // Find first point of divergence
-  const userLines = prediction
-    .split(/[,\n→>]+/)
-    .map(s => s.trim())
-    .filter(s => s.length > 0);
+  const userLines = parsePrediction(prediction);
 
   const firstDivergence = submitted
-    ? userLines.findIndex((line, i) => i >= expectedOutput.length || line !== expectedOutput[i])
+    ? userLines.findIndex((line, i) => i >= expectedOutput.length || normalize(line) !== normalize(expectedOutput[i]))
     : -1;
 
   return (
@@ -71,6 +83,7 @@ export default function PredictModePanel({ expectedOutput, onCorrect, explanatio
                 value={prediction}
                 onChange={e => setPrediction(e.target.value)}
                 placeholder="e.g., A, F, C, D, B, E"
+                aria-label="Predicted console output"
                 rows={3}
                 className="w-full bg-slate-900/60 border border-slate-700/50 rounded-xl px-4 py-3
                            text-sm font-mono text-slate-200 resize-none
@@ -137,7 +150,7 @@ export default function PredictModePanel({ expectedOutput, onCorrect, explanatio
                 {Array.from({ length: Math.max(userLines.length, expectedOutput.length) }).map((_, i) => {
                   const userVal = userLines[i];
                   const expected = expectedOutput[i];
-                  const match = userVal === expected;
+                  const match = userVal !== undefined && expected !== undefined && normalize(userVal) === normalize(expected);
                   const isDivergence = i === firstDivergence;
 
                   return (

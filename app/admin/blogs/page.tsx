@@ -66,21 +66,21 @@ export default function AdminBlogsDashboard() {
 
   if (!isAuthorized) {
     return (
-      <main className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-6">
-        <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-200 max-w-md w-full text-center">
-          <div className="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-6 text-indigo-600">
+      <main className="min-h-screen flex flex-col items-center justify-center p-6">
+        <div className="bg-card p-8 rounded-3xl shadow-sm border border-border max-w-md w-full text-center">
+          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-primary">
             <Lock className="w-8 h-8" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">Admin Access</h1>
-          <p className="text-slate-500 mb-8 text-sm">Enter your Admin Secret to manage blog posts.</p>
-          
+          <h1 className="text-2xl font-bold text-foreground mb-2">Admin Access</h1>
+          <p className="text-muted-foreground mb-8 text-sm">Enter your Admin Secret to manage blog posts.</p>
+
           <form onSubmit={handleLogin} className="space-y-4">
-            <input 
-              type="password" 
+            <input
+              type="password"
               value={adminSecret}
               onChange={(e) => setAdminSecret(e.target.value)}
               placeholder="Admin Secret..."
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500 outline-none text-center"
+              className="w-full bg-muted border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary outline-none text-center"
               required
             />
             {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
@@ -98,12 +98,12 @@ export default function AdminBlogsDashboard() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f8fafc] text-slate-900 py-24">
+    <main className="min-h-screen text-foreground py-24">
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-12">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">Blog Management</h1>
-            <p className="text-slate-500">Manage your published articles and drafts.</p>
+            <h1 className="text-3xl font-bold text-foreground mb-2">Blog Management</h1>
+            <p className="text-muted-foreground">Manage your published articles and drafts.</p>
           </div>
           <Link 
             href={`/admin/blogs/create`}
@@ -114,23 +114,23 @@ export default function AdminBlogsDashboard() {
           </Link>
         </div>
 
-        <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+        <div className="bg-card rounded-3xl shadow-sm border border-border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Title</th>
-                  <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Status</th>
-                  <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Date</th>
-                  <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest text-right">Actions</th>
+                <tr className="bg-muted border-b border-border">
+                  <th className="px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-widest">Title</th>
+                  <th className="px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-widest">Status</th>
+                  <th className="px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-widest">Date</th>
+                  <th className="px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-widest text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-border">
                 {blogs.map((blog) => (
-                  <tr key={blog._id} className="hover:bg-slate-50/50 transition-colors">
+                  <tr key={blog._id} className="hover:bg-accent transition-colors">
                     <td className="px-6 py-4">
-                      <p className="font-bold text-slate-900">{blog.title}</p>
-                      <p className="text-xs text-slate-500 mt-1">{blog.slug}</p>
+                      <p className="font-bold text-foreground">{blog.title}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{blog.slug}</p>
                     </td>
                     <td className="px-6 py-4">
                       {blog.published ? (
@@ -143,29 +143,29 @@ export default function AdminBlogsDashboard() {
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-600">
+                    <td className="px-6 py-4 text-sm text-muted-foreground">
                       {new Date(blog.date).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Link 
-                          href={`/blog/${blog.slug}`} 
+                        <Link
+                          href={`/blog/${blog.slug}`}
                           target="_blank"
-                          className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                          className="p-2 text-muted-foreground hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                           title="View Live"
                         >
                           <Eye className="w-4 h-4" />
                         </Link>
-                        <Link 
+                        <Link
                           href={`/admin/blogs/${blog.slug}/edit`}
-                          className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          className="p-2 text-muted-foreground hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                           title="Edit"
                         >
                           <Edit2 className="w-4 h-4" />
                         </Link>
-                        <button 
+                        <button
                           onClick={() => handleDelete(blog.slug)}
-                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                           title="Delete"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -176,7 +176,7 @@ export default function AdminBlogsDashboard() {
                 ))}
                 {blogs.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center text-slate-500">
+                    <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground">
                       No blogs found. Create your first one!
                     </td>
                   </tr>

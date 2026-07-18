@@ -18,8 +18,30 @@ export default function GlobalError({
 
   return (
     <html lang="en">
-      <body>
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 via-white to-orange-50 px-4">
+      <body className="ge-body">
+        <style>{`
+          .ge-body { background: linear-gradient(to bottom right, #fef2f2, #ffffff, #fff7ed); }
+          .ge-icon-ring { background: linear-gradient(to bottom right, #ef4444, #f97316); }
+          .ge-heading { color: #111827; }
+          .ge-subheading { color: #4b5563; }
+          .ge-details-card { background: #ffffff; border-color: #fecaca; }
+          .ge-details-text { color: #4b5563; background: #f3f4f6; }
+          .ge-details-id { color: #6b7280; }
+          .ge-btn-primary { background: linear-gradient(to right, #ea580c, #dc2626); color: #ffffff; }
+          .ge-btn-secondary { background: #ffffff; color: #dc2626; border-color: #dc2626; }
+          @media (prefers-color-scheme: dark) {
+            .ge-body { background: linear-gradient(to bottom right, #1c0a0a, #0a0a0a, #1c1006); }
+            .ge-icon-ring { background: linear-gradient(to bottom right, #b91c1c, #c2410c); }
+            .ge-heading { color: #f3f4f6; }
+            .ge-subheading { color: #9ca3af; }
+            .ge-details-card { background: #171717; border-color: #7f1d1d; }
+            .ge-details-text { color: #d1d5db; background: #262626; }
+            .ge-details-id { color: #9ca3af; }
+            .ge-btn-primary { background: linear-gradient(to right, #c2410c, #b91c1c); color: #ffffff; }
+            .ge-btn-secondary { background: #171717; color: #f87171; border-color: #b91c1c; }
+          }
+        `}</style>
+        <div className="min-h-screen flex items-center justify-center px-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -32,7 +54,7 @@ export default function GlobalError({
               transition={{ duration: 2, repeat: Infinity }}
               className="mb-8"
             >
-              <div className="inline-block p-6 bg-gradient-to-br from-red-500 to-orange-500 rounded-full">
+              <div className="ge-icon-ring inline-block p-6 rounded-full">
                 <AlertTriangle className="w-16 h-16 text-white" />
               </div>
             </motion.div>
@@ -43,10 +65,10 @@ export default function GlobalError({
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.6 }}
             >
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">
+              <h1 className="ge-heading text-4xl md:text-5xl font-bold mb-2">
                 Critical System Error
               </h1>
-              <p className="text-xl text-gray-600 mb-8">
+              <p className="ge-subheading text-xl mb-8">
                 We're experiencing a critical issue. Our team has been notified.
               </p>
             </motion.div>
@@ -56,14 +78,14 @@ export default function GlobalError({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="mb-8 p-6 bg-white rounded-xl shadow-sm border-2 border-red-200"
+              className="ge-details-card mb-8 p-6 rounded-xl shadow-sm border-2"
             >
               <div className="text-left">
-                <p className="text-sm font-mono text-gray-600 bg-gray-100 p-4 rounded-lg overflow-auto max-h-32 break-words">
+                <p className="ge-details-text text-sm font-mono p-4 rounded-lg overflow-auto max-h-32 break-words">
                   {error.message || "A critical system error occurred."}
                 </p>
                 {error.digest && (
-                  <p className="text-xs text-gray-500 mt-3 font-mono">
+                  <p className="ge-details-id text-xs mt-3 font-mono">
                     Error ID: <span className="font-bold">{error.digest}</span>
                   </p>
                 )}
@@ -79,7 +101,7 @@ export default function GlobalError({
             >
               <button
                 onClick={reset}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-600 to-red-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all hover:scale-105"
+                className="ge-btn-primary inline-flex items-center justify-center gap-2 px-6 py-3 font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all hover:scale-105"
               >
                 <RefreshCw className="w-5 h-5" />
                 Try Again
@@ -87,7 +109,7 @@ export default function GlobalError({
 
               <Link
                 href="/"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-red-600 font-semibold rounded-lg shadow-lg hover:shadow-xl border-2 border-red-600 transition-all hover:scale-105"
+                className="ge-btn-secondary inline-flex items-center justify-center gap-2 px-6 py-3 font-semibold rounded-lg shadow-lg hover:shadow-xl border-2 transition-all hover:scale-105"
               >
                 <Home className="w-5 h-5" />
                 Go Home

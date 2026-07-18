@@ -8,7 +8,7 @@ export default function EnergyConservationPage() {
     <main className="min-h-screen p-6">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-2xl font-bold">Energy Conservation Lab</h1>
-        <p className="text-gray-600 mt-2">This page will host experiments demonstrating energy conservation in mechanical systems.</p>
+        <p className="text-muted-foreground mt-2">This page will host experiments demonstrating energy conservation in mechanical systems.</p>
         <EnergyConservation />
       </div>
     </main>

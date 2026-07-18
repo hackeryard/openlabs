@@ -87,8 +87,8 @@ export default function InfoPanel({ organ }: { organ: string }) {
         <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-rose-50 text-rose-500">
           <Circle className="h-6 w-6" />
         </div>
-        <h3 className="text-base font-bold text-slate-800">No structure selected</h3>
-        <p className="mt-2 max-w-xs text-sm text-slate-500">
+        <h3 className="text-base font-bold text-foreground">No structure selected</h3>
+        <p className="mt-2 max-w-xs text-sm text-muted-foreground">
           Click an organ in the 3D model to explore its anatomy, biological system, and key facts.
         </p>
       </div>
@@ -102,7 +102,7 @@ export default function InfoPanel({ organ }: { organ: string }) {
           {data?.icon ?? <Circle className="h-5 w-5" />}
         </div>
         <div>
-          <h2 className="text-xl font-black text-slate-900">{organ}</h2>
+          <h2 className="text-xl font-black text-foreground">{organ}</h2>
           {data?.system && (
             <span className="inline-flex items-center rounded-full bg-rose-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-rose-600">
               {data.system}
@@ -111,17 +111,17 @@ export default function InfoPanel({ organ }: { organ: string }) {
         </div>
       </div>
 
-      <p className="text-sm leading-relaxed text-slate-600">
+      <p className="text-sm leading-relaxed text-muted-foreground">
         {data?.description ??
           `${organ} is a biological structure within the human body. Detailed information for this structure is being added.`}
       </p>
 
       {data?.facts && (
         <div className="mt-5">
-          <h4 className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-400">Key Facts</h4>
+          <h4 className="mb-3 text-xs font-bold uppercase tracking-wide text-muted-foreground">Key Facts</h4>
           <ul className="space-y-2.5">
             {data.facts.map((fact, idx) => (
-              <li key={idx} className="flex items-start gap-2 text-sm text-slate-600">
+              <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
                 <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-500" />
                 <span>{fact}</span>
               </li>

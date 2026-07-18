@@ -110,27 +110,27 @@ export default function SetupProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex items-center justify-center p-6">
-      <div className="w-full max-w-3xl bg-slate-800 rounded-2xl shadow-xl p-8">
+    <div className="min-h-screen text-foreground flex items-center justify-center p-6">
+      <div className="w-full max-w-3xl bg-card rounded-2xl shadow-xl p-8 border border-border">
         <h1 className="text-2xl font-bold mb-2">Set up your profile</h1>
-        <p className="text-sm text-slate-400 mb-6">Add a username, choose an avatar, and write a short bio.</p>
+        <p className="text-sm text-muted-foreground mb-6">Add a username, choose an avatar, and write a short bio.</p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="text-sm font-medium text-slate-200">Username</label>
+            <label className="text-sm font-medium text-foreground">Username</label>
             <input
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="your-username"
-              className="mt-2 w-full rounded-lg bg-slate-700 border border-slate-600 px-3 py-2 text-slate-100"
+              className="mt-2 w-full rounded-lg bg-muted border border-border px-3 py-2 text-foreground"
             />
-            <div className="mt-2 text-xs text-slate-400 flex items-center gap-2">
+            <div className="mt-2 text-xs text-muted-foreground flex items-center gap-2">
               {checking ? <span>Checking...</span> : available === null ? <span>Enter a username</span> : available ? <span className="text-emerald-400">Available</span> : <span className="text-rose-400">Taken</span>}
             </div>
           </div>
 
           <div>
-            <label className="text-sm font-medium text-slate-200">Avatar</label>
+            <label className="text-sm font-medium text-foreground">Avatar</label>
             <div className="mt-3 flex gap-3">
               {AVATARS.map((a) => (
                 <button
@@ -144,7 +144,7 @@ export default function SetupProfilePage() {
               ))}
             </div>
             {keepExistingAvatar && (
-              <div className="mt-2 text-xs text-slate-400 flex items-center gap-2">
+              <div className="mt-2 text-xs text-muted-foreground flex items-center gap-2">
                 <label className="inline-flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -158,14 +158,14 @@ export default function SetupProfilePage() {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-slate-200">Bio <span className="text-xs text-slate-400">(max 160)</span></label>
+            <label className="text-sm font-medium text-foreground">Bio <span className="text-xs text-muted-foreground">(max 160)</span></label>
             <textarea
               value={bio}
               onChange={(e) => setBio(e.target.value.slice(0, 160))}
               rows={4}
-              className="mt-2 w-full rounded-lg bg-slate-700 border border-slate-600 px-3 py-2 text-slate-100"
+              className="mt-2 w-full rounded-lg bg-muted border border-border px-3 py-2 text-foreground"
             />
-            <div className="mt-1 text-xs text-slate-400">{bio.length}/160</div>
+            <div className="mt-1 text-xs text-muted-foreground">{bio.length}/160</div>
           </div>
 
           {error && <div className="text-sm text-rose-400">{error}</div>}
@@ -181,7 +181,7 @@ export default function SetupProfilePage() {
             <button
               type="button"
               onClick={() => router.push('/')}
-              className="text-sm text-slate-300 hover:underline"
+              className="text-sm text-muted-foreground hover:underline"
             >
               Skip for now
             </button>

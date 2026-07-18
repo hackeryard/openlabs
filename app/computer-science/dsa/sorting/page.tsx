@@ -74,7 +74,7 @@ export default function ComputerScience() {
           Computer Science Experiments
         </motion.h1>
 
-        <motion.p variants={item} className="text-gray-600 mb-6">
+        <motion.p variants={item} className="text-muted-foreground mb-6">
           Coding and Tech related experiments.
         </motion.p>
 
@@ -97,10 +97,10 @@ export default function ComputerScience() {
             >
               <Link
                 href={card.href}
-                className="block h-full bg-white rounded-xl border-2 border-gray-100 hover:border-indigo-200 shadow-sm hover:shadow-lg p-5 transition"
+                className="block h-full bg-card rounded-xl border-2 border-border hover:border-indigo-200 shadow-sm hover:shadow-lg p-5 transition"
               >
                 <h3 className="text-lg font-semibold">{card.title}</h3>
-                <p className="text-sm text-gray-500 mt-2">
+                <p className="text-sm text-muted-foreground mt-2">
                   {card.desc}
                 </p>
               </Link>

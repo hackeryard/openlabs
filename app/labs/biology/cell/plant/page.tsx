@@ -170,23 +170,23 @@ export default function Page() {
   const activeInfo = selectedOrganelle ? ORGANELLE_DETAILS[selectedOrganelle] : null;
 
   return (
-    <main className="min-h-screen bg-[#fafafa] text-slate-800 pb-16 pt-20 px-4 md:px-8 max-w-7xl mx-auto space-y-6">
+    <main className="min-h-screen bg-[#fafafa] text-foreground pb-16 pt-20 px-4 md:px-8 max-w-7xl mx-auto space-y-6">
       
       {/* Breadcrumbs & Lab Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200 pb-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-border pb-6">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2 text-xs font-semibold text-emerald-600 uppercase tracking-widest">
             <Link href="/" className="hover:text-emerald-700 transition-colors">Home</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
             <Link href="/biology" className="hover:text-emerald-700 transition-colors">Biology Labs</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-            <span className="text-slate-500">Plant Cell</span>
+            <span className="text-muted-foreground">Plant Cell</span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl md:text-4xl font-black text-foreground tracking-tight flex items-center gap-3">
             <Dna className="w-8 h-8 text-emerald-600" />
             Plant Cell Exploration
           </h1>
-          <p className="text-slate-500 text-sm max-w-2xl leading-relaxed font-medium">
+          <p className="text-muted-foreground text-sm max-w-2xl leading-relaxed font-medium">
             Investigate photosynthetic plant eukaryotic structure, central vacuole turgor, and chloroplast mechanics. Rotate the 3D model, select cells to explore their function, and complete targets.
           </p>
         </div>
@@ -212,10 +212,10 @@ export default function Page() {
         
         {/* Left Column: 3D Microscope Viewport */}
         <div className="lg:col-span-8 flex flex-col h-full space-y-4">
-          <div className="bg-white border border-slate-200 shadow-sm rounded-2xl overflow-hidden p-4 relative flex flex-col flex-grow shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
+          <div className="bg-card border border-border shadow-sm rounded-2xl overflow-hidden p-4 relative flex flex-col flex-grow shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
             
             {/* Viewport Control Bar */}
-            <div className="flex justify-between items-center pb-3 border-b border-slate-100 mb-3 text-xs font-medium text-slate-500">
+            <div className="flex justify-between items-center pb-3 border-b border-slate-100 mb-3 text-xs font-medium text-muted-foreground">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="uppercase tracking-wider font-bold">Virtual Microscope Feed</span>
@@ -223,7 +223,7 @@ export default function Page() {
               <div className="flex gap-2.5">
                 <button 
                   onClick={() => handleSelect(null)}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-950 transition-colors border border-slate-200"
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-muted hover:bg-slate-100 text-muted-foreground hover:text-slate-950 transition-colors border border-border"
                   title="Reset viewport focus"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
@@ -255,16 +255,16 @@ export default function Page() {
 
         {/* Right Column: Tabbed Telemetry & Database Panel */}
         <div className="lg:col-span-4 flex flex-col">
-          <div className="bg-white border border-slate-200 shadow-sm rounded-2xl flex flex-col h-full shadow-[0_4px_20px_rgba(0,0,0,0.03)] overflow-hidden min-h-[500px]">
+          <div className="bg-card border border-border shadow-sm rounded-2xl flex flex-col h-full shadow-[0_4px_20px_rgba(0,0,0,0.03)] overflow-hidden min-h-[500px]">
             
             {/* Sidebar Tabs */}
-            <div className="grid grid-cols-3 bg-slate-50 border-b border-slate-200">
+            <div className="grid grid-cols-3 bg-muted border-b border-border">
               <button
                 onClick={() => setActiveTab("explorer")}
                 className={`py-3.5 flex flex-col items-center gap-1 text-xs font-bold border-b-2 transition-all ${
                   activeTab === "explorer" 
                     ? "border-emerald-600 text-emerald-700 bg-emerald-50/30" 
-                    : "border-transparent text-slate-500 hover:text-slate-800"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <Compass className="w-4 h-4" />
@@ -275,7 +275,7 @@ export default function Page() {
                 className={`py-3.5 flex flex-col items-center gap-1 text-xs font-bold border-b-2 transition-all ${
                   activeTab === "log" 
                     ? "border-emerald-600 text-emerald-700 bg-emerald-50/30" 
-                    : "border-transparent text-slate-500 hover:text-slate-800"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <CheckSquare className="w-4 h-4" />
@@ -286,7 +286,7 @@ export default function Page() {
                 className={`py-3.5 flex flex-col items-center gap-1 text-xs font-bold border-b-2 transition-all ${
                   activeTab === "theory" 
                     ? "border-emerald-600 text-emerald-700 bg-emerald-50/30" 
-                    : "border-transparent text-slate-500 hover:text-slate-800"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <BookOpen className="w-4 h-4" />
@@ -309,42 +309,42 @@ export default function Page() {
                           <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
                             Identified Structure
                           </span>
-                          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2 mt-1">
+                          <h2 className="text-xl font-bold text-foreground flex items-center gap-2 mt-1">
                             <span className="w-3 h-3 rounded-full" style={{ backgroundColor: activeInfo.color }} />
                             {activeInfo.title}
                           </h2>
                         </div>
                         <button 
                           onClick={() => handleSelect(null)}
-                          className="text-xs font-bold px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-md transition-colors border border-slate-200"
+                          className="text-xs font-bold px-2 py-1 bg-slate-100 hover:bg-slate-200 text-muted-foreground rounded-md transition-colors border border-border"
                         >
                           Clear
                         </button>
                       </div>
 
-                      <p className="text-slate-600 text-sm leading-relaxed font-medium">
+                      <p className="text-muted-foreground text-sm leading-relaxed font-medium">
                         {activeInfo.description}
                       </p>
 
                       <div className="space-y-2 border-t border-slate-100 pt-4">
-                        <h4 className="text-xs uppercase font-extrabold tracking-wider text-slate-500 flex items-center gap-1.5">
+                        <h4 className="text-xs uppercase font-extrabold tracking-wider text-muted-foreground flex items-center gap-1.5">
                           <Info className="w-3.5 h-3.5 text-emerald-600" />
                           Key Cellular Functions
                         </h4>
-                        <ul className="text-xs text-slate-600 space-y-2 pl-4 list-disc marker:text-emerald-500 font-medium">
+                        <ul className="text-xs text-muted-foreground space-y-2 pl-4 list-disc marker:text-emerald-500 font-medium">
                           {activeInfo.functions.map((func, i) => (
                             <li key={i}>{func}</li>
                           ))}
                         </ul>
                       </div>
 
-                      <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs space-y-1 relative overflow-hidden">
+                      <div className="bg-muted border border-border rounded-xl p-3 text-xs space-y-1 relative overflow-hidden">
                         <div className="absolute top-0 right-0 -mt-2 -mr-2 w-16 h-16 bg-emerald-500/5 rounded-full blur-xl" />
                         <span className="font-extrabold text-emerald-600 uppercase tracking-widest text-[9px] flex items-center gap-1">
                           <Sparkles className="w-3 h-3 animate-pulse" />
                           Science Fun Fact
                         </span>
-                        <p className="text-slate-500 leading-relaxed italic font-medium">
+                        <p className="text-muted-foreground leading-relaxed italic font-medium">
                           "{activeInfo.funFact}"
                         </p>
                       </div>
@@ -352,11 +352,11 @@ export default function Page() {
                     </div>
                   ) : (
                     <div className="text-center py-12 space-y-4">
-                      <div className="w-12 h-12 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center mx-auto">
+                      <div className="w-12 h-12 rounded-full bg-muted border border-border flex items-center justify-center mx-auto">
                         <Compass className="w-6 h-6 text-slate-400" />
                       </div>
                       <div className="space-y-1.5">
-                        <p className="text-sm font-semibold text-slate-800">No Structure Selected</p>
+                        <p className="text-sm font-semibold text-foreground">No Structure Selected</p>
                         <p className="text-xs text-slate-400 max-w-[200px] mx-auto leading-normal">
                           Click directly on the plant cell structure, or choose one from the directory list to examine its properties.
                         </p>
@@ -365,8 +365,8 @@ export default function Page() {
                   )}
 
                   {/* Organelle Selection Directory */}
-                  <div className="border-t border-slate-200 pt-4 space-y-2">
-                    <h4 className="text-xs uppercase font-extrabold tracking-wider text-slate-500">
+                  <div className="border-t border-border pt-4 space-y-2">
+                    <h4 className="text-xs uppercase font-extrabold tracking-wider text-muted-foreground">
                       Organelle Directory
                     </h4>
                     <div className="grid grid-cols-2 gap-1.5">
@@ -381,7 +381,7 @@ export default function Page() {
                             className={`flex items-center justify-between p-2 rounded-lg text-left text-xs transition-all border ${
                               isSelected
                                 ? "bg-emerald-50 border-emerald-200 text-emerald-700 font-bold"
-                                : "bg-slate-50/50 border-slate-200/60 text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                                : "bg-slate-50/50 border-slate-200/60 text-muted-foreground hover:bg-slate-100 hover:text-foreground"
                             }`}
                           >
                             <span className="flex items-center gap-1.5 overflow-hidden text-ellipsis whitespace-nowrap">
@@ -403,9 +403,9 @@ export default function Page() {
               {/* Tab 2: Lab Log Checklist */}
               {activeTab === "log" && (
                 <div className="space-y-4">
-                  <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl flex items-center gap-4">
+                  <div className="bg-muted border border-border p-4 rounded-xl flex items-center gap-4">
                     <div className="relative flex items-center justify-center shrink-0">
-                      <div className="w-12 h-12 rounded-full border border-slate-200 bg-white flex items-center justify-center text-emerald-600 font-bold text-sm">
+                      <div className="w-12 h-12 rounded-full border border-border bg-card flex items-center justify-center text-emerald-600 font-bold text-sm">
                         {exploredOrganelles.size}
                       </div>
                       <svg className="absolute w-12 h-12 -rotate-90">
@@ -430,8 +430,8 @@ export default function Page() {
                       </svg>
                     </div>
                     <div>
-                      <h4 className="font-bold text-slate-800 text-sm">Exploration Tracker</h4>
-                      <p className="text-slate-500 text-xs mt-0.5">
+                      <h4 className="font-bold text-foreground text-sm">Exploration Tracker</h4>
+                      <p className="text-muted-foreground text-xs mt-0.5">
                         Identified {exploredOrganelles.size} out of {Object.keys(ORGANELLE_DETAILS).length} structures.
                       </p>
                     </div>
@@ -447,10 +447,10 @@ export default function Page() {
                       </div>
                     </div>
                   ) : (
-                    <div className="bg-slate-50 border border-slate-200 p-3 rounded-xl flex items-center gap-3 text-xs text-slate-500">
+                    <div className="bg-muted border border-border p-3 rounded-xl flex items-center gap-3 text-xs text-muted-foreground">
                       <HelpCircle className="w-5 h-5 text-indigo-500 shrink-0" />
                       <div>
-                        <span className="font-bold text-slate-700 block">Lab Target</span>
+                        <span className="font-bold text-muted-foreground block">Lab Target</span>
                         Identify at least 3 organelle structures in 3D to complete the experiment criteria (Progress: {exploredOrganelles.size}/3).
                       </div>
                     </div>
@@ -458,7 +458,7 @@ export default function Page() {
 
                   {/* Log Checklist */}
                   <div className="space-y-1.5">
-                    <h4 className="text-xs uppercase font-extrabold tracking-wider text-slate-500 mb-2">
+                    <h4 className="text-xs uppercase font-extrabold tracking-wider text-muted-foreground mb-2">
                       Identification Log
                     </h4>
                     {Object.keys(ORGANELLE_DETAILS).map((key) => {
@@ -470,8 +470,8 @@ export default function Page() {
                           onClick={() => handleSelect(key as OrganelleType)}
                           className={`flex items-center justify-between p-2.5 rounded-lg border text-xs cursor-pointer transition-all ${
                             isExplored
-                              ? "bg-slate-50 border-slate-200 text-slate-800 font-medium"
-                              : "bg-white border-slate-100 text-slate-400"
+                              ? "bg-muted border-border text-foreground font-medium"
+                              : "bg-card border-slate-100 text-slate-400"
                           }`}
                         >
                           <div className="flex items-center gap-2">
@@ -500,27 +500,27 @@ export default function Page() {
 
               {/* Tab 3: Cell Theory */}
               {activeTab === "theory" && (
-                <div className="space-y-4 text-xs md:text-sm leading-relaxed text-slate-600 animate-fadeIn">
+                <div className="space-y-4 text-xs md:text-sm leading-relaxed text-muted-foreground animate-fadeIn">
                   <div className="space-y-2">
-                    <h4 className="text-xs uppercase font-extrabold tracking-wider text-slate-500 flex items-center gap-1.5">
+                    <h4 className="text-xs uppercase font-extrabold tracking-wider text-muted-foreground flex items-center gap-1.5">
                       <BookOpen className="w-4 h-4 text-emerald-600" />
                       Plant Cell Biology
                     </h4>
-                    <p className="text-slate-500 font-medium">
+                    <p className="text-muted-foreground font-medium">
                       Plant cells are eukaryotic cells with structural features optimized for solar energy harvesting and architectural support.
                     </p>
                   </div>
 
-                  <div className="space-y-2 border-t border-slate-200 pt-3">
-                    <h4 className="text-xs uppercase font-bold text-slate-800">The Power of Turgor Pressure</h4>
-                    <p className="text-slate-500 font-medium font-normal">
+                  <div className="space-y-2 border-t border-border pt-3">
+                    <h4 className="text-xs uppercase font-bold text-foreground">The Power of Turgor Pressure</h4>
+                    <p className="text-muted-foreground font-medium font-normal">
                       The Large Central Vacuole absorbs water, expanding like a balloon inside the rigid Cellulose Cell Wall. This outward force is called **turgor pressure** and is what holds non-woody plants upright!
                     </p>
                   </div>
 
-                  <div className="space-y-2 border-t border-slate-200 pt-3">
-                    <h4 className="text-xs uppercase font-bold text-slate-800">Photosynthesis Machinery</h4>
-                    <p className="text-slate-500 font-medium font-normal">
+                  <div className="space-y-2 border-t border-border pt-3">
+                    <h4 className="text-xs uppercase font-bold text-foreground">Photosynthesis Machinery</h4>
+                    <p className="text-muted-foreground font-medium font-normal">
                       Chloroplasts capture photons using green chlorophyll pigment to build glucose molecules. This is an endothermic chemical pathway:
                       <br/>
                       <span className="block mt-1 font-mono text-[10px] bg-slate-950 p-1.5 rounded border border-slate-800 text-emerald-400 text-center">

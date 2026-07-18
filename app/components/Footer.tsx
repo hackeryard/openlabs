@@ -1,5 +1,8 @@
-import React from "react";
+"use client";
+
 import Link from "next/link";
+import { motion } from "framer-motion";
+
 const footerLinks = [
   {
     label: "Physics",
@@ -22,7 +25,13 @@ const footerLinks = [
 export default function Footer() {
   return (
     <footer className="bg-gradient-to-r from-slate-800 to-indigo-900 text-white py-8">
-      <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6"
+      >
         {/* -------- Brand -------- */}
         <div>
           <div className="text-lg font-bold">OpenLabs</div>
@@ -38,14 +47,15 @@ export default function Footer() {
 
           <div className="mt-2 text-sm text-slate-200 space-y-1 flex flex-col">
             {footerLinks.map((item) => (
-              <Link
-                key={item.label}
-                href={item.url}
-                aria-label={item.label}
-                className="hover:text-white transition-colors"
-              >
-                {item.label}
-              </Link>
+              <motion.div key={item.label} whileHover={{ x: 4 }} transition={{ duration: 0.15 }}>
+                <Link
+                  href={item.url}
+                  aria-label={item.label}
+                  className="hover:text-white transition-colors"
+                >
+                  {item.label}
+                </Link>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -60,7 +70,7 @@ export default function Footer() {
             </a>
           </p>
         </div>
-      </div>
+      </motion.div>
 
       {/* -------- Bottom Bar -------- */}
       <div className="mt-6 text-center text-xs text-slate-400">

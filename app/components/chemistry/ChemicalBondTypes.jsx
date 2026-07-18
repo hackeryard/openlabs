@@ -48,12 +48,12 @@ export default function ChemicalBondTypes({ onComplete }) {
   }, [predictedBond, onComplete]);
 
   return (
-    <div className="bg-white border rounded-xl p-6 space-y-12 shadow-sm">
+    <div className="bg-card border border-border rounded-xl p-6 space-y-12 shadow-sm">
 
       {/* ================= HEADER ================= */}
       <div>
         <h2 className="text-3xl font-bold">Types of Chemical Bonds</h2>
-        <p className="text-gray-600 mt-1">
+        <p className="text-muted-foreground mt-1">
           Chemical bonds are the forces that hold atoms together to form
           molecules and compounds. Atoms bond to achieve lower energy and
           greater stability.
@@ -64,7 +64,7 @@ export default function ChemicalBondTypes({ onComplete }) {
       <section className={`border-l-4 p-5 rounded-lg ${BOND_COLORS.ionic}`}>
         <h3 className="text-2xl font-semibold text-blue-700">1. Ionic Bond</h3>
 
-        <p className="mt-2 text-gray-700">
+        <p className="mt-2 text-muted-foreground">
           An <strong>ionic bond</strong> is formed when one atom completely
           transfers one or more electrons to another atom, forming oppositely
           charged ions that attract each other.
@@ -73,7 +73,7 @@ export default function ChemicalBondTypes({ onComplete }) {
         <div className="mt-4 grid md:grid-cols-2 gap-4">
           <div>
             <h4 className="font-semibold">How it forms</h4>
-            <ul className="list-disc list-inside text-gray-700 mt-1 space-y-1">
+            <ul className="list-disc list-inside text-muted-foreground mt-1 space-y-1">
               <li>Occurs between a <strong>metal</strong> and a <strong>non-metal</strong></li>
               <li>Metal loses electrons → becomes a <strong>cation (+)</strong></li>
               <li>Non-metal gains electrons → becomes an <strong>anion (−)</strong></li>
@@ -83,10 +83,10 @@ export default function ChemicalBondTypes({ onComplete }) {
 
           <div>
             <h4 className="font-semibold">Example</h4>
-            <p className="text-gray-700 mt-1">
+            <p className="text-muted-foreground mt-1">
               <strong>Sodium Chloride (NaCl)</strong>
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted-foreground">
               Na → Na⁺ + e⁻ <br />
               Cl + e⁻ → Cl⁻
             </p>
@@ -112,7 +112,7 @@ export default function ChemicalBondTypes({ onComplete }) {
           2. Covalent Bond
         </h3>
 
-        <p className="mt-2 text-gray-700">
+        <p className="mt-2 text-muted-foreground">
           A <strong>covalent bond</strong> is formed when two atoms share one or
           more pairs of electrons to achieve stability.
         </p>
@@ -120,7 +120,7 @@ export default function ChemicalBondTypes({ onComplete }) {
         <div className="mt-4 grid md:grid-cols-2 gap-4">
           <div>
             <h4 className="font-semibold">How it forms</h4>
-            <ul className="list-disc list-inside text-gray-700 mt-1 space-y-1">
+            <ul className="list-disc list-inside text-muted-foreground mt-1 space-y-1">
               <li>Occurs between <strong>non-metal atoms</strong></li>
               <li>Electrons are shared, not transferred</li>
               <li>Bond is directional</li>
@@ -130,7 +130,7 @@ export default function ChemicalBondTypes({ onComplete }) {
 
           <div>
             <h4 className="font-semibold">Examples</h4>
-            <ul className="text-gray-700 mt-1 space-y-1">
+            <ul className="text-muted-foreground mt-1 space-y-1">
               <li>H₂O — Water</li>
               <li>CO₂ — Carbon dioxide</li>
               <li>O₂ — Oxygen</li>
@@ -158,7 +158,7 @@ export default function ChemicalBondTypes({ onComplete }) {
 
         <div className="mt-4">
           <h4 className="font-semibold">Polar vs Non-Polar</h4>
-          <ul className="list-disc list-inside text-gray-700 mt-1 space-y-1">
+          <ul className="list-disc list-inside text-muted-foreground mt-1 space-y-1">
             <li><strong>Polar:</strong> Unequal sharing (H₂O)</li>
             <li><strong>Non-polar:</strong> Equal sharing (O₂, N₂)</li>
           </ul>
@@ -171,7 +171,7 @@ export default function ChemicalBondTypes({ onComplete }) {
           3. Metallic Bond
         </h3>
 
-        <p className="mt-2 text-gray-700">
+        <p className="mt-2 text-muted-foreground">
           A <strong>metallic bond</strong> is formed when positive metal ions are
           surrounded by a sea of delocalized electrons.
         </p>
@@ -179,7 +179,7 @@ export default function ChemicalBondTypes({ onComplete }) {
         <div className="mt-4 grid md:grid-cols-2 gap-4">
           <div>
             <h4 className="font-semibold">Electron Sea Model</h4>
-            <ul className="list-disc list-inside text-gray-700 mt-1 space-y-1">
+            <ul className="list-disc list-inside text-muted-foreground mt-1 space-y-1">
               <li>Valence electrons are free to move</li>
               <li>Explains electrical conductivity</li>
               <li>Non-directional bond</li>
@@ -188,7 +188,7 @@ export default function ChemicalBondTypes({ onComplete }) {
 
           <div>
             <h4 className="font-semibold">Examples</h4>
-            <ul className="text-gray-700 mt-1 space-y-1">
+            <ul className="text-muted-foreground mt-1 space-y-1">
               <li>Iron (Fe)</li>
               <li>Copper (Cu)</li>
               <li>Aluminium (Al)</li>
@@ -216,7 +216,7 @@ export default function ChemicalBondTypes({ onComplete }) {
 
         <table className="w-full border text-sm">
           <thead>
-            <tr className="bg-gray-100">
+            <tr className="bg-muted">
               <th className="border p-2">Property</th>
               <th className="border p-2">Ionic</th>
               <th className="border p-2">Covalent</th>
@@ -236,12 +236,12 @@ export default function ChemicalBondTypes({ onComplete }) {
       {/* Dot–Cross Diagrams */}
       <section className="border rounded-xl p-6">
         <h3 className="text-2xl font-semibold mb-3">Dot–Cross Diagrams</h3>
-        <p className="text-gray-600 mb-3">
+        <p className="text-muted-foreground mb-3">
           Dot–cross diagrams show the transfer or sharing of electrons using
           different symbols for different atoms.
         </p>
 
-        <pre className="bg-gray-100 p-4 rounded text-sm">
+        <pre className="bg-muted p-4 rounded text-sm">
 Na •  → Na⁺  
 Cl ××××××× + • → Cl⁻  
 
@@ -274,18 +274,18 @@ H • : O : • H
       </section>
 
       {/* 3D Bond Models */}
-<section className="border rounded-2xl p-6 bg-gradient-to-br from-gray-50 to-white shadow-sm">
+<section className="border border-border rounded-2xl p-6 bg-muted shadow-sm">
   <h3 className="text-2xl font-semibold mb-1">
     3D Bond Models
   </h3>
-  <p className="text-sm text-gray-600 mb-6">
+  <p className="text-sm text-muted-foreground mb-6">
     Visual representations to support theoretical understanding of chemical bonds
   </p>
 
   <div className="grid md:grid-cols-3 gap-6 h-80">
 
     {/* ================= IONIC ================= */}
-    <div className="relative rounded-xl border bg-white shadow-md hover:shadow-lg transition">
+    <div className="relative rounded-xl border border-border bg-card shadow-md hover:shadow-lg transition">
       <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
         Ionic Bond
       </div>
@@ -300,17 +300,17 @@ H • : O : • H
       </div>
 
       <div className="px-4 pb-4 text-center">
-        <p className="text-xs text-gray-600">
+        <p className="text-xs text-muted-foreground">
           Electron transfer forms oppositely charged ions
         </p>
-        <p className="text-[11px] text-gray-500 mt-1">
+        <p className="text-[11px] text-muted-foreground mt-1">
           Example: NaCl
         </p>
       </div>
     </div>
 
     {/* ================= COVALENT ================= */}
-    <div className="relative rounded-xl border bg-white shadow-md hover:shadow-lg transition">
+    <div className="relative rounded-xl border border-border bg-card shadow-md hover:shadow-lg transition">
       <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
         Covalent Bond
       </div>
@@ -326,17 +326,17 @@ H • : O : • H
       </div>
 
       <div className="px-4 pb-4 text-center">
-        <p className="text-xs text-gray-600">
+        <p className="text-xs text-muted-foreground">
           Shared electron pair holds atoms together
         </p>
-        <p className="text-[11px] text-gray-500 mt-1">
+        <p className="text-[11px] text-muted-foreground mt-1">
           Example: H₂, O₂
         </p>
       </div>
     </div>
 
     {/* ================= METALLIC ================= */}
-    <div className="relative rounded-xl border bg-white shadow-md hover:shadow-lg transition">
+    <div className="relative rounded-xl border border-border bg-card shadow-md hover:shadow-lg transition">
       <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700">
         Metallic Bond
       </div>
@@ -353,10 +353,10 @@ H • : O : • H
       </div>
 
       <div className="px-4 pb-4 text-center">
-        <p className="text-xs text-gray-600">
+        <p className="text-xs text-muted-foreground">
           Delocalized electrons enable conductivity
         </p>
-        <p className="text-[11px] text-gray-500 mt-1">
+        <p className="text-[11px] text-muted-foreground mt-1">
           Example: Cu, Fe
         </p>
       </div>

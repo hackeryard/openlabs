@@ -8,6 +8,14 @@ interface WebAPIsPanelProps {
   items: WebAPIItem[];
 }
 
+// Scales the pending-timer progress bar duration to roughly reflect the
+// timer's actual delay (a 5000ms timeout should visibly take longer than a
+// 0ms one), clamped so the animation never makes the user wait more than
+// ~1.5s or feels instant below ~0.4s.
+function progressDuration(delayMs: number): number {
+  return Math.min(1.5, Math.max(0.4, delayMs / 2000));
+}
+
 export default function WebAPIsPanel({ items }: WebAPIsPanelProps) {
   const shouldReduceMotion = useReducedMotion();
 
@@ -61,7 +69,7 @@ export default function WebAPIsPanel({ items }: WebAPIsPanelProps) {
                       className="h-full bg-gradient-to-r from-violet-500 to-purple-400 rounded-full"
                       initial={{ width: '0%' }}
                       animate={{ width: '100%' }}
-                      transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.8, ease: 'easeOut' }}
+                      transition={shouldReduceMotion ? { duration: 0 } : { duration: progressDuration(item.delay), ease: 'easeOut' }}
                     />
                   </div>
                   <span className="text-[10px] text-violet-400/60 font-mono">{item.delay}ms</span>

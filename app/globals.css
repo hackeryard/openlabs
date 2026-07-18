@@ -3,6 +3,33 @@
 @tailwind utilities;
 /* @import "tailwindcss"; */
 
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
+  --border: 214 32% 91%;
+  --primary: 243 75% 59%;
+  --primary-foreground: 0 0% 100%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222 47% 11%;
+}
+
+.dark {
+  --background: 222 47% 6%;
+  --foreground: 210 40% 98%;
+  --card: 222 47% 9%;
+  --card-foreground: 210 40% 98%;
+  --muted: 217 33% 15%;
+  --muted-foreground: 215 20% 65%;
+  --border: 217 33% 18%;
+  --primary: 243 75% 65%;
+  --primary-foreground: 0 0% 100%;
+  --accent: 217 33% 15%;
+  --accent-foreground: 210 40% 98%;
+}
 
 html, body, #__next, main { height: 100%; }
 /* body { @apply bg-[#B0DCFF]; } */

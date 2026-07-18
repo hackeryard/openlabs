@@ -19,7 +19,7 @@ function highlightLine(line: string): JSX.Element {
 
   // Process patterns in order
   const patterns: [RegExp, string][] = [
-    [/^(\/\/.*)$/, 'text-slate-500 italic'],                               // comments
+    [/\/\/.*/, 'text-slate-500 italic'],                                    // comments (indented or inline trailing)
     [/('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|`(?:[^`\\]|\\.)*`)/, 'text-emerald-400'],  // strings
     [/\b(const|let|var|function|return|async|await|new|if|else|for|while)\b/, 'text-violet-400 font-semibold'], // keywords
     [/\b(console|Promise|setTimeout|setInterval|queueMicrotask)\b/, 'text-amber-400'],  // built-ins

@@ -229,20 +229,20 @@ export default function MonkeyBanana() {
       {/* Theory Section */}
       {showTheory && (
         <div className="max-w-7xl mx-auto px-6 pb-6">
-          <div className="bg-white rounded-xl shadow-md border-l-4 border-indigo-500 p-5">
-            <h2 className="text-lg font-semibold text-gray-800 mb-3">📚 Understanding the Problem</h2>
+          <div className="bg-card rounded-xl shadow-md border-l-4 border-indigo-500 p-5">
+            <h2 className="text-lg font-semibold text-foreground mb-3">📚 Understanding the Problem</h2>
             <div className="grid md:grid-cols-3 gap-4 text-sm">
               <div className="bg-indigo-50 p-3 rounded-lg">
                 <span className="font-bold text-indigo-700">🎯 Goal:</span>
-                <p className="text-gray-600 mt-1">Monkey must get banana hanging from ceiling at MIDDLE position</p>
+                <p className="text-muted-foreground mt-1">Monkey must get banana hanging from ceiling at MIDDLE position</p>
               </div>
               <div className="bg-purple-50 p-3 rounded-lg">
                 <span className="font-bold text-purple-700">📦 Objects:</span>
-                <p className="text-gray-600 mt-1">Monkey (🐒), Box (📦), Banana (🍌) at DOOR, WINDOW, or MIDDLE</p>
+                <p className="text-muted-foreground mt-1">Monkey (🐒), Box (📦), Banana (🍌) at DOOR, WINDOW, or MIDDLE</p>
               </div>
               <div className="bg-pink-50 p-3 rounded-lg">
                 <span className="font-bold text-pink-700">⚡ Actions:</span>
-                <p className="text-gray-600 mt-1">MOVE, PUSH, CLIMB, GRAB - each with preconditions</p>
+                <p className="text-muted-foreground mt-1">MOVE, PUSH, CLIMB, GRAB - each with preconditions</p>
               </div>
             </div>
           </div>
@@ -255,9 +255,9 @@ export default function MonkeyBanana() {
           {/* Left Column - Visualization & Controls */}
           <div className="lg:col-span-2 space-y-6">
             {/* Visualization Card */}
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-              <div className="bg-gradient-to-r from-indigo-100 to-purple-100 px-5 py-3 border-b border-gray-200">
-                <h2 className="font-semibold text-gray-700 flex items-center gap-2">
+            <div className="bg-card rounded-xl shadow-lg overflow-hidden border border-border">
+              <div className="bg-gradient-to-r from-indigo-100 to-purple-100 px-5 py-3 border-b border-border">
+                <h2 className="font-semibold text-muted-foreground flex items-center gap-2">
                   <span className="w-2 h-2 bg-indigo-500 rounded-full"></span>
                   Current Environment State
                 </h2>
@@ -333,9 +333,9 @@ export default function MonkeyBanana() {
             </div>
 
             {/* State Display */}
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-              <div className="bg-gradient-to-r from-purple-100 to-pink-100 px-5 py-3 border-b border-gray-200">
-                <h2 className="font-semibold text-gray-700 flex items-center gap-2">
+            <div className="bg-card rounded-xl shadow-lg overflow-hidden border border-border">
+              <div className="bg-gradient-to-r from-purple-100 to-pink-100 px-5 py-3 border-b border-border">
+                <h2 className="font-semibold text-muted-foreground flex items-center gap-2">
                   <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
                   Current Prolog State
                 </h2>
@@ -343,20 +343,20 @@ export default function MonkeyBanana() {
               
               <div className="p-6">
                 <div className="grid grid-cols-4 gap-3 mb-4">
-                  <div className={`${positions.find(p => p.id === state.monkeyPos)?.bg || 'bg-gray-50'} p-3 rounded-lg border`}>
-                    <div className="text-xs text-gray-500 mb-1">Monkey</div>
+                  <div className={`${positions.find(p => p.id === state.monkeyPos)?.bg || 'bg-muted'} p-3 rounded-lg border`}>
+                    <div className="text-xs text-muted-foreground mb-1">Monkey</div>
                     <div className="font-mono text-sm font-bold">{state.monkeyPos}</div>
                   </div>
-                  <div className="bg-gray-50 p-3 rounded-lg border">
-                    <div className="text-xs text-gray-500 mb-1">On</div>
+                  <div className="bg-muted p-3 rounded-lg border">
+                    <div className="text-xs text-muted-foreground mb-1">On</div>
                     <div className="font-mono text-sm font-bold">{state.monkeyOn}</div>
                   </div>
-                  <div className={`${positions.find(p => p.id === state.boxPos)?.bg || 'bg-gray-50'} p-3 rounded-lg border`}>
-                    <div className="text-xs text-gray-500 mb-1">Box</div>
+                  <div className={`${positions.find(p => p.id === state.boxPos)?.bg || 'bg-muted'} p-3 rounded-lg border`}>
+                    <div className="text-xs text-muted-foreground mb-1">Box</div>
                     <div className="font-mono text-sm font-bold">{state.boxPos}</div>
                   </div>
-                  <div className={`${state.hasBanana === 'has' ? 'bg-green-50' : 'bg-gray-50'} p-3 rounded-lg border`}>
-                    <div className="text-xs text-gray-500 mb-1">Banana</div>
+                  <div className={`${state.hasBanana === 'has' ? 'bg-green-50' : 'bg-muted'} p-3 rounded-lg border`}>
+                    <div className="text-xs text-muted-foreground mb-1">Banana</div>
                     <div className="font-mono text-sm font-bold">{state.hasBanana}</div>
                   </div>
                 </div>
@@ -370,9 +370,9 @@ export default function MonkeyBanana() {
             </div>
 
             {/* Action Controls */}
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-              <div className="bg-gradient-to-r from-amber-100 to-orange-100 px-5 py-3 border-b border-gray-200">
-                <h2 className="font-semibold text-gray-700 flex items-center gap-2">
+            <div className="bg-card rounded-xl shadow-lg overflow-hidden border border-border">
+              <div className="bg-gradient-to-r from-amber-100 to-orange-100 px-5 py-3 border-b border-border">
+                <h2 className="font-semibold text-muted-foreground flex items-center gap-2">
                   <span className="w-2 h-2 bg-amber-500 rounded-full"></span>
                   Available Actions
                 </h2>
@@ -454,11 +454,11 @@ export default function MonkeyBanana() {
                       </div>
                     </div>
 
-                    <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <div className="bg-muted p-4 rounded-lg border border-border">
                       <div className="grid grid-cols-2 gap-3">
                         <button
                           onClick={resetSimulator}
-                          className="px-4 py-2.5 bg-white text-gray-700 rounded-lg border border-gray-300 hover:bg-gray-50 transition-all"
+                          className="px-4 py-2.5 bg-card text-muted-foreground rounded-lg border border-gray-300 hover:bg-muted transition-all"
                         >
                           🔄 Reset
                         </button>
@@ -494,9 +494,9 @@ export default function MonkeyBanana() {
             </div>
 
             {/* History */}
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-              <div className="bg-gradient-to-r from-gray-100 to-gray-200 px-5 py-3 border-b border-gray-200">
-                <h2 className="font-semibold text-gray-700 flex items-center gap-2">
+            <div className="bg-card rounded-xl shadow-lg overflow-hidden border border-border">
+              <div className="bg-gradient-to-r from-gray-100 to-gray-200 px-5 py-3 border-b border-border">
+                <h2 className="font-semibold text-muted-foreground flex items-center gap-2">
                   <span className="w-2 h-2 bg-gray-500 rounded-full"></span>
                   Execution History
                 </h2>
@@ -512,7 +512,7 @@ export default function MonkeyBanana() {
                         <div className="text-xs font-mono text-indigo-600 mb-1">
                           Step {idx+1}: {h.action.toUpperCase()}
                         </div>
-                        <div className="text-xs font-mono bg-gray-50 p-2 rounded border">
+                        <div className="text-xs font-mono bg-muted p-2 rounded border">
                           state({h.state.monkeyPos}, {h.state.monkeyOn}, {h.state.boxPos}, {h.state.hasBanana})
                         </div>
                       </div>
@@ -526,19 +526,19 @@ export default function MonkeyBanana() {
           {/* Right Column - Reference */}
           <div className="lg:col-span-1 space-y-6">
             {/* Problem Card */}
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+            <div className="bg-card rounded-xl shadow-lg overflow-hidden border border-border">
               <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-5 py-3">
                 <h2 className="font-semibold text-white">📋 Problem</h2>
               </div>
               <div className="p-5">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   Monkey wants banana at MIDDLE. Box at WINDOW initially. Monkey must move box, climb, and grab.
                 </p>
               </div>
             </div>
 
             {/* State Format */}
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+            <div className="bg-card rounded-xl shadow-lg overflow-hidden border border-border">
               <div className="bg-gradient-to-r from-purple-600 to-pink-600 px-5 py-3">
                 <h2 className="font-semibold text-white">📊 State Format</h2>
               </div>
@@ -568,11 +568,11 @@ export default function MonkeyBanana() {
             </div>
 
             {/* Prolog Code */}
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+            <div className="bg-card rounded-xl shadow-lg overflow-hidden border border-border">
               <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-5 py-3">
                 <h2 className="font-semibold text-green-400">● Prolog Code</h2>
               </div>
-              <div className="p-5 max-h-96 overflow-y-auto bg-gray-50">
+              <div className="p-5 max-h-96 overflow-y-auto bg-muted">
                 <pre className="text-xs font-mono">
                   {prologCode.map((line, idx) => (
                     <div
@@ -584,7 +584,7 @@ export default function MonkeyBanana() {
                       }`}
                     >
                       <span className="text-gray-400 mr-2">{line.line.toString().padStart(2, '0')}</span>
-                      <span className={currentLine === line.line ? 'text-gray-900' : 'text-gray-700'}>
+                      <span className={currentLine === line.line ? 'text-foreground' : 'text-muted-foreground'}>
                         {line.code}
                       </span>
                       {currentLine === line.line && (
@@ -599,7 +599,7 @@ export default function MonkeyBanana() {
             </div>
 
             {/* Solution Path */}
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+            <div className="bg-card rounded-xl shadow-lg overflow-hidden border border-border">
               <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-5 py-3">
                 <h2 className="font-semibold text-white">🏆 Solution</h2>
               </div>

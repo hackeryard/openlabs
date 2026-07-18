@@ -82,6 +82,7 @@ yarn start
 - **Chemical Bond Types** — Visual demonstrations of ionic, covalent, and metallic bonding
 - **3D Atomic Models** — Three.js-based molecular visualization with interactive controls
 - **Chemical Reaction Simulator** — Real-time reaction builder with 3D dynamics and post-processing effects
+- **Water Quality Assessor** — Interactive water-quality parameter explorer
 
 ### Physics Labs
 - **Mechanics** — Free Fall, Projectile Motion, Uniform Motion simulations
@@ -93,11 +94,14 @@ yarn start
 ### Biology Labs
 - **3D Cell Visualization** — Interactive animal and plant cell models with organelle details
 - **Human Anatomy** — Anatomical structure explorer with biological information
+- **Photosynthesis Simulator** — Interactive Light/CO₂/Water/Temperature controls demonstrating Blackman's Law of Limiting Factors
+- **Brain & Neuron Signal Simulator** — 3D neuron visualization combined with signal/firing-rate analytics charts
+- **Blood Group Simulator** — Interactive blood-typing/compatibility explorer
 
 ### Computer Science Labs
 - **HTML/CSS/JS Code Editor** — Live code editor with real-time preview and console output
 - **Java Code Editor** — Java code compilation and execution environment
-- **JavaScript Visual Debugger** — Step-through debugger with memory, stack, and async queue visualization
+- **JavaScript Event Loop Visualizer** — Step-through visualization of the Call Stack, Web APIs, Microtask/Macrotask queues, with a Predict Mode for guessing execution order before running
 - **Data Structures & Algorithms (DSA)** — Interactive DSA visualizations and algorithm implementations
 - **Data Analyzer** — Data visualization and analysis tools with D3 integration
 - **Data Science** — Data science experiments and machine learning demonstrations
@@ -386,6 +390,7 @@ Supports optional `?next=/path` query parameter to redirect users to their inten
 | `/chemistry/chemicalbonds` | Chemical bond type visualizations |
 | `/chemistry/electronic-configuration/[atomicNumber]` | Per-atom electronic configuration viewer |
 | `/chemistry/reaction-simulation` | Interactive reaction simulator with 3D dynamics |
+| `/chemistry/water-quality` | Water quality parameter assessor |
 
 ### Physics Labs
 
@@ -401,6 +406,7 @@ Supports optional `?next=/path` query parameter to redirect users to their inten
 | `/physics/speedoflight` | Speed of light experiments |
 | `/physics/uniformmotionlab` | Uniform motion visualizations |
 | `/physics/waveoptics` | Wave optics and diffraction |
+| `/physics/opticslens` | Optical lens experiments ⚠️ *(not yet in `app/lib/labs.ts` — works, but earns no XP/daily-challenge credit; see `CLAUDE.md`)* |
 
 ### Biology Labs
 
@@ -409,13 +415,22 @@ Supports optional `?next=/path` query parameter to redirect users to their inten
 | `/biology/cell/animal` | 3D interactive animal cell visualization |
 | `/biology/cell/plant` | 3D interactive plant cell visualization |
 | `/biology/human` | Human anatomy explorer |
+| `/biology/photosynthesis` | Photosynthesis rate simulator (Blackman's Law of Limiting Factors) |
+| `/biology/brainNeuron` | Brain & neuron signal simulator with 3D neuron view and analytics charts |
+| `/biology/blood` | Blood group / compatibility simulator |
+
+### Mathematics Labs
+
+| Route | Experiment |
+|-------|-----------|
+| `/maths/alzebra` | ⚠️ Placeholder only — no functioning lab content yet. Don't cite this as a working feature. |
 
 ### Computer Science Labs
 
 | Route | Tool |
 |-------|------|
 | `/computer-science/code-lab/html-css-js` | Live HTML/CSS/JS code editor with preview |
-| `/computer-science/code-lab/js` | JavaScript Visual Debugger with runtime visualization |
+| `/computer-science/code-lab/js` | JavaScript Event Loop Visualizer (Call Stack, Web APIs, Microtask/Macrotask queues, Predict Mode) |
 | `/computer-science/dsa` | Data Structures & Algorithms visualizations |
 | `/computer-science/data-analyzer` | Data analysis and D3 visualization tools |
 | `/computer-science/data-science` | Data science experiments and ML demonstrations |
@@ -757,22 +772,20 @@ throw new Error("Test error");
 # Errors in root layout will trigger global-error.tsx
 ```
 
-### JavaScript Visual Debugger 🐛
+### JavaScript Event Loop Visualizer 🐛
 
-The JavaScript debugger allows students to visualize code execution with runtime introspection:
+Interactive visualization of how JavaScript's single-threaded runtime handles asynchronous operations:
 
 **Features:**
-- **Step-through execution** — Progress through code line by line
-- **Memory inspection** — View all variables and their values at each step
-- **Call stack viewer** — Examine function call hierarchy
-- **DOM tracker** — Monitor DOM mutations
-- **Async queue** — Visualize setTimeout, setInterval, and promises
-- **Timeline scrubber** — Jump to any execution step instantly
-- **Source mapping** — Synchronized code highlighting
+- **Call Stack, Web APIs, Microtask Queue, and Macrotask Queue panels** — see exactly where each piece of code is executing
+- **Playback controls** — step through execution or run at adjustable speed
+- **Predict Mode** — guess execution order before running, to build intuition for microtask-before-macrotask ordering
+- **Curated example library** (`lib/examples.ts`) covering common async patterns (Promises, `async`/`await`, `setTimeout`, `setInterval`)
+- **Console output panel** — see actual `console.log` output alongside the visualization
 
 **Located at:** `/computer-science/code-lab/js`
 
-**Powered by:** Babel parser (`@babel/parser`, `@babel/generator`, `@babel/traverse`) for code instrumentation
+**Implementation:** a hand-written simulator (`lib/simulator.ts`) drives the visualization — not a live JS engine instrumentation; see `app/labs/computer-science/code-lab/js/` for the component breakdown (`EventLoopVisualizer`, `CallStack`, `MicrotaskQueue`, `MacrotaskQueue`, `WebAPIsPanel`, `PredictModePanel`, `PlaybackControls`).
 
 ---
 
@@ -1396,7 +1409,12 @@ Detailed changes are tracked in [CHANGELOG.md](CHANGELOG.md), generated from git
 
 ### Latest Updates
 
-**Latest Updates (May 2026 - v4.0):**
+**Most recent (see [CHANGELOG.md § Unreleased](CHANGELOG.md#unreleased) for the full list):**
+- ✅ **Photosynthesis Simulator** — new Biology lab modeling Blackman's Law of Limiting Factors
+- ✅ **JavaScript Event Loop Visualizer** — Computer Science `code-lab/js` rebuilt around a Call Stack / Web APIs / Microtask / Macrotask visualization with Predict Mode
+- ✅ **Full agent-context doc system** — `CLAUDE.md`, `AGENTS.md`, `REQUIREMENTS.md`, and `CHANGELOG.md` kept in sync, plus Claude Code skills for scaffolding labs, auditing the lab registry, and checking env var health
+
+**Previous (May 2026 - v4.0):**
 - ✅ **Gamification & Rewards Engine** — Comprehensive interactive Daily Challenges, user Streak counting, Level Ups, and custom unlockable Achievements & Badges displayed on profile dashboards
 - ✅ **XP Progression Integration** — Native hooks integrated directly inside 35+ labs triggering XP logs on completion and synchronizing Subject Mastery levels
 - ✅ **Full-Stack Editorial Blog** — Blog manager panel CRUD (`/admin/blogs`), listing grid (`/blog`), dynamic cover photos, and custom SEO FAQ schema generation
@@ -1452,4 +1470,4 @@ OpenLabs is built with ❤️ using:
 
 **Built for curious minds, by educators, for learning. 🎓**
 
-*Last Updated: July 14, 2026*
+*Last Updated: July 18, 2026*

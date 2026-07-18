@@ -243,14 +243,14 @@ export default function PhysicsPage() {
 
       {/* <a
         href="#main-content"
-        className="absolute left-4 -top-16 z-50 rounded bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow transition-all focus:top-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="absolute left-4 -top-16 z-50 rounded bg-card px-3 py-2 text-sm font-semibold text-foreground shadow transition-all focus:top-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"
       >
         Skip to main content
       </a> */}
 
       <main
         id="main-content"
-        className="min-h-screen bg-slate-50 text-slate-800 pb-20 pt-8 font-sans relative overflow-hidden bg-[radial-gradient(#e2e8f0_1.5px,transparent_1.5px)] bg-[size:24px_24px]"
+        className="min-h-screen text-foreground pb-20 pt-8 font-sans relative overflow-hidden bg-[radial-gradient(hsl(var(--border))_1.5px,transparent_1.5px)] bg-[size:24px_24px]"
       >
         {/* Ambient glow blobs */}
         <div className="absolute top-12 left-1/4 h-[400px] w-[400px] rounded-full bg-blue-500/5 blur-[90px] pointer-events-none" />
@@ -259,8 +259,8 @@ export default function PhysicsPage() {
 
         <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
           {/* Breadcrumb */}
-          <nav className="flex items-center space-x-2 text-sm text-slate-400 mb-6" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-slate-950 transition font-medium">
+          <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-foreground transition font-medium">
               Home
             </Link>
             <span aria-hidden="true">/</span>
@@ -271,19 +271,19 @@ export default function PhysicsPage() {
           <header className="mb-14">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
               <div className="space-y-4 max-w-3xl">
-                <div className="inline-flex items-center gap-2 py-1.5 px-3 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-[10px] font-black uppercase tracking-wider shadow-sm">
+                <div className="inline-flex items-center gap-2 py-1.5 px-3 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-wider shadow-sm">
                   <Orbit className="h-3.5 w-3.5 text-indigo-600 animate-pulse" aria-hidden="true" />
                   Virtual Laboratory
                 </div>
 
-                <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-none">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-foreground tracking-tight leading-none">
                   Physics{" "}
                   <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent drop-shadow-sm">
                     Experiments
                   </span>
                 </h1>
 
-                <p className="text-slate-500 text-base md:text-lg font-medium max-w-2xl leading-relaxed">
+                <p className="text-muted-foreground text-base md:text-lg font-medium max-w-2xl leading-relaxed">
                   Interactive simulations grounded in standard physics equations.
                   Measure, analyze, and validate — all in your browser.
                 </p>
@@ -291,17 +291,17 @@ export default function PhysicsPage() {
 
               {/* Stats pills */}
               <div className="flex flex-wrap items-center gap-3">
-                <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl px-5 py-3 shadow-sm">
-                  <span className="text-2xl font-black text-slate-900">{experiments.length}</span>
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">experiments</span>
+                <div className="flex items-center gap-3 bg-card/80 backdrop-blur-sm border border-border/60 rounded-2xl px-5 py-3 shadow-sm">
+                  <span className="text-2xl font-black text-foreground">{experiments.length}</span>
+                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">experiments</span>
                 </div>
-                <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl px-5 py-3 shadow-sm">
-                  <span className="text-2xl font-black text-slate-900">3</span>
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">domains</span>
+                <div className="flex items-center gap-3 bg-card/80 backdrop-blur-sm border border-border/60 rounded-2xl px-5 py-3 shadow-sm">
+                  <span className="text-2xl font-black text-foreground">3</span>
+                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">domains</span>
                 </div>
-                <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl px-5 py-3 shadow-sm">
+                <div className="flex items-center gap-3 bg-card/80 backdrop-blur-sm border border-border/60 rounded-2xl px-5 py-3 shadow-sm">
                   <span className="text-2xl font-black text-indigo-600">Free</span>
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">always</span>
+                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">always</span>
                 </div>
               </div>
             </div>
@@ -317,22 +317,22 @@ export default function PhysicsPage() {
               {features.map((f) => {
                 const Icon = f.icon;
                 const colorMap: Record<string, string> = {
-                  indigo: "bg-indigo-50 text-indigo-600 border-indigo-100",
-                  blue: "bg-blue-50 text-blue-600 border-blue-100",
-                  violet: "bg-violet-50 text-violet-600 border-violet-100",
+                  indigo: "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 border-indigo-100 dark:border-indigo-900",
+                  blue: "bg-blue-50 dark:bg-blue-950/40 text-blue-600 border-blue-100 dark:border-blue-900",
+                  violet: "bg-violet-50 dark:bg-violet-950/40 text-violet-600 border-violet-100 dark:border-violet-900",
                 };
                 return (
                   <div
                     key={f.title}
-                    className="group bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-3xl p-6 shadow-sm hover:shadow-lg hover:shadow-indigo-500/5 hover:border-indigo-200 hover:-translate-y-1 transition-all duration-300"
+                    className="group bg-card/80 backdrop-blur-sm border border-border/60 rounded-3xl p-6 shadow-sm hover:shadow-lg hover:shadow-indigo-500/5 hover:border-indigo-200 hover:-translate-y-1 transition-all duration-300"
                   >
                     <div className={`h-11 w-11 rounded-2xl border flex items-center justify-center mb-5 shadow-sm transition ${colorMap[f.color]}`}>
                       <Icon className="h-5 w-5" aria-hidden="true" />
                     </div>
-                    <h3 className="text-base font-extrabold text-slate-900 tracking-tight mb-2">
+                    <h3 className="text-base font-extrabold text-foreground tracking-tight mb-2">
                       {f.title}
                     </h3>
-                    <p className="text-sm text-slate-500 leading-relaxed font-medium">
+                    <p className="text-sm text-muted-foreground leading-relaxed font-medium">
                       {f.desc}
                     </p>
                   </div>
@@ -344,9 +344,9 @@ export default function PhysicsPage() {
           {/* Curriculum Section */}
           <section
             aria-labelledby="physics-standards-heading"
-            className="bg-white border border-slate-200/80 rounded-3xl p-8 lg:p-10 shadow-md relative overflow-hidden mb-16"
+            className="bg-card border border-border/80 rounded-3xl p-8 lg:p-10 shadow-md relative overflow-hidden mb-16"
           >
-            <div className="absolute top-0 right-0 h-32 w-32 bg-slate-50 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 right-0 h-32 w-32 bg-muted rounded-full blur-3xl pointer-events-none" />
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               <div className="lg:col-span-8 space-y-4">
@@ -354,21 +354,21 @@ export default function PhysicsPage() {
                   <BookOpen className="h-4 w-4 animate-pulse" aria-hidden="true" />
                   Educational Curriculum Alignment
                 </div>
-                <h2 id="physics-standards-heading" className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                <h2 id="physics-standards-heading" className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
                   Academic Framework Integration & Standards
                 </h2>
-                <p className="text-slate-500 text-sm md:text-base leading-relaxed font-medium">
+                <p className="text-muted-foreground text-sm md:text-base leading-relaxed font-medium">
                   Our virtual physics laboratory modules are meticulously aligned with global academic frameworks including <strong>NCERT Physics Class 11 and 12</strong>, <strong>AP Physics 1 & 2</strong>, <strong>IB Physics HL/SL</strong>, and <strong>Cambridge GCSE / A-Levels</strong>. Each experiment maps directly to standard learning outcomes for mechanics, electricity, and optics.
                 </p>
-                <p className="text-slate-500 text-sm md:text-base leading-relaxed font-medium">
+                <p className="text-muted-foreground text-sm md:text-base leading-relaxed font-medium">
                   OpenLabs provides high-fidelity dynamic simulations enabling interactive concept validation. Telemetry feeds map to standard kinematic graphs, circuit characteristics, and optical interference patterns.
                 </p>
               </div>
 
-              <div className="lg:col-span-4 bg-slate-50 border border-slate-200 p-6 rounded-2xl flex flex-col justify-center text-center shadow-inner">
+              <div className="lg:col-span-4 bg-muted border border-border p-6 rounded-2xl flex flex-col justify-center text-center shadow-inner">
                 <Compass className="h-10 w-10 text-indigo-600 mx-auto mb-3 animate-spin [animation-duration:12s]" aria-hidden="true" />
-                <h3 className="font-extrabold text-slate-900 text-sm mb-1">Interactive Telemetry</h3>
-                <p className="text-[11px] text-slate-400 leading-normal font-medium">
+                <h3 className="font-extrabold text-foreground text-sm mb-1">Interactive Telemetry</h3>
+                <p className="text-[11px] text-muted-foreground leading-normal font-medium">
                   OpenLabs bridges standard academic theory with interactive models to optimize student conceptual retention and research comprehension.
                 </p>
               </div>
@@ -380,10 +380,10 @@ export default function PhysicsPage() {
             <div className="max-w-4xl mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-16 items-start">
                 <div className="md:col-span-1 md:sticky md:top-24">
-                  <h2 id="physics-faq-heading" className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-4">
+                  <h2 id="physics-faq-heading" className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight mb-4">
                     Frequently Asked Questions
                   </h2>
-                  <p className="text-slate-500 text-base">
+                  <p className="text-muted-foreground text-base">
                     Technical and pedagogical details about our physics labs.
                   </p>
                   <div className="mt-6">
@@ -401,15 +401,15 @@ export default function PhysicsPage() {
                   {faqs.map((faq) => (
                     <details
                       key={faq.q}
-                      className="group rounded-2xl bg-white border border-slate-200/60 shadow-[0_2px_10px_rgb(0,0,0,0.02)] overflow-hidden open:border-indigo-200 open:shadow-md transition-all duration-300"
+                      className="group rounded-2xl bg-card border border-border/60 shadow-[0_2px_10px_rgb(0,0,0,0.02)] overflow-hidden open:border-indigo-200 open:shadow-md transition-all duration-300"
                     >
                       <summary className="flex items-center justify-between px-6 py-5 cursor-pointer list-none select-none outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset rounded-2xl">
-                        <span className="font-semibold text-slate-800 text-[1.05rem] group-hover:text-indigo-600 transition-colors pr-6">
+                        <span className="font-semibold text-foreground text-[1.05rem] group-hover:text-indigo-600 transition-colors pr-6">
                           {faq.q}
                         </span>
-                        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center group-open:bg-indigo-50 group-open:border-indigo-100 group-hover:bg-slate-100 transition-colors">
+                        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center group-open:bg-primary/10 group-open:border-primary/20 group-hover:bg-accent transition-colors">
                           <svg
-                            className="w-4 h-4 text-slate-400 group-open:text-indigo-600 group-open:rotate-180 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                            className="w-4 h-4 text-muted-foreground group-open:text-indigo-600 group-open:rotate-180 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -419,7 +419,7 @@ export default function PhysicsPage() {
                           </svg>
                         </span>
                       </summary>
-                      <div className="px-6 pb-6 pt-1 text-slate-600 leading-relaxed border-t border-slate-50 mt-1">
+                      <div className="px-6 pb-6 pt-1 text-muted-foreground leading-relaxed border-t border-border mt-1">
                         <p>{faq.a}</p>
                       </div>
                     </details>
@@ -430,8 +430,8 @@ export default function PhysicsPage() {
           </section>
 
           {/* Footer note */}
-          <footer className="text-center py-8 border-t border-slate-200/60">
-            <p className="text-xs text-slate-400 font-medium">
+          <footer className="text-center py-8 border-t border-border/60">
+            <p className="text-xs text-muted-foreground font-medium">
               All simulations are free for educational use. Validated against experimental data.
             </p>
           </footer>

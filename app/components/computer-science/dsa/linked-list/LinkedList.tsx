@@ -124,7 +124,7 @@ const UniversalLinkedList: React.FC<{ onComplete?: () => void }> = ({ onComplete
           const y = centerY + radius * Math.sin(angle);
           return (
             <foreignObject key={i} x={x - 30} y={y - 25} width="60" height="50">
-              <div className="bg-white border-2 border-slate-800 rounded-lg flex items-center justify-center h-full font-black text-sm shadow-sm relative group">
+              <div className="bg-card border-2 border-slate-800 rounded-lg flex items-center justify-center h-full font-black text-sm shadow-sm relative group">
                 {item}
                 <button onClick={() => deleteNode(i)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100"><Trash2 size={10}/></button>
               </div>
@@ -145,8 +145,8 @@ const UniversalLinkedList: React.FC<{ onComplete?: () => void }> = ({ onComplete
 
           return (
             <div key={index} className="flex items-center relative">
-              <motion.div layout className="relative group flex border-2 border-slate-800 rounded-xl overflow-hidden bg-white shadow-[4px_4px_0px_rgba(0,0,0,1)]">
-                {(type === "doubly") && <div className="w-4 bg-slate-50 border-r border-slate-800 flex items-center justify-center"><CircleDot size={8} className="text-slate-300"/></div>}
+              <motion.div layout className="relative group flex border-2 border-slate-800 rounded-xl overflow-hidden bg-card shadow-[4px_4px_0px_rgba(0,0,0,1)]">
+                {(type === "doubly") && <div className="w-4 bg-muted border-r border-slate-800 flex items-center justify-center"><CircleDot size={8} className="text-muted-foreground"/></div>}
                 <div className="px-6 py-4 font-black min-w-[60px] text-center">{item}</div>
                 <div className="w-6 bg-slate-800 flex items-center justify-center"><CircleDot size={8} className="text-indigo-400"/></div>
                 <button onClick={() => deleteNode(index)} className="absolute -top-2 -right-2 bg-rose-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 z-50"><Trash2 size={12}/></button>
@@ -156,13 +156,13 @@ const UniversalLinkedList: React.FC<{ onComplete?: () => void }> = ({ onComplete
 
               {isEndOfRow && (
                 <div className="absolute -bottom-12 right-1/2 translate-x-1/2 flex flex-col items-center">
-                  <CornerRightDown className="text-slate-400" size={30} />
-                  <div className="text-[8px] font-black text-slate-300 uppercase">Next Line</div>
+                  <CornerRightDown className="text-muted-foreground" size={30} />
+                  <div className="text-[8px] font-black text-muted-foreground uppercase">Next Line</div>
                 </div>
               )}
 
               {isLastNode && (
-                <div className="ml-4 text-[10px] font-black text-slate-300 uppercase italic">
+                <div className="ml-4 text-[10px] font-black text-muted-foreground uppercase italic">
                   {type.includes("circular") ? "LOOPING..." : "NULL"}
                 </div>
               )}
@@ -174,16 +174,16 @@ const UniversalLinkedList: React.FC<{ onComplete?: () => void }> = ({ onComplete
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 font-sans">
+    <div className="min-h-screen p-6 font-sans">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-center bg-white p-6 rounded-3xl border-2 border-slate-800 shadow-[8px_8px_0px_rgba(79,70,229,1)]">
+        <div className="flex flex-col md:flex-row justify-between items-center bg-card p-6 rounded-3xl border-2 border-slate-800 shadow-[8px_8px_0px_rgba(79,70,229,1)]">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-indigo-600 rounded-xl text-white"><LinkIcon /></div>
             <h1 className="text-2xl font-black uppercase italic">Linked<span className="text-indigo-600 underline">List.</span></h1>
           </div>
           <div className="flex items-center gap-4 mt-4 md:mt-0">
-            <select value={type} onChange={(e) => setType(e.target.value as ListType)} className="bg-slate-50 border-2 border-slate-800 p-2 rounded-xl font-bold outline-none">
+            <select value={type} onChange={(e) => setType(e.target.value as ListType)} className="bg-muted border-2 border-slate-800 p-2 rounded-xl font-bold outline-none">
               <option value="singly">Singly</option>
               <option value="doubly">Doubly</option>
               <option value="circular">Circular</option>
@@ -194,13 +194,13 @@ const UniversalLinkedList: React.FC<{ onComplete?: () => void }> = ({ onComplete
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Controls */}
-          <div className="lg:col-span-4 bg-white p-6 rounded-3xl border-2 border-slate-800 space-y-4">
-            <input type="text" value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Data..." className="w-full p-4 bg-slate-100 border-2 border-transparent focus:border-indigo-600 rounded-2xl outline-none font-bold" />
+          <div className="lg:col-span-4 bg-card p-6 rounded-3xl border-2 border-slate-800 space-y-4">
+            <input type="text" value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder="Data..." className="w-full p-4 bg-muted border-2 border-transparent focus:border-indigo-600 rounded-2xl outline-none font-bold" />
             <div className="flex gap-2">
-                <input type="number" value={posValue} onChange={(e) => setPosValue(parseInt(e.target.value))} className="w-20 p-4 bg-slate-100 rounded-2xl font-bold" />
+                <input type="number" value={posValue} onChange={(e) => setPosValue(parseInt(e.target.value))} className="w-20 p-4 bg-muted rounded-2xl font-bold" />
                 <button onClick={handleInsert} className="flex-1 bg-indigo-600 text-white font-black rounded-2xl hover:scale-[1.02] active:scale-95 transition-transform uppercase">Add Node</button>
             </div>
-            <button onClick={() => setList([])} className="w-full p-3 border-2 border-slate-200 text-slate-400 font-bold rounded-2xl flex items-center justify-center gap-2"><RotateCcw size={16}/> RESET</button>
+            <button onClick={() => setList([])} className="w-full p-3 border-2 border-border text-muted-foreground font-bold rounded-2xl flex items-center justify-center gap-2"><RotateCcw size={16}/> RESET</button>
             
             <div className="space-y-2">
               {logs.map((log, i) => (
@@ -210,9 +210,9 @@ const UniversalLinkedList: React.FC<{ onComplete?: () => void }> = ({ onComplete
           </div>
 
           {/* Canvas */}
-          <div className="lg:col-span-8 bg-white rounded-3xl border-2 border-slate-800 min-h-[500px] flex items-center justify-center overflow-hidden relative">
+          <div className="lg:col-span-8 bg-card rounded-3xl border-2 border-slate-800 min-h-[500px] flex items-center justify-center overflow-hidden relative">
             <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(#000 1.5px, transparent 1.5px)', backgroundSize: '24px 24px' }} />
-            {list.length === 0 ? <p className="font-black text-slate-200 text-3xl uppercase tracking-widest">Empty List</p> : 
+            {list.length === 0 ? <p className="font-black text-muted-foreground text-3xl uppercase tracking-widest">Empty List</p> :
              type.includes("circular") ? <CircularLayout /> : <SnakeLayout />}
           </div>
         </div>

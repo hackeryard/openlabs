@@ -59,7 +59,7 @@ function XPBar({ xp, level, color = "from-indigo-500 via-blue-500 to-cyan-400" }
           <div className="absolute top-0 right-0 bottom-0 w-12 bg-gradient-to-r from-transparent to-white/40 rounded-full animate-[pulse_2s_infinite]" />
         </motion.div>
       </div>
-      <div className="flex justify-between items-center text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+      <div className="flex justify-between items-center text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
         <span>{xp} XP Earned</span>
         <span>{next - xp} XP to Level {level + 1}</span>
       </div>
@@ -89,13 +89,13 @@ function SubjectMasteryCircle({ subject, xp, level }: { subject: string; xp: num
     <motion.div
       variants={itemVariants}
       whileHover={{ y: -5, scale: 1.02 }}
-      className={`bg-white/60 backdrop-blur-md border border-white/80 rounded-3xl p-5 flex flex-col items-center justify-center text-center transition-all duration-300 relative overflow-hidden group shadow-[0_8px_30px_rgb(0,0,0,0.04)] ${theme.border} ${theme.shadow}`}
+      className={`bg-card border border-border rounded-3xl p-5 flex flex-col items-center justify-center text-center transition-all duration-300 relative overflow-hidden group shadow-[0_8px_30px_rgb(0,0,0,0.04)] ${theme.border} ${theme.shadow}`}
     >
       <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-b from-transparent to-${theme.bg.split('-')[1]}-50/50`} />
 
       <div className="relative w-20 h-20 flex items-center justify-center mb-2">
         <svg className="w-full h-full -rotate-90 drop-shadow-sm">
-          <circle cx="40" cy="40" r={radius} className="stroke-slate-100" strokeWidth="6" fill="transparent" />
+          <circle cx="40" cy="40" r={radius} className="stroke-muted" strokeWidth="6" fill="transparent" />
           <motion.circle
             initial={{ strokeDashoffset: circumference }}
             animate={{ strokeDashoffset }}
@@ -108,15 +108,15 @@ function SubjectMasteryCircle({ subject, xp, level }: { subject: string; xp: num
             strokeLinecap="round"
           />
         </svg>
-        <span className="absolute text-sm font-black text-slate-700">
+        <span className="absolute text-sm font-black text-foreground">
           {pct}%
         </span>
       </div>
 
-      <h4 className="text-[11px] font-black text-slate-800 uppercase tracking-widest mt-2 truncate w-full px-1 relative z-10">
+      <h4 className="text-[11px] font-black text-foreground uppercase tracking-widest mt-2 truncate w-full px-1 relative z-10">
         {displayName}
       </h4>
-      <span className="text-[10px] font-bold text-slate-500 mt-1 relative z-10">
+      <span className="text-[10px] font-bold text-muted-foreground mt-1 relative z-10">
         LVL {level} <span className="opacity-40 px-1">•</span> {xp} XP
       </span>
     </motion.div>
@@ -128,7 +128,7 @@ function ActivityAreaChart({ activityLog }: { activityLog: any[] }) {
 
   if (data.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-slate-400 bg-slate-50/50 border border-slate-200/60 border-dashed rounded-3xl text-sm font-semibold">
+      <div className="flex flex-col items-center justify-center py-12 text-muted-foreground bg-muted border border-border border-dashed rounded-3xl text-sm font-semibold">
         <Activity className="mb-3 opacity-20" size={32} />
         No lab activity recorded this week yet.
       </div>
@@ -163,17 +163,17 @@ function ActivityAreaChart({ activityLog }: { activityLog: any[] }) {
   const areaPath = `${linePath} L ${points[points.length - 1].x} ${height - paddingY} L ${points[0].x} ${height - paddingY} Z`;
 
   return (
-    <div className="w-full bg-slate-900/[0.02] border border-white/60 rounded-3xl p-6 relative overflow-hidden group">
+    <div className="w-full bg-muted border border-border rounded-3xl p-6 relative overflow-hidden group">
       <div className="flex justify-between items-center mb-6 relative z-10">
         <div>
-          <span className="text-[10px] uppercase tracking-widest text-indigo-500 font-black block mb-1">
+          <span className="text-[10px] uppercase tracking-widest text-primary font-black block mb-1">
             Weekly Throughput
           </span>
-          <span className="text-sm text-slate-600 font-semibold">Activity trends over 7 days</span>
+          <span className="text-sm text-muted-foreground font-semibold">Activity trends over 7 days</span>
         </div>
-        <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full shadow-sm border border-slate-100">
+        <div className="flex items-center gap-2 bg-card px-3 py-1.5 rounded-full shadow-sm border border-border">
           <Flame size={14} className="text-orange-500" />
-          <span className="text-xs font-bold text-slate-700">
+          <span className="text-xs font-bold text-foreground">
             Peak: {maxCount} / day
           </span>
         </div>
@@ -310,7 +310,7 @@ export default function ProfileViewClient() {
           <div className="absolute inset-2 rounded-full border-r-2 border-purple-500 animate-spin animate-reverse"></div>
           <Microscope className="absolute inset-0 m-auto text-indigo-400 opacity-50" size={24} />
         </div>
-        <p className="text-sm font-bold text-slate-400 animate-pulse tracking-widest uppercase">Initializing Workspace...</p>
+        <p className="text-sm font-bold text-muted-foreground animate-pulse tracking-widest uppercase">Initializing Workspace...</p>
       </div>
     );
   }
@@ -360,7 +360,7 @@ export default function ProfileViewClient() {
   const rank = getRankTitle(user.xp || 0);
 
   return (
-    <div className="min-h-screen bg-[#fafcff] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-50/50 via-white to-slate-50 font-sans relative overflow-hidden selection:bg-indigo-100 selection:text-indigo-900">
+    <div className="min-h-screen font-sans relative overflow-hidden selection:bg-indigo-100 selection:text-indigo-900">
 
       {/* Background Animated Orbs */}
       <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-indigo-400/10 blur-[100px] mix-blend-multiply pointer-events-none animate-[pulse_8s_infinite]" />
@@ -374,7 +374,7 @@ export default function ProfileViewClient() {
       >
 
         {/* --- Profile Header Glass Card --- */}
-        <motion.div variants={itemVariants} className="relative bg-white/60 backdrop-blur-xl rounded-[2rem] border border-white/80 shadow-[0_8px_40px_rgb(0,0,0,0.03)] overflow-hidden mb-8 group/card">
+        <motion.div variants={itemVariants} className="relative bg-card rounded-[2rem] border border-border shadow-[0_8px_40px_rgb(0,0,0,0.03)] overflow-hidden mb-8 group/card">
 
           {/* Abstract Lab Banner Area */}
           <div className="h-48 sm:h-56 bg-slate-900 relative overflow-hidden flex items-center justify-center">
@@ -400,7 +400,7 @@ export default function ProfileViewClient() {
               {/* Dynamic Avatar */}
               <div className="relative group cursor-pointer" onClick={() => !editing && setEditing(true)}>
                 <div className="absolute -inset-1.5 bg-gradient-to-tr from-indigo-500 via-purple-500 to-cyan-400 rounded-[2.5rem] blur-md opacity-40 group-hover:opacity-75 transition-opacity duration-500" />
-                <div className="w-36 h-36 rounded-[2rem] border-4 border-white/90 shadow-2xl bg-white overflow-hidden relative mx-auto md:mx-0 backdrop-blur-sm transform group-hover:scale-[1.02] transition-transform duration-300">
+                <div className="w-36 h-36 rounded-[2rem] border-4 border-card/90 shadow-2xl bg-card overflow-hidden relative mx-auto md:mx-0 backdrop-blur-sm transform group-hover:scale-[1.02] transition-transform duration-300">
                   <img
                     key={editing ? form.avatar : user.avatar}
                     src={editing ? form.avatar : user.avatar || AVATARS[0]}
@@ -429,12 +429,12 @@ export default function ProfileViewClient() {
                     </div>
                     <p className="text-indigo-600 font-bold text-sm tracking-wide">@{user.username || "unnamed"}</p>
 
-                    <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center md:justify-start gap-4 pt-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                      <span className="flex items-center gap-1.5 bg-slate-100/80 px-3 py-1.5 rounded-lg border border-slate-200/50">
-                        <Mail size={14} className="text-slate-400" /> {user.email}
+                    <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center md:justify-start gap-4 pt-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      <span className="flex items-center gap-1.5 bg-muted px-3 py-1.5 rounded-lg border border-border">
+                        <Mail size={14} className="text-muted-foreground" /> {user.email}
                       </span>
-                      <span className="flex items-center gap-1.5 bg-slate-100/80 px-3 py-1.5 rounded-lg border border-slate-200/50">
-                        <Calendar size={14} className="text-slate-400" /> Joined {joinDate}
+                      <span className="flex items-center gap-1.5 bg-muted px-3 py-1.5 rounded-lg border border-border">
+                        <Calendar size={14} className="text-muted-foreground" /> Joined {joinDate}
                       </span>
                     </div>
                   </>
@@ -442,9 +442,9 @@ export default function ProfileViewClient() {
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full max-w-sm mx-auto md:mx-0 pt-3 space-y-2">
                     <label className="text-[10px] font-black text-indigo-600 uppercase tracking-widest block text-left">Your Username</label>
                     <div className="relative">
-                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm select-none">@</span>
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground font-bold text-sm select-none">@</span>
                       <input
-                        className="block w-full pl-8 pr-4 py-2.5 text-sm font-bold border border-slate-200/80 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all bg-white shadow-sm text-slate-800"
+                        className="block w-full pl-8 pr-4 py-2.5 text-sm font-bold border border-border rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all bg-card shadow-sm text-foreground"
                         value={form.username}
                         placeholder="Username"
                         onChange={(e) => setForm(f => ({ ...f, username: e.target.value }))}
@@ -458,13 +458,13 @@ export default function ProfileViewClient() {
               <div className="flex gap-3 pb-3 w-full md:w-auto justify-center">
                 {!editing ? (
                   <>
-                    <button onClick={() => setEditing(true)} className="flex items-center justify-center w-12 h-12 bg-white hover:bg-slate-50 text-slate-700 rounded-2xl transition-all shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-0.5 duration-200 group">
+                    <button onClick={() => setEditing(true)} className="flex items-center justify-center w-12 h-12 bg-card hover:bg-accent text-foreground rounded-2xl transition-all shadow-sm border border-border hover:shadow-md hover:-translate-y-0.5 duration-200 group">
                       <Edit2 size={18} className="group-hover:text-indigo-600 transition-colors" />
                     </button>
                     <button onClick={() => {
                       analyticsService.trackLogoutCompleted();
                       fetch("/api/auth/logout", { method: "POST" }).then(() => router.push("/"));
-                    }} className="flex items-center justify-center w-12 h-12 bg-white border border-slate-200 hover:bg-rose-50 hover:border-rose-200 text-slate-500 hover:text-rose-600 rounded-2xl transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 duration-200 group">
+                    }} className="flex items-center justify-center w-12 h-12 bg-card border border-border hover:bg-rose-50 hover:border-rose-200 text-muted-foreground hover:text-rose-600 rounded-2xl transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 duration-200 group">
                       <LogOut size={18} className="group-hover:scale-110 transition-transform" />
                     </button>
                   </>
@@ -473,7 +473,7 @@ export default function ProfileViewClient() {
                     <button onClick={handleSave} disabled={saving} className="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold shadow-lg shadow-slate-900/20 transition-all disabled:opacity-50 text-xs tracking-wider uppercase active:scale-[0.98]">
                       {saving ? "Saving..." : "Save Changes"}
                     </button>
-                    <button onClick={() => setEditing(false)} className="px-6 py-3 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 transition-all text-xs tracking-wider uppercase active:scale-[0.98]">
+                    <button onClick={() => setEditing(false)} className="px-6 py-3 bg-card border border-border text-muted-foreground rounded-xl font-bold hover:bg-accent transition-all text-xs tracking-wider uppercase active:scale-[0.98]">
                       Cancel
                     </button>
                   </div>
@@ -488,22 +488,22 @@ export default function ProfileViewClient() {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="border-t border-slate-200/50 pt-6 mt-4 flex flex-col lg:flex-row lg:items-center justify-between gap-6"
+                  className="border-t border-border pt-6 mt-4 flex flex-col lg:flex-row lg:items-center justify-between gap-6"
                 >
                   <div className="flex-1">
-                    <p className="text-slate-600 max-w-3xl text-sm leading-relaxed font-medium text-center md:text-left bg-white/40 p-4 rounded-2xl border border-white/60">
+                    <p className="text-muted-foreground max-w-3xl text-sm leading-relaxed font-medium text-center md:text-left bg-muted p-4 rounded-2xl border border-border">
                       {user.bio || "No bio yet. Define your research goals and tell the lab about your scientific journey!"}
                     </p>
                   </div>
 
                   {/* Rank Status Badge */}
                   <div className="bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-100/80 rounded-2xl px-5 py-3.5 flex items-center gap-4 shrink-0 self-center lg:self-auto shadow-sm">
-                    <div className="w-10 h-10 rounded-xl bg-white border border-indigo-100 shadow-sm flex items-center justify-center text-indigo-600">
+                    <div className="w-10 h-10 rounded-xl bg-card border border-indigo-100 shadow-sm flex items-center justify-center text-indigo-600">
                       <Microscope size={20} />
                     </div>
                     <div>
                       <span className="text-[9px] uppercase tracking-[0.2em] text-indigo-400 font-black block mb-0.5">Current Rank</span>
-                      <span className="text-sm font-black text-slate-800 tracking-tight">{rank}</span>
+                      <span className="text-sm font-black text-foreground tracking-tight">{rank}</span>
                     </div>
                   </div>
                 </motion.div>
@@ -513,12 +513,12 @@ export default function ProfileViewClient() {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="space-y-6 mt-4 border-t border-slate-200/50 pt-8"
+                  className="space-y-6 mt-4 border-t border-border pt-8"
                 >
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block text-left">About Your Research</label>
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest block text-left">About Your Research</label>
                     <textarea
-                      className="w-full rounded-2xl border-slate-200 border p-4 text-sm font-medium focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all text-slate-700 bg-white/80 shadow-inner"
+                      className="w-full rounded-2xl border-border border p-4 text-sm font-medium focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all text-foreground bg-card shadow-inner"
                       rows={3}
                       value={form.bio}
                       onChange={(e) => setForm(f => ({ ...f, bio: e.target.value }))}
@@ -527,16 +527,16 @@ export default function ProfileViewClient() {
                   </div>
 
                   <div className="space-y-3">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2 text-left">Select ID Badge Avatar</label>
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest block mb-2 text-left">Select ID Badge Avatar</label>
                     <div className="flex flex-wrap gap-4 justify-center md:justify-start">
                       {AVATARS.map((path) => (
                         <button
                           key={path}
                           type="button"
                           onClick={() => setForm(f => ({ ...f, avatar: path }))}
-                          className={`relative w-20 h-20 rounded-[1.25rem] overflow-hidden border-[3px] transition-all duration-300 hover:scale-105 active:scale-95 bg-white p-1.5 ${form.avatar === path
+                          className={`relative w-20 h-20 rounded-[1.25rem] overflow-hidden border-[3px] transition-all duration-300 hover:scale-105 active:scale-95 bg-card p-1.5 ${form.avatar === path
                             ? "border-indigo-500 shadow-lg shadow-indigo-500/20 scale-105 ring-4 ring-indigo-500/10"
-                            : "border-slate-200 hover:border-slate-300 opacity-60 hover:opacity-100 grayscale hover:grayscale-0"
+                            : "border-border hover:border-muted-foreground/40 opacity-60 hover:opacity-100 grayscale hover:grayscale-0"
                             }`}
                         >
                           <img src={path} alt="Avatar" className="w-full h-full object-cover rounded-xl" />
@@ -560,54 +560,54 @@ export default function ProfileViewClient() {
             {/* Top Level KPIs */}
             <motion.div variants={containerVariants} className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5">
 
-              <motion.div variants={itemVariants} className="bg-white/60 backdrop-blur-md border border-white/80 rounded-3xl p-5 flex flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(99,102,241,0.12)] group">
+              <motion.div variants={itemVariants} className="bg-card border border-border rounded-3xl p-5 flex flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(99,102,241,0.12)] group">
                 <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Zap size={22} className="animate-pulse" />
                 </div>
                 <div>
-                  <h4 className="text-3xl font-black text-slate-800 tracking-tighter">{user.level}</h4>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Current Level</p>
+                  <h4 className="text-3xl font-black text-foreground tracking-tighter">{user.level}</h4>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">Current Level</p>
                 </div>
               </motion.div>
 
-              <motion.div variants={itemVariants} className="bg-white/60 backdrop-blur-md border border-white/80 rounded-3xl p-5 flex flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(249,115,22,0.12)] group">
+              <motion.div variants={itemVariants} className="bg-card border border-border rounded-3xl p-5 flex flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(249,115,22,0.12)] group">
                 <div className="w-12 h-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Flame size={22} />
                 </div>
                 <div>
-                  <h4 className="text-3xl font-black text-slate-800 tracking-tighter">
-                    {user.streak} <span className="text-sm text-slate-400 font-bold tracking-normal">day</span>
+                  <h4 className="text-3xl font-black text-foreground tracking-tighter">
+                    {user.streak} <span className="text-sm text-muted-foreground font-bold tracking-normal">day</span>
                   </h4>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Lab Streak</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">Lab Streak</p>
                 </div>
               </motion.div>
 
-              <motion.div variants={itemVariants} className="bg-white/60 backdrop-blur-md border border-white/80 rounded-3xl p-5 flex flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(16,185,129,0.12)] group">
+              <motion.div variants={itemVariants} className="bg-card border border-border rounded-3xl p-5 flex flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(16,185,129,0.12)] group">
                 <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Beaker size={22} />
                 </div>
                 <div>
-                  <h4 className="text-3xl font-black text-slate-800 tracking-tighter">{totalCompleted}</h4>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Simulations</p>
+                  <h4 className="text-3xl font-black text-foreground tracking-tighter">{totalCompleted}</h4>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">Simulations</p>
                 </div>
               </motion.div>
 
-              <motion.div variants={itemVariants} className="bg-white/60 backdrop-blur-md border border-white/80 rounded-3xl p-5 flex flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(59,130,246,0.12)] group">
+              <motion.div variants={itemVariants} className="bg-card border border-border rounded-3xl p-5 flex flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(59,130,246,0.12)] group">
                 <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Trophy size={22} />
                 </div>
                 <div>
-                  <h4 className="text-3xl font-black text-slate-800 tracking-tighter">{user.xp}</h4>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Total XP</p>
+                  <h4 className="text-3xl font-black text-foreground tracking-tighter">{user.xp}</h4>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">Total XP</p>
                 </div>
               </motion.div>
 
             </motion.div>
 
             {/* Subject Mastery Panel */}
-            <motion.div variants={itemVariants} className="bg-white/60 backdrop-blur-xl p-6 sm:p-8 rounded-[2rem] border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.03)] space-y-8 flex-grow">
+            <motion.div variants={itemVariants} className="bg-card p-6 sm:p-8 rounded-[2rem] border border-border shadow-[0_8px_30px_rgb(0,0,0,0.03)] space-y-8 flex-grow">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+                <h3 className="text-lg font-black text-foreground tracking-tight flex items-center gap-2.5">
                   <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">
                     <Compass size={20} />
                   </div>
@@ -616,7 +616,7 @@ export default function ProfileViewClient() {
               </div>
 
               {(!user.subjectProgress || user.subjectProgress.length === 0) ? (
-                <div className="flex flex-col items-center justify-center py-16 text-slate-400 bg-slate-50/50 rounded-3xl border border-slate-200/60 border-dashed text-sm font-semibold">
+                <div className="flex flex-col items-center justify-center py-16 text-muted-foreground bg-muted rounded-3xl border border-border border-dashed text-sm font-semibold">
                   <BookOpen className="mb-3 opacity-20" size={32} />
                   Initialize virtual labs to map your mastery.
                 </div>
@@ -630,9 +630,9 @@ export default function ProfileViewClient() {
             </motion.div>
 
             {/* Recent Log */}
-            <motion.div variants={itemVariants} className="bg-white/60 backdrop-blur-xl p-6 sm:p-8 rounded-[2rem] border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.03)] space-y-6">
+            <motion.div variants={itemVariants} className="bg-card p-6 sm:p-8 rounded-[2rem] border border-border shadow-[0_8px_30px_rgb(0,0,0,0.03)] space-y-6">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+                <h3 className="text-lg font-black text-foreground tracking-tight flex items-center gap-2.5">
                   <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600">
                     <CheckCircle2 size={20} />
                   </div>
@@ -644,7 +644,7 @@ export default function ProfileViewClient() {
               </div>
 
               {(!user.completedExperiments || user.completedExperiments.length === 0) ? (
-                <div className="text-center py-12 text-slate-400 bg-slate-50/50 rounded-3xl border border-slate-200/60 border-dashed text-sm font-semibold">
+                <div className="text-center py-12 text-muted-foreground bg-muted rounded-3xl border border-border border-dashed text-sm font-semibold">
                   No simulations logged. Step into the lab.
                 </div>
               ) : (
@@ -653,17 +653,17 @@ export default function ProfileViewClient() {
                     <motion.div
                       key={idx}
                       whileHover={{ scale: 1.01, x: 4 }}
-                      className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl bg-white border border-slate-100 hover:border-indigo-100 hover:shadow-md hover:shadow-indigo-500/5 transition-all gap-4 group cursor-pointer"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl bg-card border border-border hover:border-indigo-100 hover:shadow-md hover:shadow-indigo-500/5 transition-all gap-4 group cursor-pointer"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-[1rem] bg-slate-50 text-slate-500 border border-slate-100 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                        <div className="w-12 h-12 rounded-[1rem] bg-muted text-muted-foreground border border-border flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
                           <Beaker size={20} />
                         </div>
                         <div>
-                          <p className="font-bold text-slate-800 capitalize text-sm tracking-wide">
+                          <p className="font-bold text-foreground capitalize text-sm tracking-wide">
                             {exp.experimentId?.replace(/-/g, " ")}
                           </p>
-                          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest flex items-center gap-2 mt-1">
+                          <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest flex items-center gap-2 mt-1">
                             <span className="text-indigo-600">{exp.subject === "computerScience" ? "Comp Sci" : exp.subject}</span>
                             <span className="opacity-30">•</span>
                             <span>{new Date(exp.completedAt).toLocaleDateString()}</span>
@@ -687,11 +687,11 @@ export default function ProfileViewClient() {
           <div className="space-y-6 lg:space-y-8 flex flex-col">
 
             {/* Achievements */}
-            <motion.div variants={itemVariants} className="bg-white/60 backdrop-blur-xl p-6 sm:p-8 rounded-[2rem] border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.03)] relative overflow-hidden flex flex-col min-h-[420px]">
+            <motion.div variants={itemVariants} className="bg-card p-6 sm:p-8 rounded-[2rem] border border-border shadow-[0_8px_30px_rgb(0,0,0,0.03)] relative overflow-hidden flex flex-col min-h-[420px]">
               <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/10 rounded-full blur-[40px] pointer-events-none" />
 
               <div className="relative z-10 flex flex-col h-full space-y-6">
-                <h3 className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+                <h3 className="text-lg font-black text-foreground tracking-tight flex items-center gap-2.5">
                   <div className="p-2 rounded-xl bg-amber-50 text-amber-500">
                     <Award size={20} />
                   </div>
@@ -700,12 +700,12 @@ export default function ProfileViewClient() {
 
                 {(!user.badges || user.badges.length === 0) ? (
                   <div className="flex-grow flex flex-col items-center justify-center text-center py-10 space-y-4">
-                    <div className="w-16 h-16 rounded-[1.25rem] bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-300">
+                    <div className="w-16 h-16 rounded-[1.25rem] bg-muted border border-border flex items-center justify-center text-muted-foreground">
                       <Award size={28} />
                     </div>
                     <div className="space-y-1.5">
-                      <p className="text-sm font-bold text-slate-700">No Badges Yet</p>
-                      <p className="text-[11px] font-medium text-slate-500 max-w-[200px] leading-relaxed mx-auto">
+                      <p className="text-sm font-bold text-foreground">No Badges Yet</p>
+                      <p className="text-[11px] font-medium text-muted-foreground max-w-[200px] leading-relaxed mx-auto">
                         Complete your first lab module to start earning achievements.
                       </p>
                     </div>
@@ -718,7 +718,7 @@ export default function ProfileViewClient() {
                         <motion.div
                           variants={itemVariants}
                           key={b.id}
-                          className="p-5 rounded-[1.25rem] bg-white border border-slate-100 hover:border-slate-300 hover:shadow-lg transition-all flex flex-col items-center justify-center text-center group cursor-crosshair relative overflow-hidden"
+                          className="p-5 rounded-[1.25rem] bg-card border border-border hover:border-muted-foreground/40 hover:shadow-lg transition-all flex flex-col items-center justify-center text-center group cursor-crosshair relative overflow-hidden"
                         >
                           {/* 3D Spin Medal */}
                           <div
@@ -730,11 +730,11 @@ export default function ProfileViewClient() {
                             <div className="absolute inset-0 bg-white/20 rounded-full" style={{ transform: "translateZ(-1px)" }} />
                             <Trophy size={24} className="text-white drop-shadow-md relative z-10" />
                           </div>
-                          <span className="text-[11px] font-black text-slate-800 uppercase tracking-wide leading-snug">
+                          <span className="text-[11px] font-black text-foreground uppercase tracking-wide leading-snug">
                             {b.name}
                           </span>
                           {b.earnedAt && (
-                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1.5">
+                            <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest mt-1.5">
                               {new Date(b.earnedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                             </span>
                           )}
@@ -771,8 +771,8 @@ export default function ProfileViewClient() {
             </motion.div>
 
             {/* Activity Chart */}
-            <motion.div variants={itemVariants} className="bg-white/60 backdrop-blur-xl p-6 sm:p-8 rounded-[2rem] border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.03)] space-y-5">
-              <h3 className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+            <motion.div variants={itemVariants} className="bg-card p-6 sm:p-8 rounded-[2rem] border border-border shadow-[0_8px_30px_rgb(0,0,0,0.03)] space-y-5">
+              <h3 className="text-lg font-black text-foreground tracking-tight flex items-center gap-2.5">
                 <div className="p-2 rounded-xl bg-blue-50 text-blue-600">
                   <Activity size={20} />
                 </div>

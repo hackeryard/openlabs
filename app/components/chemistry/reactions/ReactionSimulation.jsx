@@ -349,9 +349,9 @@ export const ReactionAnalysis = ({ reactionId }) => {
     const details = REACTION_DETAILS[reactionId] || REACTION_DETAILS.water;
     
     return (
-        <div className="h-full bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden flex flex-col">
-            <div className="p-4 bg-gray-50 border-b border-gray-100">
-                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Analysis</h3>
+        <div className="h-full bg-card rounded-xl shadow-xl border border-border overflow-hidden flex flex-col">
+            <div className="p-4 bg-muted border-b border-border">
+                <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Analysis</h3>
             </div>
             
             <div className="p-6 space-y-6 flex-1 overflow-y-auto">
@@ -361,8 +361,8 @@ export const ReactionAnalysis = ({ reactionId }) => {
                     key={reactionId + "type"}
                     className="space-y-1"
                 >
-                    <div className="text-xs font-semibold text-gray-400">CLASSIFICATION</div>
-                    <div className="text-lg font-bold text-gray-800">{details.type}</div>
+                    <div className="text-xs font-semibold text-muted-foreground">CLASSIFICATION</div>
+                    <div className="text-lg font-bold text-foreground">{details.type}</div>
                     <div className={`text-sm font-medium ${details.energy.includes("Exo") ? "text-orange-500" : "text-blue-500"}`}>
                         {details.energy}
                     </div>
@@ -375,7 +375,7 @@ export const ReactionAnalysis = ({ reactionId }) => {
                     key={reactionId + "context"}
                     className="space-y-2"
                 >
-                    <div className="text-xs font-semibold text-gray-400">REAL WORLD CONTEXT</div>
+                    <div className="text-xs font-semibold text-muted-foreground">REAL WORLD CONTEXT</div>
                     <div className="p-3 bg-blue-50 rounded-lg text-blue-800 text-sm font-medium border border-blue-100">
                         {details.context}
                     </div>
@@ -390,10 +390,10 @@ export const ReactionAnalysis = ({ reactionId }) => {
                     key={reactionId + "facts"}
                     className="space-y-2"
                 >
-                    <div className="text-xs font-semibold text-gray-400">KEY CONCEPTS</div>
+                    <div className="text-xs font-semibold text-muted-foreground">KEY CONCEPTS</div>
                     <ul className="space-y-2">
                         {details.facts.map((fact, i) => (
-                            <li key={i} className="flex gap-2 text-sm text-gray-600">
+                            <li key={i} className="flex gap-2 text-sm text-muted-foreground">
                                 <span className="text-blue-400">•</span>
                                 {fact}
                             </li>
@@ -402,7 +402,7 @@ export const ReactionAnalysis = ({ reactionId }) => {
                 </motion.div>
             </div>
             
-            <div className="p-4 bg-gray-50 border-t border-gray-100 text-[10px] text-center text-gray-400">
+            <div className="p-4 bg-muted border-t border-border text-[10px] text-center text-muted-foreground">
                 Educational Purpose Only • Standard Conditions (STP)
             </div>
         </div>
@@ -495,33 +495,33 @@ export default function ReactionSimulation({ onComplete, onStateChange }) {
         initial={{ opacity: 0, y: -15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="bg-white rounded-3xl p-6 shadow-md border border-slate-200 flex flex-col md:flex-row justify-between gap-6 items-center"
+        className="bg-card rounded-3xl p-6 shadow-md border border-border flex flex-col md:flex-row justify-between gap-6 items-center"
       >
         <div className="flex-1 w-full text-left space-y-1">
           <div className="flex flex-wrap items-center gap-2.5">
-            <span className="px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-150 text-[10px] font-black uppercase tracking-wider">
+            <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-[10px] font-black uppercase tracking-wider">
               Control Panel
             </span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex flex-wrap items-center gap-2">
+          <h2 className="text-xl sm:text-2xl font-black text-foreground tracking-tight flex flex-wrap items-center gap-2">
              {currentData.name}
-             <span className="text-gray-300">|</span>
-             <span className="text-xs font-mono font-bold text-indigo-600 bg-indigo-50 border border-indigo-100/50 px-2.5 py-0.5 rounded-full">
+             <span className="text-muted-foreground">|</span>
+             <span className="text-xs font-mono font-bold text-primary bg-primary/10 border border-primary/20 px-2.5 py-0.5 rounded-full">
                 {currentData.equation}
              </span>
           </h2>
-          <p className="text-slate-500 text-xs sm:text-sm font-medium">{currentData.description}</p>
+          <p className="text-muted-foreground text-xs sm:text-sm font-medium">{currentData.description}</p>
         </div>
 
         <div className="flex flex-col gap-3 w-full md:w-auto min-w-[240px]">
-           <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Select Reaction Configuration</label>
-           <select 
+           <label className="text-[10px] font-black text-muted-foreground uppercase tracking-wider">Select Reaction Configuration</label>
+           <select
              value={activeReactionId}
              onChange={(e) => setActiveReactionId(e.target.value)}
-             className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none shadow-sm cursor-pointer"
+             className="w-full p-3 bg-muted border border-border rounded-xl text-xs font-bold text-muted-foreground focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none shadow-sm cursor-pointer"
            >
              {Object.entries(REACTIONS_DATA).map(([key, data]) => (
-               <option key={key} value={key} className="font-semibold text-slate-800">{data.name}</option>
+               <option key={key} value={key} className="font-semibold text-foreground">{data.name}</option>
              ))}
            </select>
 
@@ -530,7 +530,7 @@ export default function ReactionSimulation({ onComplete, onStateChange }) {
                  whileTap={{ scale: 0.97 }}
                  onClick={resetSimulation}
                  disabled={animationPhase === 'idle'}
-                 className="flex-1 rounded-xl font-extrabold text-xs bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700 disabled:opacity-50 transition-all border border-slate-200/60 shadow-sm"
+                 className="flex-1 rounded-xl font-extrabold text-xs bg-muted text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50 transition-all border border-border/60 shadow-sm"
               >
                 Reset System
               </motion.button>

@@ -113,13 +113,13 @@ function VerifyEmailPageContent() {
 
   if (!email) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4 font-sans">
-        <div className="w-full max-w-[400px] bg-white rounded-xl shadow-xl border border-slate-100 p-8 text-center">
-          <div className="mx-auto h-12 w-12 bg-red-50 text-red-600 rounded-xl flex items-center justify-center mb-4">
+      <div className="min-h-screen flex items-center justify-center p-4 font-sans">
+        <div className="w-full max-w-[400px] bg-card rounded-xl shadow-xl border border-border p-8 text-center">
+          <div className="mx-auto h-12 w-12 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-300 rounded-xl flex items-center justify-center mb-4">
             <AlertCircle size={24} />
           </div>
-          <h2 className="text-xl font-bold text-slate-900">Missing Email</h2>
-          <p className="mt-2 text-sm text-slate-500">
+          <h2 className="text-xl font-bold text-foreground">Missing Email</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
             We couldn't find an email address to verify. Please try signing up again.
           </p>
           <Link
@@ -136,28 +136,28 @@ function VerifyEmailPageContent() {
   /* ================= MAIN UI ================= */
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4 font-sans text-slate-900">
-      <div className="w-full max-w-[400px] bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 font-sans text-foreground">
+      <div className="w-full max-w-[400px] bg-card rounded-xl shadow-xl border border-border overflow-hidden">
         
         {/* Header */}
         <div className="p-8 pb-6 text-center">
           <div className="mb-4 flex justify-center">
-            <div className="h-12 w-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+            <div className="h-12 w-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
               <Mail size={24} />
             </div>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
             Check your inbox
           </h1>
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-muted-foreground">
             We've sent a 6-digit code to <br />
-            <span className="font-semibold text-slate-900">{email}</span>
+            <span className="font-semibold text-foreground">{email}</span>
           </p>
         </div>
 
         {/* Success Alert */}
         {success && (
-          <div className="mx-8 mb-4 flex items-center gap-2 rounded-lg bg-green-50 p-3 text-sm text-green-700 border border-green-100 animate-in fade-in slide-in-from-top-2">
+          <div className="mx-8 mb-4 flex items-center gap-2 rounded-lg bg-green-50 dark:bg-green-950/20 p-3 text-sm text-green-700 dark:text-green-300 border border-green-100 dark:border-green-900 animate-in fade-in slide-in-from-top-2">
             <CheckCircle2 size={16} />
             <span className="font-medium">Verified! Redirecting...</span>
           </div>
@@ -165,7 +165,7 @@ function VerifyEmailPageContent() {
 
         {/* Error Alert */}
         {error && (
-          <div className="mx-8 mb-4 flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-600 border border-red-100 animate-in fade-in slide-in-from-top-2">
+          <div className="mx-8 mb-4 flex items-center gap-2 rounded-lg bg-red-50 dark:bg-red-950/20 p-3 text-sm text-red-600 dark:text-red-300 border border-red-100 dark:border-red-900 animate-in fade-in slide-in-from-top-2">
             <AlertCircle size={16} />
             <span>{error}</span>
           </div>
@@ -183,14 +183,14 @@ function VerifyEmailPageContent() {
               value={otp}
               onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ""))}
               placeholder="000000"
-              className={`block w-full text-center text-3xl font-bold tracking-[0.5em] rounded-lg border py-4 text-slate-800 transition-all duration-200 outline-none placeholder:tracking-[0.5em] placeholder:text-slate-200
+              className={`block w-full text-center text-3xl font-bold tracking-[0.5em] rounded-lg border py-4 text-foreground transition-all duration-200 outline-none placeholder:tracking-[0.5em] placeholder:text-muted-foreground
                 ${error
-                  ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-50"
-                  : "border-slate-200 hover:border-slate-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50"
+                  ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/20"
+                  : "border-border hover:border-primary/40 focus:border-indigo-500 focus:ring-4 focus:ring-primary/20"
                 }
               `}
             />
-             <p className="text-center text-xs text-slate-400 uppercase tracking-wide font-medium">
+             <p className="text-center text-xs text-muted-foreground uppercase tracking-wide font-medium">
                Enter 6-digit code
              </p>
           </div>
@@ -217,16 +217,16 @@ function VerifyEmailPageContent() {
           {/* Divider */}
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-100"></div>
+              <div className="w-full border-t border-border"></div>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-slate-400">Or</span>
+              <span className="bg-card px-2 text-muted-foreground">Or</span>
             </div>
           </div>
 
           {/* Resend Section */}
           <div className="text-center">
-            <p className="text-sm text-slate-500 mb-2">
+            <p className="text-sm text-muted-foreground mb-2">
               Didn't receive the code?
             </p>
             <button
@@ -250,10 +250,10 @@ function VerifyEmailPageContent() {
           </div>
           
           {/* Back to Signup */}
-           <div className="text-center border-t border-slate-50 pt-4 mt-2">
+           <div className="text-center border-t border-border pt-4 mt-2">
             <Link 
                 href="/signup" 
-                className="text-sm text-slate-400 hover:text-slate-600 transition-colors"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
                 Start with a different email
             </Link>

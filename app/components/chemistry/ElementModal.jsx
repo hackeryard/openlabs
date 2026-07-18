@@ -101,13 +101,13 @@ function getCategoryStyle(category) {
 
 function PropertyTile({ icon: Icon, label, value }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-2.5 shadow-sm">
-      <div className="mb-1 flex items-center gap-1.5 text-[8px] font-black uppercase tracking-wider text-slate-400">
+    <div className="rounded-xl border border-border bg-card p-2.5 shadow-sm">
+      <div className="mb-1 flex items-center gap-1.5 text-[8px] font-black uppercase tracking-wider text-muted-foreground">
         <Icon className="h-3 w-3 text-indigo-500" />
         {label}
       </div>
       <div
-        className="min-h-4 truncate font-mono text-xs font-black text-slate-900"
+        className="min-h-4 truncate font-mono text-xs font-black text-foreground"
         title={String(value ?? "—")}
       >
         {value ?? "—"}
@@ -197,7 +197,7 @@ export default function ElementModal({ element, onClose }) {
       {/* Dialog Container */}
       <div
         ref={dialogRef}
-        className="relative flex w-full max-w-3xl max-h-[90vh] flex-col overflow-hidden rounded-3xl border border-white/70 bg-white shadow-2xl"
+        className="relative flex w-full max-w-3xl max-h-[90vh] flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-2xl"
       >
         {/* Top Gradient Accent */}
         <div className="h-1 shrink-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
@@ -206,7 +206,7 @@ export default function ElementModal({ element, onClose }) {
         <button
           ref={closeRef}
           onClick={onClose}
-          className="absolute right-3 top-4 z-30 inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white/90 text-slate-500 shadow-sm transition hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="absolute right-3 top-4 z-30 inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-card/90 text-muted-foreground shadow-sm transition hover:bg-accent hover:text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-400"
           aria-label="Close element details"
         >
           <X className="h-4 w-4" />
@@ -227,14 +227,14 @@ export default function ElementModal({ element, onClose }) {
                 >
                   {style.label}
                 </span>
-                <span className="font-mono text-[10px] font-black text-slate-400">
+                <span className="font-mono text-[10px] font-black text-muted-foreground">
                   Z = {atomicNumber}
                 </span>
               </div>
 
-              <div className="rounded-2xl border border-white/80 bg-white/80 p-4 text-center shadow-lg backdrop-blur">
+              <div className="rounded-2xl border border-border/80 bg-card/80 p-4 text-center shadow-lg backdrop-blur">
                 <div
-                  className={`mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-inner ${style.accent}`}
+                  className={`mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl border border-border bg-card shadow-inner ${style.accent}`}
                 >
                   <span className="text-3xl font-black tracking-tight">
                     {symbol}
@@ -242,43 +242,43 @@ export default function ElementModal({ element, onClose }) {
                 </div>
                 <h2
                   id={`element-${atomicNumber}-title`}
-                  className="text-2xl font-black tracking-tight text-slate-900"
+                  className="text-2xl font-black tracking-tight text-foreground"
                 >
                   {name}
                 </h2>
-                <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                   Atomic mass {atomicMass ?? "—"} u
                 </p>
               </div>
 
               <div className="grid grid-cols-3 gap-2">
-                <div className="rounded-xl border border-slate-200 bg-white/80 p-2 text-center shadow-sm">
-                  <div className="font-mono text-base font-black text-slate-900">
+                <div className="rounded-xl border border-border bg-card/80 p-2 text-center shadow-sm">
+                  <div className="font-mono text-base font-black text-foreground">
                     {period ?? "—"}
                   </div>
-                  <div className="text-[8px] font-black uppercase tracking-wider text-slate-400">
+                  <div className="text-[8px] font-black uppercase tracking-wider text-muted-foreground">
                     Period
                   </div>
                 </div>
-                <div className="rounded-xl border border-slate-200 bg-white/80 p-2 text-center shadow-sm">
-                  <div className="font-mono text-base font-black text-slate-900">
+                <div className="rounded-xl border border-border bg-card/80 p-2 text-center shadow-sm">
+                  <div className="font-mono text-base font-black text-foreground">
                     {group ?? "—"}
                   </div>
-                  <div className="text-[8px] font-black uppercase tracking-wider text-slate-400">
+                  <div className="text-[8px] font-black uppercase tracking-wider text-muted-foreground">
                     Group
                   </div>
                 </div>
-                <div className="rounded-xl border border-slate-200 bg-white/80 p-2 text-center shadow-sm">
-                  <div className="font-mono text-base font-black text-slate-900">
+                <div className="rounded-xl border border-border bg-card/80 p-2 text-center shadow-sm">
+                  <div className="font-mono text-base font-black text-foreground">
                     {block?.toUpperCase() ?? "—"}
                   </div>
-                  <div className="text-[8px] font-black uppercase tracking-wider text-slate-400">
+                  <div className="text-[8px] font-black uppercase tracking-wider text-muted-foreground">
                     Block
                   </div>
                 </div>
               </div>
 
-              <div className="flex h-28 md:h-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white/70 p-2 shadow-inner">
+              <div className="flex h-28 md:h-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-border bg-card/70 p-2 shadow-inner">
                 <img
                   src={imageSrc}
                   alt={name}
@@ -300,10 +300,10 @@ export default function ElementModal({ element, onClose }) {
                   <FlaskConical className="h-3.5 w-3.5" />
                   Element Monograph
                 </div>
-                <h3 className="mt-1 text-xl font-black tracking-tight text-slate-900">
+                <h3 className="mt-1 text-xl font-black tracking-tight text-foreground">
                   Atomic profile and laboratory notes
                 </h3>
-                <p className="mt-1 text-xs font-medium leading-relaxed text-slate-500">
+                <p className="mt-1 text-xs font-medium leading-relaxed text-muted-foreground">
                   Review core periodic data, electron configuration, and
                   chemical context before opening the full atom page.
                 </p>
@@ -342,21 +342,21 @@ export default function ElementModal({ element, onClose }) {
                 />
               </div>
 
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3 shadow-inner">
-                <div className="mb-1.5 flex items-center gap-2 text-[9px] font-black uppercase tracking-wider text-slate-400">
+              <div className="rounded-2xl border border-border bg-muted p-3 shadow-inner">
+                <div className="mb-1.5 flex items-center gap-2 text-[9px] font-black uppercase tracking-wider text-muted-foreground">
                   <Atom className="h-3.5 w-3.5 text-indigo-500" />
                   Electron Configuration
                 </div>
-                <div className="break-words rounded-xl border border-slate-200 bg-white px-3 py-2 font-mono text-xs font-black text-slate-900">
+                <div className="break-words rounded-xl border border-border bg-card px-3 py-2 font-mono text-xs font-black text-foreground">
                   {electronConfiguration || electronConfig || "—"}
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
-                <div className="mb-1.5 text-[9px] font-black uppercase tracking-wider text-slate-400">
+              <div className="rounded-2xl border border-border bg-card p-3 shadow-sm">
+                <div className="mb-1.5 text-[9px] font-black uppercase tracking-wider text-muted-foreground">
                   Summary / Notes
                 </div>
-                <p className="whitespace-pre-wrap text-xs font-medium leading-relaxed text-slate-600">
+                <p className="whitespace-pre-wrap text-xs font-medium leading-relaxed text-muted-foreground">
                   {summary ||
                     `${name} is classified as ${style.label.toLowerCase()} in period ${period ?? "—"} and group ${
                       group ?? "—"
@@ -366,10 +366,10 @@ export default function ElementModal({ element, onClose }) {
             </div>
 
             {/* Sticky Action Bar */}
-            <div className="sticky bottom-0 z-20 mt-auto border-t border-slate-200 bg-white/95 p-4 backdrop-blur sm:px-6">
+            <div className="sticky bottom-0 z-20 mt-auto border-t border-border bg-card/95 p-4 backdrop-blur sm:px-6">
               <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
                 <button
-                  className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-black text-slate-600 shadow-sm transition hover:bg-slate-50"
+                  className="rounded-xl border border-border bg-card px-4 py-2.5 text-xs font-black text-muted-foreground shadow-sm transition hover:bg-accent"
                   onClick={onClose}
                 >
                   Close

@@ -10,13 +10,13 @@ export default function WorkingDirectory({ state }: Props) {
   const files = Object.keys(state.workingDir);
 
   return (
-    <div className="p-4 border rounded-2xl bg-zinc-900 text-white">
+    <div className="p-4 border border-border rounded-2xl bg-card text-foreground">
       <h2 className="font-semibold mb-4 text-lg">
         Working Directory
       </h2>
 
       {files.length === 0 ? (
-        <p className="text-sm text-zinc-400">
+        <p className="text-sm text-muted-foreground">
           No files
         </p>
       ) : (

@@ -247,24 +247,24 @@ export default function NetworkingLanding({ content }: Props) {
   ];
 
   return (
-    <main className="min-h-screen bg-[#fafafa] text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
+    <main className="min-h-screen text-foreground selection:bg-indigo-100 selection:text-indigo-900">
       {jsonLd.map((schema, index) => (
         <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       ))}
 
-      <section className="relative border-b border-slate-200 bg-white">
+      <section className="relative border-b border-border bg-card">
         <nav aria-label="Breadcrumb" className="absolute left-0 right-0 top-5 mx-auto max-w-6xl px-6 lg:px-8">
-          <ol className="flex flex-wrap items-center gap-1 text-xs font-semibold text-slate-500">
+          <ol className="flex flex-wrap items-center gap-1 text-xs font-semibold text-muted-foreground">
             {breadcrumbs.map((breadcrumb, index) => {
               const isLast = index === breadcrumbs.length - 1;
               return (
                 <li key={breadcrumb.href} className="flex items-center gap-1">
                   {isLast ? (
-                    <span className="text-slate-800" aria-current="page">{breadcrumb.label}</span>
+                    <span className="text-foreground" aria-current="page">{breadcrumb.label}</span>
                   ) : (
                     <Link href={breadcrumb.href} className="transition hover:text-indigo-700">{breadcrumb.label}</Link>
                   )}
-                  {!isLast && <ChevronRight className="h-3.5 w-3.5 text-slate-300" />}
+                  {!isLast && <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />}
                 </li>
               );
             })}
@@ -277,10 +277,10 @@ export default function NetworkingLanding({ content }: Props) {
               <Server className="h-4 w-4" />
               Computer Science Networking Lab
             </div>
-            <h1 className="max-w-3xl text-4xl font-black leading-tight tracking-tight text-slate-950 md:text-5xl">
+            <h1 className="max-w-3xl text-4xl font-black leading-tight tracking-tight text-foreground md:text-5xl">
               {content.name} Interactive Simulator
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
               {content.heroDescription} Learn the concept, data flow, network
               behavior, and practical tradeoffs through a focused OpenLabs
               interactive networking lab.
@@ -290,7 +290,7 @@ export default function NetworkingLanding({ content }: Props) {
                 Launch {content.shortName} Lab
                 <ArrowRight className="h-5 w-5" />
               </Link>
-              <Link href="/computer-science/networking" className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-6 py-3 text-base font-bold text-slate-700 transition hover:border-indigo-200 hover:text-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2">
+              <Link href="/computer-science/networking" className="inline-flex items-center justify-center rounded-lg border border-border bg-card px-6 py-3 text-base font-bold text-foreground transition hover:border-indigo-200 hover:text-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2">
                 View All Networking Labs
               </Link>
             </div>
@@ -323,33 +323,33 @@ export default function NetworkingLanding({ content }: Props) {
           ].map((feature) => {
             const Icon = feature.icon;
             return (
-              <article key={feature.title} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-indigo-200 hover:shadow-md">
+              <article key={feature.title} className="rounded-xl border border-border bg-card p-5 shadow-sm transition hover:border-indigo-200 hover:shadow-md">
                 <Icon className="mb-4 h-6 w-6 text-indigo-600" />
-                <h2 className="text-lg font-bold text-slate-900">{feature.title}</h2>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{feature.description}</p>
+                <h2 className="text-lg font-bold text-foreground">{feature.title}</h2>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{feature.description}</p>
               </article>
             );
           })}
         </div>
       </section>
 
-      <section className="border-y border-slate-200 bg-white">
+      <section className="border-y border-border bg-card">
         <div className="mx-auto grid max-w-6xl gap-10 px-6 py-14 md:grid-cols-[0.85fr_1.15fr] lg:px-8">
           <div>
             <span className="text-sm font-bold uppercase tracking-widest text-indigo-600">Learn by simulating</span>
-            <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-950">
+            <h2 className="mt-3 text-3xl font-black tracking-tight text-foreground">
               Understand {content.shortName} through interactive network behavior
             </h2>
-            <p className="mt-4 text-base leading-7 text-slate-600">
+            <p className="mt-4 text-base leading-7 text-muted-foreground">
               {content.behavior} The lab makes the invisible movement of data,
               paths, layers, and links easier to inspect step by step.
             </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {content.learningObjectives.map((objective) => (
-              <div key={objective} className="flex gap-3 rounded-lg bg-slate-50 p-4">
+              <div key={objective} className="flex gap-3 rounded-lg bg-muted p-4">
                 <CheckCircle2 className="mt-0.5 h-5 w-5 flex-none text-emerald-500" />
-                <p className="text-sm font-medium leading-6 text-slate-700">{objective}</p>
+                <p className="text-sm font-medium leading-6 text-foreground">{objective}</p>
               </div>
             ))}
           </div>
@@ -360,11 +360,11 @@ export default function NetworkingLanding({ content }: Props) {
         <div>
           <div className="mb-5 flex items-center gap-3">
             <Globe2 className="h-6 w-6 text-cyan-600" />
-            <h2 className="text-2xl font-black tracking-tight text-slate-950">Where this lab helps</h2>
+            <h2 className="text-2xl font-black tracking-tight text-foreground">Where this lab helps</h2>
           </div>
           <ul className="space-y-3">
             {content.useCases.map((useCase) => (
-              <li key={useCase} className="rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700">
+              <li key={useCase} className="rounded-lg border border-border bg-card px-4 py-3 text-sm font-semibold text-foreground">
                 {useCase}
               </li>
             ))}
@@ -374,9 +374,9 @@ export default function NetworkingLanding({ content }: Props) {
         <div>
           <div className="mb-5 flex items-center gap-3">
             <GitBranch className="h-6 w-6 text-indigo-600" />
-            <h2 className="text-2xl font-black tracking-tight text-slate-950">How the interactive lab works</h2>
+            <h2 className="text-2xl font-black tracking-tight text-foreground">How the interactive lab works</h2>
           </div>
-          <p className="rounded-xl border border-slate-200 bg-white p-6 text-base leading-7 text-slate-600 shadow-sm">
+          <p className="rounded-xl border border-border bg-card p-6 text-base leading-7 text-muted-foreground shadow-sm">
             Open the {content.shortName} lab, interact with the simulation controls,
             and watch the visual network state update. Use the animation to trace
             paths, layers, packets, links, or topology changes.
@@ -384,20 +384,20 @@ export default function NetworkingLanding({ content }: Props) {
         </div>
       </section>
 
-      <section className="border-t border-slate-200 bg-white">
+      <section className="border-t border-border bg-card">
         <div className="mx-auto max-w-6xl px-6 py-14 lg:px-8">
-          <h2 className="text-3xl font-black tracking-tight text-slate-950">{content.shortName} FAQs</h2>
+          <h2 className="text-3xl font-black tracking-tight text-foreground">{content.shortName} FAQs</h2>
           <div className="mt-8 grid grid-cols-1 gap-4">
             {content.faqs.map((faq) => (
-              <details key={faq.question} className="group overflow-hidden rounded-xl border border-slate-200 bg-[#fafafa] shadow-sm transition-all duration-300 open:border-indigo-200 open:bg-white open:shadow-md open:shadow-indigo-950/5">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-base font-bold text-slate-900 transition hover:text-indigo-700">
+              <details key={faq.question} className="group overflow-hidden rounded-xl border border-border bg-background shadow-sm transition-all duration-300 open:border-indigo-200 open:bg-card open:shadow-md open:shadow-indigo-950/5">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-base font-bold text-foreground transition hover:text-indigo-700">
                   <span>{faq.question}</span>
-                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400 transition group-open:border-indigo-100 group-open:bg-indigo-50 group-open:text-indigo-600">
+                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition group-open:border-indigo-100 group-open:bg-indigo-50 group-open:text-indigo-600">
                     <ChevronRight className="h-4 w-4 transition-transform duration-300 group-open:rotate-90" />
                   </span>
                 </summary>
-                <div className="border-t border-slate-100 px-5 pb-5 pt-1">
-                  <p className="text-sm leading-6 text-slate-600">{faq.answer}</p>
+                <div className="border-t border-border px-5 pb-5 pt-1">
+                  <p className="text-sm leading-6 text-muted-foreground">{faq.answer}</p>
                 </div>
               </details>
             ))}

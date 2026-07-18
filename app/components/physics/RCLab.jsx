@@ -234,7 +234,7 @@ export default function RCLab({
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-4 p-4 bg-white rounded shadow">
+    <div className="max-w-4xl mx-auto space-y-4 p-4 bg-card rounded shadow">
       <h3 className="text-xl font-semibold">RC Circuit — Charge & Discharge Lab</h3>
       <DailyChallengeCard labId="physics/rclab" currentParams={{ timeConstant: tauMeasured, voltage: Vsource }} />
       <div className="grid md:grid-cols-3 gap-4">
@@ -256,13 +256,13 @@ export default function RCLab({
             <button onClick={startDischarge} className="flex-1 py-2 rounded bg-orange-500 text-white">Discharge</button>
           </div>
           <div className="flex gap-2">
-            <button onClick={stop} className="flex-1 py-2 rounded bg-gray-200">Stop</button>
-            <button onClick={reset} className="flex-1 py-2 rounded bg-gray-200">Reset</button>
+            <button onClick={stop} className="flex-1 py-2 rounded bg-muted">Stop</button>
+            <button onClick={reset} className="flex-1 py-2 rounded bg-muted">Reset</button>
           </div>
 
-          <div className="text-sm text-gray-700">
+          <div className="text-sm text-muted-foreground">
             <div>Measured τ ≈ <strong>{tauMeasured ? tauMeasured.toFixed(4) + " s" : "—"}</strong></div>
-            <div className="text-xs text-gray-500">Theoretical τ = R × C = {(R * C).toExponential(3)} s</div>
+            <div className="text-xs text-muted-foreground">Theoretical τ = R × C = {(R * C).toExponential(3)} s</div>
           </div>
 
           <div className="mt-2 flex gap-2">

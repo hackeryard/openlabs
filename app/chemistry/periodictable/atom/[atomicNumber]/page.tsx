@@ -15,73 +15,73 @@ interface PageProps {
 const categoryMap: Record<string, { label: string; bg: string; text: string; border: string; glow: string }> = {
   "nonmetal": {
     label: "Reactive Nonmetal",
-    bg: "bg-emerald-50 text-emerald-800 border-emerald-100",
+    bg: "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-100 dark:border-emerald-900",
     text: "text-emerald-700",
     border: "border-emerald-200",
-    glow: "shadow-emerald-100 hover:border-emerald-350"
+    glow: "shadow-emerald-100 dark:shadow-black/30 hover:border-emerald-350"
   },
   "noble-gas": {
     label: "Noble Gas",
-    bg: "bg-blue-50 text-blue-800 border-blue-100",
+    bg: "bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border-blue-100 dark:border-blue-900",
     text: "text-blue-700",
     border: "border-blue-200",
-    glow: "shadow-blue-100 hover:border-blue-350"
+    glow: "shadow-blue-100 dark:shadow-black/30 hover:border-blue-350"
   },
   "alkali-metal": {
     label: "Alkali Metal",
-    bg: "bg-red-50 text-red-800 border-red-100",
+    bg: "bg-red-50 dark:bg-red-950/40 text-red-800 dark:text-red-300 border-red-100 dark:border-red-900",
     text: "text-red-700",
     border: "border-red-200",
-    glow: "shadow-red-100 hover:border-red-350"
+    glow: "shadow-red-100 dark:shadow-black/30 hover:border-red-350"
   },
   "alkaline-earth": {
     label: "Alkaline Earth Metal",
-    bg: "bg-orange-50 text-orange-800 border-orange-100",
+    bg: "bg-orange-50 dark:bg-orange-950/40 text-orange-800 dark:text-orange-300 border-orange-100 dark:border-orange-900",
     text: "text-orange-700",
     border: "border-orange-200",
-    glow: "shadow-orange-100 hover:border-orange-350"
+    glow: "shadow-orange-100 dark:shadow-black/30 hover:border-orange-350"
   },
   "metalloid": {
     label: "Metalloid",
-    bg: "bg-teal-50 text-teal-800 border-teal-100",
+    bg: "bg-teal-50 dark:bg-teal-950/40 text-teal-800 dark:text-teal-300 border-teal-100 dark:border-teal-900",
     text: "text-teal-700",
     border: "border-teal-200",
-    glow: "shadow-teal-100 hover:border-teal-350"
+    glow: "shadow-teal-100 dark:shadow-black/30 hover:border-teal-350"
   },
   "post-transition": {
     label: "Post-Transition Metal",
-    bg: "bg-slate-50 text-slate-800 border-slate-100",
+    bg: "bg-slate-50 dark:bg-slate-800/40 text-slate-800 dark:text-slate-300 border-slate-100 dark:border-slate-700",
     text: "text-slate-700",
     border: "border-slate-200",
-    glow: "shadow-slate-100 hover:border-slate-350"
+    glow: "shadow-slate-100 dark:shadow-black/30 hover:border-slate-350"
   },
   "transition-metal": {
     label: "Transition Metal",
-    bg: "bg-indigo-50 text-indigo-800 border-indigo-100",
+    bg: "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-800 dark:text-indigo-300 border-indigo-100 dark:border-indigo-900",
     text: "text-indigo-755",
     border: "border-indigo-200",
-    glow: "shadow-indigo-100 hover:border-indigo-350"
+    glow: "shadow-indigo-100 dark:shadow-black/30 hover:border-indigo-350"
   },
   "lanthanide": {
     label: "Lanthanide",
-    bg: "bg-pink-50 text-pink-800 border-pink-100",
+    bg: "bg-pink-50 dark:bg-pink-950/40 text-pink-800 dark:text-pink-300 border-pink-100 dark:border-pink-900",
     text: "text-pink-700",
     border: "border-pink-200",
-    glow: "shadow-pink-100 hover:border-pink-350"
+    glow: "shadow-pink-100 dark:shadow-black/30 hover:border-pink-350"
   },
   "actinide": {
     label: "Actinide",
-    bg: "bg-yellow-50 text-yellow-800 border-yellow-100",
+    bg: "bg-yellow-50 dark:bg-yellow-950/40 text-yellow-800 dark:text-yellow-300 border-yellow-100 dark:border-yellow-900",
     text: "text-yellow-755",
     border: "border-yellow-200",
-    glow: "shadow-yellow-100 hover:border-yellow-350"
+    glow: "shadow-yellow-100 dark:shadow-black/30 hover:border-yellow-350"
   },
   "halogen": {
     label: "Halogen",
-    bg: "bg-purple-50 text-purple-800 border-purple-100",
+    bg: "bg-purple-50 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300 border-purple-100 dark:border-purple-900",
     text: "text-purple-700",
     border: "border-purple-200",
-    glow: "shadow-purple-100 hover:border-purple-350"
+    glow: "shadow-purple-100 dark:shadow-black/30 hover:border-purple-350"
   }
 };
 
@@ -303,10 +303,10 @@ export default function Page({ params }: PageProps) {
 
   const categoryStyle = categoryMap[el.category] || {
     label: el.category,
-    bg: "bg-slate-100 text-slate-800 border-slate-200",
+    bg: "bg-slate-100 dark:bg-slate-800/40 text-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700",
     text: "text-slate-700",
     border: "border-slate-200",
-    glow: "shadow-slate-100 hover:border-slate-350"
+    glow: "shadow-slate-100 dark:shadow-black/30 hover:border-slate-350"
   };
 
   const shells = calculateConfiguration(Z);
@@ -317,8 +317,8 @@ export default function Page({ params }: PageProps) {
 
   const propertiesGrid = (
     <div className="grid grid-cols-2 gap-4 w-full">
-      <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition duration-200">
-        <div className="flex items-center gap-1.5 text-[9px] text-slate-400 font-extrabold uppercase tracking-wider">
+      <div className="bg-card border border-border p-4 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition duration-200">
+        <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-extrabold uppercase tracking-wider">
           <Atom className="h-3 w-3 text-indigo-500" /> Electron Config
         </div>
         <div className="font-extrabold font-mono text-[13px] text-indigo-755 mt-2 truncate" title={el.electronConfiguration || el.electronConfig || "—"}>
@@ -326,17 +326,17 @@ export default function Page({ params }: PageProps) {
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition duration-200">
-        <div className="flex items-center gap-1.5 text-[9px] text-slate-400 font-extrabold uppercase tracking-wider">
+      <div className="bg-card border border-border p-4 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition duration-200">
+        <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-extrabold uppercase tracking-wider">
           <Activity className="h-3 w-3 text-indigo-500" /> Electronegativity
         </div>
         <div className="font-extrabold font-mono text-[13px] text-indigo-755 mt-2">
-          {el.electronegativity ?? "n/a"} <span className="text-[9px] text-slate-400 font-normal">Pauling</span>
+          {el.electronegativity ?? "n/a"} <span className="text-[9px] text-muted-foreground font-normal">Pauling</span>
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition duration-200">
-        <div className="flex items-center gap-1.5 text-[9px] text-slate-400 font-extrabold uppercase tracking-wider">
+      <div className="bg-card border border-border p-4 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition duration-200">
+        <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-extrabold uppercase tracking-wider">
           <Calendar className="h-3 w-3 text-indigo-500" /> Year Discovered
         </div>
         <div className="font-extrabold text-[13px] text-indigo-755 mt-2 truncate">
@@ -344,8 +344,8 @@ export default function Page({ params }: PageProps) {
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition duration-200">
-        <div className="flex items-center gap-1.5 text-[9px] text-slate-400 font-extrabold uppercase tracking-wider">
+      <div className="bg-card border border-border p-4 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition duration-200">
+        <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-extrabold uppercase tracking-wider">
           <Milestone className="h-3 w-3 text-indigo-500" /> Shells & Levels
         </div>
         <div className="font-extrabold text-[13px] text-indigo-755 mt-2">
@@ -353,8 +353,8 @@ export default function Page({ params }: PageProps) {
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition duration-200">
-        <div className="flex items-center gap-1.5 text-[9px] text-slate-400 font-extrabold uppercase tracking-wider">
+      <div className="bg-card border border-border p-4 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition duration-200">
+        <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-extrabold uppercase tracking-wider">
           <Layers className="h-3 w-3 text-indigo-500" /> Orbital Block
         </div>
         <div className="font-extrabold text-[13px] text-indigo-755 uppercase mt-2">
@@ -362,8 +362,8 @@ export default function Page({ params }: PageProps) {
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition duration-200">
-        <div className="flex items-center gap-1.5 text-[9px] text-slate-400 font-extrabold uppercase tracking-wider">
+      <div className="bg-card border border-border p-4 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition duration-200">
+        <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-extrabold uppercase tracking-wider">
           <Hash className="h-3 w-3 text-indigo-500" /> Group & Period
         </div>
         <div className="font-extrabold text-[13px] text-indigo-755 mt-2">
@@ -371,15 +371,15 @@ export default function Page({ params }: PageProps) {
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm col-span-2 hover:shadow-md transition duration-200">
-        <div className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider mb-2.5">Electrons per Shell Level</div>
+      <div className="bg-card border border-border p-4 rounded-2xl shadow-sm col-span-2 hover:shadow-md transition duration-200">
+        <div className="text-[10px] text-muted-foreground font-extrabold uppercase tracking-wider mb-2.5">Electrons per Shell Level</div>
         <div className="flex flex-wrap gap-2">
           {shellArray.map((count, idx) => (
             <div key={idx} className="flex items-center gap-1.5">
-              <span className="text-xs font-mono font-bold bg-slate-50 border border-slate-200 text-slate-700 px-2 py-0.5 rounded-md">
+              <span className="text-xs font-mono font-bold bg-muted border border-border text-foreground px-2 py-0.5 rounded-md">
                 Shell {idx + 1}: {count}
               </span>
-              {idx < shellArray.length - 1 && <span className="text-slate-400 font-mono text-xs">→</span>}
+              {idx < shellArray.length - 1 && <span className="text-muted-foreground font-mono text-xs">→</span>}
             </div>
           ))}
         </div>
@@ -451,7 +451,7 @@ export default function Page({ params }: PageProps) {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 text-slate-800 pb-20 pt-8 font-sans relative overflow-hidden">
+    <main className="min-h-screen text-foreground pb-20 pt-8 font-sans relative overflow-hidden">
 
       {/* Decorative category-colored glow sphere in background */}
       <div className="absolute top-24 left-1/4 h-[380px] w-[380px] rounded-full bg-indigo-500/5 blur-[80px] pointer-events-none" />
@@ -468,12 +468,12 @@ export default function Page({ params }: PageProps) {
 
       <div className="max-w-7xl mx-auto px-4 md:px-8 relative">
         {/* Navigation Breadcrumb */}
-        <nav className="flex items-center space-x-2 text-sm text-slate-500 mb-6" aria-label="Breadcrumb">
-          <Link href="/" className="hover:text-slate-900 transition font-medium">Home</Link>
+        <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6" aria-label="Breadcrumb">
+          <Link href="/" className="hover:text-foreground transition font-medium">Home</Link>
           <span>/</span>
-          <Link href="/chemistry" className="hover:text-slate-900 transition font-medium">Chemistry</Link>
+          <Link href="/chemistry" className="hover:text-foreground transition font-medium">Chemistry</Link>
           <span>/</span>
-          <Link href="/chemistry/periodictable" className="hover:text-slate-900 transition font-medium">Periodic Table</Link>
+          <Link href="/chemistry/periodictable" className="hover:text-foreground transition font-medium">Periodic Table</Link>
           <span>/</span>
           <span className="text-indigo-600 font-bold">{el.name}</span>
         </nav>
@@ -482,13 +482,13 @@ export default function Page({ params }: PageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8 items-start">
           {/* Col 1: Dynamic Visual Element Identity Badge & Properties Grid (Left Column) */}
           <div className="lg:col-span-5 flex flex-col space-y-6 w-full">
-            <div className={`w-full rounded-3xl border bg-white p-6 text-center shadow-xl transition-all duration-300 hover:shadow-2xl ${categoryStyle.glow} ${categoryStyle.border}`}>
+            <div className={`w-full rounded-3xl border bg-card p-6 text-center shadow-xl transition-all duration-300 hover:shadow-2xl ${categoryStyle.glow} ${categoryStyle.border}`}>
 
               {/* Dynamic visual indicator for configuration exceptions */}
-              <div className="flex justify-between items-start mb-6 text-slate-400 font-mono text-xs px-1">
+              <div className="flex justify-between items-start mb-6 text-muted-foreground font-mono text-xs px-1">
                 <span>Z = {el.atomicNumber}</span>
                 {exception ? (
-                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-black uppercase tracking-wider animate-pulse shadow-sm">
+                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-900 text-[10px] font-black uppercase tracking-wider animate-pulse shadow-sm">
                     <ShieldAlert className="h-3 w-3 text-amber-600" /> Quantum Exception
                   </span>
                 ) : (
@@ -499,32 +499,32 @@ export default function Page({ params }: PageProps) {
               </div>
 
               {/* Bohr Model Dynamic SVG Vector Representation */}
-              <div className="h-64 flex items-center justify-center mb-6 relative rounded-2xl overflow-hidden bg-slate-50 border border-slate-100/50 shadow-inner">
+              <div className="h-64 flex items-center justify-center mb-6 relative rounded-2xl overflow-hidden bg-muted border border-border shadow-inner">
                 <BohrModelSVG symbol={el.symbol} shells={shells} />
               </div>
 
-              <h1 className="text-4xl font-black tracking-tight mb-1 text-slate-900 leading-none">
+              <h1 className="text-4xl font-black tracking-tight mb-1 text-foreground leading-none">
                 {el.name}
               </h1>
-              <p className="text-xl font-mono text-slate-450 font-bold mb-3">
+              <p className="text-xl font-mono text-muted-foreground font-bold mb-3">
                 {el.symbol}
               </p>
-              <div className="inline-block px-5 py-2 rounded-2xl bg-indigo-50/80 border border-indigo-100 text-sm font-black font-mono text-indigo-755 shadow-sm">
+              <div className="inline-block px-5 py-2 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900 text-sm font-black font-mono text-indigo-755 shadow-sm">
                 Mass: {el.atomicMass} u
               </div>
 
               <div className="mt-6 flex flex-wrap gap-2 justify-center text-xs font-bold font-mono">
-                <span className="px-3.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-655">Period {el.period}</span>
-                <span className="px-3.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-655">Group {el.group}</span>
-                <span className="px-3.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-655">Block {el.block.toUpperCase()}</span>
+                <span className="px-3.5 py-1.5 rounded-xl bg-muted border border-border text-muted-foreground">Period {el.period}</span>
+                <span className="px-3.5 py-1.5 rounded-xl bg-muted border border-border text-muted-foreground">Group {el.group}</span>
+                <span className="px-3.5 py-1.5 rounded-xl bg-muted border border-border text-muted-foreground">Block {el.block.toUpperCase()}</span>
               </div>
 
-              <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50/80 p-3 shadow-inner">
-                <div className="mb-2 flex items-center justify-between px-1 text-[10px] font-black uppercase tracking-wider text-slate-400">
+              <div className="mt-6 rounded-2xl border border-border bg-muted p-3 shadow-inner">
+                <div className="mb-2 flex items-center justify-between px-1 text-[10px] font-black uppercase tracking-wider text-muted-foreground">
                   <span>Element Sample Image</span>
                   <span className="font-mono">/{el.symbol}</span>
                 </div>
-                <div className="flex h-44 items-center justify-center overflow-hidden rounded-xl border border-white bg-white">
+                <div className="flex h-44 items-center justify-center overflow-hidden rounded-xl border border-border bg-card">
                   <img
                     src={getElementImageSrc(el.name)}
                     alt={`${el.name} element sample`}
@@ -541,7 +541,7 @@ export default function Page({ params }: PageProps) {
           {/* Col 2: Integrated Chemistry Monograph & Lab Consoles (Right Column) */}
           <div className="lg:col-span-7 flex flex-col justify-start space-y-6 w-full">
             {/* Unified Feature Card: Overview, Category & Action buttons in one premium container */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden flex flex-col justify-between">
+            <div className="bg-card border border-border rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden flex flex-col justify-between">
               <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
 
               <div className="space-y-4">
@@ -552,17 +552,17 @@ export default function Page({ params }: PageProps) {
                   </h2>
                 </div>
 
-                <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
+                <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">
                   Scientific Monograph: {el.name} ({el.symbol})
                 </h2>
 
-                <p className="text-slate-655 text-base md:text-lg leading-relaxed font-medium">
+                <p className="text-muted-foreground text-base md:text-lg leading-relaxed font-medium">
                   {overview}
                 </p>
               </div>
 
               {/* Redesigned interactive Virtual Experiments Panel */}
-              <div className="mt-8 border-t border-slate-100 pt-6">
+              <div className="mt-8 border-t border-border pt-6">
                 <div className="flex items-center gap-2 mb-4">
                   <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                   <span className="text-[10px] text-emerald-700 font-extrabold uppercase tracking-wider">
@@ -573,16 +573,16 @@ export default function Page({ params }: PageProps) {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Link
                     href={`/labs/chemistry/periodictable/atom/${el.atomicNumber}`}
-                    className="group border border-slate-150 bg-slate-50 hover:bg-white hover:border-indigo-400 hover:shadow-lg rounded-2xl p-4 transition-all duration-300 text-left flex flex-col justify-between"
+                    className="group border border-border bg-muted hover:bg-card hover:border-indigo-400 hover:shadow-lg rounded-2xl p-4 transition-all duration-300 text-left flex flex-col justify-between"
                   >
                     <div>
-                      <div className="h-9 w-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300 mb-3 shadow-sm">
+                      <div className="h-9 w-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300 mb-3 shadow-sm">
                         <GraduationCap className="h-5 w-5" />
                       </div>
-                      <h4 className="font-extrabold text-slate-900 text-sm group-hover:text-indigo-600 transition-colors">
+                      <h4 className="font-extrabold text-foreground text-sm group-hover:text-indigo-600 transition-colors">
                         3D Orbitals & Valence Lab
                       </h4>
-                      <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                      <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
                         Simulate concentric quantum energy levels, observe valence spins, and examine live electron clouds.
                       </p>
                     </div>
@@ -593,16 +593,16 @@ export default function Page({ params }: PageProps) {
 
                   <Link
                     href={`/labs/chemistry/electronic-configuration/${el.atomicNumber}`}
-                    className="group border border-slate-150 bg-slate-50 hover:bg-white hover:border-purple-400 hover:shadow-lg rounded-2xl p-4 transition-all duration-300 text-left flex flex-col justify-between"
+                    className="group border border-border bg-muted hover:bg-card hover:border-purple-400 hover:shadow-lg rounded-2xl p-4 transition-all duration-300 text-left flex flex-col justify-between"
                   >
                     <div>
-                      <div className="h-9 w-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-colors duration-300 mb-3 shadow-sm">
+                      <div className="h-9 w-9 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-colors duration-300 mb-3 shadow-sm">
                         <Atom className="h-5 w-5" />
                       </div>
-                      <h4 className="font-extrabold text-slate-900 text-sm group-hover:text-purple-600 transition-colors">
+                      <h4 className="font-extrabold text-foreground text-sm group-hover:text-purple-600 transition-colors">
                         Electronic Configuration Lab
                       </h4>
-                      <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                      <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
                         Experiment with Aufbau ordering, explore shells, and analyze dynamic quantum configuration exceptions.
                       </p>
                     </div>
@@ -619,17 +619,17 @@ export default function Page({ params }: PageProps) {
 
             {/* Dynamic Quantum Configuration Exception Alert Card */}
             {exception && (
-              <div className="border border-amber-200 bg-amber-50/40 p-5 rounded-3xl shadow-inner relative overflow-hidden flex gap-4">
-                <div className="absolute top-0 right-0 h-16 w-16 bg-amber-100/30 rounded-full blur-xl pointer-events-none" />
-                <div className="flex-shrink-0 p-2.5 bg-amber-100 rounded-xl text-amber-700 h-fit">
+              <div className="border border-amber-200 dark:border-amber-900 bg-amber-50/40 dark:bg-amber-950/20 p-5 rounded-3xl shadow-inner relative overflow-hidden flex gap-4">
+                <div className="absolute top-0 right-0 h-16 w-16 bg-amber-100/30 dark:bg-amber-900/20 rounded-full blur-xl pointer-events-none" />
+                <div className="flex-shrink-0 p-2.5 bg-amber-100 dark:bg-amber-950/40 rounded-xl text-amber-700 dark:text-amber-300 h-fit">
                   <ShieldAlert className="h-5 w-5 animate-pulse" />
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-amber-850 text-sm tracking-tight mb-1">
+                  <h3 className="font-extrabold text-amber-850 dark:text-amber-200 text-sm tracking-tight mb-1">
                     Quantum Stability Configuration Exception
                   </h3>
-                  <p className="text-xs text-amber-800 leading-relaxed">
-                    Instead of the anticipated standard filling shell order <code className="bg-amber-100/50 px-1 rounded font-bold font-mono">{exception.ideal}</code>, {el.name} settles into an active ground state configuration of <strong className="bg-amber-100 px-1.5 py-0.5 rounded font-mono text-[13px] text-amber-900 border border-amber-200/50">{exception.active}</strong>. {exception.reason}
+                  <p className="text-xs text-amber-800 dark:text-amber-200/90 leading-relaxed">
+                    Instead of the anticipated standard filling shell order <code className="bg-amber-100/50 dark:bg-amber-900/30 px-1 rounded font-bold font-mono">{exception.ideal}</code>, {el.name} settles into an active ground state configuration of <strong className="bg-amber-100 dark:bg-amber-900/40 px-1.5 py-0.5 rounded font-mono text-[13px] text-amber-900 dark:text-amber-200 border border-amber-200/50 dark:border-amber-800">{exception.active}</strong>. {exception.reason}
                   </p>
                 </div>
               </div>
@@ -637,22 +637,22 @@ export default function Page({ params }: PageProps) {
 
             {/* Etymology origin badge card */}
             {etymology && (
-              <div className="bg-white border border-slate-200/80 p-5 rounded-3xl flex gap-4 shadow-sm">
-                <div className="flex-shrink-0 p-2.5 bg-indigo-50 rounded-xl text-indigo-600 h-fit">
+              <div className="bg-card border border-border p-5 rounded-3xl flex gap-4 shadow-sm">
+                <div className="flex-shrink-0 p-2.5 bg-indigo-50 dark:bg-indigo-950/40 rounded-xl text-indigo-600 h-fit">
                   <Info className="h-5 w-5" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full text-xs font-medium">
                   <div>
-                    <div className="text-[10px] text-slate-400 uppercase tracking-wider font-extrabold">Name Origin</div>
-                    <div className="text-slate-900 font-extrabold text-sm mt-0.5">{etymology.origin}</div>
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-extrabold">Name Origin</div>
+                    <div className="text-foreground font-extrabold text-sm mt-0.5">{etymology.origin}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-slate-400 uppercase tracking-wider font-extrabold">Literal Meaning</div>
-                    <div className="text-slate-700 mt-0.5 font-medium">{etymology.meaning}</div>
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-extrabold">Literal Meaning</div>
+                    <div className="text-muted-foreground mt-0.5 font-medium">{etymology.meaning}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-slate-400 uppercase tracking-wider font-extrabold">Discovery Hub</div>
-                    <div className="text-slate-755 mt-0.5 font-bold">{etymology.geography}</div>
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-extrabold">Discovery Hub</div>
+                    <div className="text-muted-foreground mt-0.5 font-bold">{etymology.geography}</div>
                   </div>
                 </div>
               </div>
@@ -660,46 +660,46 @@ export default function Page({ params }: PageProps) {
           </div>
         </div>
 
-        <section className="mt-20 border-t border-slate-200 pt-16 pb-12">
+        <section className="mt-20 border-t border-border pt-16 pb-12">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-16">
 
-              <article className="relative pl-6 md:pl-8 border-l-2 border-indigo-100 hover:border-indigo-500 transition-colors">
+              <article className="relative pl-6 md:pl-8 border-l-2 border-indigo-100 dark:border-indigo-900 hover:border-indigo-500 transition-colors">
                 <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-widest text-xs mb-3">
                   <Layers className="h-4 w-4" /> Orbitals & Reactivity
                 </div>
-                <h3 className="text-2xl font-black text-slate-900 mb-4">Reactivity and Chemical Bonding</h3>
-                <p className="text-slate-600 leading-relaxed text-base">
+                <h3 className="text-2xl font-black text-foreground mb-4">Reactivity and Chemical Bonding</h3>
+                <p className="text-muted-foreground leading-relaxed text-base">
                   {reactivity}
                 </p>
               </article>
 
-              <article className="relative pl-6 md:pl-8 border-l-2 border-indigo-100 hover:border-indigo-500 transition-colors">
+              <article className="relative pl-6 md:pl-8 border-l-2 border-indigo-100 dark:border-indigo-900 hover:border-indigo-500 transition-colors">
                 <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-widest text-xs mb-3">
                   <Compass className="h-4 w-4" /> Biological Impact
                 </div>
-                <h3 className="text-2xl font-black text-slate-900 mb-4">Biological Role & Toxicity</h3>
-                <p className="text-slate-600 leading-relaxed text-base">
+                <h3 className="text-2xl font-black text-foreground mb-4">Biological Role & Toxicity</h3>
+                <p className="text-muted-foreground leading-relaxed text-base">
                   {bioRole}
                 </p>
               </article>
 
-              <article className="relative pl-6 md:pl-8 border-l-2 border-indigo-100 hover:border-indigo-500 transition-colors">
+              <article className="relative pl-6 md:pl-8 border-l-2 border-indigo-100 dark:border-indigo-900 hover:border-indigo-500 transition-colors">
                 <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-widest text-xs mb-3">
                   <FlaskConical className="h-4 w-4" /> Technological Utility
                 </div>
-                <h3 className="text-2xl font-black text-slate-900 mb-4">Industrial and Tech Applications</h3>
-                <p className="text-slate-600 leading-relaxed text-base">
+                <h3 className="text-2xl font-black text-foreground mb-4">Industrial and Tech Applications</h3>
+                <p className="text-muted-foreground leading-relaxed text-base">
                   {industrialUse}
                 </p>
               </article>
 
-              <article className="relative pl-6 md:pl-8 border-l-2 border-indigo-100 hover:border-indigo-500 transition-colors">
+              <article className="relative pl-6 md:pl-8 border-l-2 border-indigo-100 dark:border-indigo-900 hover:border-indigo-500 transition-colors">
                 <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-widest text-xs mb-3">
                   <Milestone className="h-4 w-4" /> Geochemistry
                 </div>
-                <h3 className="text-2xl font-black text-slate-900 mb-4">Abundance & Geological Occurrence</h3>
-                <p className="text-slate-600 leading-relaxed text-base">
+                <h3 className="text-2xl font-black text-foreground mb-4">Abundance & Geological Occurrence</h3>
+                <p className="text-muted-foreground leading-relaxed text-base">
                   In nature, elements like {el.name} are distributed across the planet depending on stellar fusion pathways and geochemical classification. Superheavy elements (Z &gt; 92) do not occur naturally on Earth and must be synthesized particle-by-particle in advanced nuclear labs such as CERN (Switzerland), Lawrence Berkeley Lab (USA), RIKEN (Japan), or Dubna (Russia) to study their atomic decay and validate the predicted "Island of Stability".
                 </p>
               </article>
@@ -708,23 +708,23 @@ export default function Page({ params }: PageProps) {
           </div>
         </section>
 
-        <section className="mt-20 border-t border-slate-200 pt-20 pb-16 bg-slate-50/50">
+        <section className="mt-20 border-t border-border pt-20 pb-16 bg-muted/40">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight mb-12 text-center">
+            <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight mb-12 text-center">
               Common questions about <span className="text-indigo-600">{el.name}</span>
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
               {faqs.map((faq, idx) => (
                 <div key={idx} className="relative flex gap-4">
-                  <div className="shrink-0 flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 font-bold text-lg">
+                  <div className="shrink-0 flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100 dark:bg-indigo-950/40 text-indigo-600 font-bold text-lg">
                     Q.
                   </div>
                   <div>
-                    <h4 className="font-bold text-slate-900 text-lg mb-3">
+                    <h4 className="font-bold text-foreground text-lg mb-3">
                       {faq.question}
                     </h4>
-                    <p className="text-slate-600 leading-relaxed text-sm md:text-base">
+                    <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
                       {faq.answer}
                     </p>
                   </div>
@@ -757,7 +757,7 @@ function BohrModelSVG({ symbol, shells }: { symbol: string; shells: Record<numbe
         cx={center}
         cy={center}
         r={r}
-        className="stroke-slate-200 fill-none stroke-[1.5px]"
+        className="stroke-slate-200 dark:stroke-slate-700 fill-none stroke-[1.5px]"
         strokeDasharray="4 4"
       />
     );

@@ -50,6 +50,10 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 - FR-27: The system shall expose `sitemap.xml` and `robots.txt`, regenerated on a bounded cache interval.
 - FR-28: Each lab/blog page shall carry accurate metadata (title, description, canonical URL, Open Graph/Twitter tags) and structured data (schema.org) where applicable.
 
+### 2.8 Theming
+- FR-29: Users shall be able to switch between light, dark, and system-matched appearance via a toggle in the navigation bar; the choice shall persist across sessions and avoid a flash-of-wrong-theme on load.
+- FR-30: Core navigation, shared UI chrome, and lab UI chrome (panels, buttons, text) shall render correctly in both themes; simulation/visualization *content* (canvas draw colors, 3D material colors, chart data-series colors, data-encoding legend/status colors) is exempt and may remain fixed regardless of theme. Deliberately dark-by-design surfaces (code editors, terminals, a small number of labs with a fixed dark aesthetic) are exempt by design, not by omission — see `CLAUDE.md` § Theming for the current exemption list.
+
 ## 3. Non-functional requirements
 
 - NFR-1 (Deployment): The application shall be deployable on Vercel, including a daily cron job for challenge generation.
@@ -67,9 +71,11 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 These exist as placeholders or partial scaffolding in the codebase but are **not functioning features** — do not assume they work, and confirm intent before building on them:
 
 - Server-side code execution for the "run code" flow (`app/api/auth/run` returns a hardcoded stub, no sandbox/Docker execution exists yet).
-- The standalone external "AI agent" service integration (`app/api/agent`) — superseded by `app/api/chat`, currently has no caller.
+- The standalone external "AI agent" service integration (`app/api/agent`) — superseded by `app/api/chat`, currently has no caller, and unlike `app/api/chat` has no authentication or rate limiting (a gap to close before ever wiring it up, not a pattern to copy).
 - Google OAuth's dedicated `start`/`callback` routes — actual Google login goes entirely through NextAuth instead.
 - Per-user admin roles (RBAC) — admin access today is a single shared secret, not scoped per user.
+- **Mathematics as a real subject** — despite FR-1 listing five subjects, Maths currently has exactly one lab (`app/maths/alzebra` / `app/labs/maths/alzebra`) and both its landing and simulation pages are unfinished placeholders (literal stub content, no algebra functionality). Treat Maths as not yet delivered when scoping related work, and don't cite it as a working subject in user-facing copy until it has real content.
+- **A single, unified theming system** — the six DSA sorting-algorithm labs (`app/components/computer-science/dsa/sorting/*`) run their own independent local dark/light toggle predating the site-wide `next-themes` rollout; the two are not reconciled, so a user can have the sorting labs in a different visual mode than the rest of the site. See `CLAUDE.md` § Theming for the full list of components not yet migrated to the shared token system.
 
 ## 5. Open questions / suggested follow-ups
 

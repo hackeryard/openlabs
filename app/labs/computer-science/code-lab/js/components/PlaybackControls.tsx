@@ -7,6 +7,9 @@ interface PlaybackControlsProps {
   totalSteps: number;
   isPlaying: boolean;
   speed: number;
+  /** When true, all stepping/seeking/playback is disabled (e.g. a predict-mode
+   * example whose answer hasn't been revealed yet) — only Reset stays active. */
+  disabled?: boolean;
   onStepForward: () => void;
   onStepBackward: () => void;
   onPlay: () => void;
@@ -23,6 +26,7 @@ export default function PlaybackControls({
   totalSteps,
   isPlaying,
   speed,
+  disabled = false,
   onStepForward,
   onStepBackward,
   onPlay,
@@ -45,7 +49,9 @@ export default function PlaybackControls({
           max={Math.max(0, totalSteps - 1)}
           value={currentStep}
           onChange={e => onSeek(parseInt(e.target.value))}
+          disabled={disabled}
           className="w-full h-1.5 rounded-full appearance-none cursor-pointer bg-slate-700/50
+                     disabled:opacity-30 disabled:cursor-not-allowed
                      [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5
                      [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-indigo-400
                      [&::-webkit-slider-thumb]:shadow-[0_0_8px_rgba(99,102,241,0.4)]
@@ -73,18 +79,18 @@ export default function PlaybackControls({
             icon={SkipBack}
             label="First step"
             onClick={() => onSeek(0)}
-            disabled={atStart}
+            disabled={disabled || atStart}
             size="sm"
           />
           <ControlButton
             icon={StepBack}
             label="Step backward"
             onClick={onStepBackward}
-            disabled={atStart}
+            disabled={disabled || atStart}
           />
           <button
             onClick={isPlaying ? onPause : onPlay}
-            disabled={atEnd && !isPlaying}
+            disabled={disabled || (atEnd && !isPlaying)}
             className={`
               flex items-center justify-center w-10 h-10 rounded-xl transition-all
               ${isPlaying
@@ -102,13 +108,13 @@ export default function PlaybackControls({
             icon={StepForward}
             label="Step forward"
             onClick={onStepForward}
-            disabled={atEnd}
+            disabled={disabled || atEnd}
           />
           <ControlButton
             icon={SkipForward}
             label="Last step"
             onClick={() => onSeek(totalSteps - 1)}
-            disabled={atEnd}
+            disabled={disabled || atEnd}
             size="sm"
           />
         </div>

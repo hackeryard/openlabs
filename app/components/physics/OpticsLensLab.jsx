@@ -511,13 +511,13 @@ export default function OpticsLensLab({
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <header className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Optics — Thin Lens Lab</h2>
-        <div className="text-sm text-gray-600">Interactive ray diagram — thin lens equation 1/f = 1/do + 1/di</div>
+        <div className="text-sm text-muted-foreground">Interactive ray diagram — thin lens equation 1/f = 1/do + 1/di</div>
       </header>
       <DailyChallengeCard labId="physics/opticslenslab" currentParams={{ focalLength: f, objectDistance: doDist, imageDistance: di, magnification: mag }} />
 
       <div className="grid md:grid-cols-3 gap-4">
         {/* Controls */}
-        <div className="md:col-span-1 bg-white p-4 rounded shadow space-y-3">
+        <div className="md:col-span-1 bg-card p-4 rounded shadow space-y-3">
           <div>
             <label className="block text-sm font-medium">Focal length f (m) — (+) converging, (−) diverging</label>
             <input type="range" min={-0.5} max={0.5} step={0.001} value={f} onChange={(e) => setF(Number(e.target.value))} />
@@ -543,12 +543,12 @@ export default function OpticsLensLab({
           <div className="mt-2 text-sm">
             <div>Image distance di: <strong>{di !== null ? di.toFixed(4) + " m" : "—"}</strong></div>
             <div>Magnification m: <strong>{mag !== null ? mag.toFixed(4) : "—"}</strong></div>
-            <div className="text-xs text-gray-500">Positive di = image on right (real). Negative di = image on left (virtual).</div>
+            <div className="text-xs text-muted-foreground">Positive di = image on right (real). Negative di = image on left (virtual).</div>
           </div>
 
           <div className="flex gap-2 mt-2">
             <button onClick={() => addManualEntry()} className="flex-1 py-2 rounded bg-green-600 text-white">Record Measurement</button>
-            <button onClick={() => { setDoDist(initialDo); setF(initialF); setObjH(initialObjH); setManualEntries([]); setSweepResults([]); }} className="flex-1 py-2 rounded bg-gray-200">Reset</button>
+            <button onClick={() => { setDoDist(initialDo); setF(initialF); setObjH(initialObjH); setManualEntries([]); setSweepResults([]); }} className="flex-1 py-2 rounded bg-muted">Reset</button>
           </div>
 
           <div className="mt-2">
@@ -557,9 +557,9 @@ export default function OpticsLensLab({
         </div>
 
         {/* Canvas */}
-        <div className="md:col-span-2 bg-white p-3 rounded shadow">
+        <div className="md:col-span-2 bg-card p-3 rounded shadow">
           <div className="flex items-center justify-between mb-2">
-            <div><strong>Ray diagram — drag object to move</strong><div className="text-xs text-gray-500">Drag horizontally near the object to change do, drag vertically near object top to change height</div></div>
+            <div><strong>Ray diagram — drag object to move</strong><div className="text-xs text-muted-foreground">Drag horizontally near the object to change do, drag vertically near object top to change height</div></div>
             <div className="flex gap-2">
               <button onClick={exportCSV} className="px-3 py-1 bg-green-600 text-white rounded">Export CSV</button>
               <button onClick={exportJSON} className="px-3 py-1 bg-yellow-400 rounded">Export JSON</button>
@@ -567,12 +567,12 @@ export default function OpticsLensLab({
             </div>
           </div>
           <canvas ref={canvasRef} className="w-full border rounded" style={{ height: 380 }} />
-          <div className="mt-2 text-xs text-gray-500">Tip: click/touch near the object arrow to drag height, or drag horizontally to move object distance.</div>
+          <div className="mt-2 text-xs text-muted-foreground">Tip: click/touch near the object arrow to drag height, or drag horizontally to move object distance.</div>
         </div>
       </div>
 
       {/* Sweep */}
-      <div className="bg-white p-4 rounded shadow">
+      <div className="bg-card p-4 rounded shadow">
         <h3 className="font-semibold">Sweep — collect di & magnification</h3>
         <div className="grid md:grid-cols-6 gap-2 items-end">
           <div>
@@ -598,7 +598,7 @@ export default function OpticsLensLab({
             <button onClick={() => { setSweepResults([]); runSweep(); }} disabled={sweepRunning} className="w-full py-2 rounded bg-indigo-600 text-white">{sweepRunning ? "Running..." : "Run Sweep"}</button>
           </div>
           <div>
-            <button onClick={() => setSweepResults([])} className="w-full py-2 rounded bg-gray-200">Clear</button>
+            <button onClick={() => setSweepResults([])} className="w-full py-2 rounded bg-muted">Clear</button>
           </div>
         </div>
 
@@ -606,7 +606,7 @@ export default function OpticsLensLab({
           <div>
             <div className="text-sm font-medium">Sweep Results</div>
             <div className="mt-2 max-h-40 overflow-auto text-sm">
-              {sweepResults.length === 0 ? <div className="text-xs text-gray-500">No results</div> :
+              {sweepResults.length === 0 ? <div className="text-xs text-muted-foreground">No results</div> :
                 <table style={{ width: "100%", borderCollapse: "collapse" }}><thead><tr><th style={{ padding: 6 }}>Param</th><th style={{ padding: 6 }}>di (m)</th><th style={{ padding: 6 }}>m</th></tr></thead><tbody>
                   {sweepResults.map((r, i) => (<tr key={i}><td style={{ padding: 6 }}>{r.do ? `do=${r.do.toFixed(3)}` : r.f ? `f=${r.f.toFixed(3)}` : "-"}</td><td style={{ padding: 6 }}>{r.di !== null ? r.di.toFixed(4) : "—"}</td><td style={{ padding: 6 }}>{r.mag !== null ? r.mag.toFixed(4) : "—"}</td></tr>))}
                 </tbody></table>}
@@ -618,7 +618,7 @@ export default function OpticsLensLab({
             <div className="mt-2 text-sm">
               <div className="mt-2">
                 <button onClick={() => addManualEntry()} className="px-3 py-1 rounded bg-emerald-500 text-white mb-2">Add Current Measurement</button>
-                <button onClick={() => setManualEntries([])} className="px-3 py-1 rounded bg-gray-200 ml-2 mb-2">Clear</button>
+                <button onClick={() => setManualEntries([])} className="px-3 py-1 rounded bg-muted ml-2 mb-2">Clear</button>
                 <ul className="max-h-40 overflow-auto">
                   {manualEntries.map((m, i) => (<li key={i} className="py-1 border-b text-sm">{`do=${m.do} m, di=${m.di || "—"}, m=${m.mag || "—"} ${m.note || ""}`}</li>))}
                 </ul>
@@ -629,9 +629,9 @@ export default function OpticsLensLab({
       </div>
 
       {/* Save / export */}
-      <div className="bg-white p-4 rounded shadow flex gap-2">
+      <div className="bg-card p-4 rounded shadow flex gap-2">
         <button onClick={() => saveRun()} className="px-3 py-2 bg-orange-500 text-white rounded">Save Run</button>
-        <button onClick={() => { const runs = listRuns(); if (!runs || runs.length === 0) alert("No saved runs"); else alert(runs.map(r => r.name + " - " + r.date).join("\n")); }} className="px-3 py-2 bg-gray-200 rounded">List Saved</button>
+        <button onClick={() => { const runs = listRuns(); if (!runs || runs.length === 0) alert("No saved runs"); else alert(runs.map(r => r.name + " - " + r.date).join("\n")); }} className="px-3 py-2 bg-muted rounded">List Saved</button>
         <button onClick={() => clearRuns()} className="px-3 py-2 bg-red-500 text-white rounded">Clear Saved</button>
         <div className="flex-1" />
         <button onClick={exportCSV} className="px-3 py-2 bg-green-600 text-white rounded">Export CSV</button>
@@ -639,7 +639,7 @@ export default function OpticsLensLab({
         <button onClick={exportReport} className="px-3 py-2 bg-indigo-600 text-white rounded">Printable Report</button>
       </div>
 
-      <div className="bg-white p-4 rounded shadow">
+      <div className="bg-card p-4 rounded shadow">
         <h3 className="font-semibold">Lab Instructions</h3>
         <ol className="list-decimal list-inside text-sm mt-2">
           <li>Set focal length and object distance (or drag object). Observe the ray diagram and image location.</li>

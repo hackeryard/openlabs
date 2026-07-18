@@ -19,12 +19,14 @@ export default function ConsoleOutput({ entries }: ConsoleOutputProps) {
   const shouldReduceMotion = useReducedMotion();
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to latest output
+  // Auto-scroll to latest output. Depends on the entries array itself (not
+  // just its length) so switching to a same-length-but-different-content
+  // snapshot still re-scrolls correctly.
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
     }
-  }, [entries.length]);
+  }, [entries]);
 
   return (
     <div className="flex flex-col h-full min-h-0">

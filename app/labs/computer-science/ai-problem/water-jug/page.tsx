@@ -141,7 +141,7 @@ export default function WaterJugProblem() {
             className={`absolute bottom-0 w-full transition-all duration-500 ${color}`}
             style={{ height: `${percentage}%` }}
           >
-            <div className="absolute top-0 w-full h-2 bg-white opacity-50"></div>
+            <div className="absolute top-0 w-full h-2 bg-card opacity-50"></div>
           </div>
           
           {/* Measurement lines */}
@@ -177,9 +177,9 @@ export default function WaterJugProblem() {
         <DailyChallengeCard labId="computer-science/ai-problem" currentParams={{ problemSolved: steps.length > 0 }} />
         
         {/* Problem Statement */}
-        <div className="bg-white rounded-lg shadow-lg p-4 mb-6">
+        <div className="bg-card rounded-lg shadow-lg p-4 mb-6">
           <h2 className="text-xl font-bold mb-2">📋 Problem Statement</h2>
-          <p className="text-gray-700">
+          <p className="text-muted-foreground">
             You have two jugs: <strong className="text-blue-600">{jug1Capacity}L</strong> and <strong className="text-purple-600">{jug2Capacity}L</strong>. 
             You need to measure exactly <strong className="text-green-600">{target}L</strong> of water.
             You can fill a jug, empty a jug, or pour water from one jug to the other.
@@ -188,7 +188,7 @@ export default function WaterJugProblem() {
         </div>
         
         {/* Configuration */}
-        <div className="bg-white rounded-lg shadow-lg p-4 mb-6">
+        <div className="bg-card rounded-lg shadow-lg p-4 mb-6">
           <h2 className="text-lg font-bold mb-3">⚙️ Configure Problem</h2>
           <div className="grid grid-cols-3 gap-4">
             <div>
@@ -242,7 +242,7 @@ export default function WaterJugProblem() {
         
         {/* Visualization */}
         {steps.length > 0 && (
-          <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="bg-card rounded-lg shadow-lg p-6">
             {/* Current Step Info */}
             <div className="text-center mb-4">
               <span className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full font-bold">
@@ -259,7 +259,7 @@ export default function WaterJugProblem() {
                 color="bg-gradient-to-t from-blue-500 to-blue-400"
               />
               
-              <div className="text-2xl text-gray-500">→</div>
+              <div className="text-2xl text-muted-foreground">→</div>
               
               <Jug 
                 capacity={jug2Capacity}
@@ -303,7 +303,7 @@ export default function WaterJugProblem() {
                     className={`p-3 rounded-lg cursor-pointer border ${
                       index === currentStep 
                         ? 'bg-blue-100 border-blue-500' 
-                        : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                        : 'bg-muted border-border hover:bg-gray-100'
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -322,19 +322,19 @@ export default function WaterJugProblem() {
         
         {/* Empty State */}
         {steps.length === 0 && !error && (
-          <div className="bg-white rounded-lg shadow-lg p-12 text-center">
+          <div className="bg-card rounded-lg shadow-lg p-12 text-center">
             <div className="text-6xl mb-4">🪣</div>
-            <h2 className="text-2xl font-bold text-gray-700 mb-2">
+            <h2 className="text-2xl font-bold text-muted-foreground mb-2">
               Configure and click "Find Solution" to begin
             </h2>
-            <p className="text-gray-500">
+            <p className="text-muted-foreground">
               You'll see each step explained visually with the exact water amounts
             </p>
           </div>
         )}
         
         {/* Algorithm Explanation */}
-        <div className="bg-white rounded-lg shadow-lg p-4 mt-6">
+        <div className="bg-card rounded-lg shadow-lg p-4 mt-6">
           <h2 className="text-lg font-bold mb-2">🔍 How the Algorithm Works</h2>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
