@@ -121,7 +121,7 @@ function SignupPageContent({ onSuccess }: SignupPageProps) {
   /* ================= UI ================= */
 
   return (
-    <div className="h-screen w-full flex bg-slate-50 font-sans selection:bg-indigo-100 overflow-hidden">
+    <div className="h-screen w-full flex bg-background font-sans selection:bg-indigo-100 overflow-hidden">
       {/* --- LEFT SIDE: Brand/Visual (Hidden on Mobile) --- */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 items-center justify-center p-12 overflow-hidden h-full">
         {/* Decorative Grid Mesh */}
@@ -145,20 +145,20 @@ function SignupPageContent({ onSuccess }: SignupPageProps) {
       </div>
 
       {/* --- RIGHT SIDE: Signup Form --- */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10 md:p-12 bg-slate-50 lg:bg-white h-full overflow-y-auto">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10 md:p-12 bg-background h-full overflow-y-auto">
         <div className="w-full max-w-md space-y-5 my-auto py-2">
 
           {/* Header */}
           <div className="text-center lg:text-left space-y-1">
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight sm:text-3xl">Create an account</h1>
-            <p className="text-sm text-slate-500 font-medium">Start your free 30-day trial today</p>
+            <h1 className="text-2xl font-bold text-foreground tracking-tight sm:text-3xl">Create an account</h1>
+            <p className="text-sm text-muted-foreground font-medium">Start your free 30-day trial today</p>
           </div>
 
           {/* Social Login */}
           <button
             type="button"
             onClick={() => signIn("google", { callbackUrl: nextPath || "/" })}
-            className="w-full inline-flex items-center justify-center gap-3 bg-white border border-slate-200/80 py-2.5 px-4 rounded-xl text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 transition-all duration-200 active:scale-[0.98]"
+            className="w-full inline-flex items-center justify-center gap-3 bg-card border border-border/80 py-2.5 px-4 rounded-xl text-sm font-semibold text-foreground shadow-sm hover:bg-accent hover:border-border hover:text-foreground transition-all duration-200 active:scale-[0.98]"
             aria-label="Sign up with Google"
           >
             <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 533.5 544.3" xmlns="http://www.w3.org/2000/svg">
@@ -171,13 +171,13 @@ function SignupPageContent({ onSuccess }: SignupPageProps) {
           </button>
 
           <div className="relative flex items-center justify-center">
-            <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-slate-200"></span></div>
-            <div className="relative flex justify-center text-[10px] uppercase"><span className="bg-slate-50 lg:bg-white px-3 text-slate-400 font-bold tracking-wider">Or register with email</span></div>
+            <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border"></span></div>
+            <div className="relative flex justify-center text-[10px] uppercase"><span className="bg-background px-3 text-muted-foreground font-bold tracking-wider">Or register with email</span></div>
           </div>
 
           {/* Error Message */}
           {serverError && (
-            <div className="flex items-center gap-2.5 bg-red-50 border border-red-100 text-red-600 p-3 rounded-xl text-xs font-medium animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="flex items-center gap-2.5 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 text-red-600 dark:text-red-300 p-3 rounded-xl text-xs font-medium animate-in fade-in slide-in-from-top-2 duration-200">
               <AlertCircle size={16} className="flex-shrink-0" />
               <span>{serverError}</span>
             </div>
@@ -188,9 +188,9 @@ function SignupPageContent({ onSuccess }: SignupPageProps) {
 
             {/* Name Input */}
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-500 tracking-wide uppercase ml-1">Full Name</label>
+              <label className="text-[10px] font-bold text-muted-foreground tracking-wide uppercase ml-1">Full Name</label>
               <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" size={16} />
                 <input
                   type="text"
                   value={name}
@@ -198,7 +198,7 @@ function SignupPageContent({ onSuccess }: SignupPageProps) {
                     setName(e.target.value);
                     if (errors.name) setErrors({ ...errors, name: undefined });
                   }}
-                  className={`w-full pl-10 pr-4 py-2.5 bg-white border ${errors.name ? 'border-red-400 ring-2 ring-red-50' : 'border-slate-200 hover:border-slate-300'} rounded-xl outline-none focus:border-indigo-600 focus:ring-4 focus:ring-indigo-50 transition-all text-slate-900 placeholder:text-slate-400 font-medium text-sm`}
+                  className={`w-full pl-10 pr-4 py-2.5 bg-card border ${errors.name ? 'border-red-400 ring-2 ring-red-500/20' : 'border-border hover:border-primary/40'} rounded-xl outline-none focus:border-indigo-600 focus:ring-4 focus:ring-primary/20 transition-all text-foreground placeholder:text-muted-foreground font-medium text-sm`}
                   placeholder="John Doe"
                 />
               </div>
@@ -207,9 +207,9 @@ function SignupPageContent({ onSuccess }: SignupPageProps) {
 
             {/* Email Input */}
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-500 tracking-wide uppercase ml-1">Email Address</label>
+              <label className="text-[10px] font-bold text-muted-foreground tracking-wide uppercase ml-1">Email Address</label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" size={16} />
                 <input
                   type="email"
                   value={email}
@@ -217,7 +217,7 @@ function SignupPageContent({ onSuccess }: SignupPageProps) {
                     setEmail(e.target.value);
                     if (errors.email) setErrors({ ...errors, email: undefined });
                   }}
-                  className={`w-full pl-10 pr-4 py-2.5 bg-white border ${errors.email ? 'border-red-400 ring-2 ring-red-50' : 'border-slate-200 hover:border-slate-300'} rounded-xl outline-none focus:border-indigo-600 focus:ring-4 focus:ring-indigo-50 transition-all text-slate-900 placeholder:text-slate-400 font-medium text-sm`}
+                  className={`w-full pl-10 pr-4 py-2.5 bg-card border ${errors.email ? 'border-red-400 ring-2 ring-red-500/20' : 'border-border hover:border-primary/40'} rounded-xl outline-none focus:border-indigo-600 focus:ring-4 focus:ring-primary/20 transition-all text-foreground placeholder:text-muted-foreground font-medium text-sm`}
                   placeholder="name@company.com"
                 />
               </div>
@@ -228,9 +228,9 @@ function SignupPageContent({ onSuccess }: SignupPageProps) {
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {/* Password */}
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 tracking-wide uppercase ml-1">Password</label>
+                <label className="text-[10px] font-bold text-muted-foreground tracking-wide uppercase ml-1">Password</label>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" size={16} />
                   <input
                     type={showPassword ? "text" : "password"}
                     value={password}
@@ -238,7 +238,7 @@ function SignupPageContent({ onSuccess }: SignupPageProps) {
                       setPassword(e.target.value);
                       if (errors.password) setErrors({ ...errors, password: undefined });
                     }}
-                    className={`w-full pl-10 pr-4 py-2.5 bg-white border ${errors.password ? 'border-red-400 ring-2 ring-red-50' : 'border-slate-200 hover:border-slate-300'} rounded-xl outline-none focus:border-indigo-600 focus:ring-4 focus:ring-indigo-50 transition-all text-slate-900 placeholder:text-slate-400 font-medium text-sm`}
+                    className={`w-full pl-10 pr-4 py-2.5 bg-card border ${errors.password ? 'border-red-400 ring-2 ring-red-500/20' : 'border-border hover:border-primary/40'} rounded-xl outline-none focus:border-indigo-600 focus:ring-4 focus:ring-primary/20 transition-all text-foreground placeholder:text-muted-foreground font-medium text-sm`}
                     placeholder="••••••"
                   />
                 </div>
@@ -247,9 +247,9 @@ function SignupPageContent({ onSuccess }: SignupPageProps) {
 
               {/* Confirm Password */}
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 tracking-wide uppercase ml-1">Confirm</label>
+                <label className="text-[10px] font-bold text-muted-foreground tracking-wide uppercase ml-1">Confirm</label>
                 <div className="relative">
-                  <CheckCircle2 className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
+                  <CheckCircle2 className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" size={16} />
                   <input
                     type={showPassword ? "text" : "password"}
                     value={confirm}
@@ -257,13 +257,13 @@ function SignupPageContent({ onSuccess }: SignupPageProps) {
                       setConfirm(e.target.value);
                       if (errors.confirm) setErrors({ ...errors, confirm: undefined });
                     }}
-                    className={`w-full pl-10 pr-10 py-2.5 bg-white border ${errors.confirm ? 'border-red-400 ring-2 ring-red-50' : 'border-slate-200 hover:border-slate-300'} rounded-xl outline-none focus:border-indigo-600 focus:ring-4 focus:ring-indigo-50 transition-all text-slate-900 placeholder:text-slate-400 font-medium text-sm`}
+                    className={`w-full pl-10 pr-10 py-2.5 bg-card border ${errors.confirm ? 'border-red-400 ring-2 ring-red-500/20' : 'border-border hover:border-primary/40'} rounded-xl outline-none focus:border-indigo-600 focus:ring-4 focus:ring-primary/20 transition-all text-foreground placeholder:text-muted-foreground font-medium text-sm`}
                     placeholder="••••••"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((s) => !s)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-md hover:bg-slate-50 focus:outline-none"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-accent focus:outline-none"
                     tabIndex={-1}
                   >
                     {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
@@ -285,10 +285,10 @@ function SignupPageContent({ onSuccess }: SignupPageProps) {
                       setAccept(e.target.checked);
                       if (errors.accept) setErrors({ ...errors, accept: undefined });
                     }}
-                    className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer accent-indigo-600"
+                    className="h-4 w-4 rounded border-border text-indigo-600 focus:ring-indigo-500 focus:ring-offset-0 cursor-pointer accent-indigo-600"
                   />
                 </div>
-                <label htmlFor="terms" className="ml-2 text-xs text-slate-600 font-medium leading-tight select-none cursor-pointer">
+                <label htmlFor="terms" className="ml-2 text-xs text-muted-foreground font-medium leading-tight select-none cursor-pointer">
                   I agree to the{" "}
                   <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-700 transition-colors hover:underline">
                     Terms
@@ -323,7 +323,7 @@ function SignupPageContent({ onSuccess }: SignupPageProps) {
           </form>
 
           {/* Footer */}
-          <p className="text-center text-xs text-slate-500 pt-1 font-medium">
+          <p className="text-center text-xs text-muted-foreground pt-1 font-medium">
             Already have an account?{" "}
             <Link
               href="/login"
@@ -341,8 +341,8 @@ function SignupPageContent({ onSuccess }: SignupPageProps) {
 export default function SignupPage(props: SignupPageProps) {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="w-9 h-9 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-9 h-9 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
       </div>
     }>
       <SignupPageContent {...props} />

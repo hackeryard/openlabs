@@ -19,7 +19,7 @@ export default function RootLoading() {
   }
 
   return (
-    <div className="w-full min-h-screen bg-[#fafafa] flex items-center justify-center pt-16">
+    <div className="w-full min-h-screen bg-background flex items-center justify-center pt-16">
       <UniversalLoader subject={subject} />
     </div>
   );

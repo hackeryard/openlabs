@@ -177,8 +177,8 @@ export default function PeriodicTable({ onComplete }) {
     if (!items.length) return null;
 
     return (
-      <div className="rounded-3xl border border-slate-200 bg-white/85 p-4 shadow-md backdrop-blur">
-        <div className="mb-3 flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-slate-400">
+      <div className="rounded-3xl border border-border bg-card/85 p-4 shadow-md backdrop-blur">
+        <div className="mb-3 flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-muted-foreground">
           <span className={`h-2.5 w-2.5 rounded-full ${categoryStyles[type]?.dot || "bg-slate-400"}`} />
           {formatCategory(type)} series
         </div>
@@ -208,44 +208,44 @@ export default function PeriodicTable({ onComplete }) {
     <section className="max-w-[1600px] mx-auto px-0 sm:px-2 py-6 space-y-6">
       {/* Header */}
       <motion.div
-        className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl"
+        className="overflow-hidden rounded-3xl border border-border bg-card shadow-xl"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
         <div className="h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
         <div className="grid gap-6 p-5 md:grid-cols-[1fr_420px] md:p-7">
           <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-indigo-700">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-primary">
               <FlaskConical className="h-3.5 w-3.5 animate-pulse" />
               Quantum Element Workbench
             </div>
             <div>
-              <h2 className="text-3xl font-black tracking-tight text-slate-900 md:text-4xl">
+              <h2 className="text-3xl font-black tracking-tight text-foreground md:text-4xl">
                 Interactive Periodic Table
               </h2>
-              <p className="mt-2 max-w-3xl text-sm font-medium leading-relaxed text-slate-500 md:text-base">
+              <p className="mt-2 max-w-3xl text-sm font-medium leading-relaxed text-muted-foreground md:text-base">
                 Filter families, inspect atomic properties, open 3D atom pages, and export focused datasets from a polished lab console.
               </p>
             </div>
             <div className="grid max-w-xl grid-cols-3 gap-2 sm:gap-3">
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-2 sm:p-3">
-                <div className="font-mono text-xl font-black text-slate-900 sm:text-2xl">118</div>
-                <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">Elements</div>
+              <div className="rounded-2xl border border-border bg-muted p-2 sm:p-3">
+                <div className="font-mono text-xl font-black text-foreground sm:text-2xl">118</div>
+                <div className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Elements</div>
               </div>
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-2 sm:p-3">
-                <div className="font-mono text-xl font-black text-slate-900 sm:text-2xl">{filtered.length}</div>
-                <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">Visible</div>
+              <div className="rounded-2xl border border-border bg-muted p-2 sm:p-3">
+                <div className="font-mono text-xl font-black text-foreground sm:text-2xl">{filtered.length}</div>
+                <div className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Visible</div>
               </div>
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-2 sm:p-3">
+              <div className="rounded-2xl border border-border bg-muted p-2 sm:p-3">
                 <div className="font-mono text-xl font-black text-indigo-600 sm:text-2xl">{explored.size}</div>
-                <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">Visited</div>
+                <div className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Visited</div>
               </div>
             </div>
           </div>
           <div className="flex flex-col justify-center gap-3">
             <SearchBar elements={elements} onSelect={setQuerySelected} />
             {querySelected && (
-              <div className="rounded-2xl border border-indigo-100 bg-indigo-50 px-4 py-3 text-xs font-bold text-indigo-700">
+              <div className="rounded-2xl border border-primary/20 bg-primary/10 px-4 py-3 text-xs font-bold text-primary">
                 Focused on {querySelected.name}. Clear search to restore the full table.
               </div>
             )}
@@ -255,7 +255,7 @@ export default function PeriodicTable({ onComplete }) {
 
       {/* Controls */}
       <motion.div
-        className="sticky top-2 z-10 space-y-4 rounded-3xl border border-slate-200 bg-white/90 p-4 shadow-lg backdrop-blur"
+        className="sticky top-2 z-10 space-y-4 rounded-3xl border border-border bg-card/90 p-4 shadow-lg backdrop-blur"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
@@ -268,7 +268,7 @@ export default function PeriodicTable({ onComplete }) {
                 setQuerySelected(null);
                 setActiveCategories(new Set());
               }}
-              className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-xs font-black text-slate-600 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+              className="inline-flex items-center gap-2 rounded-2xl border border-border bg-card px-4 py-2 text-xs font-black text-muted-foreground shadow-sm transition hover:border-border hover:bg-accent"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               Reset
@@ -283,7 +283,7 @@ export default function PeriodicTable({ onComplete }) {
           </div>
         </div>
 
-        <div className="hidden flex-wrap gap-2 border-t border-slate-100 pt-3 text-xs sm:flex">
+        <div className="hidden flex-wrap gap-2 border-t border-border pt-3 text-xs sm:flex">
           {categories.map(cat => (
             <div
               key={cat}
@@ -298,16 +298,16 @@ export default function PeriodicTable({ onComplete }) {
 
       {/* Main Grid */}
       <motion.div
-        className="overflow-hidden rounded-3xl border border-slate-200 bg-white/80 p-1.5 shadow-xl backdrop-blur sm:p-5"
+        className="overflow-hidden rounded-3xl border border-border bg-card/80 p-1.5 shadow-xl backdrop-blur sm:p-5"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
-        <div className="mb-4 flex flex-col gap-3 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-slate-400">
+        <div className="mb-4 flex flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-muted-foreground">
             <Table2 className="h-4 w-4 text-indigo-500" />
             Element Matrix
           </div>
-          <div className="hidden items-center gap-2 text-[10px] font-bold text-slate-400 sm:flex">
+          <div className="hidden items-center gap-2 text-[10px] font-bold text-muted-foreground sm:flex">
             <Atom className="h-4 w-4 text-indigo-500" />
             Arrow keys navigate focused cells
           </div>
@@ -316,7 +316,7 @@ export default function PeriodicTable({ onComplete }) {
           <div className="mx-auto w-full">
             <div className="mb-1 grid gap-1 pl-0 sm:mb-2 sm:gap-2" style={{ gridTemplateColumns: "repeat(18, minmax(0, 1fr))" }}>
               {Array.from({ length: 18 }, (_, i) => (
-                <div key={i} className="text-center font-mono text-[7px] font-black text-slate-400 sm:text-[10px]">
+                <div key={i} className="text-center font-mono text-[7px] font-black text-muted-foreground sm:text-[10px]">
                   {i + 1}
                 </div>
               ))}

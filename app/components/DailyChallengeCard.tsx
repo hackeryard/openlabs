@@ -54,7 +54,7 @@ export default function DailyChallengeCard({ labId, currentParams }) {
             initial={{ opacity: 0, y: -15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 15 }}
-            className="relative overflow-hidden rounded-2xl bg-slate-900/80 backdrop-blur-xl border border-slate-700/80 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] p-5 md:p-6"
+            className="relative overflow-hidden rounded-2xl bg-card/80 backdrop-blur-xl border border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] p-5 md:p-6"
           >
             {/* Ambient Background Glow */}
             <div className="absolute top-0 right-0 -mt-12 -mr-12 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -72,7 +72,7 @@ export default function DailyChallengeCard({ labId, currentParams }) {
                   </span>
                 </div>
 
-                <h3 className="text-lg md:text-xl font-bold text-white tracking-tight leading-snug">
+                <h3 className="text-lg md:text-xl font-bold text-card-foreground tracking-tight leading-snug">
                   {challenge.challenge}
                 </h3>
 
@@ -80,7 +80,7 @@ export default function DailyChallengeCard({ labId, currentParams }) {
                   <div className="pt-1">
                     <button
                       onClick={() => setShowHint(!showHint)}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-slate-400 hover:text-indigo-400 transition-colors"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-primary transition-colors"
                     >
                       <HelpCircle className="w-3.5 h-3.5" />
                       {showHint ? "Hide Hint" : "Need a Hint?"}
@@ -92,9 +92,9 @@ export default function DailyChallengeCard({ labId, currentParams }) {
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: "auto" }}
                           exit={{ opacity: 0, height: 0 }}
-                          className="mt-2 text-sm text-slate-300 bg-slate-800/50 border border-slate-700/50 rounded-xl p-3 leading-relaxed"
+                          className="mt-2 text-sm text-muted-foreground bg-muted/50 border border-border rounded-xl p-3 leading-relaxed"
                         >
-                          <span className="font-semibold text-indigo-400">Hint:</span> {challenge.hint}
+                          <span className="font-semibold text-primary">Hint:</span> {challenge.hint}
                         </motion.p>
                       )}
                     </AnimatePresence>
@@ -188,14 +188,14 @@ export default function DailyChallengeCard({ labId, currentParams }) {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-2xl bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 p-5 shadow-lg flex items-center gap-4 max-w-3xl mx-auto"
+            className="rounded-2xl bg-card/60 backdrop-blur-xl border border-border p-5 shadow-lg flex items-center gap-4 max-w-3xl mx-auto"
           >
-            <div className="w-10 h-10 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0">
+            <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
               <CheckCircle2 className="w-5.5 h-5.5" />
             </div>
             <div>
-              <h4 className="font-bold text-slate-200 text-sm md:text-base">Daily Challenge Cleared!</h4>
-              <p className="text-slate-400 text-xs md:text-sm mt-0.5">
+              <h4 className="font-bold text-card-foreground text-sm md:text-base">Daily Challenge Cleared!</h4>
+              <p className="text-muted-foreground text-xs md:text-sm mt-0.5">
                 You have already claimed your rewards for today's challenge in this lab. Keep exploring!
               </p>
             </div>

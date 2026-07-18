@@ -212,11 +212,11 @@ export default function ElectronicConfiguration({
   } = calculateConfiguration(atomicNumber);
 
   return (
-    <div className="bg-white border rounded-xl p-6 space-y-6 shadow-sm">
+    <div className="bg-card border border-border rounded-xl p-6 space-y-6 shadow-sm">
       {/* Header */}
       <div>
         <h2 className="text-2xl font-bold">Electronic Configuration</h2>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           {name} ({symbol}) — Atomic Number {atomicNumber}
         </p>
       </div>
@@ -257,7 +257,7 @@ export default function ElectronicConfiguration({
         {Object.entries(ORBITAL_COLORS).map(([key, color]) => (
           <div key={key} className="flex items-center gap-2">
             <span className={`px-2 py-0.5 rounded ${color}`}>{key}</span>
-            <span className="text-gray-600">orbital</span>
+            <span className="text-muted-foreground">orbital</span>
           </div>
         ))}
       </div>
@@ -267,8 +267,8 @@ export default function ElectronicConfiguration({
         <h3 className="font-semibold mb-2">Shell-wise Distribution</h3>
         <div className="flex flex-wrap gap-3">
           {Object.entries(shells).map(([shell, count]) => (
-            <div key={shell} className="px-4 py-2 rounded-lg bg-gray-100">
-              <div className="text-xs text-gray-500">Shell {shell}</div>
+            <div key={shell} className="px-4 py-2 rounded-lg bg-muted">
+              <div className="text-xs text-muted-foreground">Shell {shell}</div>
               <div className="font-bold text-lg">{count}</div>
             </div>
           ))}
@@ -277,17 +277,17 @@ export default function ElectronicConfiguration({
 
       {/* Summary (existing) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="border rounded-lg p-4">
-          <div className="text-gray-500 text-sm">Valence Electrons</div>
+        <div className="border border-border rounded-lg p-4">
+          <div className="text-muted-foreground text-sm">Valence Electrons</div>
           <div className="text-3xl font-bold text-blue-600">
             {valenceElectrons}
           </div>
         </div>
 
-        <div className="border rounded-lg p-4">
-          <div className="text-gray-500 text-sm">Periodic Table Block</div>
+        <div className="border border-border rounded-lg p-4">
+          <div className="text-muted-foreground text-sm">Periodic Table Block</div>
           <div className="text-3xl font-bold uppercase">{block}</div>
-          <div className="text-sm text-gray-600 mt-1">
+          <div className="text-sm text-muted-foreground mt-1">
             {BLOCK_DESCRIPTION[block]}
           </div>
         </div>

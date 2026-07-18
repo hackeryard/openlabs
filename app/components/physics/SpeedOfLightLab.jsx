@@ -150,7 +150,7 @@ export default function SpeedOfLightLab() {
         if (!canvas || dataRef.current.length < 2) return null;
 
         return (
-            <div className="bg-white p-3 rounded shadow">
+            <div className="bg-card p-3 rounded shadow">
                 <h3 className="text-sm font-semibold mb-2">
                     {graphMode === "d-t" ? "Distance–Time" : "Velocity–Time"} Graph
                 </h3>
@@ -441,7 +441,7 @@ function printReport() {
             <div className="grid md:grid-cols-3 gap-4 items-start">
 
                 {/* LEFT: Controls */}
-                <div className="bg-white p-4 rounded shadow space-y-3">
+                <div className="bg-card p-4 rounded shadow space-y-3">
                     <div className="flex flex-col gap-2">
                         <button
                             onClick={() => setRunning(r => !r)}
@@ -452,14 +452,14 @@ function printReport() {
 
                         <button
                             onClick={reset}
-                            className="bg-gray-200 py-2 rounded"
+                            className="bg-muted py-2 rounded"
                         >
                             Reset
                         </button>
 
                         <button
                             onClick={() => setGraphMode(g => (g === "d-t" ? "v-t" : "d-t"))}
-                            className="bg-slate-200 py-2 rounded"
+                            className="bg-muted py-2 rounded"
                         >
                             Toggle Graph
                         </button>
@@ -497,15 +497,15 @@ function printReport() {
             </div>
 
             {/* Canvas (separate, no overlay) */}
-            <div className="bg-white p-3 rounded shadow">
+            <div className="bg-card p-3 rounded shadow">
                 <canvas ref={canvasRef} className="w-full rounded" />
             </div>
 
             {/* Results */}
-            <div className="bg-white p-4 rounded shadow">
+            <div className="bg-card p-4 rounded shadow">
                 <h3 className="font-semibold mb-2">Results</h3>
                 <table className="w-full text-sm border">
-                    <thead className="bg-slate-100">
+                    <thead className="bg-muted">
                         <tr>
                             <th className="border p-2">Medium</th>
                             <th className="border p-2">Speed (m/s)</th>

@@ -499,13 +499,13 @@ export default function ProjectileMotionLab({
     <div className="max-w-6xl mx-auto p-0 sm:p-4 space-y-4">
       <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-2xl font-semibold">Projectile Motion — Virtual Lab</h2>
-        <div className="text-sm text-gray-600">Simulate launches, measure range & TOF</div>
+        <div className="text-sm text-muted-foreground">Simulate launches, measure range & TOF</div>
       </header>
       <DailyChallengeCard labId="physics/projectilemotion" currentParams={{ range, maxHeight: maxH, time: tof, speed: v0, angle, height: h0 }} />
 
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="md:col-span-1 bg-white p-4 rounded shadow space-y-3">
+        <div className="md:col-span-1 bg-card p-4 rounded shadow space-y-3">
           <label className="block text-sm">Initial speed (m/s)</label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <input type="range" min="1" max="100" step="0.1" value={v0} onChange={(e) => { setV0(Number(e.target.value)); computeAnalytic(Number(e.target.value), angle, h0, g); }} />
@@ -525,7 +525,7 @@ export default function ProjectileMotionLab({
 
           <div className="flex flex-col sm:flex-row gap-2 mt-2">
             <button onClick={() => { setRunning(r => !r); }} className="flex-1 py-2 rounded bg-blue-600 text-white">{running ? "Pause" : "Start"}</button>
-            <button onClick={() => resetAll()} className="flex-1 py-2 rounded bg-gray-200">Reset</button>
+            <button onClick={() => resetAll()} className="flex-1 py-2 rounded bg-muted">Reset</button>
           </div>
 
           <div className="mt-2 text-sm">
@@ -535,9 +535,9 @@ export default function ProjectileMotionLab({
           </div>
         </div>
 
-        <div className="md:col-span-2 bg-white p-3 rounded shadow">
+        <div className="md:col-span-2 bg-card p-3 rounded shadow">
           <div className="flex items-center justify-between mb-2">
-            <div><strong>Trajectory</strong><div className="text-xs text-gray-500">Realtime animation — stops on ground hit</div></div>
+            <div><strong>Trajectory</strong><div className="text-xs text-muted-foreground">Realtime animation — stops on ground hit</div></div>
             <div className="flex flex-wrap gap-2">
               <button onClick={exportCSV} className="px-3 py-1 bg-green-600 text-white rounded">Export CSV</button>
               <button onClick={exportJSON} className="px-3 py-1 bg-yellow-400 rounded">Export JSON</button>
@@ -548,29 +548,29 @@ export default function ProjectileMotionLab({
             <canvas ref={canvasRef} className="w-full rounded-md" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mt-3">
-            <div className="bg-gray-50 p-3 rounded">
+            <div className="bg-muted p-3 rounded">
               <div className="text-sm font-medium">Stopwatch</div>
               <div className="text-2xl font-mono my-2">{swDisplay}s</div>
-              <div className="flex gap-2"><button onClick={swStartStop} className="flex-1 py-1 rounded bg-blue-600 text-white">{swRunning ? "Stop" : "Start"}</button><button onClick={swLap} className="py-1 px-3 rounded bg-gray-200">Lap</button></div>
+              <div className="flex gap-2"><button onClick={swStartStop} className="flex-1 py-1 rounded bg-blue-600 text-white">{swRunning ? "Stop" : "Start"}</button><button onClick={swLap} className="py-1 px-3 rounded bg-muted">Lap</button></div>
               <div className="mt-2 text-xs">Laps: {laps.length}</div>
               <div className="mt-2"><button onClick={recordManualMeasurement} className="w-full py-1 rounded bg-emerald-500 text-white">Record Manual Time</button></div>
             </div>
 
-            <div className="bg-gray-50 p-3 rounded">
+            <div className="bg-muted p-3 rounded">
               <div className="text-sm font-medium">Manual Entries</div>
-              <ul className="mt-2 max-h-36 overflow-auto text-sm">{manualEntries.length === 0 ? <div className="text-xs text-gray-500">No entries</div> : manualEntries.map((e, i) => (<li key={i} className="py-1 border-b">{e.time.toFixed(3)} s — {e.note}</li>))}</ul>
+              <ul className="mt-2 max-h-36 overflow-auto text-sm">{manualEntries.length === 0 ? <div className="text-xs text-muted-foreground">No entries</div> : manualEntries.map((e, i) => (<li key={i} className="py-1 border-b">{e.time.toFixed(3)} s — {e.note}</li>))}</ul>
             </div>
 
-            <div className="bg-gray-50 p-3 rounded">
+            <div className="bg-muted p-3 rounded">
               <div className="text-sm font-medium">Saved Runs</div>
-              <div className="mt-2"><button onClick={() => saveRun()} className="w-full py-1 rounded bg-orange-500 text-white mb-2">Save Run</button><button onClick={() => { const s = listRuns(); if (s.length === 0) alert("No saved"); else alert(s.map(r => r.name + " " + r.date).join("\n")); }} className="w-full py-1 rounded bg-gray-200 mb-2">List</button><button onClick={() => clearRuns()} className="w-full py-1 rounded bg-red-500 text-white">Clear</button></div>
+              <div className="mt-2"><button onClick={() => saveRun()} className="w-full py-1 rounded bg-orange-500 text-white mb-2">Save Run</button><button onClick={() => { const s = listRuns(); if (s.length === 0) alert("No saved"); else alert(s.map(r => r.name + " " + r.date).join("\n")); }} className="w-full py-1 rounded bg-muted mb-2">List</button><button onClick={() => clearRuns()} className="w-full py-1 rounded bg-red-500 text-white">Clear</button></div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Sweep */}
-      <div className="bg-white p-4 rounded shadow">
+      <div className="bg-card p-4 rounded shadow">
         <h3 className="font-semibold">Sweep — Measure Range</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-2 items-end">
           <div><label className="block text-xs">Mode</label><select value={sweepMode} onChange={(e) => setSweepMode(e.target.value)} className="w-full border rounded px-2 py-1"><option value="angle">Angle</option><option value="speed">Speed</option></select></div>
@@ -578,7 +578,7 @@ export default function ProjectileMotionLab({
           <div><label className="block text-xs">End</label><input value={sweepEnd} onChange={(e) => setSweepEnd(Number(e.target.value))} className="w-full border rounded px-2 py-1" /></div>
           <div><label className="block text-xs">Steps</label><input value={sweepSteps} min="2" onChange={(e) => setSweepSteps(Number(e.target.value))} className="w-full border rounded px-2 py-1" /></div>
           <div><button onClick={() => { setSweepResults([]); runSweep(); }} className="w-full py-2 rounded bg-indigo-600 text-white">{sweepRunning ? "Running..." : "Run Sweep"}</button></div>
-          <div><button onClick={() => setSweepResults([])} className="w-full py-2 rounded bg-gray-200">Clear</button></div>
+          <div><button onClick={() => setSweepResults([])} className="w-full py-2 rounded bg-muted">Clear</button></div>
         </div>
 
         <div className="mt-3 grid md:grid-cols-2 gap-4">
@@ -586,13 +586,13 @@ export default function ProjectileMotionLab({
             <div className="text-sm">Sweep Results</div>
             <div className="mt-2 max-h-40 overflow-auto overflow-x-auto text-sm">
               {sweepResults.length === 0 ? (
-                <div className="text-xs text-gray-500">No results</div>
+                <div className="text-xs text-muted-foreground">No results</div>
               ) : (
                 <table className="w-full border-collapse">
                   <thead>
                     <tr>
-                      <th className="border-b border-gray-200 p-2">Param</th>
-                      <th className="border-b border-gray-200 p-2">Range (m)</th>
+                      <th className="border-b border-border p-2">Param</th>
+                      <th className="border-b border-border p-2">Range (m)</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -609,12 +609,12 @@ export default function ProjectileMotionLab({
           </div>
           <div>
             <div className="text-sm">Fit</div>
-            <div className="mt-2 text-xs text-gray-500">Fit relationships (e.g. Range vs v²)</div>
+            <div className="mt-2 text-xs text-muted-foreground">Fit relationships (e.g. Range vs v²)</div>
           </div>
         </div>
       </div>
 
-      <div className="bg-white p-4 rounded shadow">
+      <div className="bg-card p-4 rounded shadow">
         <h3 className="font-semibold">Lab Instructions</h3>
         <ol className="list-decimal list-inside text-sm mt-2">
           <li>Set initial speed, angle and height then Start the simulation.</li>

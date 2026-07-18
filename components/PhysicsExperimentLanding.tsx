@@ -73,7 +73,7 @@ export default function PhysicsExperimentLanding({
   if (!mounted) {
     return (
       <main
-        className="min-h-screen bg-[#fffdf8]"
+        className="min-h-screen bg-background"
         aria-label={`${title} loading`}
         suppressHydrationWarning
       />
@@ -547,6 +547,94 @@ export default function PhysicsExperimentLanding({
           .px-section-title { align-items: start; flex-direction: column; }
           .px-card, .px-side-card { padding: 20px; }
         }
+
+        /* ---------- Dark mode overrides ---------- */
+        .dark .px-page {
+          --px-ink: #e6edf3;
+          background:
+            radial-gradient(circle at 12% 8%, color-mix(in srgb, var(--px-warm) 16%, transparent), transparent 28rem),
+            radial-gradient(circle at 86% 18%, color-mix(in srgb, var(--px-secondary) 18%, transparent), transparent 30rem),
+            radial-gradient(circle at 70% 78%, rgba(242, 190, 78, 0.10), transparent 34rem),
+            linear-gradient(180deg, #0a0f1c 0%, #0b1120 52%, #0a1017 100%);
+          color: var(--px-ink);
+        }
+        .dark .px-crumbs { border-bottom-color: rgba(255,255,255,.08); background: rgba(12,18,30,.72); }
+        .dark .px-crumbs-inner { color: #8a97a3; }
+        .dark .px-hero {
+          border-bottom-color: rgba(255,255,255,.08);
+          background:
+            radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+            linear-gradient(135deg, rgba(12,18,30,.96), rgba(16,22,38,.94) 42%, rgba(10,20,26,.96));
+          background-size: 24px 24px, auto;
+        }
+        .dark .px-kicker span {
+          border-color: color-mix(in srgb, var(--px-warm) 30%, transparent);
+          background: linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+          color: #f0b892;
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+        .dark .px-hero-copy p { color: #9aa7b2; }
+        .dark .px-secondary-link { border-color: rgba(255,255,255,.14); background: rgba(255,255,255,.05); color: #dbe4ea; }
+        .dark .px-secondary-link:hover { border-color: var(--px-warm); color: #f0b892; }
+        .dark .px-visual {
+          border-color: rgba(255,255,255,.1);
+          background: rgba(16,22,38,.9);
+          box-shadow: 0 28px 80px rgba(0,0,0,.5), 0 0 0 8px rgba(255,255,255,.04);
+        }
+        .dark .px-visual-art {
+          background:
+            radial-gradient(circle at 22% 20%, color-mix(in srgb, var(--px-warm) 22%, transparent), transparent 10rem),
+            radial-gradient(circle at 76% 32%, color-mix(in srgb, var(--px-secondary) 24%, transparent), transparent 12rem),
+            linear-gradient(135deg, #0d1424, #0b1a1a);
+        }
+        .dark .px-visual-caption {
+          border-color: rgba(255,255,255,.1);
+          background: rgba(12,18,30,.82);
+          box-shadow: 0 12px 34px rgba(0,0,0,.4);
+        }
+        .dark .px-visual-caption span { color: #f0b892; }
+        .dark .px-lower {
+          background:
+            linear-gradient(180deg, rgba(10,15,28,.4), rgba(11,17,32,.75)),
+            radial-gradient(circle at 18% 28%, color-mix(in srgb, var(--px-warm) 8%, transparent), transparent 24rem),
+            radial-gradient(circle at 88% 62%, color-mix(in srgb, var(--px-primary) 12%, transparent), transparent 26rem);
+        }
+        .dark .px-lower::before {
+          background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+        }
+        .dark .px-lower-head p:not(.px-eyebrow) { color: #9aa7b2; }
+        .dark .px-fact {
+          border-color: rgba(255,255,255,.1);
+          background: linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+          box-shadow: 0 12px 32px rgba(0,0,0,.3);
+        }
+        .dark .px-fact span { color: #8a97a3; }
+        .dark .px-card, .dark .px-side-card {
+          border-color: rgba(255,255,255,.08);
+          background: linear-gradient(180deg, #0f1626, #0d1322);
+          box-shadow: 0 16px 42px rgba(0,0,0,.35);
+        }
+        .dark .px-card p { color: #9aa7b2; }
+        .dark .px-formula-panel {
+          border-color: rgba(255,255,255,.1);
+          background: linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+          box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+        }
+        .dark .px-formula-panel span { color: #9aa7b2; }
+        .dark .px-section-title span { border-color: color-mix(in srgb, var(--px-primary) 30%, transparent); background: rgba(255,255,255,.04); }
+        .dark .px-faq {
+          border-color: rgba(255,255,255,.1);
+          background: linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+        }
+        .dark .px-faq h3 { color: #e6edf3; }
+        .dark .px-faq p { color: #9aa7b2; }
+        .dark .px-launch-card {
+          background: radial-gradient(circle at top right, color-mix(in srgb, var(--px-primary) 26%, transparent), transparent 13rem), radial-gradient(circle at bottom left, color-mix(in srgb, var(--px-warm) 18%, transparent), transparent 12rem), #0f1626;
+          border-color: color-mix(in srgb, var(--px-primary) 34%, transparent);
+        }
+        .dark .px-side-card p { color: #9aa7b2; }
+        .dark .px-side-card li { color: #9aa7b2; }
+        .dark .px-side-card li::before { box-shadow: 0 0 0 4px rgba(255,255,255,.06); }
       `}</style>
     </>
   );

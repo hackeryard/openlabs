@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { Info, X, BookOpen } from 'lucide-react';
+import { Info, X, BookOpen, Lock } from 'lucide-react';
 
 import { EXAMPLES } from '../lib/examples';
 import type { SimulationSnapshot } from '../lib/types';
@@ -40,7 +40,10 @@ export default function EventLoopVisualizer({
   
   // ── Tracking State ───────────────────────────────────────
   const [completedExampleIds, setCompletedExampleIds] = useState<Set<string>>(new Set());
-  const [predictCorrectCount, setPredictCorrectCount] = useState(0);
+  const [predictCorrectIds, setPredictCorrectIds] = useState<Set<string>>(new Set());
+  // Examples whose real output has been revealed (by submitting a
+  // prediction, right or wrong) — gates peeking at the answer beforehand.
+  const [revealedPredictIds, setRevealedPredictIds] = useState<Set<string>>(new Set());
 
   const playIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -49,6 +52,7 @@ export default function EventLoopVisualizer({
   const snapshots = selectedExample.snapshots;
   const totalSteps = snapshots.length;
   const currentSnapshot: SimulationSnapshot = snapshots[currentStep] ?? snapshots[0];
+  const isLocked = selectedExample.isPredictMode && !revealedPredictIds.has(selectedExampleId);
 
   // ── Auto-play logic ──────────────────────────────────────
   useEffect(() => {
@@ -75,14 +79,20 @@ export default function EventLoopVisualizer({
     }
   }, [isPlaying, speed, totalSteps]);
 
-  // Track completed examples
+  // Track completed examples — reaching the end of ANY example (not just
+  // correctly predicting the quiz) counts as having used the lab, so it
+  // also earns lab-completion XP the first time it happens.
   useEffect(() => {
     if (currentStep === totalSteps - 1 && !completedExampleIds.has(selectedExampleId)) {
       const nextSet = new Set(completedExampleIds).add(selectedExampleId);
       setCompletedExampleIds(nextSet);
       onExamplesCompletedChange?.(nextSet.size);
+      if (!hasCompletedExperiment) {
+        setHasCompletedExperiment(true);
+        onExperimentComplete();
+      }
     }
-  }, [currentStep, totalSteps, selectedExampleId, completedExampleIds, onExamplesCompletedChange]);
+  }, [currentStep, totalSteps, selectedExampleId, completedExampleIds, onExamplesCompletedChange, hasCompletedExperiment, onExperimentComplete]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -94,25 +104,45 @@ export default function EventLoopVisualizer({
   // ── Keyboard shortcuts ───────────────────────────────────
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      // Don't intercept when typing in an input/textarea
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      // Don't hijack keys while focus is on any interactive form control —
+      // e.g. arrow keys should cycle the example <select>, and Space should
+      // activate whichever PlaybackControls button is focused, not always
+      // toggle play/pause.
+      const target = e.target;
+      const isFormControl =
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target instanceof HTMLSelectElement ||
+        target instanceof HTMLButtonElement;
+      if (isFormControl) return;
 
       switch (e.key) {
         case 'ArrowRight':
         case 'n':
+          if (isLocked) return;
           e.preventDefault();
           handleStepForward();
           break;
         case 'ArrowLeft':
         case 'p':
+          if (isLocked) return;
           e.preventDefault();
           handleStepBackward();
           break;
-        case ' ':
-          e.preventDefault();
-          if (isPlaying) handlePause();
-          else handlePlay();
+        case ' ': {
+          if (isLocked) return;
+          const atEnd = currentStep >= totalSteps - 1;
+          if (isPlaying) {
+            e.preventDefault();
+            handlePause();
+          } else if (!atEnd) {
+            // Mirror PlaybackControls' own Play/Pause button, which is
+            // disabled at the end — don't let Space silently restart.
+            e.preventDefault();
+            handlePlay();
+          }
           break;
+        }
         case 'r':
           e.preventDefault();
           handleReset();
@@ -122,7 +152,12 @@ export default function EventLoopVisualizer({
 
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [isPlaying, currentStep, totalSteps]);
+    // Deliberately not listing the handle* callbacks below: they're declared
+    // later in this component via useCallback, and their own dependencies
+    // (currentStep/totalSteps) are already covered here, so this effect
+    // re-subscribes with a fresh closure whenever it matters.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPlaying, currentStep, totalSteps, isLocked]);
 
   // ── Handlers ─────────────────────────────────────────────
   const handleExampleChange = useCallback((id: string) => {
@@ -160,16 +195,29 @@ export default function EventLoopVisualizer({
   }, []);
 
   const handlePredictCorrect = useCallback(() => {
-    setPredictCorrectCount(prev => {
-      const next = prev + 1;
-      onPredictCorrectChange?.(next);
+    setPredictCorrectIds(prev => {
+      // Dedupe by example id — resubmitting the same correct answer (via
+      // "Try Again") must not keep inflating the count that feeds the
+      // daily-challenge XP param.
+      if (prev.has(selectedExampleId)) return prev;
+      const next = new Set(prev).add(selectedExampleId);
+      onPredictCorrectChange?.(next.size);
       return next;
     });
     if (!hasCompletedExperiment) {
       setHasCompletedExperiment(true);
       onExperimentComplete();
     }
-  }, [hasCompletedExperiment, onExperimentComplete, onPredictCorrectChange]);
+  }, [hasCompletedExperiment, onExperimentComplete, onPredictCorrectChange, selectedExampleId]);
+
+  // Reveals the real console output for a predict-mode example — called on
+  // every submission (correct or incorrect), not just correct ones.
+  const handlePredictSubmit = useCallback(() => {
+    setRevealedPredictIds(prev => {
+      if (prev.has(selectedExampleId)) return prev;
+      return new Set(prev).add(selectedExampleId);
+    });
+  }, [selectedExampleId]);
 
   // ── Render ───────────────────────────────────────────────
   return (
@@ -270,14 +318,23 @@ export default function EventLoopVisualizer({
 
             {/* Console Output */}
             <div className="rounded-xl border border-slate-700/50 bg-slate-900/40 backdrop-blur-sm overflow-hidden flex-1 min-h-[80px] shrink-0 flex flex-col min-h-0">
-              <ConsoleOutput entries={currentSnapshot.consoleOutput} />
+              {isLocked ? (
+                <div className="flex-1 flex flex-col items-center justify-center gap-2 p-4 text-center">
+                  <Lock className="w-5 h-5 text-slate-600" />
+                  <p className="text-xs text-slate-500">Submit your prediction below to reveal the console output.</p>
+                </div>
+              ) : (
+                <ConsoleOutput entries={currentSnapshot.consoleOutput} />
+              )}
             </div>
 
             {/* Predict Mode Panel (only for predict examples) */}
             {selectedExample.isPredictMode && (
               <PredictModePanel
+                key={selectedExampleId}
                 expectedOutput={selectedExample.expectedOutput}
                 onCorrect={handlePredictCorrect}
+                onSubmit={handlePredictSubmit}
                 explanation={selectedExample.explanation}
               />
             )}
@@ -304,6 +361,7 @@ export default function EventLoopVisualizer({
           totalSteps={totalSteps}
           isPlaying={isPlaying}
           speed={speed}
+          disabled={isLocked}
           onStepForward={handleStepForward}
           onStepBackward={handleStepBackward}
           onPlay={handlePlay}

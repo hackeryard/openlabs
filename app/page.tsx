@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { CheckCircle2, ChevronDown } from 'lucide-react'
 import Hero from './components/Hero'
 import ProfileSetupBannerClient from '../components/ProfileSetupBannerClient'
+import AnimatedCard from '../components/ui/AnimatedCard'
 
 export const metadata: Metadata = {
   title: 'OpenLabs Virtual Labs for Interactive STEM Learning',
@@ -119,7 +120,7 @@ const breadcrumbSchema = {
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#fafafa] selection:bg-indigo-100 selection:text-indigo-900 antialiased overflow-hidden">
+    <main className="min-h-screen selection:bg-indigo-100 selection:text-indigo-900 antialiased overflow-hidden">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(homeSchema) }}
@@ -140,13 +141,13 @@ export default function Home() {
         <div className="relative max-w-6xl mx-auto space-y-32 z-10">
           <section className="flex flex-col md:flex-row gap-12 lg:gap-24 items-center max-w-5xl mx-auto">
             <div className="flex-1 space-y-8">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.15]">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-foreground tracking-tight leading-[1.15]">
                 Hands-on learning, <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500">
                   without the physical limits.
                 </span>
               </h2>
-              <p className="text-lg text-slate-600 leading-relaxed font-medium">
+              <p className="text-lg text-muted-foreground leading-relaxed font-medium">
                 OpenLabs is a hands-on virtual lab platform built for students and educators who want interactive, practical experience in science and technology. Our platform provides guided simulations, real-time visualizations, and project-based learning.
               </p>
             </div>
@@ -157,24 +158,25 @@ export default function Home() {
                 "Complete assessments, coding exercises, and mini-projects.",
                 "Track progress and build a learning portfolio."
               ].map((feature, i) => (
-                <div
+                <AnimatedCard
                   key={i}
-                  className="group flex items-start gap-4 p-5 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/60 shadow-sm hover:shadow-lg hover:shadow-indigo-500/5 hover:border-indigo-200 hover:-translate-y-1 transition-all duration-300"
+                  delay={i * 0.08}
+                  className="group flex items-start gap-4 p-5 backdrop-blur-sm"
                 >
-                  <div className="mt-0.5 bg-indigo-50/80 rounded-full p-1 group-hover:bg-indigo-100 transition-colors">
+                  <div className="mt-0.5 bg-primary/10 rounded-full p-1 group-hover:bg-primary/20 transition-colors">
                     <CheckCircle2 className="w-5 h-5 text-indigo-600 flex-shrink-0" />
                   </div>
-                  <p className="text-[0.95rem] font-semibold text-slate-700 leading-snug">{feature}</p>
-                </div>
+                  <p className="text-[0.95rem] font-semibold text-foreground leading-snug">{feature}</p>
+                </AnimatedCard>
               ))}
             </div>
           </section>
           <section id="faqs" className="max-w-5xl mx-auto pb-12 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-16 items-start">
             <div className="md:col-span-1 md:sticky md:top-24">
-              <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-4">
+              <h2 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight mb-4">
                 Frequently Asked Questions
               </h2>
-              <p className="text-slate-500 text-lg">
+              <p className="text-muted-foreground text-lg">
                 Everything you need to know about the OpenLabs platform.
               </p>
             </div>
@@ -182,17 +184,17 @@ export default function Home() {
               {faqsData.map((faq, index) => (
                 <details
                   key={index}
-                  className="group rounded-2xl bg-white border border-slate-200/60 shadow-[0_2px_10px_rgb(0,0,0,0.02)] overflow-hidden open:border-indigo-200 open:shadow-md transition-all duration-300"
+                  className="group rounded-2xl bg-card border border-border/60 shadow-[0_2px_10px_rgb(0,0,0,0.02)] overflow-hidden open:border-indigo-200 open:shadow-md transition-all duration-300"
                 >
                   <summary className="flex items-center justify-between px-6 py-5 cursor-pointer list-none select-none outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset rounded-2xl">
-                    <span className="font-semibold text-slate-800 text-[1.05rem] group-hover:text-indigo-600 transition-colors pr-6">
+                    <span className="font-semibold text-foreground text-[1.05rem] group-hover:text-indigo-600 transition-colors pr-6">
                       {faq.q}
                     </span>
-                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center group-open:bg-indigo-50 group-open:border-indigo-100 group-hover:bg-slate-100 transition-colors">
-                      <ChevronDown className="w-4 h-4 text-slate-400 group-open:text-indigo-600 group-open:rotate-180 transition-transform duration-500 ease-[0.16,1,0.3,1]" />
+                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center group-open:bg-primary/10 group-open:border-primary/20 group-hover:bg-accent transition-colors">
+                      <ChevronDown className="w-4 h-4 text-muted-foreground group-open:text-indigo-600 group-open:rotate-180 transition-transform duration-500 ease-[0.16,1,0.3,1]" />
                     </span>
                   </summary>
-                  <div className="px-6 pb-6 pt-1 text-slate-600 leading-relaxed border-t border-slate-50 mt-1">
+                  <div className="px-6 pb-6 pt-1 text-muted-foreground leading-relaxed border-t border-border mt-1">
                     <p>{faq.a}</p>
                   </div>
                 </details>

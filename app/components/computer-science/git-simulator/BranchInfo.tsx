@@ -10,11 +10,11 @@ export default function BranchInfo({ state }: Props) {
   const branchNames = Object.keys(state.refs);
 
   return (
-    <div className="p-4 border rounded-2xl bg-zinc-900 text-white">
+    <div className="p-4 border border-border rounded-2xl bg-card text-foreground">
       <h2 className="font-semibold mb-4 text-lg">Branches</h2>
 
       {branchNames.length === 0 ? (
-        <p className="text-sm text-zinc-400">No branches</p>
+        <p className="text-sm text-muted-foreground">No branches</p>
       ) : (
         branchNames.map((branch) => {
           const isHead =
@@ -29,7 +29,7 @@ export default function BranchInfo({ state }: Props) {
               <span>{branch}</span>
 
               {isHead && (
-                <span className="text-xs bg-blue-600 px-2 py-0.5 rounded">
+                <span className="text-xs bg-blue-600 text-white px-2 py-0.5 rounded">
                   HEAD
                 </span>
               )}

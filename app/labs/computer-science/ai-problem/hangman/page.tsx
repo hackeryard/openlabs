@@ -53,13 +53,13 @@ export default function Hangman() {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex bg-white border-x border-t rounded-b-lg shadow overflow-hidden">
+      <div className="flex bg-card border-x border-t rounded-b-lg shadow overflow-hidden">
         <button
           onClick={() => setActiveTab("demo")}
           className={`flex-1 py-3 px-4 font-medium text-center transition ${
             activeTab === "demo" 
               ? "bg-indigo-600 text-white" 
-              : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+              : "bg-muted text-muted-foreground hover:bg-gray-100"
           }`}
         >
           📸 Photo Demo
@@ -69,7 +69,7 @@ export default function Hangman() {
           className={`flex-1 py-3 px-4 font-medium text-center transition ${
             activeTab === "experiment" 
               ? "bg-indigo-600 text-white" 
-              : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+              : "bg-muted text-muted-foreground hover:bg-gray-100"
           }`}
         >
           🔬 Code Experiments
@@ -79,7 +79,7 @@ export default function Hangman() {
           className={`flex-1 py-3 px-4 font-medium text-center transition ${
             activeTab === "play" 
               ? "bg-indigo-600 text-white" 
-              : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+              : "bg-muted text-muted-foreground hover:bg-gray-100"
           }`}
         >
           🎮 Play Game
@@ -87,26 +87,26 @@ export default function Hangman() {
       </div>
 
       {/* Content Area */}
-      <div className="bg-white p-6 rounded-b-lg shadow-lg min-h-[600px]">
+      <div className="bg-card p-6 rounded-b-lg shadow-lg min-h-[600px]">
         {activeTab === "demo" && <DemoTab />}
         {activeTab === "experiment" && <ExperimentTab />}
         {activeTab === "play" && (
           <div className="space-y-4">
             {/* Difficulty & Controls */}
-            <div className="flex justify-between items-center bg-gray-50 p-4 rounded-lg">
+            <div className="flex justify-between items-center bg-muted p-4 rounded-lg">
               <div className="flex items-center gap-3">
-                <span className="font-medium text-gray-700">Difficulty:</span>
+                <span className="font-medium text-muted-foreground">Difficulty:</span>
                 <select 
                   value={difficulty}
                   onChange={(e) => setDifficulty(e.target.value)}
-                  className="px-3 py-2 border rounded-lg bg-white shadow-sm focus:ring-2 focus:ring-indigo-500"
+                  className="px-3 py-2 border rounded-lg bg-card shadow-sm focus:ring-2 focus:ring-indigo-500"
                 >
                   <option value="easy">🌟 Easy (3-4 letters)</option>
                   <option value="medium">⭐⭐ Medium (5-6 letters)</option>
                   <option value="hard">⭐⭐⭐ Hard (7-9 letters)</option>
                 </select>
               </div>
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-muted-foreground">
                 Total words: {WORD_DATABASE[difficulty].length}
               </div>
             </div>
@@ -257,7 +257,7 @@ function DemoTab() {
             className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap ${
               activeStep === idx 
                 ? 'bg-indigo-600 text-white' 
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                : 'bg-gray-200 text-muted-foreground hover:bg-gray-300'
             }`}
           >
             Step {step.step}
@@ -276,16 +276,16 @@ function DemoTab() {
         
         <div className="grid md:grid-cols-3 gap-4 p-4">
           {/* Visual Column */}
-          <div className="bg-white p-3 rounded-lg border-2 border-indigo-200">
+          <div className="bg-card p-3 rounded-lg border-2 border-indigo-200">
             <div className="text-center mb-3">
               <div className="text-3xl font-mono tracking-widest bg-indigo-50 p-3 rounded">
                 {steps[activeStep].visual.word}
               </div>
-              <div className="text-sm text-gray-600 mt-2">
+              <div className="text-sm text-muted-foreground mt-2">
                 Guesses: {steps[activeStep].visual.guesses}
               </div>
             </div>
-            <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
+            <div className="text-xs text-muted-foreground bg-muted p-2 rounded">
               {steps[activeStep].explanation}
             </div>
           </div>
@@ -410,7 +410,7 @@ play(Word, [o | [r,p]]) → play(Word, [o,r,p])`,
           {experiments[activeExperiment].icon} Experiment {experiments[activeExperiment].id}: {experiments[activeExperiment].title}
         </h3>
         <div className="space-y-3">
-          <div className="bg-white p-3 rounded-lg">
+          <div className="bg-card p-3 rounded-lg">
             <div className="font-mono text-sm">Before: {experiments[activeExperiment].before}</div>
             <div className="font-mono text-sm mt-2">Player guesses: <span className="bg-yellow-100 px-2 py-1 rounded">{experiments[activeExperiment].guess}</span></div>
             <div className="font-mono text-sm mt-2 bg-gray-100 p-2 rounded">
@@ -422,7 +422,7 @@ play(Word, [o | [r,p]]) → play(Word, [o,r,p])`,
               {experiments[activeExperiment].code}
             </pre>
           </div>
-          <p className="text-sm text-gray-600">{experiments[activeExperiment].explanation}</p>
+          <p className="text-sm text-muted-foreground">{experiments[activeExperiment].explanation}</p>
         </div>
       </div>
     </div>
@@ -586,7 +586,7 @@ function GameArea({ difficulty, onComplete }) {
       <div className="flex justify-between items-center bg-indigo-50 p-3 rounded-lg">
         <div>
           <span className="font-bold text-indigo-800">Current Word: </span>
-          <span className="text-gray-600">{secretWord.length} letters</span>
+          <span className="text-muted-foreground">{secretWord.length} letters</span>
         </div>
         <div className="flex gap-2">
           <button
@@ -620,7 +620,7 @@ function GameArea({ difficulty, onComplete }) {
             <div className="text-4xl font-mono tracking-widest mb-2">
               {displayWord}
             </div>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-muted-foreground">
               Wrong guesses: {wrongCount}/6
             </div>
           </div>
@@ -686,17 +686,17 @@ function GameArea({ difficulty, onComplete }) {
               {showHint ? '🔒 Hide Hint' : '💡 Show Hint'}
             </button>
             {showHint && (
-              <div className="mt-3 p-3 bg-white rounded-lg border border-yellow-300">
+              <div className="mt-3 p-3 bg-card rounded-lg border border-yellow-300">
                 <span className="font-bold text-yellow-800">Hint:</span>
-                <p className="text-gray-700 mt-1">{hint}</p>
+                <p className="text-muted-foreground mt-1">{hint}</p>
               </div>
             )}
           </div>
 
           {/* Guessed Letters */}
-          <div className="bg-gray-50 p-4 rounded-xl border-2 border-gray-300">
-            <h3 className="font-bold text-gray-700 mb-2">📝 Guessed Letters:</h3>
-            <div className="bg-white p-3 rounded-lg min-h-[60px] font-mono">
+          <div className="bg-muted p-4 rounded-xl border-2 border-gray-300">
+            <h3 className="font-bold text-muted-foreground mb-2">📝 Guessed Letters:</h3>
+            <div className="bg-card p-3 rounded-lg min-h-[60px] font-mono">
               {guesses.length > 0 ? (
                 <div className="flex flex-wrap gap-1">
                   {guesses.map((letter, idx) => (
@@ -736,15 +736,15 @@ function GameArea({ difficulty, onComplete }) {
           <div className="bg-indigo-50 p-4 rounded-xl border-2 border-indigo-300">
             <h3 className="font-bold text-indigo-800 mb-2">📊 Current Program State:</h3>
             <div className="grid grid-cols-2 gap-2 text-sm">
-              <div className="bg-white p-2 rounded">
+              <div className="bg-card p-2 rounded">
                 <span className="font-mono">Word:</span>
                 <span className="float-right font-mono">[{secretWord.join(',')}]</span>
               </div>
-              <div className="bg-white p-2 rounded">
+              <div className="bg-card p-2 rounded">
                 <span className="font-mono">Guesses:</span>
                 <span className="float-right font-mono">[{guesses.join(',')}]</span>
               </div>
-              <div className="bg-white p-2 rounded col-span-2">
+              <div className="bg-card p-2 rounded col-span-2">
                 <span className="font-mono">all_guessed:</span>
                 <span className={`float-right font-bold ${secretWord.every(l => guesses.includes(l)) ? 'text-green-600' : 'text-red-600'}`}>
                   {secretWord.every(l => guesses.includes(l)) ? 'true' : 'false'}
@@ -754,16 +754,16 @@ function GameArea({ difficulty, onComplete }) {
           </div>
 
           {/* Statistics */}
-          <div className="bg-gray-50 p-4 rounded-xl border-2 border-gray-300">
-            <h3 className="font-bold text-gray-700 mb-2">📈 Statistics:</h3>
+          <div className="bg-muted p-4 rounded-xl border-2 border-gray-300">
+            <h3 className="font-bold text-muted-foreground mb-2">📈 Statistics:</h3>
             <div className="grid grid-cols-2 gap-2">
-              <div className="bg-white p-2 rounded">
+              <div className="bg-card p-2 rounded">
                 Correct: {guesses.filter(g => secretWord.includes(g)).length}
               </div>
-              <div className="bg-white p-2 rounded">
+              <div className="bg-card p-2 rounded">
                 Wrong: {guesses.filter(g => !secretWord.includes(g)).length}
               </div>
-              <div className="bg-white p-2 rounded col-span-2">
+              <div className="bg-card p-2 rounded col-span-2">
                 Progress: {secretWord.filter(l => guesses.includes(l)).length}/{secretWord.length} letters
               </div>
             </div>

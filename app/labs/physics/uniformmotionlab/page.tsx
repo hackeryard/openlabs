@@ -13,7 +13,7 @@ export default function UniformMotionPage() {
     <main className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-2xl font-bold">Uniform Motion Lab</h1>
-        <p className="text-gray-600 mb-4">Uniform linear motion using a moving object.</p>
+        <p className="text-muted-foreground mb-4">Uniform linear motion using a moving object.</p>
         <UniformMotionLab />
       </div>
     </main>

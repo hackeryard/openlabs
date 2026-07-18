@@ -13,7 +13,7 @@ export default function SimplePendulumPage() {
     <main className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-2xl font-bold">Simple Pendulum</h1>
-        <p className="text-gray-600 mb-4">Interactive pendulum lab.</p>
+        <p className="text-muted-foreground mb-4">Interactive pendulum lab.</p>
         <SimplePendulum />
       </div>
     </main>

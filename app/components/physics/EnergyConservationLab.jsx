@@ -186,7 +186,7 @@ export default function EnergyConservation({
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4 bg-white rounded shadow space-y-4">
+    <div className="max-w-4xl mx-auto p-4 bg-card rounded shadow space-y-4">
       <h3 className="text-xl font-semibold">Energy Conservation — Block on Incline Lab</h3>
       <DailyChallengeCard labId="physics/energyconservation" currentParams={{ kineticEnergy: 0.5 * m * vRef.current * vRef.current, potentialEnergy: m * g * Math.max(0, h0 - sRef.current * Math.sin(angleDeg * Math.PI / 180)) }} />
       <div className="grid md:grid-cols-3 gap-4">
@@ -209,7 +209,7 @@ export default function EnergyConservation({
 
           <div className="flex gap-2 mt-2">
             <button onClick={() => setRunning(r => !r)} className="flex-1 py-2 rounded bg-blue-600 text-white">{running ? "Pause" : "Start"}</button>
-            <button onClick={reset} className="flex-1 py-2 rounded bg-gray-200">Reset</button>
+            <button onClick={reset} className="flex-1 py-2 rounded bg-muted">Reset</button>
           </div>
 
           <div className="text-sm mt-2">

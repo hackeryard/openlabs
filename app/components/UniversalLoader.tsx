@@ -22,7 +22,7 @@ const SUBJECT_THEMES: Record<SubjectType, SubjectTheme> = {
     primary: "text-emerald-600",
     border: "border-emerald-500",
     accent: "bg-emerald-500",
-    bgGradient: "from-emerald-50/20 via-white to-slate-50/30",
+    bgGradient: "from-emerald-500/10 via-transparent to-transparent",
     glowColor: "bg-emerald-500/5",
     icon: Dna,
     statuses: [
@@ -45,7 +45,7 @@ const SUBJECT_THEMES: Record<SubjectType, SubjectTheme> = {
     primary: "text-amber-600",
     border: "border-amber-500",
     accent: "bg-amber-500",
-    bgGradient: "from-amber-50/20 via-white to-slate-50/30",
+    bgGradient: "from-amber-500/10 via-transparent to-transparent",
     glowColor: "bg-amber-500/5",
     icon: FlaskConical,
     statuses: [
@@ -68,7 +68,7 @@ const SUBJECT_THEMES: Record<SubjectType, SubjectTheme> = {
     primary: "text-indigo-600",
     border: "border-indigo-500",
     accent: "bg-indigo-500",
-    bgGradient: "from-indigo-50/20 via-white to-slate-50/30",
+    bgGradient: "from-indigo-500/10 via-transparent to-transparent",
     glowColor: "bg-indigo-500/5",
     icon: Atom,
     statuses: [
@@ -91,7 +91,7 @@ const SUBJECT_THEMES: Record<SubjectType, SubjectTheme> = {
     primary: "text-purple-600",
     border: "border-purple-500",
     accent: "bg-purple-500",
-    bgGradient: "from-purple-50/20 via-white to-slate-50/30",
+    bgGradient: "from-purple-500/10 via-transparent to-transparent",
     glowColor: "bg-purple-500/5",
     icon: Cpu,
     statuses: [
@@ -114,7 +114,7 @@ const SUBJECT_THEMES: Record<SubjectType, SubjectTheme> = {
     primary: "text-violet-600",
     border: "border-violet-500",
     accent: "bg-violet-500",
-    bgGradient: "from-violet-50/20 via-white to-slate-50/30",
+    bgGradient: "from-violet-500/10 via-transparent to-transparent",
     glowColor: "bg-violet-500/5",
     icon: Layers,
     statuses: [
@@ -162,7 +162,7 @@ export default function UniversalLoader({ subject = "default", customMessage }: 
 
   return (
     <div className={`w-full min-h-[420px] flex flex-col items-center justify-center p-8 bg-gradient-to-b ${theme.bgGradient} transition-colors duration-500`}>
-      <div className="relative max-w-lg w-full bg-white/80 backdrop-blur-md border border-slate-200/80 rounded-3xl p-8 md:p-10 shadow-lg flex flex-col items-center overflow-hidden">
+      <div className="relative max-w-lg w-full bg-card/80 backdrop-blur-md border border-border rounded-3xl p-8 md:p-10 shadow-lg flex flex-col items-center overflow-hidden">
         
         {/* Glow Effects */}
         <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-48 h-48 rounded-full blur-3xl opacity-40 pointer-events-none ${theme.glowColor}`} />
@@ -181,12 +181,12 @@ export default function UniversalLoader({ subject = "default", customMessage }: 
         </div>
 
         {/* Status text */}
-        <h3 className="text-sm font-bold text-slate-700 tracking-wide text-center h-7 select-none">
+        <h3 className="text-sm font-bold text-foreground tracking-wide text-center h-7 select-none">
           {customMessage || theme.statuses[statusIndex]}
         </h3>
 
         {/* Progress bar */}
-        <div className="w-full bg-slate-100 h-1.5 rounded-full mt-4 overflow-hidden border border-slate-200/40 relative">
+        <div className="w-full bg-muted h-1.5 rounded-full mt-4 overflow-hidden border border-border relative">
           <motion.div 
             className={`h-full rounded-full ${theme.accent} bg-gradient-to-r from-transparent to-white/40 absolute top-0`}
             initial={{ left: "-40%", width: "40%" }}
@@ -200,11 +200,11 @@ export default function UniversalLoader({ subject = "default", customMessage }: 
         </div>
 
         {/* Fact Card */}
-        <div className="w-full bg-slate-50/50 border border-slate-200/60 rounded-2xl p-4 mt-6 flex flex-col gap-1.5 select-none relative z-10">
+        <div className="w-full bg-muted/50 border border-border rounded-2xl p-4 mt-6 flex flex-col gap-1.5 select-none relative z-10">
           <span className={`text-[10px] uppercase font-extrabold tracking-widest ${theme.primary}`}>
             Did You Know?
           </span>
-          <p className="text-slate-600 text-xs md:text-sm font-medium leading-relaxed min-h-[48px] flex items-center transition-all duration-300">
+          <p className="text-muted-foreground text-xs md:text-sm font-medium leading-relaxed min-h-[48px] flex items-center transition-all duration-300">
             {theme.facts[factIndex]}
           </p>
         </div>

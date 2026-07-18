@@ -11,6 +11,8 @@ import { Analytics } from "@vercel/analytics/next"
 import Script from 'next/script'
 import ClarityProvider from '@/components/ClarityProvider'
 import ClarityTrackerObserver from '@/components/ClarityTrackerObserver'
+import ThemeProvider from '@/components/ThemeProvider'
+import AmbientBackground from '@/components/ui/AmbientBackground'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.openlabs.org.in'
 
@@ -83,7 +85,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children, }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         {/* Google tag (gtag.js) */}
         <Script async src="https://www.googletagmanager.com/gtag/js?id=G-7XW8JGG3BD" strategy="afterInteractive" />
@@ -97,7 +99,9 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
           `}
         </Script>
       </head>
-      <body>
+      <body className="bg-background text-foreground">
+        <ThemeProvider>
+        <AmbientBackground />
         <Analytics />
         <Navbar />
         <div className="mx-auto">
@@ -112,6 +116,7 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
         </div>
         <Footer />
         <SpeedInsights />
+        </ThemeProvider>
 
         {/* Structured Data */}
         <Script

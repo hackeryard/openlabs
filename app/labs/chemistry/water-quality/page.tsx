@@ -28,17 +28,17 @@ export default function WaterQualityPage() {
 
   if (!isMounted) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-muted flex items-center justify-center">
         <div className="flex flex-col items-center justify-center">
           <div className="w-10 h-10 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mb-4" />
-          <p className="text-slate-500 font-bold text-xs tracking-wider uppercase">Loading Laboratory Interface…</p>
+          <p className="text-muted-foreground font-bold text-xs tracking-wider uppercase">Loading Laboratory Interface…</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 text-slate-800 p-4 md:p-8 font-sans relative overflow-hidden bg-[radial-gradient(#e2e8f0_1.5px,transparent_1.5px)] bg-[size:24px_24px]">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 text-foreground p-4 md:p-8 font-sans relative overflow-hidden bg-[radial-gradient(#e2e8f0_1.5px,transparent_1.5px)] bg-[size:24px_24px]">
       
       {/* Background ambient water glows */}
       <div className="absolute top-0 right-1/4 h-[400px] w-[400px] rounded-full bg-teal-500/5 blur-[120px] pointer-events-none" />
@@ -48,7 +48,7 @@ export default function WaterQualityPage() {
         
         {/* Navigation Breadcrumbs Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200/60 pb-4">
-          <div className="flex items-center space-x-2 text-sm text-slate-500">
+          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
             <Link href="/chemistry" className="hover:text-slate-950 transition font-medium flex items-center gap-1.5" id="nav-back-chemistry">
               <ArrowLeft className="h-4 w-4" /> Back to Chemistry
             </Link>
@@ -71,10 +71,10 @@ export default function WaterQualityPage() {
               Simulation Sandbox
             </span>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-none">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-foreground tracking-tight leading-none">
             Water Quality Analysis Laboratory
           </h1>
-          <p className="text-slate-500 text-sm md:text-base font-medium max-w-3xl">
+          <p className="text-muted-foreground text-sm md:text-base font-medium max-w-3xl">
             Examine chemical and biological contaminants. Configure sensor arrays to monitor pH, dissolved oxygen, turbidity, and heavy metal concentrations in real-time under WHO regulations.
           </p>
         </div>

@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Beaker, Atom, Dna, Code, ArrowRight } from "lucide-react";
+import AnimatedCard from "@/components/ui/AnimatedCard";
 
 const labsData = {
   "Physics": {
@@ -55,7 +56,7 @@ const mainButtons = [
 
 export default function Hero() {
   return (
-    <div className="min-h-screen bg-[#f8fafc]">
+    <div className="min-h-screen">
       {/* -------- Hero Section -------- */}
       <section
         className="relative px-4 sm:px-6 lg:px-8 py-12 md:py-24 lg:py-32 flex items-center justify-center overflow-hidden"
@@ -69,16 +70,16 @@ export default function Hero() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Content */}
           <div className="text-center lg:text-left order-2 lg:order-1">
-            <span className="inline-block px-4 py-1.5 mb-6 text-sm font-bold tracking-wider text-indigo-700 uppercase bg-indigo-50 rounded-full">
+            <span className="inline-block px-4 py-1.5 mb-6 text-sm font-bold tracking-wider text-primary uppercase bg-primary/10 rounded-full">
               The Future of Learning
             </span>
 
-            <h1 id="hero-heading" className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tight text-slate-900 leading-[1.1]">
+            <h1 id="hero-heading" className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tight text-foreground leading-[1.1]">
               Experience Science <br />
               <span className="text-indigo-600">Anywhere, Anytime.</span>
             </h1>
 
-            <p className="mt-6 text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+            <p className="mt-6 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto lg:mx-0 leading-relaxed">
               Ditch the static textbooks. Dive into a high-fidelity virtual laboratory designed for the next generation of scientists.
             </p>
 
@@ -116,20 +117,21 @@ export default function Hero() {
       </section>
 
       {/* -------- Lab Grid Section -------- */}
-      <section className="px-4 sm:px-6 lg:px-8 py-20 bg-white" aria-labelledby="labs-heading">
+      <section className="px-4 sm:px-6 lg:px-8 py-20 bg-background" aria-labelledby="labs-heading">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 id="labs-heading" className="text-3xl sm:text-5xl font-extrabold text-slate-900 mb-4">
+            <h2 id="labs-heading" className="text-3xl sm:text-5xl font-extrabold text-foreground mb-4">
               Explore Virtual Labs
             </h2>
             <div className="h-1.5 w-20 bg-indigo-600 mx-auto rounded-full" />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            {Object.entries(labsData).map(([category, data]) => (
-              <article
+            {Object.entries(labsData).map(([category, data], catIndex) => (
+              <AnimatedCard
                 key={category}
-                className={`flex flex-col bg-white rounded-3xl overflow-hidden shadow-xl border border-slate-100 hover:shadow-2xl transition-all duration-300 group`}
+                delay={catIndex * 0.1}
+                className="flex flex-col overflow-hidden rounded-3xl shadow-xl group"
               >
                 <div className={`bg-gradient-to-r ${data.color} p-6 text-white`}>
                   <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center backdrop-blur-md mb-4 group-hover:scale-110 transition-transform">
@@ -143,17 +145,17 @@ export default function Hero() {
                     <Link
                       key={lab.path}
                       href={lab.path}
-                      className="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors group/link"
+                      className="flex items-center justify-between p-3 rounded-xl hover:bg-accent transition-colors group/link"
                       aria-label={`Open ${lab.name} experiment`}
                     >
-                      <span className="text-slate-700 font-semibold group-hover/link:text-indigo-600">
+                      <span className="text-foreground font-semibold group-hover/link:text-indigo-600">
                         {lab.name}
                       </span>
-                      <ArrowRight className="w-4 h-4 text-slate-300 group-hover/link:text-indigo-600 group-hover/link:translate-x-1 transition-all" />
+                      <ArrowRight className="w-4 h-4 text-muted-foreground group-hover/link:text-indigo-600 group-hover/link:translate-x-1 transition-all" />
                     </Link>
                   ))}
                 </div>
-              </article>
+              </AnimatedCard>
             ))}
           </div>
         </div>

@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 /* ---------------- Animations ---------------- */
 
@@ -164,6 +165,8 @@ export default function Navbar() {
 
           {/* ---------------- Mobile Toggle ---------------- */}
 
+          <div className="flex items-center gap-2 lg:hidden">
+          <ThemeToggle />
           <motion.button
             aria-label="Toggle menu"
             aria-expanded={mobileOpen}
@@ -171,7 +174,6 @@ export default function Navbar() {
             onClick={() => setMobileOpen((v) => !v)}
             whileTap={{ scale: 0.95 }}
             className="
-              lg:hidden
               p-2
               rounded-md
               bg-white/10
@@ -211,6 +213,7 @@ export default function Navbar() {
               />
             </motion.svg>
           </motion.button>
+          </div>
 
           {/* ---------------- Desktop Menu ---------------- */}
 
@@ -257,10 +260,10 @@ export default function Navbar() {
                     className="
                       absolute top-full left-0 mt-2
                       w-56
-                      bg-white text-slate-800
+                      bg-card text-foreground
                       rounded-xl
                       shadow-2xl
-                      border border-slate-100
+                      border border-border
                       overflow-hidden
                       z-50
                     "
@@ -274,8 +277,8 @@ export default function Navbar() {
                           className={`
                             flex items-center px-3 py-2.5 rounded-lg transition text-sm
                             ${pathname.startsWith(cat.path)
-                              ? "bg-indigo-50 text-indigo-700 font-semibold"
-                              : "hover:bg-slate-50 text-slate-700"
+                              ? "bg-primary/10 text-primary font-semibold"
+                              : "hover:bg-accent text-foreground"
                             }
                           `}
                         >
@@ -342,6 +345,9 @@ export default function Navbar() {
                 </Link>
               </li>
             )}
+            <li>
+              <ThemeToggle />
+            </li>
           </ul>
         </div>
 
@@ -357,7 +363,7 @@ export default function Navbar() {
               className="
                 lg:hidden
                 absolute top-[72px] right-4 left-4
-                bg-white text-slate-800
+                bg-card text-foreground
                 rounded-xl
                 shadow-2xl
                 overflow-hidden
@@ -372,7 +378,7 @@ export default function Navbar() {
                     onClick={() => setMobileOpen(false)}
                     className={`
                       block px-4 py-2.5 rounded-lg transition text-sm font-medium
-                      ${pathname === "/" ? "bg-indigo-100 text-indigo-700 font-semibold" : "hover:bg-slate-100"}
+                      ${pathname === "/" ? "bg-primary/10 text-primary font-semibold" : "hover:bg-accent"}
                     `}
                   >
                     Home
@@ -387,7 +393,7 @@ export default function Navbar() {
                     aria-controls="mobile-labs-menu"
                     className={`
                       w-full flex items-center justify-between px-4 py-2.5 rounded-lg transition text-sm font-medium
-                      ${isLabsActive ? "bg-indigo-100 text-indigo-700 font-semibold" : "hover:bg-slate-100"}
+                      ${isLabsActive ? "bg-primary/10 text-primary font-semibold" : "hover:bg-accent"}
                     `}
                   >
                     <span>Labs</span>
@@ -416,8 +422,8 @@ export default function Navbar() {
                               className={`
                                 flex items-center px-4 py-2 rounded-lg transition text-sm
                                 ${pathname.startsWith(cat.path)
-                                  ? "bg-indigo-50 text-indigo-700 font-semibold"
-                                  : "hover:bg-slate-50 text-slate-600"
+                                  ? "bg-primary/10 text-primary font-semibold"
+                                  : "hover:bg-accent text-muted-foreground"
                                 }
                               `}
                             >
@@ -438,7 +444,7 @@ export default function Navbar() {
                       onClick={() => setMobileOpen(false)}
                       className={`
                         block px-4 py-2.5 rounded-lg transition text-sm font-medium
-                        ${pathname === link.path ? "bg-indigo-100 text-indigo-700 font-semibold" : "hover:bg-slate-100"}
+                        ${pathname === link.path ? "bg-primary/10 text-primary font-semibold" : "hover:bg-accent"}
                       `}
                     >
                       {link.label}
@@ -447,7 +453,7 @@ export default function Navbar() {
                 ))}
 
                 {/* Divider */}
-                <li><hr className="my-1 border-slate-200" /></li>
+                <li><hr className="my-1 border-border" /></li>
 
                 {/* Auth */}
                 {!user ? (
@@ -472,7 +478,7 @@ export default function Navbar() {
                     <Link
                       href="/profile"
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-slate-100 transition"
+                      className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent transition"
                     >
                       <Image
                         src={user.avatar || "/images/avatars/avatar1.svg"}
@@ -481,7 +487,7 @@ export default function Navbar() {
                         height={32}
                         className="rounded-full object-cover"
                       />
-                      <span className="text-sm font-medium text-slate-700">My Profile</span>
+                      <span className="text-sm font-medium text-foreground">My Profile</span>
                     </Link>
                   </li>
                 )}

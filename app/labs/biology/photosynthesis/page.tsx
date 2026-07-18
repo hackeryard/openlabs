@@ -84,23 +84,23 @@ export default function PhotosynthesisLab() {
   };
 
   return (
-    <main className="min-h-screen bg-[#fafafa] text-slate-800 pb-16 pt-20 px-4 md:px-8 max-w-7xl mx-auto space-y-6">
+    <main className="min-h-screen bg-[#fafafa] text-foreground pb-16 pt-20 px-4 md:px-8 max-w-7xl mx-auto space-y-6">
       
       {/* Breadcrumbs & Lab Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200 pb-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-border pb-6">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2 text-xs font-semibold text-emerald-600 uppercase tracking-widest">
             <Link href="/" className="hover:text-emerald-700 transition-colors">Home</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
             <Link href="/biology" className="hover:text-emerald-700 transition-colors">Biology Labs</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-            <span className="text-slate-500">Photosynthesis</span>
+            <span className="text-muted-foreground">Photosynthesis</span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+          <h1 className="text-3xl md:text-4xl font-black text-foreground tracking-tight flex items-center gap-3">
             <Leaf className="w-8 h-8 text-emerald-600" />
             Photosynthesis Simulator
           </h1>
-          <p className="text-slate-500 text-sm max-w-2xl leading-relaxed font-medium">
+          <p className="text-muted-foreground text-sm max-w-2xl leading-relaxed font-medium">
             Explore how Light, CO₂, Water, and Temperature interact to determine the rate of photosynthesis. Note: This model is a simplified teaching approximation of biological processes.
           </p>
         </div>
@@ -129,10 +129,10 @@ export default function PhotosynthesisLab() {
         <div className="lg:col-span-7 flex flex-col h-full space-y-4">
           
           {/* Main Visualizer Container */}
-          <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-4 flex flex-col gap-4">
+          <div className="bg-card border border-border shadow-sm rounded-2xl p-4 flex flex-col gap-4">
             
             <div className="flex justify-between items-center border-b border-slate-100 pb-2">
-              <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2 uppercase tracking-wider">
+              <h2 className="text-sm font-bold text-foreground flex items-center gap-2 uppercase tracking-wider">
                 <Activity className="w-4 h-4 text-emerald-600" />
                 Live Experiment View
               </h2>
@@ -142,7 +142,7 @@ export default function PhotosynthesisLab() {
               {/* Leaf Diagram */}
               <div className="flex flex-col gap-2">
                 <LeafDiagram rate={rateOutput.rate} />
-                <p className="text-center text-[10px] text-slate-500 font-medium">Cross section responds to photosynthetic activity.</p>
+                <p className="text-center text-[10px] text-muted-foreground font-medium">Cross section responds to photosynthetic activity.</p>
               </div>
               
               {/* Bubble Output Visualizer */}
@@ -173,10 +173,10 @@ export default function PhotosynthesisLab() {
         {/* Right Column: Controls */}
         <div className="lg:col-span-5 flex flex-col space-y-4">
           
-          <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-5">
+          <div className="bg-card border border-border shadow-sm rounded-2xl p-5">
             <div className="flex justify-between items-center mb-5">
-              <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2 uppercase tracking-wider">
-                <Settings2 className="w-4 h-4 text-slate-500" />
+              <h2 className="text-sm font-bold text-foreground flex items-center gap-2 uppercase tracking-wider">
+                <Settings2 className="w-4 h-4 text-muted-foreground" />
                 Environmental Controls
               </h2>
             </div>

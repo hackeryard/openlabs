@@ -367,10 +367,10 @@ export default function OpenLabsAI() {
               - Height decreased on desktop: sm:h-[480px] / sm:max-h-[480px] (from sm:h-[550px])
               - Layout integrity metrics fully locked to avoid screen cut-off bounds.
             */
-            className="fixed bottom-4 right-4 left-4 sm:left-auto sm:bottom-6 sm:right-6 w-auto sm:w-[460px] h-[calc(100dvh-2rem)] sm:h-[480px] max-h-[calc(100dvh-2rem)] sm:max-h-[480px] bg-white dark:bg-gray-900 shadow-2xl rounded-2xl flex flex-col z-50 border border-gray-200 dark:border-gray-800 overflow-hidden"
+            className="fixed bottom-4 right-4 left-4 sm:left-auto sm:bottom-6 sm:right-6 w-auto sm:w-[460px] h-[calc(100dvh-2rem)] sm:h-[480px] max-h-[calc(100dvh-2rem)] sm:max-h-[480px] bg-card shadow-2xl rounded-2xl flex flex-col z-50 border border-border overflow-hidden"
           >
             {/* Header - Original Style */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800 bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex-shrink-0">
+            <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex-shrink-0">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
                   <svg
@@ -410,11 +410,11 @@ export default function OpenLabsAI() {
             <div 
               ref={messagesContainerRef}
               onScroll={handleScroll}
-              className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900 hide-scroll"
+              className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 bg-muted hide-scroll"
             >
               {messages.length === 0 && (
                 <div className="text-center py-8">
-                  <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="32"
@@ -425,15 +425,15 @@ export default function OpenLabsAI() {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      className="text-blue-600 dark:text-blue-400"
+                      className="text-primary"
                     >
                       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  <h3 className="text-lg font-semibold text-foreground mb-2">
                     How can I help you?
                   </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-muted-foreground">
                     Ask me anything about your experiment or theory
                   </p>
                 </div>
@@ -451,7 +451,7 @@ export default function OpenLabsAI() {
                   <div
                     className={`max-w-[85%] p-3 rounded-2xl ${msg.role === "user"
                       ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-br-none"
-                      : "bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 rounded-bl-none shadow-sm"
+                      : "bg-card text-foreground border border-border rounded-bl-none shadow-sm"
                       }`}
                   >
                     <div className="prose prose-sm max-w-none dark:prose-invert">
@@ -465,7 +465,7 @@ export default function OpenLabsAI() {
                             </a>
                           ),
                           code: ({ children }) => (
-                            <code className="bg-black/10 dark:bg-white/10 rounded px-1 py-0.5">
+                            <code className="bg-foreground/10 rounded px-1 py-0.5">
                               {children}
                             </code>
                           ),
@@ -481,19 +481,19 @@ export default function OpenLabsAI() {
               {/* Live Streaming Typewriter Output Segment */}
               {streamingText && (
                 <div className="flex justify-start">
-                  <div className="max-w-[85%] p-3 rounded-2xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 rounded-bl-none shadow-sm">
+                  <div className="max-w-[85%] p-3 rounded-2xl bg-card text-foreground border border-border rounded-bl-none shadow-sm">
                     <div className="prose prose-sm max-w-none dark:prose-invert">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={{
                           p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
                           a: ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">{children}</a>,
-                          code: ({ children }) => <code className="bg-black/10 dark:bg-white/10 rounded px-1 py-0.5">{children}</code>,
+                          code: ({ children }) => <code className="bg-foreground/10 rounded px-1 py-0.5">{children}</code>,
                         }}
                       >
                         {streamingText}
                       </ReactMarkdown>
-                      <span className="inline-block w-1.5 h-3.5 ml-0.5 bg-blue-500 dark:bg-blue-400 animate-pulse" />
+                      <span className="inline-block w-1.5 h-3.5 ml-0.5 bg-primary animate-pulse" />
                     </div>
                   </div>
                 </div>
@@ -505,7 +505,7 @@ export default function OpenLabsAI() {
                   animate={{ opacity: 1, y: 0 }}
                   className="flex justify-start"
                 >
-                  <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-2xl rounded-bl-none shadow-sm">
+                  <div className="bg-card border border-border p-4 rounded-2xl rounded-bl-none shadow-sm">
                     <div className="flex gap-1">
                       <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
                       <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
@@ -519,12 +519,12 @@ export default function OpenLabsAI() {
             </div>
 
             {/* Input Input Console - Fixed Height */}
-            <div className="p-4 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 flex-shrink-0">
+            <div className="p-4 border-t border-border bg-card flex-shrink-0">
               <div className="flex gap-2 items-end">
                 <div className="flex-1 relative">
                   <input
                     ref={inputRef}
-                    className="w-full p-3 pr-12 border border-gray-300 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all"
+                    className="w-full p-3 pr-12 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-card text-foreground placeholder-muted-foreground transition-all"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Type your message..."
@@ -534,7 +534,7 @@ export default function OpenLabsAI() {
                   {input && (
                     <button
                       onClick={() => setInput("")}
-                      className="absolute right-3 bottom-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      className="absolute right-3 bottom-3 text-muted-foreground hover:text-foreground"
                     >
                       ✕
                     </button>
@@ -546,7 +546,7 @@ export default function OpenLabsAI() {
                   onClick={toggleMic}
                   className={`px-3 py-3 rounded-xl transition-all flex-shrink-0 ${listening
                     ? "bg-red-500 text-white animate-pulse"
-                    : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white"
+                    : "bg-muted text-foreground"
                     }`}
                   aria-label="Voice input"
                 >
@@ -585,13 +585,13 @@ export default function OpenLabsAI() {
                 <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar">
                   <button
                     onClick={() => setInput("Explain the theory in simple terms")}
-                    className="text-xs px-3 py-1.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors whitespace-nowrap"
+                    className="text-xs px-3 py-1.5 rounded-full bg-muted text-muted-foreground hover:bg-accent transition-colors whitespace-nowrap"
                   >
                     📚 Explain theory
                   </button>
                   <button
                     onClick={() => setInput("What are the key concepts?")}
-                    className="text-xs px-3 py-1.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors whitespace-nowrap"
+                    className="text-xs px-3 py-1.5 rounded-full bg-muted text-muted-foreground hover:bg-accent transition-colors whitespace-nowrap"
                   >
                     🔑 Key concepts
                   </button>
@@ -600,10 +600,10 @@ export default function OpenLabsAI() {
             </div>
 
             {/* Footer */}
-            <div className="px-4 py-2 text-[11px] flex justify-between items-center text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 flex-shrink-0">
+            <div className="px-4 py-2 text-[11px] flex justify-between items-center text-muted-foreground border-t border-border bg-muted flex-shrink-0">
               <span>AI responses may not always be accurate</span>
               {remainingQueries !== null && (
-                <span className={`font-semibold transition-all duration-300 ${remainingQueries <= 2 ? "text-red-500 dark:text-red-400 font-bold" : "text-blue-600 dark:text-blue-400"}`}>
+                <span className={`font-semibold transition-all duration-300 ${remainingQueries <= 2 ? "text-red-500 dark:text-red-400 font-bold" : "text-primary"}`}>
                   Quota: {remainingQueries}/10 left
                 </span>
               )}
@@ -617,7 +617,7 @@ export default function OpenLabsAI() {
                 exit={{ opacity: 0 }}
                 className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
               >
-                <div className="flex flex-col items-center gap-4 bg-white dark:bg-gray-800 px-8 py-6 rounded-2xl shadow-xl m-4">
+                <div className="flex flex-col items-center gap-4 bg-card px-8 py-6 rounded-2xl shadow-xl m-4">
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ repeat: Infinity, duration: 1 }}
@@ -625,12 +625,12 @@ export default function OpenLabsAI() {
                   >
                     <Mic className="text-white" size={28} />
                   </motion.div>
-                  <p className="text-sm font-medium text-gray-800 dark:text-white">
+                  <p className="text-sm font-medium text-foreground">
                     Listening...
                   </p>
                   <button
                     onClick={toggleMic}
-                    className="text-xs px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                    className="text-xs px-4 py-2 rounded-full bg-muted text-foreground"
                   >
                     Tap to stop
                   </button>

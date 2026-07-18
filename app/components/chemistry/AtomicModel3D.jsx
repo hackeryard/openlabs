@@ -104,8 +104,8 @@ function Atom({ atomicNumber }) {
 
 export default function AtomicModel3D({ atomicNumber }) {
   return (
-    <div className="w-full h-[600px] bg-white rounded-xl border">
-      <div className="text-center text-sm text-gray-600 py-1">
+    <div className="w-full h-[600px] bg-card rounded-xl border border-border">
+      <div className="text-center text-sm text-muted-foreground py-1">
         Bohr Model — One orbit per electron (Z = {atomicNumber})
       </div>
 

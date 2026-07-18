@@ -13,7 +13,7 @@ export default function ProjectileMotionPage() {
     <main className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-2xl font-bold">Projectile Motion</h1>
-        <p className="text-gray-600 mb-4">2D projectile motion virtual lab.</p>
+        <p className="text-muted-foreground mb-4">2D projectile motion virtual lab.</p>
         <ProjectileMotion />
       </div>
     </main>

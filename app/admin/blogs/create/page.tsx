@@ -131,11 +131,11 @@ export default function CreateBlogPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#f8fafc] text-slate-900 py-24">
+    <main className="min-h-screen text-foreground py-24">
       <div className="max-w-4xl mx-auto px-6">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Create New Blog Post</h1>
-          <p className="text-slate-500">Publish a new article to the OpenLabs Journal.</p>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Create New Blog Post</h1>
+          <p className="text-muted-foreground">Publish a new article to the OpenLabs Journal.</p>
         </div>
 
         {error && (
@@ -152,82 +152,82 @@ export default function CreateBlogPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-8 bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+        <form onSubmit={handleSubmit} className="space-y-8 bg-card p-8 rounded-3xl shadow-sm border border-border">
 
           {/* Security */}
           {/* Admin Secret is securely loaded from sessionStorage */}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="block text-sm font-bold text-slate-700">Title <span className="text-red-500">*</span></label>
-              <input type="text" name="title" value={formData.title} onChange={handleChange} required className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="The Future of Education" />
+              <label className="block text-sm font-bold text-muted-foreground">Title <span className="text-red-500">*</span></label>
+              <input type="text" name="title" value={formData.title} onChange={handleChange} required className="w-full bg-muted border border-border rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none" placeholder="The Future of Education" />
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-bold text-slate-700">Slug (Optional)</label>
-              <input type="text" name="slug" value={formData.slug} onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="auto-generated-if-empty" />
+              <label className="block text-sm font-bold text-muted-foreground">Slug (Optional)</label>
+              <input type="text" name="slug" value={formData.slug} onChange={handleChange} className="w-full bg-muted border border-border rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none" placeholder="auto-generated-if-empty" />
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-bold text-slate-700">Category <span className="text-red-500">*</span></label>
-              <input type="text" name="category" value={formData.category} onChange={handleChange} required className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g. Physics, EdTech" />
+              <label className="block text-sm font-bold text-muted-foreground">Category <span className="text-red-500">*</span></label>
+              <input type="text" name="category" value={formData.category} onChange={handleChange} required className="w-full bg-muted border border-border rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none" placeholder="e.g. Physics, EdTech" />
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-bold text-slate-700">Author</label>
-              <input type="text" name="author" value={formData.author} onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
+              <label className="block text-sm font-bold text-muted-foreground">Author</label>
+              <input type="text" name="author" value={formData.author} onChange={handleChange} className="w-full bg-muted border border-border rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none" />
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-bold text-slate-700">Read Time</label>
-              <input type="text" name="readTime" value={formData.readTime} onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g. 5 min read" />
+              <label className="block text-sm font-bold text-muted-foreground">Read Time</label>
+              <input type="text" name="readTime" value={formData.readTime} onChange={handleChange} className="w-full bg-muted border border-border rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none" placeholder="e.g. 5 min read" />
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-bold text-slate-700">Cover Image</label>
-              <input type="file" accept="image/*" onChange={handleImageChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer" />
+              <label className="block text-sm font-bold text-muted-foreground">Cover Image</label>
+              <input type="file" accept="image/*" onChange={handleImageChange} className="w-full bg-muted border border-border rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-primary outline-none file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer" />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-border">
             <div className="space-y-2">
-              <label className="block text-sm font-bold text-slate-700">Meta Title (SEO)</label>
-              <input type="text" name="metaTitle" value={formData.metaTitle} onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Leave empty to use main title" />
+              <label className="block text-sm font-bold text-muted-foreground">Meta Title (SEO)</label>
+              <input type="text" name="metaTitle" value={formData.metaTitle} onChange={handleChange} className="w-full bg-muted border border-border rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none" placeholder="Leave empty to use main title" />
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-bold text-slate-700">Meta Description (SEO)</label>
-              <textarea name="metaDescription" value={formData.metaDescription} onChange={handleChange} rows={2} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Leave empty to use excerpt"></textarea>
+              <label className="block text-sm font-bold text-muted-foreground">Meta Description (SEO)</label>
+              <textarea name="metaDescription" value={formData.metaDescription} onChange={handleChange} rows={2} className="w-full bg-muted border border-border rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none" placeholder="Leave empty to use excerpt"></textarea>
             </div>
           </div>
 
-          <div className="space-y-2 pt-4 border-t border-slate-200">
-            <label className="block text-sm font-bold text-slate-700">Excerpt (Short description) <span className="text-red-500">*</span></label>
-            <textarea name="excerpt" value={formData.excerpt} onChange={handleChange} required rows={2} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+          <div className="space-y-2 pt-4 border-t border-border">
+            <label className="block text-sm font-bold text-muted-foreground">Excerpt (Short description) <span className="text-red-500">*</span></label>
+            <textarea name="excerpt" value={formData.excerpt} onChange={handleChange} required rows={2} className="w-full bg-muted border border-border rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary outline-none"></textarea>
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-bold text-slate-700">Markdown Content <span className="text-red-500">*</span></label>
-            <textarea name="content" value={formData.content} onChange={handleChange} required rows={15} className="w-full bg-slate-900 text-slate-100 font-mono border-0 rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="## Write your markdown here..."></textarea>
+            <label className="block text-sm font-bold text-muted-foreground">Markdown Content <span className="text-red-500">*</span></label>
+            <textarea name="content" value={formData.content} onChange={handleChange} required rows={15} className="w-full bg-slate-900 text-slate-100 font-mono border-0 rounded-xl px-4 py-4 text-sm focus:ring-2 focus:ring-primary outline-none" placeholder="## Write your markdown here..."></textarea>
           </div>
 
           {/* FAQs Builder */}
-          <div className="space-y-4 pt-6 border-t border-slate-200">
-            <h3 className="text-lg font-bold text-slate-900">FAQs (Optional)</h3>
+          <div className="space-y-4 pt-6 border-t border-border">
+            <h3 className="text-lg font-bold text-foreground">FAQs (Optional)</h3>
 
             {formData.faqs.map((faq, index) => (
-              <div key={index} className="p-5 rounded-2xl bg-slate-50 border border-slate-200 relative group">
-                <button type="button" onClick={() => handleRemoveFaq(index)} className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+              <div key={index} className="p-5 rounded-2xl bg-muted border border-border relative group">
+                <button type="button" onClick={() => handleRemoveFaq(index)} className="absolute top-4 right-4 p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
                   <Trash2 className="w-4 h-4" />
                 </button>
                 <div className="space-y-4 pr-10">
                   <div className="space-y-2">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">Question {index + 1}</label>
-                    <input type="text" value={faq.question} onChange={(e) => handleFaqChange(index, 'question', e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="What is OpenLabs?" />
+                    <label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest">Question {index + 1}</label>
+                    <input type="text" value={faq.question} onChange={(e) => handleFaqChange(index, 'question', e.target.value)} className="w-full bg-card border border-border rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-primary outline-none" placeholder="What is OpenLabs?" />
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">Answer {index + 1}</label>
-                    <textarea value={faq.answer} onChange={(e) => handleFaqChange(index, 'answer', e.target.value)} rows={2} className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="OpenLabs is..."></textarea>
+                    <label className="block text-xs font-bold text-muted-foreground uppercase tracking-widest">Answer {index + 1}</label>
+                    <textarea value={faq.answer} onChange={(e) => handleFaqChange(index, 'answer', e.target.value)} rows={2} className="w-full bg-card border border-border rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-primary outline-none" placeholder="OpenLabs is..."></textarea>
                   </div>
                 </div>
               </div>
@@ -239,7 +239,7 @@ export default function CreateBlogPage() {
             </button>
           </div>
 
-          <div className="pt-6 border-t border-slate-200 flex justify-end">
+          <div className="pt-6 border-t border-border flex justify-end">
             <button
               type="submit"
               disabled={loading}

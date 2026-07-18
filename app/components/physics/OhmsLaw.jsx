@@ -371,13 +371,13 @@ export default function OhmsLaw({
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <header className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Ohm’s Law — Virtual Lab</h2>
-        <div className="text-sm text-gray-600">Explore V = I × R — measure with virtual instruments, sweep, and export reports.</div>
+        <div className="text-sm text-muted-foreground">Explore V = I × R — measure with virtual instruments, sweep, and export reports.</div>
       </header>
       <DailyChallengeCard labId="physics/ohmslaw" currentParams={{ current, voltage, resistance }} />
 
       <div className="grid md:grid-cols-3 gap-4">
         {/* Controls */}
-        <div className="md:col-span-1 bg-white p-4 rounded shadow space-y-3">
+        <div className="md:col-span-1 bg-card p-4 rounded shadow space-y-3">
           <h3 className="font-semibold">Circuit Controls</h3>
 
           <label className="block text-sm">Source EMF (V)</label>
@@ -396,11 +396,11 @@ export default function OhmsLaw({
           <input type="number" value={current} onChange={handleCurrentChange} className="mt-1 w-full border rounded px-2 py-1" />
 
           <div className="flex gap-2 mt-2">
-            <button onClick={() => { setVoltage(initialV); setResistance(initialR); setRInternal(initialRint); setLastEdited("voltage"); setWarning(""); }} className="flex-1 py-2 rounded bg-gray-200">Reset Params</button>
+            <button onClick={() => { setVoltage(initialV); setResistance(initialR); setRInternal(initialRint); setLastEdited("voltage"); setWarning(""); }} className="flex-1 py-2 rounded bg-muted">Reset Params</button>
             <button onClick={addManualEntry} className="flex-1 py-2 rounded bg-green-600 text-white">Record Meter Readings</button>
           </div>
 
-          <div className="text-sm mt-2 text-gray-600">
+          <div className="text-sm mt-2 text-muted-foreground">
             <div>Last edited: <strong>{lastEdited}</strong></div>
             {warning && <div className="text-red-600 mt-1">{warning}</div>}
             <div className="mt-2">Computed current: <strong>{current.toFixed(4)} A</strong></div>
@@ -410,7 +410,7 @@ export default function OhmsLaw({
         </div>
 
         {/* Visualization & instruments */}
-        <div className="md:col-span-2 bg-white p-4 rounded shadow space-y-4">
+        <div className="md:col-span-2 bg-card p-4 rounded shadow space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               {/* simple SVG circuit */}
@@ -440,12 +440,12 @@ export default function OhmsLaw({
                 </div>
 
                 <div className="mt-3">
-                  {showAmmeter && <div className="p-2 bg-gray-50 rounded border w-40">
-                    <div className="text-xs text-gray-500">Ammeter (A)</div>
+                  {showAmmeter && <div className="p-2 bg-muted rounded border w-40">
+                    <div className="text-xs text-muted-foreground">Ammeter (A)</div>
                     <div className="text-xl font-mono">{instrumentRead(current, "I")} A ±{uncertainty}</div>
                   </div>}
-                  {showVoltmeter && <div className="p-2 bg-gray-50 rounded border w-40 mt-2">
-                    <div className="text-xs text-gray-500">Voltmeter across load (V)</div>
+                  {showVoltmeter && <div className="p-2 bg-muted rounded border w-40 mt-2">
+                    <div className="text-xs text-muted-foreground">Voltmeter across load (V)</div>
                     <div className="text-xl font-mono">{instrumentRead(current * resistance, "V")} V ±{uncertainty}</div>
                   </div>}
                 </div>
@@ -465,7 +465,7 @@ export default function OhmsLaw({
           <div>
             <div className="flex items-center justify-between mb-2">
               <div className="font-medium">V–I Plot</div>
-              <div className="text-xs text-gray-500">Red dot = operating point</div>
+              <div className="text-xs text-muted-foreground">Red dot = operating point</div>
             </div>
             <canvas ref={plotRef} width={760} height={260} className="w-full border rounded" />
           </div>
@@ -473,7 +473,7 @@ export default function OhmsLaw({
       </div>
 
       {/* Sweep controls */}
-      <div className="bg-white p-4 rounded shadow space-y-3">
+      <div className="bg-card p-4 rounded shadow space-y-3">
         <h3 className="font-semibold">Sweep & Measurement</h3>
         <div className="grid md:grid-cols-6 gap-2 items-end">
           <div>
@@ -499,7 +499,7 @@ export default function OhmsLaw({
             <button onClick={()=>{ setSweepResults([]); runSweep(); }} disabled={sweepRunning} className="w-full py-2 rounded bg-indigo-600 text-white">{sweepRunning ? "Running..." : "Run Sweep"}</button>
           </div>
           <div>
-            <button onClick={clearSweep} className="w-full py-2 rounded bg-gray-200">Clear</button>
+            <button onClick={clearSweep} className="w-full py-2 rounded bg-muted">Clear</button>
           </div>
         </div>
 
@@ -508,14 +508,14 @@ export default function OhmsLaw({
             <div className="text-sm font-medium">Sweep Results</div>
             <div className="mt-2 max-h-40 overflow-auto text-sm">
               {sweepResults.length === 0 ? (
-                <div className="text-xs text-gray-500">No results</div>
+                <div className="text-xs text-muted-foreground">No results</div>
               ) : (
                 <table className="w-full border-collapse">
                   <thead>
                     <tr>
-                      <th className="border-b border-gray-200 p-2">V (V)</th>
-                      <th className="border-b border-gray-200 p-2">I (A)</th>
-                      <th className="border-b border-gray-200 p-2">R? (Ω)</th>
+                      <th className="border-b border-border p-2">V (V)</th>
+                      <th className="border-b border-border p-2">I (A)</th>
+                      <th className="border-b border-border p-2">R? (Ω)</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -535,11 +535,11 @@ export default function OhmsLaw({
             <div className="text-sm font-medium">Manual Entries</div>
             <div className="mt-2 text-sm">
               <button onClick={addManualEntry} className="px-3 py-1 rounded bg-emerald-500 text-white mb-2">Add Entry (read meters)</button>
-              <button onClick={()=>setManualEntries([])} className="px-3 py-1 rounded bg-gray-200 ml-2">Clear</button>
+              <button onClick={()=>setManualEntries([])} className="px-3 py-1 rounded bg-muted ml-2">Clear</button>
               <div className="mt-2">
                 <ul className="max-h-40 overflow-auto">
                   {manualEntries.map((m,i)=>(
-                    <li key={i} className="flex justify-between text-sm py-1 border-b">{`V=${m.V} V, I=${m.I} A`}<span className="text-xs text-gray-500">{m.note}</span></li>
+                    <li key={i} className="flex justify-between text-sm py-1 border-b">{`V=${m.V} V, I=${m.I} A`}<span className="text-xs text-muted-foreground">{m.note}</span></li>
                   ))}
                 </ul>
               </div>
@@ -549,9 +549,9 @@ export default function OhmsLaw({
       </div>
 
       {/* Save / export / report */}
-      <div className="bg-white p-4 rounded shadow flex gap-2">
+      <div className="bg-card p-4 rounded shadow flex gap-2">
         <button onClick={() => saveRun()} className="px-3 py-2 bg-orange-500 text-white rounded">Save Run</button>
-        <button onClick={() => { const runs=loadRuns(); if (runs.length===0) alert("No saved runs"); else alert(runs.map(r=>r.name+" - "+r.date).join("\n")); }} className="px-3 py-2 bg-gray-200 rounded">List Saved</button>
+        <button onClick={() => { const runs=loadRuns(); if (runs.length===0) alert("No saved runs"); else alert(runs.map(r=>r.name+" - "+r.date).join("\n")); }} className="px-3 py-2 bg-muted rounded">List Saved</button>
         <button onClick={() => clearSavedRuns()} className="px-3 py-2 bg-red-500 text-white rounded">Clear Saved</button>
         <div className="flex-1" />
         <button onClick={exportCSV} className="px-3 py-2 bg-green-600 text-white rounded">Export CSV</button>
@@ -560,7 +560,7 @@ export default function OhmsLaw({
       </div>
 
       {/* Lab instructions */}
-      <div className="bg-white p-4 rounded shadow">
+      <div className="bg-card p-4 rounded shadow">
         <h3 className="font-semibold">Lab Instructions</h3>
         <ol className="list-decimal list-inside text-sm mt-2">
           <li>Set EMF and R. Inspect ammeter and voltmeter readings.</li>

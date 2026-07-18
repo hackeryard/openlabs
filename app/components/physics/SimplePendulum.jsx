@@ -680,14 +680,14 @@ export default function SimplePendulum({
     <div className="max-w-6xl mx-auto p-3 sm:p-4 space-y-4">
       <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-2xl font-semibold">Simple Pendulum — Virtual Lab</h2>
-        <div className="text-sm text-gray-600">Do the experiment like in a real lab: drag the bob, time oscillations, sweep lengths, export reports.</div>
+        <div className="text-sm text-muted-foreground">Do the experiment like in a real lab: drag the bob, time oscillations, sweep lengths, export reports.</div>
       </header>
       <DailyChallengeCard labId="physics/simplependulum" currentParams={{ length, gravity, period: measuredPeriod }} />
 
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Controls */}
-        <div className="md:col-span-1 bg-white p-4 rounded shadow space-y-3">
+        <div className="md:col-span-1 bg-card p-4 rounded shadow space-y-3">
           <h3 className="font-semibold">Experiment Controls</h3>
 
           <label className="block text-sm">Length (m)</label>
@@ -716,7 +716,7 @@ export default function SimplePendulum({
 
           <div className="flex flex-col sm:flex-row gap-2 mt-2">
             <button onClick={() => { setRunning((r) => !r); setStatusMsg(running ? "Paused" : "Running..."); }} className="flex-1 py-2 rounded bg-blue-600 text-white">{running ? "Pause" : "Start"}</button>
-            <button onClick={() => { thetaRef.current = (initAngleDeg * Math.PI) / 180; thetaVelRef.current = 0; dataRef.current = []; crossingsRef.current = []; setMeasuredPeriod(null); setSimTime(0); }} className="flex-1 py-2 rounded bg-gray-200">Reset</button>
+            <button onClick={() => { thetaRef.current = (initAngleDeg * Math.PI) / 180; thetaVelRef.current = 0; dataRef.current = []; crossingsRef.current = []; setMeasuredPeriod(null); setSimTime(0); }} className="flex-1 py-2 rounded bg-muted">Reset</button>
           </div>
 
           <label className="block text-sm mt-2">Measurement uncertainty (s)</label>
@@ -727,8 +727,8 @@ export default function SimplePendulum({
           <div className="mt-2 text-sm">
             <div>Theoretical period: <strong>{theoreticalPeriod.toFixed(4)} s</strong></div>
             <div>Measured period: <strong>{measuredPeriod ? measuredPeriod.toFixed(4) + " s" : "—"}</strong></div>
-            <div className="text-xs text-gray-500">Sim time: {simTime.toFixed(2)} s</div>
-            <div className="text-xs text-gray-500">Status: {statusMsg}</div>
+            <div className="text-xs text-muted-foreground">Sim time: {simTime.toFixed(2)} s</div>
+            <div className="text-xs text-muted-foreground">Status: {statusMsg}</div>
           </div>
 
           <div className="mt-3 space-y-1">
@@ -742,11 +742,11 @@ export default function SimplePendulum({
         </div>
 
         {/* Canvas + mini controls */}
-        <div className="md:col-span-2 bg-white p-3 rounded shadow space-y-3">
+        <div className="md:col-span-2 bg-card p-3 rounded shadow space-y-3">
           <div className="flex items-center justify-between">
             <div>
               <strong>Interactive Pendulum</strong>
-              <div className="text-xs text-gray-500">Drag bob to set initial angle. Click play/pause to run.</div>
+              <div className="text-xs text-muted-foreground">Drag bob to set initial angle. Click play/pause to run.</div>
             </div>
             <div className="flex flex-wrap gap-2 justify-end">
               <button onClick={exportCSVAll} className="mr-2 px-3 py-1 bg-green-600 text-white rounded">Export CSV</button>
@@ -762,13 +762,13 @@ export default function SimplePendulum({
 
           {/* stopwatch + manual measurement */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-            <div className="bg-gray-50 p-3 rounded">
+            <div className="bg-muted p-3 rounded">
               <div className="text-sm font-medium">Stopwatch (manual timing)</div>
               <div className="text-2xl font-mono my-2">{stopwatchDisplay}s</div>
               <div className="flex gap-2">
                 <button onClick={swStartStop} className="flex-1 py-1 rounded bg-blue-600 text-white">{stopwatchRunning ? "Stop" : "Start"}</button>
-                <button onClick={swLap} className="py-1 px-3 rounded bg-gray-200">Lap</button>
-                <button onClick={swReset} className="py-1 px-3 rounded bg-gray-200">Reset</button>
+                <button onClick={swLap} className="py-1 px-3 rounded bg-muted">Lap</button>
+                <button onClick={swReset} className="py-1 px-3 rounded bg-muted">Reset</button>
               </div>
               <div className="mt-2 text-xs">Laps: {laps.length}</div>
               <div className="mt-2">
@@ -776,9 +776,9 @@ export default function SimplePendulum({
               </div>
             </div>
 
-            <div className="bg-gray-50 p-3 rounded">
+            <div className="bg-muted p-3 rounded">
               <div className="text-sm font-medium">Manual Measurements</div>
-              <div className="text-xs text-gray-500">Times recorded by stopwatch</div>
+              <div className="text-xs text-muted-foreground">Times recorded by stopwatch</div>
               <ul className="mt-2 max-h-36 overflow-auto text-sm">
                 {laps.concat(manualMeasurements.map(m => m.time)).map((t, i) => (
                   <li key={i} className="flex justify-between"><span>#{i + 1}</span><span>{(typeof t === 'object' ? t.time : t).toFixed(3)} s</span></li>
@@ -789,11 +789,11 @@ export default function SimplePendulum({
               </div>
             </div>
 
-            <div className="bg-gray-50 p-3 rounded">
+            <div className="bg-muted p-3 rounded">
               <div className="text-sm font-medium">Saved Runs</div>
               <div className="mt-2">
                 <button onClick={() => saveRun()} className="w-full py-1 rounded bg-orange-500 text-white mb-2">Save Current Run</button>
-                <button onClick={() => { const runs = loadRuns(); if (runs.length === 0) alert('No saved runs'); else alert('Saved runs: \\n' + runs.map(r => r.name + ' - ' + r.date).join('\\n')) }} className="w-full py-1 rounded bg-gray-200 mb-2">List Saved Runs</button>
+                <button onClick={() => { const runs = loadRuns(); if (runs.length === 0) alert('No saved runs'); else alert('Saved runs: \\n' + runs.map(r => r.name + ' - ' + r.date).join('\\n')) }} className="w-full py-1 rounded bg-muted mb-2">List Saved Runs</button>
                 <button onClick={() => clearSavedRuns()} className="w-full py-1 rounded bg-red-500 text-white">Clear Saved Runs</button>
               </div>
             </div>
@@ -802,7 +802,7 @@ export default function SimplePendulum({
       </div>
 
       {/* Sweep controls */}
-      <div className="bg-white p-4 rounded shadow">
+      <div className="bg-card p-4 rounded shadow">
         <h3 className="font-semibold">Length Sweep — Auto-measure T vs √L</h3>
         <div className="grid md:grid-cols-6 gap-2 items-end">
           <div>
@@ -825,7 +825,7 @@ export default function SimplePendulum({
             <button onClick={() => { setSweepResults([]); runSweep(); }} disabled={sweepRunning} className="w-full py-2 rounded bg-indigo-600 text-white">{sweepRunning ? "Running..." : "Run Sweep"}</button>
           </div>
           <div>
-            <button onClick={() => { setSweepResults([]); }} className="w-full py-2 rounded bg-gray-200">Clear</button>
+            <button onClick={() => { setSweepResults([]); }} className="w-full py-2 rounded bg-muted">Clear</button>
           </div>
         </div>
 
@@ -834,13 +834,13 @@ export default function SimplePendulum({
             <div className="text-sm">Sweep Results</div>
             <div className="mt-2 max-h-40 overflow-auto text-sm">
               {sweepResults.length === 0 ? (
-                <div className="text-xs text-gray-500">No results yet</div>
+                <div className="text-xs text-muted-foreground">No results yet</div>
               ) : (
                 <table className="w-full border-collapse">
                   <thead>
                     <tr>
-                      <th className="border-b border-gray-200 text-left p-2">L (m)</th>
-                      <th className="border-b border-gray-200 text-left p-2">T (s)</th>
+                      <th className="border-b border-border text-left p-2">L (m)</th>
+                      <th className="border-b border-border text-left p-2">T (s)</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -859,9 +859,9 @@ export default function SimplePendulum({
           <div>
             <div className="text-sm">Sweep Plot (T vs √L)</div>
             <div className="mt-2 h-48 sm:h-56 md:h-64">
-              <canvas id="sweep-plot-canvas" className="w-full h-full border border-gray-200 rounded-md" />
+              <canvas id="sweep-plot-canvas" className="w-full h-full border border-border rounded-md" />
             </div>
-            <div className="mt-2 text-xs text-gray-500">
+            <div className="mt-2 text-xs text-muted-foreground">
               Fit: {(() => { const fit = fitTSqrtL(sweepResults); return fit ? `T ≈ ${fit.a.toFixed(4)}√L + ${fit.b.toFixed(4)}` : "—"; })()}
             </div>
           </div>
@@ -869,7 +869,7 @@ export default function SimplePendulum({
       </div>
 
       {/* Lab instructions */}
-      <div className="bg-white p-4 rounded shadow">
+      <div className="bg-card p-4 rounded shadow">
         <h3 className="font-semibold">Lab Instructions</h3>
         <ol className="list-decimal list-inside text-sm mt-2">
           <li>Drag the bob or set the initial angle, then press Start.</li>

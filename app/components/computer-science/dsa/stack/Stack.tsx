@@ -70,22 +70,22 @@ const StackVisualizer: React.FC<{ onComplete?: () => void }> = ({ onComplete }) 
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans text-slate-900">
+    <div className="min-h-screen p-4 md:p-8 font-sans text-foreground">
       <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Column: Controls */}
         <div className="lg:col-span-5 space-y-6">
           <header>
-            <h1 className="text-4xl font-black tracking-tight text-slate-800">
+            <h1 className="text-4xl font-black tracking-tight text-foreground">
               STACK<span className="text-blue-600">.</span>
             </h1>
-            <p className="text-slate-500 mt-2">
+            <p className="text-muted-foreground mt-2">
               Visualizing Last-In-First-Out (LIFO) behavior.
             </p>
           </header>
 
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+          <div className="bg-card p-6 rounded-2xl shadow-sm border border-border space-y-4">
             <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 Configuration
               </label>
               <div className="flex items-center gap-4 mt-2">
@@ -95,16 +95,16 @@ const StackVisualizer: React.FC<{ onComplete?: () => void }> = ({ onComplete }) 
                   max="8"
                   value={maxSize}
                   onChange={(e) => setMaxSize(Number(e.target.value))}
-                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                  className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-blue-600"
                 />
-                <span className="font-mono font-bold bg-slate-100 px-3 py-1 rounded text-blue-600">
+                <span className="font-mono font-bold bg-muted px-3 py-1 rounded text-blue-600">
                   {maxSize}
                 </span>
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-100">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
+            <div className="pt-4 border-t border-border">
+              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 Operations
               </label>
               
@@ -130,12 +130,12 @@ const StackVisualizer: React.FC<{ onComplete?: () => void }> = ({ onComplete }) 
                   onKeyPress={(e) => e.key === "Enter" && push()}
                   placeholder={isFull ? "Stack is Full" : "Element value..."}
                   disabled={isFull}
-                  className="flex-1 px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all disabled:cursor-not-allowed disabled:bg-slate-100"
+                  className="flex-1 px-4 py-2 bg-muted border border-border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all disabled:cursor-not-allowed disabled:bg-muted"
                 />
                 <button
                   onClick={reset}
                   title="Clear Stack"
-                  className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-all active:scale-90"
+                  className="flex items-center justify-center gap-2 px-4 py-3 bg-muted text-muted-foreground font-bold rounded-xl hover:bg-accent transition-all active:scale-90"
                 >
                   <RotateCcw size={18} />
                 </button>
@@ -162,7 +162,7 @@ const StackVisualizer: React.FC<{ onComplete?: () => void }> = ({ onComplete }) 
 
           {/* Activity Log */}
           <div className="hidden md:block">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
               Operation Log
             </h3>
             <div className="space-y-2">
@@ -189,10 +189,10 @@ const StackVisualizer: React.FC<{ onComplete?: () => void }> = ({ onComplete }) 
         </div>
 
         {/* Right Column: Visualization */}
-        <div className="lg:col-span-7 flex flex-col items-center justify-center min-h-[500px] bg-slate-200/50 rounded-3xl border-2 border-dashed border-slate-300 p-8 relative overflow-hidden">
+        <div className="lg:col-span-7 flex flex-col items-center justify-center min-h-[500px] bg-muted rounded-3xl border-2 border-dashed border-border p-8 relative overflow-hidden">
           {/* Stack Container */}
           <div
-            className="relative flex flex-col-reverse justify-start border-x-4 border-b-4 border-slate-400 rounded-b-2xl bg-white shadow-inner transition-all duration-500"
+            className="relative flex flex-col-reverse justify-start border-x-4 border-b-4 border-border rounded-b-2xl bg-card shadow-inner transition-all duration-500"
             style={{
               width: "280px",
               height: `${maxSize * 70}px`,
@@ -212,7 +212,7 @@ const StackVisualizer: React.FC<{ onComplete?: () => void }> = ({ onComplete }) 
                     className={`h-[60px] mb-2 rounded-xl flex items-center justify-between px-6 shadow-sm border-2 ${
                       isTop
                         ? "bg-blue-500 border-blue-400 text-white z-10"
-                        : "bg-white border-slate-200 text-slate-600"
+                        : "bg-card border-border text-muted-foreground"
                     }`}
                   >
                     <span className="font-bold text-lg truncate pr-2">
@@ -220,7 +220,7 @@ const StackVisualizer: React.FC<{ onComplete?: () => void }> = ({ onComplete }) 
                     </span>
                     <span
                       className={`text-[10px] font-black uppercase px-2 py-1 rounded ${
-                        isTop ? "bg-blue-400" : "bg-slate-100 text-slate-400"
+                        isTop ? "bg-blue-400" : "bg-muted text-muted-foreground"
                       }`}
                     >
                       {isTop ? "Top" : `[${index}]`}
@@ -231,7 +231,7 @@ const StackVisualizer: React.FC<{ onComplete?: () => void }> = ({ onComplete }) 
             </AnimatePresence>
 
             {isEmpty && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-300 select-none">
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground select-none">
                 <Info size={48} strokeWidth={1} />
                 <p className="font-medium mt-2 italic">Stack is Empty</p>
               </div>
@@ -239,7 +239,7 @@ const StackVisualizer: React.FC<{ onComplete?: () => void }> = ({ onComplete }) 
           </div>
 
           {/* Guidelines */}
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-20 text-slate-400">
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-20 text-muted-foreground">
             <div className="flex flex-col items-center gap-1 opacity-50">
               <ArrowDown size={20} />
               <span className="text-[10px] font-bold uppercase vertical-text">

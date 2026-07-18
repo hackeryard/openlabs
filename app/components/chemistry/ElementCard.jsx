@@ -45,7 +45,7 @@ export default function ElementCard({ element, onOpen }) {
       data-group={element.group}
 
       className={`group relative w-full aspect-square p-0.5 sm:p-1.5 lg:p-2
-        rounded-lg border bg-white sm:rounded-2xl
+        rounded-lg border bg-card sm:rounded-2xl
         shadow-none hover:shadow-md sm:shadow-sm sm:hover:shadow-lg
         transform-gpu transition-all duration-200
         text-left flex flex-col justify-between items-center overflow-hidden
@@ -58,13 +58,13 @@ export default function ElementCard({ element, onOpen }) {
       type="button"
     >
       {/* Atomic number */}
-      <div className="hidden sm:block absolute top-1.5 left-2 text-[9px] sm:text-[10px] font-black font-mono text-slate-500">
+      <div className="hidden sm:block absolute top-1.5 left-2 text-[9px] sm:text-[10px] font-black font-mono text-muted-foreground">
         {atomicNumber}
       </div>
 
       {/* Category dot */}
       <span
-        className={`hidden sm:block absolute top-2 right-2 h-2 w-2 rounded-full ring-2 ring-white ${dotClass}`}
+        className={`hidden sm:block absolute top-2 right-2 h-2 w-2 rounded-full ring-2 ring-card ${dotClass}`}
         aria-hidden="true"
       />
 
@@ -77,10 +77,10 @@ export default function ElementCard({ element, onOpen }) {
 
       {/* Name */}
       <div className="hidden sm:block w-full text-center">
-        <div className="text-[9px] sm:text-[10px] text-slate-600 font-bold truncate px-1 leading-tight">
+        <div className="text-[9px] sm:text-[10px] text-muted-foreground font-bold truncate px-1 leading-tight">
           {name}
         </div>
-        <div className="hidden xl:block text-[8px] text-slate-400 font-mono truncate mt-0.5">
+        <div className="hidden xl:block text-[8px] text-muted-foreground font-mono truncate mt-0.5">
           {atomicMass}
         </div>
       </div>

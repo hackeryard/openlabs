@@ -43,11 +43,11 @@ export default function AtomPage() {
 
   if (!element) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center font-sans">
-        <div className="bg-white border border-slate-200 p-8 rounded-3xl shadow-xl max-w-sm">
+      <div className="min-h-screen bg-muted flex flex-col items-center justify-center p-6 text-center font-sans">
+        <div className="bg-card border border-border p-8 rounded-3xl shadow-xl max-w-sm">
           <FlaskConical className="h-12 w-12 text-rose-500 mx-auto mb-4 animate-bounce" />
-          <h2 className="text-2xl font-black text-slate-900 mb-2">Element Not Found</h2>
-          <p className="text-slate-500 text-sm mb-6">
+          <h2 className="text-2xl font-black text-foreground mb-2">Element Not Found</h2>
+          <p className="text-muted-foreground text-sm mb-6">
             The requested chemical element cannot be resolved in our quantum dataset.
           </p>
           <Link href="/chemistry/periodictable" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-755 text-white font-bold py-3 px-6 rounded-xl transition shadow-md">
@@ -62,7 +62,7 @@ export default function AtomPage() {
   const categoryLabel = element.category ? element.category.replace("-", " ") : "Element";
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 text-slate-800 p-4 md:p-8 font-sans relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 text-foreground p-4 md:p-8 font-sans relative overflow-hidden">
       {/* Soft ambient background glows */}
       <div className="absolute top-0 right-1/4 h-[400px] w-[400px] rounded-full bg-indigo-500/5 blur-[100px] pointer-events-none" />
       <div className="absolute bottom-10 left-10 h-[300px] w-[300px] rounded-full bg-purple-500/5 blur-[80px] pointer-events-none" />
@@ -71,7 +71,7 @@ export default function AtomPage() {
         
         {/* Navigation & Breadcrumbs Hub */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-4">
-          <div className="flex items-center space-x-2 text-sm text-slate-500 animate-fade-in">
+          <div className="flex items-center space-x-2 text-sm text-muted-foreground animate-fade-in">
             <Link href="/chemistry/periodictable" className="hover:text-slate-950 transition font-medium flex items-center gap-1.5">
               <ArrowLeft className="h-4 w-4" /> Back to Table
             </Link>
@@ -97,14 +97,14 @@ export default function AtomPage() {
             <span className="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-150 text-[10px] font-black uppercase tracking-wider">
               Z = {element.atomicNumber}
             </span>
-            <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[10px] font-bold uppercase tracking-wider">
+            <span className="px-3 py-1 rounded-full bg-slate-100 text-muted-foreground border border-border text-[10px] font-bold uppercase tracking-wider">
               {categoryLabel}
             </span>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-none">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-foreground tracking-tight leading-none">
             {element.name} <span className="text-indigo-600">({element.symbol})</span> 3D Orbital Lab
           </h1>
-          <p className="text-slate-500 text-sm md:text-base font-medium max-w-3xl">
+          <p className="text-muted-foreground text-sm md:text-base font-medium max-w-3xl">
             Simulate and interact with the concentric quantum shell configuration of {element.name} in high-fidelity 3D. Inspect valence spin vectors and nuclear parameters.
           </p>
         </div>
@@ -183,44 +183,44 @@ export default function AtomPage() {
           <div className="lg:col-span-4 flex flex-col space-y-6 w-full">
             
             {/* Daily Challenges card */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-lg relative overflow-hidden">
+            <div className="bg-card border border-border rounded-3xl p-5 shadow-lg relative overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 to-teal-500" />
               <DailyChallengeCard labId="chemistry/periodictable" currentParams={{ elementViewed: element.name }} />
             </div>
 
             {/* Scientific Parameters readout card */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-md space-y-4">
+            <div className="bg-card border border-border rounded-3xl p-6 shadow-md space-y-4">
               <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-wider text-xs">
                 <Activity className="h-4 w-4" /> Lab Readings
               </div>
-              <h3 className="font-extrabold text-slate-900 text-lg tracking-tight border-b border-slate-100 pb-2">
+              <h3 className="font-extrabold text-foreground text-lg tracking-tight border-b border-slate-100 pb-2">
                 Quantum State Instrumentation
               </h3>
               
               <div className="grid grid-cols-2 gap-3.5 text-xs">
-                <div className="bg-slate-50 border border-slate-150 p-3 rounded-xl hover:shadow-sm transition">
+                <div className="bg-muted border border-slate-150 p-3 rounded-xl hover:shadow-sm transition">
                   <div className="text-[9px] text-slate-400 uppercase font-extrabold tracking-wider">Symbol</div>
-                  <div className="text-slate-900 font-extrabold font-mono text-sm mt-0.5">{element.symbol}</div>
+                  <div className="text-foreground font-extrabold font-mono text-sm mt-0.5">{element.symbol}</div>
                 </div>
 
-                <div className="bg-slate-50 border border-slate-150 p-3 rounded-xl hover:shadow-sm transition">
+                <div className="bg-muted border border-slate-150 p-3 rounded-xl hover:shadow-sm transition">
                   <div className="text-[9px] text-slate-400 uppercase font-extrabold tracking-wider">Valency Block</div>
-                  <div className="text-slate-900 font-extrabold font-mono text-sm mt-0.5 uppercase">{element.block}-block</div>
+                  <div className="text-foreground font-extrabold font-mono text-sm mt-0.5 uppercase">{element.block}-block</div>
                 </div>
 
-                <div className="bg-slate-50 border border-slate-150 p-3 rounded-xl hover:shadow-sm transition">
+                <div className="bg-muted border border-slate-150 p-3 rounded-xl hover:shadow-sm transition">
                   <div className="text-[9px] text-slate-400 uppercase font-extrabold tracking-wider">Group</div>
-                  <div className="text-slate-900 font-extrabold font-mono text-sm mt-0.5">{element.group}</div>
+                  <div className="text-foreground font-extrabold font-mono text-sm mt-0.5">{element.group}</div>
                 </div>
 
-                <div className="bg-slate-50 border border-slate-150 p-3 rounded-xl hover:shadow-sm transition">
+                <div className="bg-muted border border-slate-150 p-3 rounded-xl hover:shadow-sm transition">
                   <div className="text-[9px] text-slate-400 uppercase font-extrabold tracking-wider">Period</div>
-                  <div className="text-slate-900 font-extrabold font-mono text-sm mt-0.5">{element.period}</div>
+                  <div className="text-foreground font-extrabold font-mono text-sm mt-0.5">{element.period}</div>
                 </div>
 
-                <div className="bg-slate-50 border border-slate-150 p-3 rounded-xl col-span-2 hover:shadow-sm transition">
+                <div className="bg-muted border border-slate-150 p-3 rounded-xl col-span-2 hover:shadow-sm transition">
                   <div className="text-[9px] text-slate-400 uppercase font-extrabold tracking-wider">Valence Configuration</div>
-                  <div className="text-slate-900 font-bold font-mono text-[11px] mt-1 truncate" title={element.electronConfiguration || element.electronConfig}>
+                  <div className="text-foreground font-bold font-mono text-[11px] mt-1 truncate" title={element.electronConfiguration || element.electronConfig}>
                     {element.electronConfiguration || element.electronConfig || "n/a"}
                   </div>
                 </div>
@@ -228,15 +228,15 @@ export default function AtomPage() {
             </div>
 
             {/* Instruction console card */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-md space-y-4">
+            <div className="bg-card border border-border rounded-3xl p-6 shadow-md space-y-4">
               <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-wider text-xs">
                 <Gauge className="h-4 w-4" /> Lab Manual
               </div>
-              <h3 className="font-extrabold text-slate-900 text-lg tracking-tight border-b border-slate-100 pb-2">
+              <h3 className="font-extrabold text-foreground text-lg tracking-tight border-b border-slate-100 pb-2">
                 Experiment Instructions
               </h3>
               
-              <ul className="space-y-3 text-xs text-slate-600 font-medium">
+              <ul className="space-y-3 text-xs text-muted-foreground font-medium">
                 <li className="flex items-start gap-2.5">
                   <div className="flex-shrink-0 h-5 w-5 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-bold text-[10px] mt-0.5">1</div>
                   <span><strong>Rotate Nucleus</strong>: Left-click and drag anywhere on the 3D model canvas to rotate your viewing angle.</span>

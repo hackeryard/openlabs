@@ -60,9 +60,9 @@ const categoryMap: Record<string, { label: string; bg: string; text: string; bor
   },
   "post-transition": {
     label: "Post-Transition Metal",
-    bg: "bg-slate-50 text-slate-800 border-slate-100",
-    text: "text-slate-700",
-    border: "border-slate-200",
+    bg: "bg-muted text-foreground border-slate-100",
+    text: "text-muted-foreground",
+    border: "border-border",
     glow: "shadow-slate-100 hover:border-slate-350"
   },
   "transition-metal": {
@@ -210,11 +210,11 @@ export default function ElectronicConfigurationPage() {
 
   if (!element) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center font-sans">
-        <div className="bg-white border border-slate-200 p-8 rounded-3xl shadow-xl max-w-sm">
+      <div className="min-h-screen bg-muted flex flex-col items-center justify-center p-6 text-center font-sans">
+        <div className="bg-card border border-border p-8 rounded-3xl shadow-xl max-w-sm">
           <FlaskConical className="h-12 w-12 text-rose-500 mx-auto mb-4 animate-bounce" />
-          <h2 className="text-2xl font-black text-slate-900 mb-2">Element Not Found</h2>
-          <p className="text-slate-500 text-sm mb-6">
+          <h2 className="text-2xl font-black text-foreground mb-2">Element Not Found</h2>
+          <p className="text-muted-foreground text-sm mb-6">
             The requested chemical element cannot be resolved in our quantum dataset.
           </p>
           <Link href="/chemistry/periodictable" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-755 text-white font-bold py-3 px-6 rounded-xl transition shadow-md">
@@ -227,9 +227,9 @@ export default function ElectronicConfigurationPage() {
 
   const categoryStyle = categoryMap[element.category] || {
     label: element.category,
-    bg: "bg-slate-100 text-slate-800 border-slate-200",
-    text: "text-slate-700",
-    border: "border-slate-200",
+    bg: "bg-slate-100 text-foreground border-border",
+    text: "text-muted-foreground",
+    border: "border-border",
     glow: "shadow-slate-100 hover:border-slate-350"
   };
 
@@ -237,7 +237,7 @@ export default function ElectronicConfigurationPage() {
   const exception = ELECTRON_EXCEPTIONS[Z];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 text-slate-800 p-4 md:p-8 font-sans relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 text-foreground p-4 md:p-8 font-sans relative overflow-hidden">
       {/* Decorative background glows */}
       <div className="absolute top-0 right-1/4 h-[400px] w-[400px] rounded-full bg-indigo-500/5 blur-[100px] pointer-events-none" />
       <div className="absolute bottom-10 left-10 h-[300px] w-[300px] rounded-full bg-purple-500/5 blur-[80px] pointer-events-none" />
@@ -246,7 +246,7 @@ export default function ElectronicConfigurationPage() {
         
         {/* Navigation & Breadcrumbs Hub */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-4">
-          <div className="flex items-center space-x-2 text-sm text-slate-500">
+          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
             <Link href="/chemistry/periodictable" className="hover:text-slate-950 transition font-medium flex items-center gap-1.5">
               <ArrowLeft className="h-4 w-4" /> Back to Table
             </Link>
@@ -276,10 +276,10 @@ export default function ElectronicConfigurationPage() {
               {categoryStyle.label}
             </span>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-none">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-foreground tracking-tight leading-none">
             {element.name} <span className="text-indigo-600">({element.symbol})</span> Electronic Config Lab
           </h1>
-          <p className="text-slate-500 text-sm md:text-base font-medium max-w-3xl">
+          <p className="text-muted-foreground text-sm md:text-base font-medium max-w-3xl">
             Configure, spin, and fill the energy subshells of {element.name}. Experiment with Hund's rule, the Pauli exclusion principle, and Aufbau orbital structures.
           </p>
         </div>
@@ -289,7 +289,7 @@ export default function ElectronicConfigurationPage() {
           
           {/* Column 1: Big Interactive Configurations Sandbox (Left Side - lg:col-span-8) */}
           <div className="lg:col-span-8 flex flex-col space-y-4">
-            <div className="bg-white rounded-3xl border border-slate-200 p-4 md:p-6 shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[560px] group">
+            <div className="bg-card rounded-3xl border border-border p-4 md:p-6 shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[560px] group">
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
               
               {/* Interactive HUD Overlay header */}
@@ -306,7 +306,7 @@ export default function ElectronicConfigurationPage() {
               </div>
 
               {/* Configurations Lab Interactive Panel */}
-              <div className="flex-1 rounded-2xl bg-slate-50 border border-slate-200/60 p-4 relative flex flex-col justify-center min-h-[420px]">
+              <div className="flex-1 rounded-2xl bg-muted border border-slate-200/60 p-4 relative flex flex-col justify-center min-h-[420px]">
                 <ElectronicConfiguration 
                   atomicNumber={atomicNumber} 
                   symbol={element.symbol} 
@@ -321,7 +321,7 @@ export default function ElectronicConfigurationPage() {
           <div className="lg:col-span-4 flex flex-col space-y-6 w-full">
             
             {/* Daily Challenges card */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-md relative overflow-hidden">
+            <div className="bg-card border border-border rounded-3xl p-5 shadow-md relative overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 to-teal-500" />
               <DailyChallengeCard labId="chemistry/electronic-configuration" currentParams={{ elementsVisualized: 1 }} />
             </div>
@@ -345,11 +345,11 @@ export default function ElectronicConfigurationPage() {
             )}
 
             {/* Animated Bohr Model Visual Indicator Card */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-md flex flex-col items-center text-center">
+            <div className="bg-card border border-border rounded-3xl p-5 shadow-md flex flex-col items-center text-center">
               <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-wider text-xs mb-3 w-full text-left">
                 <Compass className="h-4 w-4 animate-spin [animation-duration:10s]" /> Live Bohr Indicator
               </div>
-              <div className="h-44 w-full flex items-center justify-center relative rounded-2xl overflow-hidden bg-slate-50 border border-slate-100/50 shadow-inner p-2 mb-2">
+              <div className="h-44 w-full flex items-center justify-center relative rounded-2xl overflow-hidden bg-muted border border-slate-100/50 shadow-inner p-2 mb-2">
                 <BohrModelSVG symbol={element.symbol} shells={shells} />
               </div>
               <div className="text-[10px] text-slate-400 font-mono">
@@ -358,15 +358,15 @@ export default function ElectronicConfigurationPage() {
             </div>
 
             {/* Instruction console card */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-md space-y-4">
+            <div className="bg-card border border-border rounded-3xl p-6 shadow-md space-y-4">
               <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-wider text-xs">
                 <Gauge className="h-4 w-4" /> Lab Manual
               </div>
-              <h3 className="font-extrabold text-slate-900 text-lg tracking-tight border-b border-slate-100 pb-2">
+              <h3 className="font-extrabold text-foreground text-lg tracking-tight border-b border-slate-100 pb-2">
                 Orbital Filling Guide
               </h3>
               
-              <ul className="space-y-3 text-xs text-slate-600 font-medium">
+              <ul className="space-y-3 text-xs text-muted-foreground font-medium">
                 <li className="flex items-start gap-2.5">
                   <div className="flex-shrink-0 h-5 w-5 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-bold text-[10px] mt-0.5">1</div>
                   <span><strong>Aufbau Order</strong>: Add electrons to the lowest available energy orbital boxes (starting at 1s, then 2s, 2p, etc.).</span>

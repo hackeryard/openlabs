@@ -389,12 +389,12 @@ export default function WaveOpticsLab() {
     <div className="max-w-7xl mx-auto p-4 space-y-4">
       <header className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Wave Optics — Diffraction & Interference Lab</h2>
-        <div className="text-sm text-gray-600">Fraunhofer approximation: small-angle diffraction patterns</div>
+        <div className="text-sm text-muted-foreground">Fraunhofer approximation: small-angle diffraction patterns</div>
       </header>
       <DailyChallengeCard labId="physics/waveoptics" currentParams={{ fringeWidth: (wavelengthNm * 1e-9 * L) / (dMicron * 1e-6), wavelength: wavelengthNm }} />
 
       <div className="grid md:grid-cols-4 gap-4">
-        <div className="md:col-span-1 bg-white p-4 rounded shadow space-y-3">
+        <div className="md:col-span-1 bg-card p-4 rounded shadow space-y-3">
           <label className="block text-sm">Mode</label>
           <select value={mode} onChange={(e) => setMode(e.target.value)} className="w-full border rounded px-2 py-1">
             <option value="single">Single slit</option>
@@ -432,17 +432,17 @@ export default function WaveOpticsLab() {
 
           <div className="mt-2 flex gap-2">
             <button onClick={() => draw()} className="flex-1 py-2 rounded bg-blue-600 text-white">Redraw</button>
-            <button onClick={() => { setResolution(Math.max(200, resolution + 200)); draw(); }} className="py-2 px-3 rounded bg-gray-200">+Res</button>
+            <button onClick={() => { setResolution(Math.max(200, resolution + 200)); draw(); }} className="py-2 px-3 rounded bg-muted">+Res</button>
           </div>
         </div>
 
-        <div className="md:col-span-3 bg-white p-3 rounded shadow">
+        <div className="md:col-span-3 bg-card p-3 rounded shadow">
           <div className="flex items-center justify-between mb-2">
             <div className="text-sm">Intensity vs screen position (click to read)</div>
             <div className="flex gap-2">
               <button onClick={exportCSV} className="px-3 py-1 rounded bg-green-600 text-white">Export CSV</button>
               <button onClick={() => saveRun()} className="px-3 py-1 rounded bg-orange-500 text-white">Save Run</button>
-              <button onClick={() => listRuns()} className="px-3 py-1 rounded bg-gray-200">List Saved</button>
+              <button onClick={() => listRuns()} className="px-3 py-1 rounded bg-muted">List Saved</button>
               <button onClick={() => clearRuns()} className="px-3 py-1 rounded bg-red-500 text-white">Clear Saved</button>
               <button onClick={() => exportReport()} className="px-3 py-1 rounded bg-indigo-600 text-white">Printable</button>
               <button onClick={() => runSweepWavelength(400, 800, 9)} className="px-3 py-1 rounded bg-violet-600 text-white">Sweep λ 400–800 nm</button>
@@ -471,7 +471,7 @@ export default function WaveOpticsLab() {
       </div>
 
       {/* Lab instructions */}
-      <div className="bg-white p-4 rounded shadow">
+      <div className="bg-card p-4 rounded shadow">
         <h3 className="font-semibold">Lab Instructions — Wave Optics</h3>
         <ol className="list-decimal list-inside text-sm mt-2">
           <li>Select mode: single slit for envelope-only, double slit for interference & envelope, grating for many-slit pattern.</li>

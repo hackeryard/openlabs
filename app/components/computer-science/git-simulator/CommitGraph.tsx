@@ -39,15 +39,15 @@ export default function CommitGraph({ state }: Props) {
 
   if (orderedCommits.length === 0) {
     return (
-      <div className="p-6 border rounded-2xl bg-zinc-900 text-white">
+      <div className="p-6 border border-border rounded-2xl bg-card text-foreground">
         <h2 className="font-semibold mb-6 text-lg">Repository Graph</h2>
-        <p className="text-zinc-400">No commits yet</p>
+        <p className="text-muted-foreground">No commits yet</p>
       </div>
     );
   }
 
   return (
-    <div className="p-6 border rounded-2xl bg-zinc-900 text-white overflow-x-auto">
+    <div className="p-6 border border-border rounded-2xl bg-card text-foreground overflow-x-auto">
       <h2 className="font-semibold mb-6 text-lg">Repository Graph</h2>
 
       <div
@@ -61,7 +61,7 @@ export default function CommitGraph({ state }: Props) {
         {branchNames.map((branch, index) => (
           <div
             key={branch}
-            className="absolute top-0 bottom-0 border-l border-zinc-700"
+            className="absolute top-0 bottom-0 border-l border-border"
             style={{ left: index * LANE_WIDTH + 20 }}
           />
         ))}
@@ -99,20 +99,20 @@ export default function CommitGraph({ state }: Props) {
               />
 
               {/* Commit Info */}
-              <div className="bg-zinc-800 px-3 py-2 rounded-lg shadow text-sm min-w-[200px]">
+              <div className="bg-muted px-3 py-2 rounded-lg shadow text-sm min-w-[200px]">
                 <div className="font-medium">{commit.message}</div>
-                <div className="text-xs text-zinc-400">
+                <div className="text-xs text-muted-foreground">
                   {commit.id}
                 </div>
 
                 {branchEntry && (
-                  <div className="mt-1 text-xs bg-blue-600 px-2 py-0.5 rounded inline-block">
+                  <div className="mt-1 text-xs bg-blue-600 text-white px-2 py-0.5 rounded inline-block">
                     {branchEntry[0]}
                   </div>
                 )}
 
                 {isHead && (
-                  <div className="mt-1 text-xs bg-yellow-600 px-2 py-0.5 rounded inline-block ml-1">
+                  <div className="mt-1 text-xs bg-yellow-600 text-white px-2 py-0.5 rounded inline-block ml-1">
                     HEAD
                   </div>
                 )}

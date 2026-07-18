@@ -28,11 +28,11 @@ export default function BlogGrid({ posts }: { posts: BlogPost[] }) {
   if (!posts || posts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
-        <div className="w-20 h-20 bg-indigo-50/50 rounded-[2rem] flex items-center justify-center mb-6 shadow-inner border border-indigo-100/50">
+        <div className="w-20 h-20 bg-primary/10 rounded-[2rem] flex items-center justify-center mb-6 shadow-inner border border-primary/20">
           <BookOpen className="w-10 h-10 text-indigo-300" aria-hidden="true" />
         </div>
-        <h3 className="text-3xl font-black text-slate-900 mb-3 tracking-tight">No transmissions yet</h3>
-        <p className="text-slate-500 max-w-sm text-lg">Check back soon for new articles, research, and updates.</p>
+        <h3 className="text-3xl font-black text-foreground mb-3 tracking-tight">No transmissions yet</h3>
+        <p className="text-muted-foreground max-w-sm text-lg">Check back soon for new articles, research, and updates.</p>
       </div>
     );
   }
@@ -59,17 +59,17 @@ export default function BlogGrid({ posts }: { posts: BlogPost[] }) {
           <Link
             key={post.slug}
             href={`/blog/${post.slug}`}
-            className="group relative block outline-none focus-visible:ring-4 focus-visible:ring-indigo-100 rounded-[2.5rem] z-10 hover:z-20"
+            className="group relative block outline-none focus-visible:ring-4 focus-visible:ring-primary/30 rounded-[2.5rem] z-10 hover:z-20"
           >
             {/* Cinematic Hover Glow (Behind the card) */}
             <div className={`absolute -inset-3 rounded-[3.5rem] bg-gradient-to-br ${glowColor} opacity-0 group-hover:opacity-100 blur-2xl transition-all duration-700 ease-out -z-10`} />
 
-            <article className="relative flex flex-col h-full bg-white/80 backdrop-blur-xl border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] rounded-[2rem] p-3 transition-all duration-500 hover:-translate-y-2 overflow-hidden">
+            <article className="relative flex flex-col h-full bg-card/80 backdrop-blur-xl border border-border shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] rounded-[2rem] p-3 transition-all duration-500 hover:-translate-y-2 overflow-hidden">
               {/* Internal subtle border for glass effect */}
-              <div className="absolute inset-0 border border-slate-200/50 rounded-[2rem] pointer-events-none" />
+              <div className="absolute inset-0 border border-border/50 rounded-[2rem] pointer-events-none" />
 
               {/* Framed Image Container */}
-              <div className="relative w-full aspect-[4/3] rounded-[1.5rem] overflow-hidden mb-6 z-10 shadow-inner bg-slate-100">
+              <div className="relative w-full aspect-[4/3] rounded-[1.5rem] overflow-hidden mb-6 z-10 shadow-inner bg-muted">
                 {post.coverImage ? (
                   <>
                     <Image
@@ -83,15 +83,15 @@ export default function BlogGrid({ posts }: { posts: BlogPost[] }) {
                     <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors duration-500" />
                   </>
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
-                    <IconComponent className="w-16 h-16 text-slate-200" aria-hidden="true" />
+                  <div className="absolute inset-0 flex items-center justify-center bg-muted">
+                    <IconComponent className="w-16 h-16 text-muted-foreground" aria-hidden="true" />
                   </div>
                 )}
 
                 {/* Floating Glass Category Pill */}
-                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3.5 py-1.5 rounded-full flex items-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.1)] translate-y-0 group-hover:-translate-y-1 transition-transform duration-500 ease-out border border-white/50">
+                <div className="absolute top-4 left-4 bg-card/90 backdrop-blur-md px-3.5 py-1.5 rounded-full flex items-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.1)] translate-y-0 group-hover:-translate-y-1 transition-transform duration-500 ease-out border border-border/50">
                   <IconComponent className="w-4 h-4 text-indigo-600" aria-hidden="true" />
-                  <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-slate-800 mt-0.5">
+                  <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-foreground mt-0.5">
                     {post.category}
                   </span>
                 </div>
@@ -99,17 +99,17 @@ export default function BlogGrid({ posts }: { posts: BlogPost[] }) {
 
               {/* Content Box */}
               <div className="px-3 pb-3 flex flex-col flex-1 relative z-10">
-                <h2 className="text-xl sm:text-2xl font-black text-slate-900 mb-3 leading-[1.25] group-hover:text-indigo-600 transition-colors duration-300 line-clamp-2">
+                <h2 className="text-xl sm:text-2xl font-black text-foreground mb-3 leading-[1.25] group-hover:text-indigo-600 transition-colors duration-300 line-clamp-2">
                   {post.title}
                 </h2>
 
-                <p className="text-slate-500 text-[0.95rem] font-medium leading-relaxed mb-8 flex-1 line-clamp-3">
+                <p className="text-muted-foreground text-[0.95rem] font-medium leading-relaxed mb-8 flex-1 line-clamp-3">
                   {post.excerpt}
                 </p>
 
                 {/* Footer Metadata & Interactive Button */}
-                <div className="flex items-center justify-between mt-auto pt-5 border-t border-slate-100/80">
-                  <div className="flex items-center gap-4 text-xs font-bold text-slate-400">
+                <div className="flex items-center justify-between mt-auto pt-5 border-t border-border/80">
+                  <div className="flex items-center gap-4 text-xs font-bold text-muted-foreground">
                     <span className="flex items-center gap-1.5 group-hover:text-indigo-400 transition-colors duration-300">
                       <Calendar className="w-4 h-4" aria-hidden="true" />
                       <time dateTime={post.date}>{displayDate}</time>
@@ -123,8 +123,8 @@ export default function BlogGrid({ posts }: { posts: BlogPost[] }) {
                   </div>
 
                   {/* Exploding Action Button */}
-                  <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center group-hover:bg-indigo-600 group-hover:border-indigo-600 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] transition-all duration-500 ease-out z-20">
-                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300" aria-hidden="true" />
+                  <div className="w-10 h-10 rounded-full bg-muted border border-border flex items-center justify-center group-hover:bg-indigo-600 group-hover:border-indigo-600 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] transition-all duration-500 ease-out z-20">
+                    <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300" aria-hidden="true" />
                   </div>
                 </div>
               </div>

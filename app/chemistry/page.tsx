@@ -155,21 +155,21 @@ export default function ChemistryPage() {
 
       <a
         href="#main-content"
-        className="absolute left-4 -top-16 z-50 rounded bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow transition-all focus:top-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="absolute left-4 -top-16 z-50 rounded bg-card px-3 py-2 text-sm font-semibold text-foreground shadow transition-all focus:top-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"
       >
         Skip to main content
       </a>
 
       <main
         id="main-content"
-        className="min-h-screen bg-slate-50 text-slate-800 pb-20 pt-8 font-sans relative overflow-hidden bg-[radial-gradient(#e2e8f0_1.5px,transparent_1.5px)] bg-[size:24px_24px]"
+        className="min-h-screen text-foreground pb-20 pt-8 font-sans relative overflow-hidden bg-[radial-gradient(hsl(var(--border))_1.5px,transparent_1.5px)] bg-[size:24px_24px]"
       >
         <div className="absolute top-12 left-1/4 h-[400px] w-[400px] rounded-full bg-indigo-500/5 blur-[90px] pointer-events-none" />
         <div className="absolute bottom-20 right-1/4 h-[500px] w-[500px] rounded-full bg-purple-500/5 blur-[120px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
-          <nav className="flex items-center space-x-2 text-sm text-slate-400 mb-6" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-slate-950 transition font-medium">
+          <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-foreground transition font-medium">
               Home
             </Link>
             <span aria-hidden="true">/</span>
@@ -177,18 +177,18 @@ export default function ChemistryPage() {
           </nav>
 
           <div className="space-y-4 mb-12 text-left">
-            <div className="inline-flex items-center gap-2 py-1.5 px-3 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-[10px] font-black uppercase tracking-wider shadow-sm">
+            <div className="inline-flex items-center gap-2 py-1.5 px-3 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-wider shadow-sm">
               <FlaskConical className="h-3.5 w-3.5 text-indigo-600 animate-pulse" aria-hidden="true" />
               Virtual Laboratory Gateway
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-none">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-foreground tracking-tight leading-none">
               Chemistry <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent drop-shadow-sm">
                 Interactive Labs
               </span>
             </h1>
 
-            <p className="text-slate-500 text-base md:text-lg font-medium max-w-3xl leading-relaxed">
+            <p className="text-muted-foreground text-base md:text-lg font-medium max-w-3xl leading-relaxed">
               Welcome to the OpenLabs Chemistry Portal. Interact with dynamic periodic trends, configure atomic Bohr orbitals in full 3D, simulate exothermic chemical reactions, and analyze water titration curves in our GPU-accelerated science sandbox.
             </p>
           </div>
@@ -198,40 +198,40 @@ export default function ChemistryPage() {
               const Icon = card.icon;
               const colorClasses =
                 card.color === "indigo"
-                  ? "bg-indigo-50 text-indigo-600 border-indigo-100 group-hover:border-indigo-400 group-hover:shadow-indigo-100/50"
+                  ? "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 border-indigo-100 dark:border-indigo-900 group-hover:border-indigo-400 group-hover:shadow-indigo-100/50"
                   : card.color === "teal"
-                  ? "bg-teal-50 text-teal-600 border-teal-100 group-hover:border-teal-400 group-hover:shadow-teal-100/50"
+                  ? "bg-teal-50 dark:bg-teal-950/40 text-teal-600 border-teal-100 dark:border-teal-900 group-hover:border-teal-400 group-hover:shadow-teal-100/50"
                   : card.color === "purple"
-                  ? "bg-purple-50 text-purple-600 border-purple-100 group-hover:border-purple-400 group-hover:shadow-purple-100/50"
-                  : "bg-sky-50 text-sky-600 border-sky-100 group-hover:border-sky-400 group-hover:shadow-sky-100/50";
+                  ? "bg-purple-50 dark:bg-purple-950/40 text-purple-600 border-purple-100 dark:border-purple-900 group-hover:border-purple-400 group-hover:shadow-purple-100/50"
+                  : "bg-sky-50 dark:bg-sky-950/40 text-sky-600 border-sky-100 dark:border-sky-900 group-hover:border-sky-400 group-hover:shadow-sky-100/50";
 
               return (
                 <div key={card.href} className="group">
                   <Link
                     href={card.href}
-                    className="h-full bg-white rounded-3xl border border-slate-200 p-6 shadow-md hover:shadow-xl transition-all duration-300 relative overflow-hidden flex flex-col justify-between"
+                    className="h-full bg-card rounded-3xl border border-border p-6 shadow-md hover:shadow-xl transition-all duration-300 relative overflow-hidden flex flex-col justify-between"
                     aria-label={`Go to ${card.title}`}
                   >
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-slate-100 group-hover:bg-indigo-500/20 transition-all" />
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-muted group-hover:bg-indigo-500/20 transition-all" />
                     <div>
                       <div className="flex justify-between items-start mb-6">
                         <div className={`h-11 w-11 rounded-2xl border flex items-center justify-center transition shadow-sm ${colorClasses}`}>
                           <Icon className="h-5 w-5" aria-hidden="true" />
                         </div>
-                        <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-100 shadow-inner">
+                        <span className="text-[9px] font-black uppercase tracking-wider text-muted-foreground bg-muted px-2.5 py-1 rounded-lg border border-border shadow-inner">
                           {card.badge}
                         </span>
                       </div>
 
-                      <h2 className="text-xl font-extrabold text-slate-900 group-hover:text-indigo-600 transition-colors mb-2.5 tracking-tight leading-snug">
+                      <h2 className="text-xl font-extrabold text-foreground group-hover:text-indigo-600 transition-colors mb-2.5 tracking-tight leading-snug">
                         {card.title}
                       </h2>
-                      <p className="text-slate-500 text-xs leading-relaxed font-medium">
+                      <p className="text-muted-foreground text-xs leading-relaxed font-medium">
                         {card.desc}
                       </p>
                     </div>
 
-                    <div className="mt-6 pt-4 border-t border-slate-50 text-[10px] font-extrabold text-indigo-600 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                    <div className="mt-6 pt-4 border-t border-border text-[10px] font-extrabold text-indigo-600 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                       Enter Laboratory <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                     </div>
                   </Link>
@@ -242,9 +242,9 @@ export default function ChemistryPage() {
 
           <section
             aria-labelledby="chemistry-standards-heading"
-            className="bg-white border border-slate-200/80 rounded-3xl p-8 lg:p-10 shadow-md relative overflow-hidden"
+            className="bg-card border border-border/80 rounded-3xl p-8 lg:p-10 shadow-md relative overflow-hidden"
           >
-            <div className="absolute top-0 right-0 h-32 w-32 bg-slate-50 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 right-0 h-32 w-32 bg-muted rounded-full blur-3xl pointer-events-none" />
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               <div className="lg:col-span-8 space-y-4">
@@ -252,21 +252,21 @@ export default function ChemistryPage() {
                   <BookOpen className="h-4 w-4 animate-pulse" aria-hidden="true" />
                   Educational Curriculum Alignment
                 </div>
-                <h2 id="chemistry-standards-heading" className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                <h2 id="chemistry-standards-heading" className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
                   Academic Framework Integration & Standards
                 </h2>
-                <p className="text-slate-500 text-sm md:text-base leading-relaxed font-medium">
+                <p className="text-muted-foreground text-sm md:text-base leading-relaxed font-medium">
                   Our virtual chemistry laboratory modules are meticulously aligned with standard global high school and collegiate academic frameworks. This includes <strong>NCERT Chemistry Class 11 and 12</strong> (Unit 3: Elements Classification, Unit 4: Bonding), <strong>AP Chemistry</strong> (Units 1 & 2: Atomic and Molecular Structures), <strong>IB Chemistry Higher Level (HL/SL)</strong>, and <strong>Cambridge GCSE / A-Levels</strong> core units.
                 </p>
-                <p className="text-slate-500 text-sm md:text-base leading-relaxed font-medium">
+                <p className="text-muted-foreground text-sm md:text-base leading-relaxed font-medium">
                   OpenLabs provides high-fidelity dynamic sandbox visualizations enabling interactive homework accelerators. Telemetry feeds map to standard titration curves, Aufbau ground states, molecular orbitals, and aqueous dissolved particle assays.
                 </p>
               </div>
 
-              <div className="lg:col-span-4 bg-slate-50 border border-slate-200 p-6 rounded-2xl flex flex-col justify-center text-center shadow-inner">
+              <div className="lg:col-span-4 bg-muted border border-border p-6 rounded-2xl flex flex-col justify-center text-center shadow-inner">
                 <Compass className="h-10 w-10 text-indigo-600 mx-auto mb-3 animate-spin [animation-duration:12s]" aria-hidden="true" />
-                <h3 className="font-extrabold text-slate-900 text-sm mb-1">Interactive Telemetry</h3>
-                <p className="text-[11px] text-slate-400 leading-normal font-medium">
+                <h3 className="font-extrabold text-foreground text-sm mb-1">Interactive Telemetry</h3>
+                <p className="text-[11px] text-muted-foreground leading-normal font-medium">
                   OpenLabs bridges standard academic theory with interactive WebGL models to optimize student conceptual retention and research comprehension.
                 </p>
               </div>

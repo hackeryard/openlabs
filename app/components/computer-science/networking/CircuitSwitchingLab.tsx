@@ -196,16 +196,16 @@ export default function CircuitSwitchingLab({ onComplete }: { onComplete?: () =>
     }, [isReserved, isTransmitting, reservedPath]);
 
     return (
-        <div className="max-w-6xl mx-auto p-4 md:p-8 bg-slate-50 min-h-screen font-sans">
+        <div className="max-w-6xl mx-auto p-4 md:p-8 min-h-screen font-sans">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
                         <div className="p-2.5 bg-indigo-600 rounded-2xl text-white shadow-lg shadow-indigo-200">
                             <Activity size={24} />
                         </div>
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight uppercase">Circuit Switching Lab</h1>
+                        <h1 className="text-3xl font-black text-foreground tracking-tight uppercase">Circuit Switching Lab</h1>
                     </div>
-                    <p className="text-slate-500 font-medium">Establish a dedicated physical path before transmitting continuous data.</p>
+                    <p className="text-muted-foreground font-medium">Establish a dedicated physical path before transmitting continuous data.</p>
                 </div>
 
                 <div className="flex gap-4 w-full md:w-auto">
@@ -216,8 +216,8 @@ export default function CircuitSwitchingLab({ onComplete }: { onComplete?: () =>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 <div className="lg:col-span-3 space-y-6">
-                    <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-                        <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-5 flex items-center gap-2">
+                    <div className="bg-card p-6 rounded-3xl border border-border shadow-sm">
+                        <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-5 flex items-center gap-2">
                             <Zap size={14} className="text-amber-500" /> Connection Phase
                         </h3>
 
@@ -235,7 +235,7 @@ export default function CircuitSwitchingLab({ onComplete }: { onComplete?: () =>
                             </button>
                         )}
 
-                        <button onClick={resetLab} className="w-full mt-3 py-3 bg-slate-50 hover:bg-slate-100 text-slate-500 rounded-2xl font-bold text-sm transition-all border border-slate-200">
+                        <button onClick={resetLab} className="w-full mt-3 py-3 bg-muted hover:bg-accent text-muted-foreground rounded-2xl font-bold text-sm transition-all border border-border">
                             <RotateCcw size={16} className="inline mr-2" /> Reset Lab
                         </button>
                     </div>
@@ -251,11 +251,11 @@ export default function CircuitSwitchingLab({ onComplete }: { onComplete?: () =>
                 </div>
 
                 <div className="lg:col-span-9">
-                    <div className="relative bg-white border-2 border-slate-100 rounded-[3rem] shadow-2xl shadow-slate-200 overflow-hidden">
+                    <div className="relative bg-card border-2 border-border rounded-[3rem] shadow-2xl shadow-slate-200 overflow-hidden">
                         <div className="absolute top-8 left-8 z-20">
-                            <div className="px-4 py-2 bg-white/90 backdrop-blur-xl border border-slate-100 rounded-2xl shadow-sm flex items-center gap-3">
-                                {isReserved ? <Lock size={14} className="text-indigo-600" /> : <Unlock size={14} className="text-slate-300" />}
-                                <span className="text-[11px] font-black text-slate-700 uppercase tracking-tighter">
+                            <div className="px-4 py-2 bg-card/90 backdrop-blur-xl border border-border rounded-2xl shadow-sm flex items-center gap-3">
+                                {isReserved ? <Lock size={14} className="text-indigo-600" /> : <Unlock size={14} className="text-muted-foreground" />}
+                                <span className="text-[11px] font-black text-foreground uppercase tracking-tighter">
                                     {isTransmitting ? 'Circuit Active: Data Flowing' : isReserved ? 'Circuit Established: Reserved' : 'Idle: Requesting Connection'}
                                 </span>
                             </div>
@@ -263,7 +263,7 @@ export default function CircuitSwitchingLab({ onComplete }: { onComplete?: () =>
 
 
 
-                        <canvas ref={canvasRef} width={800} height={400} className="w-full h-auto block bg-[#fcfdfe]" />
+                        <canvas ref={canvasRef} width={800} height={400} className="w-full h-auto block bg-card" />
                     </div>
 
                     <div className="mt-6 flex justify-center gap-8">
@@ -281,8 +281,8 @@ export default function CircuitSwitchingLab({ onComplete }: { onComplete?: () =>
 
 function MetricCard({ label, value, color }: any) {
     return (
-        <div className="bg-white px-5 py-3 rounded-2xl border border-slate-200 shadow-sm flex-1 md:min-w-[140px]">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{label}</p>
+        <div className="bg-card px-5 py-3 rounded-2xl border border-border shadow-sm flex-1 md:min-w-[140px]">
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{label}</p>
             <p className={`text-2xl font-black ${color} font-mono tracking-tighter`}>{value}</p>
         </div>
     );
@@ -301,7 +301,7 @@ function Legend({ dot, text }: { dot: string, text: string }) {
     return (
         <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: dot }} />
-            <span className="text-[10px] font-black text-slate-500 uppercase tracking-tight">{text}</span>
+            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-tight">{text}</span>
         </div>
     );
 }

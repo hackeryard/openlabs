@@ -644,9 +644,9 @@ const barOptions: ChartOptions<'bar'> = {
         <div className="header-text-block">
           <div className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse" />
-            <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">Control Deck</span>
+            <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Control Deck</span>
           </div>
-          <p className="text-[11px] text-slate-500 font-semibold mt-0.5">Configure active parameter overrides and calibrate sensor arrays</p>
+          <p className="text-[11px] text-muted-foreground font-semibold mt-0.5">Configure active parameter overrides and calibrate sensor arrays</p>
         </div>
         <div className="header-controls">
           <button 
@@ -857,16 +857,16 @@ const barOptions: ChartOptions<'bar'> = {
               </h2>
               <p className="step-description">Active spectroscopic telemetry diagnostics and automatic system status</p>
               <div className="space-y-3 text-xs font-semibold">
-                <div className="flex justify-between items-center bg-slate-50 border border-slate-200 p-2.5 rounded-xl">
-                  <span className="text-slate-400 uppercase text-[9.5px] tracking-wider font-black">Optics Calibrator</span>
-                  <span className="text-slate-900 font-mono">540nm Green Laser</span>
+                <div className="flex justify-between items-center bg-muted border border-border p-2.5 rounded-xl">
+                  <span className="text-muted-foreground uppercase text-[9.5px] tracking-wider font-black">Optics Calibrator</span>
+                  <span className="text-foreground font-mono">540nm Green Laser</span>
                 </div>
-                <div className="flex justify-between items-center bg-slate-50 border border-slate-200 p-2.5 rounded-xl">
-                  <span className="text-slate-400 uppercase text-[9.5px] tracking-wider font-black">Absorption Coeff</span>
-                  <span className="text-slate-900 font-mono">0.125 OD/cm</span>
+                <div className="flex justify-between items-center bg-muted border border-border p-2.5 rounded-xl">
+                  <span className="text-muted-foreground uppercase text-[9.5px] tracking-wider font-black">Absorption Coeff</span>
+                  <span className="text-foreground font-mono">0.125 OD/cm</span>
                 </div>
-                <div className="flex justify-between items-center bg-slate-50 border border-slate-200 p-2.5 rounded-xl">
-                  <span className="text-slate-500 uppercase text-[9.5px] tracking-wider font-black">System Signal</span>
+                <div className="flex justify-between items-center bg-muted border border-border p-2.5 rounded-xl">
+                  <span className="text-muted-foreground uppercase text-[9.5px] tracking-wider font-black">System Signal</span>
                   <span className="text-teal-700 font-bold bg-teal-50 px-2 py-0.5 rounded border border-teal-200/50 animate-pulse">OPTIMIZED</span>
                 </div>
               </div>
@@ -876,7 +876,7 @@ const barOptions: ChartOptions<'bar'> = {
           {/* Experiment Controls */}
           <div className="card controls-card">
             <h2 className="flex items-center gap-1.5">
-              <Settings className="w-4 h-4 text-slate-500" />
+              <Settings className="w-4 h-4 text-muted-foreground" />
               Experiment Controls
             </h2>
             <div className="button-grid">
@@ -917,7 +917,7 @@ const barOptions: ChartOptions<'bar'> = {
                    note.startsWith('⚠️') ? <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" /> :
                    note.startsWith('🔬') ? <Activity className="w-3.5 h-3.5 text-indigo-500 shrink-0 mt-0.5" /> :
                    note.startsWith('📊') ? <ClipboardList className="w-3.5 h-3.5 text-blue-500 shrink-0 mt-0.5" /> :
-                   <Info className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />}
+                   <Info className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />}
                   <span>{note.replace(/^[^\w\s]+/, '').trim()}</span>
                 </div>
               ))}
@@ -1101,7 +1101,7 @@ const barOptions: ChartOptions<'bar'> = {
 
           {/* Test Results History */}
           <div className="card history-card">
-            <h2><ClipboardList className="inline w-4 h-4 mr-1.5 text-slate-500" /> Recent Test Results</h2>
+            <h2><ClipboardList className="inline w-4 h-4 mr-1.5 text-muted-foreground" /> Recent Test Results</h2>
             <div className="history-list">
               {testResults.map((result) => (
                 <div key={result.id} className="history-item">

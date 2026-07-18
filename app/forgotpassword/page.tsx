@@ -60,21 +60,21 @@ export default function ForgotPasswordPage() {
   /* ================= UI ================= */
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4 font-sans text-slate-900">
-      <div className="w-full max-w-[400px] bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 font-sans text-foreground">
+      <div className="w-full max-w-[400px] bg-card rounded-xl shadow-xl border border-border overflow-hidden">
         
         {/* Header Content */}
         {!success && (
           <div className="p-8 pb-6 text-center">
             <div className="mb-4 flex justify-center">
-              <div className="h-12 w-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+              <div className="h-12 w-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
                 <KeyRound size={24} />
               </div>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
               Forgot password?
             </h1>
-            <p className="mt-2 text-sm text-slate-500">
+            <p className="mt-2 text-sm text-muted-foreground">
               No worries, we'll send you reset instructions.
             </p>
           </div>
@@ -83,13 +83,13 @@ export default function ForgotPasswordPage() {
         {/* Success View (Replaces Form) */}
         {success ? (
           <div className="p-8 text-center animate-in fade-in zoom-in-95 duration-300">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-green-600">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-950/30 text-green-600">
               <CheckCircle2 size={32} />
             </div>
-            <h2 className="mb-2 text-xl font-bold text-slate-900">Check your email</h2>
-            <p className="mb-6 text-sm text-slate-500">
+            <h2 className="mb-2 text-xl font-bold text-foreground">Check your email</h2>
+            <p className="mb-6 text-sm text-muted-foreground">
               We have sent a password reset link to <br />
-              <span className="font-semibold text-slate-900">{email}</span>
+              <span className="font-semibold text-foreground">{email}</span>
             </p>
             
             <div className="space-y-3">
@@ -105,7 +105,7 @@ export default function ForgotPasswordPage() {
                         setSuccess(false);
                         setEmail("");
                     }}
-                    className="text-sm text-slate-400 hover:text-slate-600"
+                    className="text-sm text-muted-foreground hover:text-foreground"
                 >
                     Click to try another email
                 </button>
@@ -117,7 +117,7 @@ export default function ForgotPasswordPage() {
             
             {/* Error Alert */}
             {error && (
-              <div className="flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-600 border border-red-100 animate-in fade-in slide-in-from-top-1">
+              <div className="flex items-center gap-2 rounded-lg bg-red-50 dark:bg-red-950/20 p-3 text-sm text-red-600 dark:text-red-300 border border-red-100 dark:border-red-900 animate-in fade-in slide-in-from-top-1">
                 <AlertCircle size={16} />
                 <span>{error}</span>
               </div>
@@ -125,11 +125,11 @@ export default function ForgotPasswordPage() {
 
             {/* Email Input */}
             <div className="space-y-1.5">
-              <label className="block text-sm font-semibold text-slate-700">
+              <label className="block text-sm font-semibold text-foreground">
                 Email
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
                   <Mail size={18} />
                 </div>
                 <input
@@ -141,8 +141,8 @@ export default function ForgotPasswordPage() {
                   }}
                   className={`block w-full rounded-lg border pl-10 pr-3 py-2.5 text-sm transition-all duration-200 outline-none
                     ${error
-                      ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-50"
-                      : "border-slate-200 hover:border-slate-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50"
+                      ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/20"
+                      : "border-border hover:border-primary/40 focus:border-indigo-500 focus:ring-4 focus:ring-primary/20"
                     }
                   `}
                   placeholder="name@company.com"
@@ -173,7 +173,7 @@ export default function ForgotPasswordPage() {
             <div className="text-center">
               <Link
                 href="/login"
-                className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"
+                className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
                 <ArrowLeft size={16} />
                 Back to log in
