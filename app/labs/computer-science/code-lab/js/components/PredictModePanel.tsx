@@ -63,17 +63,17 @@ export default function PredictModePanel({ expectedOutput, onCorrect, onSubmit, 
     : -1;
 
   return (
-    <div className="rounded-2xl border border-indigo-500/30 bg-indigo-500/5 backdrop-blur-sm overflow-hidden">
+    <div className="rounded-2xl border border-indigo-300 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/5 backdrop-blur-sm overflow-hidden">
       {/* Header */}
-      <div className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-b border-indigo-500/20">
-        <Brain className="w-5 h-5 text-indigo-400" />
-        <h3 className="text-sm font-bold text-indigo-300">🧠 Predict the Output</h3>
+      <div className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-indigo-100 dark:from-indigo-500/10 to-purple-100 dark:to-purple-500/10 border-b border-indigo-200 dark:border-indigo-500/20">
+        <Brain className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+        <h3 className="text-sm font-bold text-indigo-700 dark:text-indigo-300">🧠 Predict the Output</h3>
       </div>
 
       <div className="p-4 space-y-4">
         {!submitted ? (
           <>
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-xs text-foreground/80 leading-relaxed">
               Look at the code above and predict the console output order.
               Type each output value separated by commas or new lines.
             </p>
@@ -85,9 +85,9 @@ export default function PredictModePanel({ expectedOutput, onCorrect, onSubmit, 
                 placeholder="e.g., A, F, C, D, B, E"
                 aria-label="Predicted console output"
                 rows={3}
-                className="w-full bg-slate-900/60 border border-slate-700/50 rounded-xl px-4 py-3
-                           text-sm font-mono text-slate-200 resize-none
-                           placeholder:text-slate-600
+                className="w-full bg-card border border-border rounded-xl px-4 py-3
+                           text-sm font-mono text-foreground resize-none
+                           placeholder:text-muted-foreground
                            focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500/40
                            transition-all"
               />
@@ -119,24 +119,24 @@ export default function PredictModePanel({ expectedOutput, onCorrect, onSubmit, 
               <div className={`
                 flex items-center gap-3 px-4 py-3 rounded-xl border
                 ${isCorrect
-                  ? 'bg-emerald-500/10 border-emerald-500/30'
-                  : 'bg-rose-500/10 border-rose-500/30'
+                  ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-300 dark:border-emerald-500/30'
+                  : 'bg-rose-50 dark:bg-rose-500/10 border-rose-300 dark:border-rose-500/30'
                 }
               `}>
                 {isCorrect ? (
                   <>
-                    <CheckCircle2 className="w-6 h-6 text-emerald-400 shrink-0" />
+                    <CheckCircle2 className="w-6 h-6 text-emerald-600 dark:text-emerald-400 shrink-0" />
                     <div>
-                      <p className="text-sm font-bold text-emerald-300">Correct! 🎉</p>
-                      <p className="text-xs text-emerald-400/80 mt-0.5">You understand the event loop order.</p>
+                      <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">Correct! 🎉</p>
+                      <p className="text-xs text-emerald-700/80 dark:text-emerald-400/80 mt-0.5">You understand the event loop order.</p>
                     </div>
                   </>
                 ) : (
                   <>
-                    <XCircle className="w-6 h-6 text-rose-400 shrink-0" />
+                    <XCircle className="w-6 h-6 text-rose-600 dark:text-rose-400 shrink-0" />
                     <div>
-                      <p className="text-sm font-bold text-rose-300">Not quite!</p>
-                      <p className="text-xs text-rose-400/80 mt-0.5">Compare your answer with the correct output below.</p>
+                      <p className="text-sm font-bold text-rose-700 dark:text-rose-300">Not quite!</p>
+                      <p className="text-xs text-rose-700/80 dark:text-rose-400/80 mt-0.5">Compare your answer with the correct output below.</p>
                     </div>
                   </>
                 )}
@@ -144,8 +144,8 @@ export default function PredictModePanel({ expectedOutput, onCorrect, onSubmit, 
 
               {/* Comparison table */}
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="text-center text-slate-500 font-semibold uppercase tracking-wider pb-1">Your Answer</div>
-                <div className="text-center text-slate-500 font-semibold uppercase tracking-wider pb-1">Correct Output</div>
+                <div className="text-center text-muted-foreground font-semibold uppercase tracking-wider pb-1">Your Answer</div>
+                <div className="text-center text-muted-foreground font-semibold uppercase tracking-wider pb-1">Correct Output</div>
 
                 {Array.from({ length: Math.max(userLines.length, expectedOutput.length) }).map((_, i) => {
                   const userVal = userLines[i];
@@ -157,16 +157,16 @@ export default function PredictModePanel({ expectedOutput, onCorrect, onSubmit, 
                     <div key={i} className="contents">
                       <div className={`
                         px-3 py-1.5 rounded-lg font-mono text-center border
-                        ${match ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-                          : isDivergence ? 'bg-rose-500/15 border-rose-500/40 text-rose-300 ring-1 ring-rose-400/30'
-                            : 'bg-rose-500/10 border-rose-500/30 text-rose-300/70'}
+                        ${match ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-300 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300'
+                          : isDivergence ? 'bg-rose-100 dark:bg-rose-500/15 border-rose-400 dark:border-rose-500/40 text-rose-700 dark:text-rose-300 ring-1 ring-rose-400/30'
+                            : 'bg-rose-50 dark:bg-rose-500/10 border-rose-300 dark:border-rose-500/30 text-rose-700/70 dark:text-rose-300/70'}
                       `}>
                         {userVal ?? '—'}
                       </div>
                       <div className={`
                         px-3 py-1.5 rounded-lg font-mono text-center border
-                        ${match ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-                          : 'bg-slate-800/50 border-slate-700/50 text-slate-300'}
+                        ${match ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-300 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300'
+                          : 'bg-muted border-border text-foreground'}
                       `}>
                         {expected ?? '—'}
                       </div>
@@ -177,9 +177,9 @@ export default function PredictModePanel({ expectedOutput, onCorrect, onSubmit, 
 
               {/* Explanation */}
               {!isCorrect && firstDivergence >= 0 && (
-                <div className="flex gap-2 px-3 py-2.5 rounded-xl bg-amber-500/5 border border-amber-500/20">
-                  <Lightbulb className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                  <p className="text-xs text-amber-200/90 leading-relaxed">{explanation}</p>
+                <div className="flex gap-2 px-3 py-2.5 rounded-xl bg-amber-50 dark:bg-amber-500/5 border border-amber-200 dark:border-amber-500/20">
+                  <Lightbulb className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                  <p className="text-xs text-amber-800/90 dark:text-amber-200/90 leading-relaxed">{explanation}</p>
                 </div>
               )}
 
@@ -187,9 +187,9 @@ export default function PredictModePanel({ expectedOutput, onCorrect, onSubmit, 
               <div className="flex gap-2">
                 <button
                   onClick={handleReset}
-                  className="flex-1 px-4 py-2 rounded-xl border border-slate-700/50 bg-slate-800/50
-                             text-slate-400 text-xs font-medium
-                             hover:bg-slate-700/50 hover:text-slate-200 transition-all"
+                  className="flex-1 px-4 py-2 rounded-xl border border-border bg-muted
+                             text-muted-foreground text-xs font-medium
+                             hover:bg-accent hover:text-foreground transition-all"
                 >
                   Try Again
                 </button>

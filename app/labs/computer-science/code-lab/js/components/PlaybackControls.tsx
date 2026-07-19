@@ -50,16 +50,16 @@ export default function PlaybackControls({
           value={currentStep}
           onChange={e => onSeek(parseInt(e.target.value))}
           disabled={disabled}
-          className="w-full h-1.5 rounded-full appearance-none cursor-pointer bg-slate-700/50
+          className="w-full h-1.5 rounded-full appearance-none cursor-pointer bg-muted
                      disabled:opacity-30 disabled:cursor-not-allowed
                      [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5
-                     [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-indigo-400
+                     [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary
                      [&::-webkit-slider-thumb]:shadow-[0_0_8px_rgba(99,102,241,0.4)]
-                     [&::-webkit-slider-thumb]:hover:bg-indigo-300 [&::-webkit-slider-thumb]:transition-colors
+                     [&::-webkit-slider-thumb]:hover:opacity-90 [&::-webkit-slider-thumb]:transition-colors
                      [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-3.5 [&::-moz-range-thumb]:h-3.5
-                     [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-indigo-400 [&::-moz-range-thumb]:border-0"
+                     [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-primary [&::-moz-range-thumb]:border-0"
           style={{
-            background: `linear-gradient(to right, rgb(99 102 241 / 0.5) ${progress}%, rgb(51 65 85 / 0.5) ${progress}%)`,
+            background: `linear-gradient(to right, hsl(var(--primary) / 0.5) ${progress}%, hsl(var(--muted-foreground) / 0.3) ${progress}%)`,
           }}
           aria-label="Simulation timeline"
         />
@@ -94,8 +94,8 @@ export default function PlaybackControls({
             className={`
               flex items-center justify-center w-10 h-10 rounded-xl transition-all
               ${isPlaying
-                ? 'bg-rose-500/20 border border-rose-500/40 text-rose-400 hover:bg-rose-500/30'
-                : 'bg-indigo-500/20 border border-indigo-500/40 text-indigo-400 hover:bg-indigo-500/30'
+                ? 'bg-rose-100 dark:bg-rose-500/20 border border-rose-300 dark:border-rose-500/40 text-rose-600 dark:text-rose-400 hover:bg-rose-200 dark:hover:bg-rose-500/30'
+                : 'bg-primary/15 border border-primary/40 text-primary hover:bg-primary/25'
               }
               disabled:opacity-30 disabled:cursor-not-allowed
               shadow-lg hover:shadow-xl active:scale-95
@@ -120,14 +120,14 @@ export default function PlaybackControls({
         </div>
 
         {/* Step counter */}
-        <div className="text-xs font-mono text-slate-400 bg-slate-800/50 px-3 py-1.5 rounded-lg border border-slate-700/50">
-          Step <span className="text-indigo-400 font-semibold">{currentStep + 1}</span>
-          <span className="text-slate-600"> / </span>
-          <span className="text-slate-300">{totalSteps}</span>
+        <div className="text-xs font-mono text-muted-foreground bg-muted px-3 py-1.5 rounded-lg border border-border">
+          Step <span className="text-primary font-semibold">{currentStep + 1}</span>
+          <span className="text-muted-foreground/70"> / </span>
+          <span className="text-foreground">{totalSteps}</span>
         </div>
 
         {/* Speed selector */}
-        <div className="flex items-center gap-1 bg-slate-800/50 rounded-lg border border-slate-700/50 p-0.5">
+        <div className="flex items-center gap-1 bg-muted rounded-lg border border-border p-0.5">
           {speeds.map(s => (
             <button
               key={s}
@@ -135,8 +135,8 @@ export default function PlaybackControls({
               className={`
                 px-2 py-1 rounded-md text-[11px] font-bold transition-all
                 ${speed === s
-                  ? 'bg-indigo-500/30 text-indigo-300 border border-indigo-500/40'
-                  : 'text-slate-500 hover:text-slate-300 border border-transparent'
+                  ? 'bg-primary/20 text-primary border border-primary/40'
+                  : 'text-muted-foreground hover:text-foreground border border-transparent'
                 }
               `}
               aria-label={`Set speed to ${s}x`}
@@ -171,8 +171,8 @@ function ControlButton({
       disabled={disabled}
       className={`
         flex items-center justify-center rounded-lg transition-all
-        bg-slate-800/50 border border-slate-700/50 text-slate-400
-        hover:bg-slate-700/50 hover:text-slate-200
+        bg-muted border border-border text-muted-foreground
+        hover:bg-accent hover:text-foreground
         disabled:opacity-30 disabled:cursor-not-allowed
         active:scale-95
         ${size === 'sm' ? 'w-8 h-8' : 'w-9 h-9'}

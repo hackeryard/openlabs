@@ -43,3 +43,13 @@ html, body, #__next, main { height: 100%; }
     scrollbar-width: none;
   }
 }
+
+/* JS event-loop lab: Monaco active-line highlight during preset playback.
+   Monaco decorations are plain CSS classes, not Tailwind-composable, so
+   these live here rather than inline. */
+.code-lab-active-line {
+  background-color: rgba(99, 102, 241, 0.15) !important;
+}
+.code-lab-active-line-gutter {
+  border-left: 2px solid rgb(129, 140, 248) !important;
+}

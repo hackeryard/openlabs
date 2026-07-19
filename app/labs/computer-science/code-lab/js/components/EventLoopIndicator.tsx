@@ -20,41 +20,41 @@ const phaseConfig: Record<EventLoopPhase, {
   executing: {
     icon: RefreshCw,
     label: 'Executing',
-    color: 'text-blue-400',
-    bgColor: 'bg-blue-500/10',
-    borderColor: 'border-blue-500/30',
+    color: 'text-blue-600 dark:text-blue-400',
+    bgColor: 'bg-blue-50 dark:bg-blue-500/10',
+    borderColor: 'border-blue-300 dark:border-blue-500/30',
     glowColor: 'shadow-[0_0_15px_rgba(59,130,246,0.15)]',
   },
   'checking-stack': {
     icon: Search,
     label: 'Checking Stack',
-    color: 'text-indigo-400',
-    bgColor: 'bg-indigo-500/10',
-    borderColor: 'border-indigo-500/30',
+    color: 'text-indigo-600 dark:text-indigo-400',
+    bgColor: 'bg-indigo-50 dark:bg-indigo-500/10',
+    borderColor: 'border-indigo-300 dark:border-indigo-500/30',
     glowColor: 'shadow-[0_0_15px_rgba(99,102,241,0.15)]',
   },
   'draining-microtasks': {
     icon: Zap,
     label: 'Draining Microtasks',
-    color: 'text-emerald-400',
-    bgColor: 'bg-emerald-500/10',
-    borderColor: 'border-emerald-500/30',
+    color: 'text-emerald-600 dark:text-emerald-400',
+    bgColor: 'bg-emerald-50 dark:bg-emerald-500/10',
+    borderColor: 'border-emerald-300 dark:border-emerald-500/30',
     glowColor: 'shadow-[0_0_15px_rgba(16,185,129,0.2)]',
   },
   'picking-macrotask': {
     icon: ClipboardList,
     label: 'Picking Macrotask',
-    color: 'text-amber-400',
-    bgColor: 'bg-amber-500/10',
-    borderColor: 'border-amber-500/30',
+    color: 'text-amber-600 dark:text-amber-400',
+    bgColor: 'bg-amber-50 dark:bg-amber-500/10',
+    borderColor: 'border-amber-300 dark:border-amber-500/30',
     glowColor: 'shadow-[0_0_15px_rgba(245,158,11,0.15)]',
   },
   idle: {
     icon: CheckCircle2,
     label: 'Idle',
-    color: 'text-slate-400',
-    bgColor: 'bg-slate-500/10',
-    borderColor: 'border-slate-500/30',
+    color: 'text-muted-foreground',
+    bgColor: 'bg-muted',
+    borderColor: 'border-border',
     glowColor: '',
   },
 };
@@ -103,12 +103,12 @@ export default function EventLoopIndicator({ phase, description }: EventLoopIndi
             </span>
             {isActive && !shouldReduceMotion && (
               <span className="relative flex h-2 w-2">
-                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${config.color.replace('text-', 'bg-')}`} />
-                <span className={`relative inline-flex rounded-full h-2 w-2 ${config.color.replace('text-', 'bg-')}`} />
+                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${config.color.replace(/text-/g, 'bg-')}`} />
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${config.color.replace(/text-/g, 'bg-')}`} />
               </span>
             )}
           </div>
-          <p className="text-xs text-slate-300 mt-0.5 leading-relaxed" aria-live="polite">
+          <p className="text-xs text-foreground/80 mt-0.5 leading-relaxed" aria-live="polite">
             {description}
           </p>
         </div>

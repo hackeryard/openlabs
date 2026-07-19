@@ -2,21 +2,18 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { Info, X, BookOpen, Lock, FlaskConical } from 'lucide-react';
+import { Info, X, BookOpen, Lock, Code2, LayoutGrid, Terminal, Settings2, Keyboard } from 'lucide-react';
 
 import { EXAMPLES } from '../lib/examples';
 import type { SimulationSnapshot } from '../lib/types';
 import { generateSnapshots } from '../lib/simulator';
 import { executeUserCode } from '../lib/runtime/execute';
 
-import CallStack from './CallStack';
-import WebAPIsPanel from './WebAPIsPanel';
-import MicrotaskQueue from './MicrotaskQueue';
-import MacrotaskQueue from './MacrotaskQueue';
+import ExamplePicker from './ExamplePicker';
+import RuntimePanelGroup from './RuntimePanelGroup';
 import EventLoopIndicator from './EventLoopIndicator';
 import ConsoleOutput from './ConsoleOutput';
 import PlaybackControls from './PlaybackControls';
-import CodeEditorPane from './CodeEditorPane';
 import EditorPane from './EditorPane';
 import RunPanel from './RunPanel';
 import PredictModePanel from './PredictModePanel';
@@ -43,6 +40,15 @@ const EMPTY_SNAPSHOT: SimulationSnapshot = {
   activeCodeLine: 1,
 };
 
+type View = 'code' | 'runtime' | 'console' | 'settings';
+
+const TAB_ITEMS: { id: View; label: string; icon: typeof Code2 }[] = [
+  { id: 'code', label: 'Code', icon: Code2 },
+  { id: 'runtime', label: 'Runtime', icon: LayoutGrid },
+  { id: 'console', label: 'Console', icon: Terminal },
+  { id: 'settings', label: 'Settings', icon: Settings2 },
+];
+
 interface EventLoopVisualizerProps {
   onExperimentComplete: () => void;
   onExamplesCompletedChange?: (count: number) => void;
@@ -65,6 +71,16 @@ export default function EventLoopVisualizer({
   const [speed, setSpeed] = useState(1);
   const [showDisclaimer, setShowDisclaimer] = useState(true);
   const [hasCompletedExperiment, setHasCompletedExperiment] = useState(false);
+
+  // ── Responsive shell ───────────────────────────────────────
+  // `view` drives the single-panel tab bar below `lg`; `rightTab`
+  // drives the smaller sub-tab row shown only between `lg` and `xl`
+  // (Runtime/Console/Settings share the right column there). At `xl+`
+  // all three are shown stacked, no tabs — see the panel classNames
+  // below, which combine both states purely via Tailwind breakpoint
+  // prefixes rather than a JS media-query hook.
+  const [view, setView] = useState<View>('code');
+  const [rightTab, setRightTab] = useState<Exclude<View, 'code'>>('runtime');
 
   // ── Free-form mode (beta) ──────────────────────────────────
   const [mode, setMode] = useState<'preset' | 'freeform'>('preset');
@@ -208,8 +224,8 @@ export default function EventLoopVisualizer({
     setIsPlaying(false);
   }, []);
 
-  const handleToggleMode = useCallback(() => {
-    setMode(prev => (prev === 'preset' ? 'freeform' : 'preset'));
+  const handleModeChange = useCallback((next: 'preset' | 'freeform') => {
+    setMode(next);
     setCurrentStep(0);
     setIsPlaying(false);
   }, []);
@@ -297,7 +313,7 @@ export default function EventLoopVisualizer({
 
   // ── Render ───────────────────────────────────────────────
   return (
-    <div className="flex flex-col flex-1 min-h-0 bg-[#0a0a14] text-white">
+    <div className="flex flex-col flex-1 min-h-0 bg-background text-foreground">
       {/* ── Disclaimer Banner ─────────────────────────────── */}
       <AnimatePresence>
         {showDisclaimer && (
@@ -307,19 +323,19 @@ export default function EventLoopVisualizer({
             exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <div className="flex items-start gap-3 px-4 py-3 bg-indigo-500/8 border-b border-indigo-500/20">
-              <Info className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
+            <div className="flex items-start gap-3 px-4 py-3 bg-primary/5 border-b border-primary/20">
+              <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
               <div className="flex-1 min-w-0">
-                <p className="text-[11px] text-indigo-200/80 leading-relaxed">
-                  <span className="font-semibold text-indigo-300">About this simulation:</span>{' '}
+                <p className="text-[11px] text-foreground/80 leading-relaxed">
+                  <span className="font-semibold text-primary">About this simulation:</span>{' '}
                   This is a conceptual model of the JS event loop, not a literal engine trace.
-                  It uses preset examples — free-form code execution isn&apos;t supported yet.
-                  The goal is to build intuition about execution order, not to replicate V8 internals.
+                  Try a preset example or write your own code in the Code tab. See the Settings
+                  tab for the full picture and keyboard shortcuts.
                 </p>
               </div>
               <button
                 onClick={() => setShowDisclaimer(false)}
-                className="shrink-0 p-0.5 rounded hover:bg-indigo-500/20 text-indigo-400/60 hover:text-indigo-300 transition-colors"
+                className="shrink-0 p-0.5 rounded hover:bg-primary/10 text-primary/60 hover:text-primary transition-colors"
                 aria-label="Dismiss disclaimer"
               >
                 <X className="w-3.5 h-3.5" />
@@ -329,12 +345,11 @@ export default function EventLoopVisualizer({
         )}
       </AnimatePresence>
 
-      {/* ── Collapsed disclaimer toggle (when dismissed) ──── */}
       {!showDisclaimer && (
-        <div className="flex justify-end px-3 py-1 border-b border-slate-800/50">
+        <div className="flex justify-end px-3 py-1 border-b border-border">
           <button
             onClick={() => setShowDisclaimer(true)}
-            className="flex items-center gap-1 text-[10px] text-slate-500 hover:text-indigo-400 transition-colors"
+            className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-primary transition-colors"
             aria-label="Show simulation disclaimer"
           >
             <BookOpen className="w-3 h-3" />
@@ -343,117 +358,172 @@ export default function EventLoopVisualizer({
         </div>
       )}
 
+      {/* ── Mobile/tablet tab bar (below lg) ────────────────── */}
+      <div className="flex lg:hidden border-b border-border shrink-0">
+        {TAB_ITEMS.map(item => {
+          const Icon = item.icon;
+          const active = view === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => setView(item.id)}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-semibold border-b-2 transition-colors ${
+                active ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <Icon className="w-3.5 h-3.5" />
+              {item.label}
+            </button>
+          );
+        })}
+      </div>
+
       {/* ── Main content ──────────────────────────────────── */}
-      <div className="flex-1 min-h-0 flex flex-col">
-        <div className="flex-1 flex flex-col lg:flex-row gap-2 p-2 sm:p-3 min-h-0">
-          {/* ─ Left column: Code editor ────────────────────── */}
-          <div className="lg:w-[35%] shrink-0 rounded-xl border border-slate-700/50 bg-slate-900/40 backdrop-blur-sm overflow-hidden flex flex-col min-h-[250px] lg:min-h-0">
-            <div className="flex items-center justify-end gap-2 px-3 py-1.5 border-b border-slate-700/30 bg-slate-900/60">
-              <button
-                onClick={handleToggleMode}
-                className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-indigo-300 hover:text-indigo-200 transition-colors"
-              >
-                <FlaskConical className="w-3 h-3" />
-                {mode === 'preset' ? 'Try free-form (beta)' : 'Back to examples'}
-              </button>
-            </div>
-            {mode === 'freeform' ? (
-              <>
-                <RunPanel error={freeformError} note={freeformNote} />
-                <EditorPane
-                  sourceCode={freeformSource}
-                  onChange={setFreeformSource}
-                  onRun={handleRun}
-                  running={isRunning}
-                  onFocusChange={focused => { isEditorFocusedRef.current = focused; }}
-                />
-              </>
-            ) : (
-              <CodeEditorPane
-                sourceCode={selectedExample.sourceCode}
-                activeCodeLine={currentSnapshot.activeCodeLine}
-                examples={EXAMPLES}
-                selectedExampleId={selectedExampleId}
-                onExampleChange={handleExampleChange}
+      <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-2 p-2 sm:p-3">
+        {/* ─ Code pane: always visible at lg+, tab-gated below ─ */}
+        <div className={`${view === 'code' ? 'flex' : 'hidden'} lg:flex lg:w-[35%] shrink-0 rounded-xl border border-border bg-card overflow-hidden flex-col min-h-[250px] lg:min-h-0`}>
+          <ExamplePicker
+            examples={EXAMPLES}
+            selectedExampleId={selectedExampleId}
+            onExampleChange={handleExampleChange}
+            mode={mode}
+            onModeChange={handleModeChange}
+          />
+          {mode === 'freeform' ? (
+            <>
+              <RunPanel error={freeformError} note={freeformNote} />
+              <EditorPane
+                readOnly={false}
+                sourceCode={freeformSource}
+                onChange={setFreeformSource}
+                onRun={handleRun}
+                running={isRunning}
+                onFocusChange={focused => { isEditorFocusedRef.current = focused; }}
               />
-            )}
+            </>
+          ) : (
+            <EditorPane
+              readOnly
+              sourceCode={selectedExample.sourceCode}
+              activeCodeLine={currentSnapshot.activeCodeLine}
+              title={selectedExample.title}
+            />
+          )}
+        </div>
+
+        {/* ─ Right column: Runtime / Console / Settings ──────── */}
+        <div className="flex-1 min-w-0 flex flex-col gap-2 min-h-0">
+          {/* Sub-tab row: only shown between lg and xl, where the
+              right column shares space with the always-visible code
+              pane and can't fit all three panels stacked. */}
+          <div className="hidden lg:flex xl:hidden border-b border-border shrink-0">
+            {(['runtime', 'console', 'settings'] as const).map(id => {
+              const item = TAB_ITEMS.find(t => t.id === id)!;
+              const Icon = item.icon;
+              const active = rightTab === id;
+              return (
+                <button
+                  key={id}
+                  onClick={() => setRightTab(id)}
+                  className={`flex items-center gap-1.5 px-4 py-2 text-xs font-semibold border-b-2 transition-colors ${
+                    active ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  {item.label}
+                </button>
+              );
+            })}
           </div>
 
-          {/* ─ Right column: Visualization panels ──────────── */}
-          <div className="flex-1 min-w-0 flex flex-col gap-2 min-h-0 overflow-y-auto pr-2 custom-scrollbar">
-            {/* Top row: Call Stack + Web APIs */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 min-h-[140px] shrink-0">
-              <div className="rounded-xl border border-blue-500/20 bg-slate-900/40 backdrop-blur-sm overflow-hidden shadow-[0_0_20px_rgba(59,130,246,0.05)] flex flex-col">
-                <CallStack frames={currentSnapshot.callStack} />
-              </div>
-              <div className="rounded-xl border border-violet-500/20 bg-slate-900/40 backdrop-blur-sm overflow-hidden shadow-[0_0_20px_rgba(139,92,246,0.05)]">
-                <WebAPIsPanel items={currentSnapshot.webAPIs} />
-              </div>
+          <div className="flex-1 min-h-0 overflow-y-auto pr-1 custom-scrollbar flex flex-col gap-2">
+            {/* Runtime tab */}
+            <div className={`${view === 'runtime' ? 'flex' : 'hidden'} ${rightTab === 'runtime' ? 'lg:flex' : 'lg:hidden'} xl:flex flex-col gap-2`}>
+              <RuntimePanelGroup snapshot={currentSnapshot} />
+              <EventLoopIndicator
+                phase={currentSnapshot.eventLoopPhase}
+                description={currentSnapshot.description}
+              />
             </div>
 
-            {/* Event Loop Indicator */}
-            <EventLoopIndicator
-              phase={currentSnapshot.eventLoopPhase}
-              description={currentSnapshot.description}
-            />
-
-            {/* Queue row: Microtask + Macrotask */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 min-h-[100px] shrink-0">
-              <div className="rounded-xl border border-emerald-500/20 bg-slate-900/40 backdrop-blur-sm overflow-hidden shadow-[0_0_20px_rgba(16,185,129,0.05)] flex flex-col">
-                <MicrotaskQueue
-                  entries={currentSnapshot.microtaskQueue}
-                  isActive={currentSnapshot.eventLoopPhase === 'draining-microtasks'}
-                />
+            {/* Console tab */}
+            <div className={`${view === 'console' ? 'flex' : 'hidden'} ${rightTab === 'console' ? 'lg:flex' : 'lg:hidden'} xl:flex flex-col gap-2 min-h-[200px]`}>
+              <div className="rounded-xl border border-border bg-card overflow-hidden flex-1 min-h-[80px] flex flex-col">
+                {isLocked ? (
+                  <div className="flex-1 flex flex-col items-center justify-center gap-2 p-4 text-center">
+                    <Lock className="w-5 h-5 text-muted-foreground" />
+                    <p className="text-xs text-muted-foreground">Submit your prediction below to reveal the console output.</p>
+                  </div>
+                ) : (
+                  <ConsoleOutput entries={currentSnapshot.consoleOutput} />
+                )}
               </div>
-              <div className="rounded-xl border border-amber-500/20 bg-slate-900/40 backdrop-blur-sm overflow-hidden shadow-[0_0_20px_rgba(245,158,11,0.05)] flex flex-col">
-                <MacrotaskQueue
-                  entries={currentSnapshot.macrotaskQueue}
-                  isActive={currentSnapshot.eventLoopPhase === 'picking-macrotask'}
-                  isDimmed={currentSnapshot.microtaskQueue.length > 0 && currentSnapshot.eventLoopPhase === 'draining-microtasks'}
-                />
-              </div>
-            </div>
 
-            {/* Console Output */}
-            <div className="rounded-xl border border-slate-700/50 bg-slate-900/40 backdrop-blur-sm overflow-hidden flex-1 min-h-[80px] shrink-0 flex flex-col min-h-0">
-              {isLocked ? (
-                <div className="flex-1 flex flex-col items-center justify-center gap-2 p-4 text-center">
-                  <Lock className="w-5 h-5 text-slate-600" />
-                  <p className="text-xs text-slate-500">Submit your prediction below to reveal the console output.</p>
-                </div>
-              ) : (
-                <ConsoleOutput entries={currentSnapshot.consoleOutput} />
+              {mode === 'preset' && selectedExample.isPredictMode && (
+                <PredictModePanel
+                  key={selectedExampleId}
+                  expectedOutput={selectedExample.expectedOutput}
+                  onCorrect={handlePredictCorrect}
+                  onSubmit={handlePredictSubmit}
+                  explanation={selectedExample.explanation}
+                />
+              )}
+
+              {mode === 'preset' && !selectedExample.isPredictMode && currentStep === totalSteps - 1 && (
+                <motion.div
+                  initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex gap-2 px-4 py-3 rounded-xl bg-primary/5 border border-primary/20"
+                >
+                  <BookOpen className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                  <p className="text-xs text-foreground/80 leading-relaxed">{selectedExample.explanation}</p>
+                </motion.div>
               )}
             </div>
 
-            {/* Predict Mode Panel (only for predict examples, preset mode) */}
-            {mode === 'preset' && selectedExample.isPredictMode && (
-              <PredictModePanel
-                key={selectedExampleId}
-                expectedOutput={selectedExample.expectedOutput}
-                onCorrect={handlePredictCorrect}
-                onSubmit={handlePredictSubmit}
-                explanation={selectedExample.explanation}
-              />
-            )}
+            {/* Settings tab */}
+            <div className={`${view === 'settings' ? 'flex' : 'hidden'} ${rightTab === 'settings' ? 'lg:flex' : 'lg:hidden'} xl:flex flex-col gap-3`}>
+              <div className="rounded-xl border border-border bg-card p-4">
+                <h4 className="text-sm font-bold text-foreground mb-2">About this simulation</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  This is a conceptual model of the JavaScript event loop, not a literal engine
+                  trace. It's built to teach execution order — Call Stack, Web APIs, Microtask
+                  Queue, Macrotask Queue, and how the event loop hands off between them — not to
+                  replicate V8 internals exactly. Use a preset example to see a scripted trace, or
+                  switch to free-form mode to write and run your own JavaScript.
+                </p>
+              </div>
 
-            {/* Post-run explanation (non-predict examples, shown at end) */}
-            {mode === 'preset' && !selectedExample.isPredictMode && currentStep === totalSteps - 1 && (
-              <motion.div
-                initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex gap-2 px-4 py-3 rounded-xl bg-indigo-500/5 border border-indigo-500/20"
-              >
-                <BookOpen className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
-                <p className="text-xs text-indigo-200/80 leading-relaxed">{selectedExample.explanation}</p>
-              </motion.div>
-            )}
+              <div className="rounded-xl border border-border bg-card p-4">
+                <h4 className="flex items-center gap-2 text-sm font-bold text-foreground mb-2">
+                  <Keyboard className="w-4 h-4" />
+                  Keyboard shortcuts
+                </h4>
+                <ul className="text-xs text-muted-foreground space-y-1">
+                  <li><kbd className="px-1.5 py-0.5 rounded bg-muted border border-border font-mono text-[10px]">←</kbd> / <kbd className="px-1.5 py-0.5 rounded bg-muted border border-border font-mono text-[10px]">→</kbd> step backward / forward</li>
+                  <li><kbd className="px-1.5 py-0.5 rounded bg-muted border border-border font-mono text-[10px]">Space</kbd> play / pause</li>
+                  <li><kbd className="px-1.5 py-0.5 rounded bg-muted border border-border font-mono text-[10px]">R</kbd> reset to the start</li>
+                  <li><kbd className="px-1.5 py-0.5 rounded bg-muted border border-border font-mono text-[10px]">Ctrl/Cmd + Enter</kbd> run your code (free-form mode)</li>
+                </ul>
+              </div>
+
+              <div className="rounded-xl border border-border bg-card p-4">
+                <h4 className="text-sm font-bold text-foreground mb-3">Color legend</h4>
+                <div className="flex flex-wrap gap-x-4 gap-y-2">
+                  <LegendItem color="bg-blue-500" label="Call Stack" />
+                  <LegendItem color="bg-violet-500" label="Web APIs" />
+                  <LegendItem color="bg-emerald-500" label="Microtask Queue" />
+                  <LegendItem color="bg-amber-500" label="Macrotask Queue" />
+                  <LegendItem color="bg-primary" label="Event Loop" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* ── Bottom: Playback Controls ─────────────────────── */}
-      <div className="shrink-0 border-t border-slate-700/50 bg-slate-900/80 backdrop-blur-xl px-3 sm:px-4 py-3">
+      <div className="shrink-0 border-t border-border bg-card px-3 sm:px-4 py-3">
         <PlaybackControls
           currentStep={currentStep}
           totalSteps={totalSteps}
@@ -469,15 +539,6 @@ export default function EventLoopVisualizer({
           onSeek={handleSeek}
         />
       </div>
-
-      {/* ── Color legend ──────────────────────────────────── */}
-      <div className="shrink-0 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 px-4 py-2 border-t border-slate-800/50 bg-slate-950/50">
-        <LegendItem color="bg-blue-400" label="Call Stack" />
-        <LegendItem color="bg-violet-400" label="Web APIs" />
-        <LegendItem color="bg-emerald-400" label="Microtask Queue" />
-        <LegendItem color="bg-amber-400" label="Macrotask Queue" />
-        <LegendItem color="bg-indigo-400" label="Event Loop" />
-      </div>
     </div>
   );
 }
@@ -486,7 +547,7 @@ function LegendItem({ color, label }: { color: string; label: string }) {
   return (
     <div className="flex items-center gap-1.5">
       <span className={`w-2 h-2 rounded-full ${color}`} />
-      <span className="text-[10px] text-slate-500 font-medium">{label}</span>
+      <span className="text-[11px] text-muted-foreground font-medium">{label}</span>
     </div>
   );
 }
