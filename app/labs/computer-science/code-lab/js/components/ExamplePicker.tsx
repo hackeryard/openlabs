@@ -2,6 +2,7 @@
 
 import { ChevronDown, FlaskConical } from 'lucide-react';
 import type { Example, RuntimeMode } from '../lib/types';
+import { CATEGORY_ORDER, CATEGORY_LABELS } from '../lib/types';
 
 interface ExamplePickerProps {
   examples: Example[];
@@ -22,6 +23,9 @@ const difficultyBadge: Record<Example['difficulty'], string> = {
 
 export default function ExamplePicker({ examples, selectedExampleId, onExampleChange, mode, onModeChange, runtimeMode, onRuntimeModeChange }: ExamplePickerProps) {
   const selectedExample = examples.find(e => e.id === selectedExampleId);
+  const categorized = CATEGORY_ORDER
+    .map(category => ({ category, items: examples.filter(ex => ex.category === category) }))
+    .filter(group => group.items.length > 0);
 
   return (
     <div className="shrink-0">
@@ -43,13 +47,15 @@ export default function ExamplePicker({ examples, selectedExampleId, onExampleCh
                        transition-colors"
             aria-label="Select example"
           >
-            <optgroup label="Examples">
-              {examples.map(ex => (
-                <option key={ex.id} value={ex.id}>
-                  {ex.title}
-                </option>
-              ))}
-            </optgroup>
+            {categorized.map(group => (
+              <optgroup key={group.category} label={CATEGORY_LABELS[group.category]}>
+                {group.items.map(ex => (
+                  <option key={ex.id} value={ex.id}>
+                    {ex.title}
+                  </option>
+                ))}
+              </optgroup>
+            ))}
             <optgroup label="Beta">
               <option value="__freeform__">✍️ Write your own code</option>
             </optgroup>
@@ -78,9 +84,12 @@ export default function ExamplePicker({ examples, selectedExampleId, onExampleCh
       {mode === 'preset' && selectedExample && (
         <div className="px-3 py-2 bg-muted/50 border-b border-border">
           <p className="text-[11px] text-muted-foreground leading-relaxed">{selectedExample.description}</p>
-          <span className={`inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded-full font-semibold uppercase tracking-wider border ${difficultyBadge[selectedExample.difficulty]}`}>
-            {selectedExample.difficulty}
-          </span>
+          <div className="flex items-center gap-1.5 mt-1">
+            <span className={`inline-block text-[10px] px-1.5 py-0.5 rounded-full font-semibold uppercase tracking-wider border ${difficultyBadge[selectedExample.difficulty]}`}>
+              {selectedExample.difficulty}
+            </span>
+            <span className="text-[10px] text-muted-foreground">{CATEGORY_LABELS[selectedExample.category]}</span>
+          </div>
         </div>
       )}
 
