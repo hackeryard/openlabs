@@ -29,6 +29,7 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 - FR-14: The system shall track a daily activity streak per user, incrementing on consecutive-day activity and resetting on a missed day.
 - FR-15: The system shall generate one daily challenge per challenge-eligible lab, refreshed once every 24 hours.
 - FR-16: Submitting a correct challenge answer shall award bonus XP (scaled by difficulty) and may grant badges (e.g. first challenge completed, streak milestones, subject mastery).
+- FR-16a: The in-lab daily-challenge UI shall be presented as a floating, dismissible widget that draws attention without occupying lab page space or covering the lab's initial view.
 - FR-17: Each user shall have a public profile page showing level, badges, and progress, and a private dashboard showing full account/activity detail.
 
 ### 2.4 AI assistant
@@ -45,6 +46,7 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 ### 2.6 Code editor labs
 - FR-25: The Computer Science "code lab" shall provide an in-browser HTML/CSS/JS editor with saved projects per user.
 - FR-26: Users shall be able to create, list, and delete their own projects.
+- FR-27: The JS Event Loop Visualizer shall let users run their own JavaScript through a deterministic, fully-sandboxed simulation engine (no real network/timers; runaway loops and recursion stopped by safety budgets), in either Browser or Node.js queue-ordering semantics, with every piece of runtime state visible simultaneously during playback on all device sizes.
 
 ### 2.7 SEO & discoverability
 - FR-27: The system shall expose `sitemap.xml` and `robots.txt`, regenerated on a bounded cache interval.

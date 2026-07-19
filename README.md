@@ -124,7 +124,7 @@ yarn start
 - ✅ **User Profile Setup** — Custom onboarding banner prompting profile setup completion
 
 ### Gamification & Progress Tracking 🏆
-- 🏆 **Daily Challenges Overhaul** — Premium, dark-mode glassmorphic cards (`bg-slate-900/80`, `backdrop-blur-xl`, custom border tints) featuring pulsing difficulty badges (Easy: Emerald, Medium: Blue, Hard: Rose), dynamic submission state loaders, and custom expandable hint menus.
+- 🏆 **Daily Challenges Overhaul** — A floating, non-intrusive challenge widget: a pulsing "Daily Challenge" pill docked above the AI chat button expands into a compact glassmorphic popover (difficulty badges, expandable hints, submission states) — it never covers or pushes down the lab content.
 - 🏆 **Interactive Achievements** — Video-game styled completion screen featuring a bouncing sparkles icon, and pill-shaped reward chips showing XP gains (`Flame` icon), Levels (`TrendingUp` icon), and unlockable Badges (`Award` icon).
 - 🏆 **Database Seeding Consistency** — Updated backend generation routes (`/api/challenges/generate`) to purge previous challenge history dynamically before generating new challenges, ensuring an isolated, clean database state.
 - 🏆 **Unified Challenge Architecture** — Centralized challenge rendering logic under a single `<DailyChallengeCard>` component, removing duplicate alert markups across labs (such as Free Fall) to align with standard styling guidelines.
@@ -430,7 +430,7 @@ Supports optional `?next=/path` query parameter to redirect users to their inten
 | Route | Tool |
 |-------|------|
 | `/computer-science/code-lab/html-css-js` | Live HTML/CSS/JS code editor with preview |
-| `/computer-science/code-lab/js` | JavaScript Event Loop Visualizer (Call Stack, Web APIs, Microtask/Macrotask queues, Predict Mode) |
+| `/computer-science/code-lab/js` | JavaScript Event Loop Visualizer (all-visible dashboard: Call Stack, Web APIs, Micro/Macro/rAF/Node queues, Predict Mode, free-form code execution in Browser/Node semantics) |
 | `/computer-science/dsa` | Data Structures & Algorithms visualizations |
 | `/computer-science/data-analyzer` | Data analysis and D3 visualization tools |
 | `/computer-science/data-science` | Data science experiments and ML demonstrations |
@@ -777,11 +777,12 @@ throw new Error("Test error");
 Interactive visualization of how JavaScript's single-threaded runtime handles asynchronous operations:
 
 **Features:**
-- **Call Stack, Web APIs, Microtask Queue, and Macrotask Queue panels** — see exactly where each piece of code is executing
-- **Playback controls** — step through execution or run at adjustable speed
+- **"Live Dashboard" UI** — code, Call Stack, Web APIs, Microtask/Macrotask (plus rAF and Node.js) queues, an animated event-loop hub with per-step narration, and the console are all visible at once on every screen size, with task chips animating between panels
+- **Free-form mode** — write and run your own JavaScript through a deterministic sandbox engine (with infinite-loop/recursion safety guards), in Browser or Node.js runtime semantics (`process.nextTick`, `setImmediate`)
+- **Simulated modern APIs** — `fetch` (fixed latency, no real network), `requestAnimationFrame`, `requestIdleCallback`, and a scriptable DOM `button` for demonstrating user-interaction macrotasks
+- **Playback controls** — pinned timeline with console-output markers, stepping, adjustable speed, keyboard shortcuts
 - **Predict Mode** — guess execution order before running, to build intuition for microtask-before-macrotask ordering
-- **Curated example library** (`lib/examples.ts`) covering common async patterns (Promises, `async`/`await`, `setTimeout`, `setInterval`)
-- **Console output panel** — see actual `console.log` output alongside the visualization
+- **Category-grouped example library** (`lib/examples.ts`) covering Fundamentals, Promises, async/await, fetch/rAF/DOM, and Node-mode patterns — every preset executes through the same engine as user code
 
 **Located at:** `/computer-science/code-lab/js`
 

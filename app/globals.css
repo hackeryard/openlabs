@@ -42,4 +42,37 @@ html, body, #__next, main { height: 100%; }
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+  /* Slim, unobtrusive scrollbar for dense lab panels — the default
+     Windows scrollbar (with arrow buttons) eats ~17px per panel and
+     makes short panels look congested. */
+  .thin-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.35) transparent;
+  }
+  .thin-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .thin-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .thin-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.35);
+    border-radius: 3px;
+  }
+  .thin-scrollbar::-webkit-scrollbar-button {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+}
+
+/* JS event-loop lab: Monaco active-line highlight during preset playback.
+   Monaco decorations are plain CSS classes, not Tailwind-composable, so
+   these live here rather than inline. */
+.code-lab-active-line {
+  background-color: rgba(99, 102, 241, 0.15) !important;
+}
+.code-lab-active-line-gutter {
+  border-left: 2px solid rgb(129, 140, 248) !important;
 }
