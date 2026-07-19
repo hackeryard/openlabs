@@ -50,11 +50,17 @@ export default function EventLoopPage() {
 
   return (
     <>
+      {/* Floating widget — fixed-positioned, takes no page space. */}
       <DailyChallengeCard
         labId="computer-science/code-lab/js"
         currentParams={{ predictCorrect, examplesCompleted, freeformRunsCompleted }}
       />
-      <div className="min-h-[calc(100vh-var(--code-lab-nav-h,4rem))] w-full flex flex-col min-h-0">
+      {/* Hard height (not min-h): the dashboard fills EXACTLY one
+          viewport — the initial view is always complete with the
+          playback bar visible. The page may still scroll past it to
+          reach the global site footer below; the dashboard itself
+          never grows. */}
+      <div className="h-[calc(100vh-var(--code-lab-nav-h,4rem))] w-full flex flex-col overflow-hidden shrink-0">
         <EventLoopVisualizer
           onExperimentComplete={completeExperiment}
           onExamplesCompletedChange={setExamplesCompleted}

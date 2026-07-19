@@ -63,14 +63,14 @@ export default function PredictModePanel({ expectedOutput, onCorrect, onSubmit, 
     : -1;
 
   return (
-    <div className="rounded-2xl border border-indigo-300 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/5 backdrop-blur-sm overflow-hidden">
+    <div className="bg-indigo-50 dark:bg-indigo-500/5 overflow-hidden">
       {/* Header */}
-      <div className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-indigo-100 dark:from-indigo-500/10 to-purple-100 dark:to-purple-500/10 border-b border-indigo-200 dark:border-indigo-500/20">
-        <Brain className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-        <h3 className="text-sm font-bold text-indigo-700 dark:text-indigo-300">🧠 Predict the Output</h3>
+      <div className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-indigo-100 dark:from-indigo-500/10 to-purple-100 dark:to-purple-500/10 border-b border-indigo-200 dark:border-indigo-500/20">
+        <Brain className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+        <h3 className="text-xs sm:text-sm font-bold text-indigo-700 dark:text-indigo-300">🧠 Predict the Output</h3>
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="p-3 space-y-3">
         {!submitted ? (
           <>
             <p className="text-xs text-foreground/80 leading-relaxed">

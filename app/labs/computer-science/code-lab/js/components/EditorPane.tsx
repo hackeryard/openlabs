@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, type MutableRefObject } from 'react';
 import Editor, { type OnMount } from '@monaco-editor/react';
-import { Code2, Play } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { Code2 } from 'lucide-react';
 
 // `monaco-editor` itself is CDN-loaded lazily by @monaco-editor/loader,
 // not an installed npm package here — derive types structurally from
@@ -45,6 +46,12 @@ export default function EditorPane(props: EditorPaneProps) {
   // deeper in the file.
   const { isReadOnly, activeCodeLine, title, onRun, onChange, onFocusChange, running } = splitEditorPaneProps(props);
 
+  // Unlike the html-css-js lab (a deliberately full-dark IDE), this
+  // lab's chrome is fully tokenized light/dark — a permanently dark
+  // editor clashes against light-mode panels, so follow the site theme.
+  const { resolvedTheme } = useTheme();
+  const editorTheme = resolvedTheme === 'dark' ? 'vs-dark' : 'light';
+
   const editorRef = useRef<MonacoEditorInstance | null>(null);
   const decorationsRef = useRef<MonacoDecorationsCollection | null>(null);
   const onRunRef = useRef(onRun);
@@ -82,22 +89,16 @@ export default function EditorPane(props: EditorPaneProps) {
         <h3 className="text-sm font-semibold text-foreground tracking-wide hidden sm:block">
           {title}
         </h3>
+        {/* Run lives in the HeaderBar (single source); Ctrl/Cmd+Enter
+            still runs from inside the editor via the Monaco command. */}
         {!isReadOnly && (
-          <button
-            onClick={onRun}
-            disabled={running}
-            className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground transition hover:opacity-90 disabled:opacity-50"
-            title="Run (Ctrl/Cmd + Enter)"
-          >
-            <Play className="w-3.5 h-3.5" />
-            {running ? 'Running…' : 'Run'}
-          </button>
+          <span className="ml-auto text-[10px] text-muted-foreground font-mono hidden md:inline">Ctrl/Cmd+Enter to run</span>
         )}
       </div>
 
       <div className="flex-1 min-h-0 overscroll-contain">
         <Editor
-          theme="vs-dark"
+          theme={editorTheme}
           language="javascript"
           value={props.sourceCode}
           onChange={onChange ? (value => onChange(value ?? '')) : undefined}
