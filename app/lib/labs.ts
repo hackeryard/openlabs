@@ -225,7 +225,7 @@ export const LABS: Lab[] = [
     name: "JS Event Loop Visualizer",
     subject: "computerScience",
     type: "editor",
-    challengeParams: ["predictCorrect", "examplesCompleted"],
+    challengeParams: ["predictCorrect", "examplesCompleted", "freeformRunsCompleted"],
     challengeEnabled: true,
     description: "Interactive JavaScript event loop visualizer",
   },

@@ -17,6 +17,7 @@ export default function EventLoopPage() {
 
   const [examplesCompleted, setExamplesCompleted] = useState(0);
   const [predictCorrect, setPredictCorrect] = useState(0);
+  const [freeformRunsCompleted, setFreeformRunsCompleted] = useState(0);
 
   useEffect(() => {
     setExperimentData({
@@ -30,13 +31,14 @@ export default function EventLoopPage() {
     <>
       <DailyChallengeCard
         labId="computer-science/code-lab/js"
-        currentParams={{ predictCorrect, examplesCompleted }}
+        currentParams={{ predictCorrect, examplesCompleted, freeformRunsCompleted }}
       />
       <div className="min-h-[calc(100vh-4rem)] w-full flex flex-col min-h-0">
-        <EventLoopVisualizer 
-          onExperimentComplete={completeExperiment} 
+        <EventLoopVisualizer
+          onExperimentComplete={completeExperiment}
           onExamplesCompletedChange={setExamplesCompleted}
           onPredictCorrectChange={setPredictCorrect}
+          onFreeformRunsChange={setFreeformRunsCompleted}
         />
       </div>
     </>

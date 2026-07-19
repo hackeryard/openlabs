@@ -2,10 +2,12 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { Info, X, BookOpen, Lock } from 'lucide-react';
+import { Info, X, BookOpen, Lock, FlaskConical } from 'lucide-react';
 
 import { EXAMPLES } from '../lib/examples';
 import type { SimulationSnapshot } from '../lib/types';
+import { generateSnapshots } from '../lib/simulator';
+import { executeUserCode } from '../lib/runtime/execute';
 
 import CallStack from './CallStack';
 import WebAPIsPanel from './WebAPIsPanel';
@@ -15,18 +17,44 @@ import EventLoopIndicator from './EventLoopIndicator';
 import ConsoleOutput from './ConsoleOutput';
 import PlaybackControls from './PlaybackControls';
 import CodeEditorPane from './CodeEditorPane';
+import EditorPane from './EditorPane';
+import RunPanel from './RunPanel';
 import PredictModePanel from './PredictModePanel';
+
+const FREEFORM_STARTER = [
+  "console.log('1: start');",
+  '',
+  "setTimeout(() => console.log('4: timeout'), 0);",
+  '',
+  "Promise.resolve().then(() => console.log('3: promise'));",
+  '',
+  "console.log('2: end');",
+].join('\n');
+
+const EMPTY_SNAPSHOT: SimulationSnapshot = {
+  step: 0,
+  callStack: [],
+  webAPIs: [],
+  microtaskQueue: [],
+  macrotaskQueue: [],
+  consoleOutput: [],
+  eventLoopPhase: 'idle',
+  description: 'Click "Run" to execute your code and see it step through the event loop.',
+  activeCodeLine: 1,
+};
 
 interface EventLoopVisualizerProps {
   onExperimentComplete: () => void;
   onExamplesCompletedChange?: (count: number) => void;
   onPredictCorrectChange?: (count: number) => void;
+  onFreeformRunsChange?: (count: number) => void;
 }
 
-export default function EventLoopVisualizer({ 
+export default function EventLoopVisualizer({
   onExperimentComplete,
   onExamplesCompletedChange,
-  onPredictCorrectChange
+  onPredictCorrectChange,
+  onFreeformRunsChange
 }: EventLoopVisualizerProps) {
   const shouldReduceMotion = useReducedMotion();
 
@@ -37,7 +65,17 @@ export default function EventLoopVisualizer({
   const [speed, setSpeed] = useState(1);
   const [showDisclaimer, setShowDisclaimer] = useState(true);
   const [hasCompletedExperiment, setHasCompletedExperiment] = useState(false);
-  
+
+  // ── Free-form mode (beta) ──────────────────────────────────
+  const [mode, setMode] = useState<'preset' | 'freeform'>('preset');
+  const [freeformSource, setFreeformSource] = useState(FREEFORM_STARTER);
+  const [freeformSnapshots, setFreeformSnapshots] = useState<SimulationSnapshot[] | null>(null);
+  const [freeformError, setFreeformError] = useState<string | undefined>(undefined);
+  const [freeformNote, setFreeformNote] = useState<string | undefined>(undefined);
+  const [isRunning, setIsRunning] = useState(false);
+  const [freeformRunsCompleted, setFreeformRunsCompleted] = useState(0);
+  const isEditorFocusedRef = useRef(false);
+
   // ── Tracking State ───────────────────────────────────────
   const [completedExampleIds, setCompletedExampleIds] = useState<Set<string>>(new Set());
   const [predictCorrectIds, setPredictCorrectIds] = useState<Set<string>>(new Set());
@@ -49,10 +87,10 @@ export default function EventLoopVisualizer({
 
   // ── Derived state ────────────────────────────────────────
   const selectedExample = EXAMPLES.find(e => e.id === selectedExampleId) ?? EXAMPLES[0];
-  const snapshots = selectedExample.snapshots;
+  const snapshots = mode === 'freeform' ? (freeformSnapshots ?? [EMPTY_SNAPSHOT]) : selectedExample.snapshots;
   const totalSteps = snapshots.length;
   const currentSnapshot: SimulationSnapshot = snapshots[currentStep] ?? snapshots[0];
-  const isLocked = selectedExample.isPredictMode && !revealedPredictIds.has(selectedExampleId);
+  const isLocked = mode === 'preset' && selectedExample.isPredictMode && !revealedPredictIds.has(selectedExampleId);
 
   // ── Auto-play logic ──────────────────────────────────────
   useEffect(() => {
@@ -83,6 +121,7 @@ export default function EventLoopVisualizer({
   // correctly predicting the quiz) counts as having used the lab, so it
   // also earns lab-completion XP the first time it happens.
   useEffect(() => {
+    if (mode !== 'preset') return;
     if (currentStep === totalSteps - 1 && !completedExampleIds.has(selectedExampleId)) {
       const nextSet = new Set(completedExampleIds).add(selectedExampleId);
       setCompletedExampleIds(nextSet);
@@ -92,7 +131,7 @@ export default function EventLoopVisualizer({
         onExperimentComplete();
       }
     }
-  }, [currentStep, totalSteps, selectedExampleId, completedExampleIds, onExamplesCompletedChange, hasCompletedExperiment, onExperimentComplete]);
+  }, [mode, currentStep, totalSteps, selectedExampleId, completedExampleIds, onExamplesCompletedChange, hasCompletedExperiment, onExperimentComplete]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -115,6 +154,9 @@ export default function EventLoopVisualizer({
         target instanceof HTMLSelectElement ||
         target instanceof HTMLButtonElement;
       if (isFormControl) return;
+      // Monaco (free-form editor) owns its own keystrokes and isn't
+      // one of the instanceof checks above — skip while it has focus.
+      if (isEditorFocusedRef.current) return;
 
       switch (e.key) {
         case 'ArrowRight':
@@ -165,6 +207,40 @@ export default function EventLoopVisualizer({
     setCurrentStep(0);
     setIsPlaying(false);
   }, []);
+
+  const handleToggleMode = useCallback(() => {
+    setMode(prev => (prev === 'preset' ? 'freeform' : 'preset'));
+    setCurrentStep(0);
+    setIsPlaying(false);
+  }, []);
+
+  const handleRun = useCallback(() => {
+    setIsRunning(true);
+    setIsPlaying(false);
+    // Synchronous today (no real network/timers), but kept as a
+    // discrete state transition so a future async engine (e.g. a
+    // Worker) is a drop-in swap here.
+    const result = executeUserCode(freeformSource);
+    setFreeformSnapshots(generateSnapshots(result.instructions));
+    setFreeformError(result.error);
+    setFreeformNote(result.note);
+    setCurrentStep(0);
+    setIsRunning(false);
+
+    if (!result.error && !hasCompletedExperiment) {
+      setHasCompletedExperiment(true);
+      onExperimentComplete();
+    }
+    // A budget/loop-guard `note` still counts as "ran" (it produced a
+    // full observable trace) — only a hard `error` doesn't count.
+    if (!result.error) {
+      setFreeformRunsCompleted(prev => {
+        const next = prev + 1;
+        onFreeformRunsChange?.(next);
+        return next;
+      });
+    }
+  }, [freeformSource, hasCompletedExperiment, onExperimentComplete, onFreeformRunsChange]);
 
   const handleStepForward = useCallback(() => {
     setCurrentStep(prev => Math.min(prev + 1, totalSteps - 1));
@@ -272,13 +348,35 @@ export default function EventLoopVisualizer({
         <div className="flex-1 flex flex-col lg:flex-row gap-2 p-2 sm:p-3 min-h-0">
           {/* ─ Left column: Code editor ────────────────────── */}
           <div className="lg:w-[35%] shrink-0 rounded-xl border border-slate-700/50 bg-slate-900/40 backdrop-blur-sm overflow-hidden flex flex-col min-h-[250px] lg:min-h-0">
-            <CodeEditorPane
-              sourceCode={selectedExample.sourceCode}
-              activeCodeLine={currentSnapshot.activeCodeLine}
-              examples={EXAMPLES}
-              selectedExampleId={selectedExampleId}
-              onExampleChange={handleExampleChange}
-            />
+            <div className="flex items-center justify-end gap-2 px-3 py-1.5 border-b border-slate-700/30 bg-slate-900/60">
+              <button
+                onClick={handleToggleMode}
+                className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-indigo-300 hover:text-indigo-200 transition-colors"
+              >
+                <FlaskConical className="w-3 h-3" />
+                {mode === 'preset' ? 'Try free-form (beta)' : 'Back to examples'}
+              </button>
+            </div>
+            {mode === 'freeform' ? (
+              <>
+                <RunPanel error={freeformError} note={freeformNote} />
+                <EditorPane
+                  sourceCode={freeformSource}
+                  onChange={setFreeformSource}
+                  onRun={handleRun}
+                  running={isRunning}
+                  onFocusChange={focused => { isEditorFocusedRef.current = focused; }}
+                />
+              </>
+            ) : (
+              <CodeEditorPane
+                sourceCode={selectedExample.sourceCode}
+                activeCodeLine={currentSnapshot.activeCodeLine}
+                examples={EXAMPLES}
+                selectedExampleId={selectedExampleId}
+                onExampleChange={handleExampleChange}
+              />
+            )}
           </div>
 
           {/* ─ Right column: Visualization panels ──────────── */}
@@ -328,8 +426,8 @@ export default function EventLoopVisualizer({
               )}
             </div>
 
-            {/* Predict Mode Panel (only for predict examples) */}
-            {selectedExample.isPredictMode && (
+            {/* Predict Mode Panel (only for predict examples, preset mode) */}
+            {mode === 'preset' && selectedExample.isPredictMode && (
               <PredictModePanel
                 key={selectedExampleId}
                 expectedOutput={selectedExample.expectedOutput}
@@ -340,7 +438,7 @@ export default function EventLoopVisualizer({
             )}
 
             {/* Post-run explanation (non-predict examples, shown at end) */}
-            {!selectedExample.isPredictMode && currentStep === totalSteps - 1 && (
+            {mode === 'preset' && !selectedExample.isPredictMode && currentStep === totalSteps - 1 && (
               <motion.div
                 initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -361,7 +459,7 @@ export default function EventLoopVisualizer({
           totalSteps={totalSteps}
           isPlaying={isPlaying}
           speed={speed}
-          disabled={isLocked}
+          disabled={isLocked || (mode === 'freeform' && !freeformSnapshots)}
           onStepForward={handleStepForward}
           onStepBackward={handleStepBackward}
           onPlay={handlePlay}
