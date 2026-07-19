@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronDown, FlaskConical } from 'lucide-react';
-import type { Example } from '../lib/types';
+import type { Example, RuntimeMode } from '../lib/types';
 
 interface ExamplePickerProps {
   examples: Example[];
@@ -9,6 +9,9 @@ interface ExamplePickerProps {
   onExampleChange: (id: string) => void;
   mode: 'preset' | 'freeform';
   onModeChange: (mode: 'preset' | 'freeform') => void;
+  /** Browser vs Node.js queue-ordering — only meaningful in free-form mode. */
+  runtimeMode: RuntimeMode;
+  onRuntimeModeChange: (mode: RuntimeMode) => void;
 }
 
 const difficultyBadge: Record<Example['difficulty'], string> = {
@@ -17,7 +20,7 @@ const difficultyBadge: Record<Example['difficulty'], string> = {
   advanced: 'bg-rose-100 dark:bg-rose-500/15 text-rose-700 dark:text-rose-400 border-rose-300 dark:border-rose-500/30',
 };
 
-export default function ExamplePicker({ examples, selectedExampleId, onExampleChange, mode, onModeChange }: ExamplePickerProps) {
+export default function ExamplePicker({ examples, selectedExampleId, onExampleChange, mode, onModeChange, runtimeMode, onRuntimeModeChange }: ExamplePickerProps) {
   const selectedExample = examples.find(e => e.id === selectedExampleId);
 
   return (
@@ -77,6 +80,30 @@ export default function ExamplePicker({ examples, selectedExampleId, onExampleCh
           <p className="text-[11px] text-muted-foreground leading-relaxed">{selectedExample.description}</p>
           <span className={`inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded-full font-semibold uppercase tracking-wider border ${difficultyBadge[selectedExample.difficulty]}`}>
             {selectedExample.difficulty}
+          </span>
+        </div>
+      )}
+
+      {mode === 'freeform' && (
+        <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-muted/30">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Runtime</span>
+          <div className="flex items-center gap-1 bg-muted rounded-lg border border-border p-0.5">
+            {(['browser', 'node'] as const).map(m => (
+              <button
+                key={m}
+                onClick={() => onRuntimeModeChange(m)}
+                className={`px-2.5 py-1 rounded-md text-[11px] font-bold capitalize transition-all ${
+                  runtimeMode === m
+                    ? 'bg-primary/20 text-primary border border-primary/40'
+                    : 'text-muted-foreground hover:text-foreground border border-transparent'
+                }`}
+              >
+                {m}
+              </button>
+            ))}
+          </div>
+          <span className="text-[10px] text-muted-foreground">
+            {runtimeMode === 'node' ? 'process.nextTick / setImmediate enabled' : 'fetch, rAF, DOM events'}
           </span>
         </div>
       )}

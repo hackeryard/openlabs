@@ -32,8 +32,8 @@ export class Recorder {
   log(message: string, source: ConsoleEntry['source'], description: string, line?: number): void {
     this.emit({ type: 'LOG', message, source, description, codeLine: line });
   }
-  addWebApi(label: string, apiType: WebAPIItem['type'], delay: number | undefined, description: string, line?: number): void {
-    this.emit({ type: 'ADD_WEB_API', label, apiType, delay, description, codeLine: line });
+  addWebApi(label: string, apiType: WebAPIItem['type'], delay: number | undefined, description: string, detail?: string, line?: number): void {
+    this.emit({ type: 'ADD_WEB_API', label, apiType, delay, detail, description, codeLine: line });
   }
   removeWebApi(label: string, description: string, line?: number): void {
     this.emit({ type: 'REMOVE_WEB_API', label, description, codeLine: line });
@@ -49,6 +49,24 @@ export class Recorder {
   }
   removeMacrotask(label: string, description: string, line?: number): void {
     this.emit({ type: 'REMOVE_MACROTASK', label, description, codeLine: line });
+  }
+  addRafCallback(label: string, description: string, line?: number): void {
+    this.emit({ type: 'ADD_RAF_CALLBACK', label, description, codeLine: line });
+  }
+  removeRafCallback(label: string, description: string, line?: number): void {
+    this.emit({ type: 'REMOVE_RAF_CALLBACK', label, description, codeLine: line });
+  }
+  addNextTick(label: string, description: string, line?: number): void {
+    this.emit({ type: 'ADD_NEXTTICK', label, description, codeLine: line });
+  }
+  removeNextTick(label: string, description: string, line?: number): void {
+    this.emit({ type: 'REMOVE_NEXTTICK', label, description, codeLine: line });
+  }
+  addImmediate(label: string, description: string, line?: number): void {
+    this.emit({ type: 'ADD_IMMEDIATE', label, description, codeLine: line });
+  }
+  removeImmediate(label: string, description: string, line?: number): void {
+    this.emit({ type: 'REMOVE_IMMEDIATE', label, description, codeLine: line });
   }
   phase(phase: EventLoopPhase, description: string, line?: number): void {
     this.emit({ type: 'SET_PHASE', phase, description, codeLine: line });

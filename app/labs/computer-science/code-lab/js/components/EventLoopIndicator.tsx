@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import type { EventLoopPhase } from '../lib/types';
-import { RefreshCw, Search, Zap, ClipboardList, CheckCircle2 } from 'lucide-react';
+import { RefreshCw, Search, Zap, ClipboardList, CheckCircle2, Film, Paintbrush, Coffee, ArrowUpNarrowWide } from 'lucide-react';
 
 interface EventLoopIndicatorProps {
   phase: EventLoopPhase;
@@ -48,6 +48,38 @@ const phaseConfig: Record<EventLoopPhase, {
     bgColor: 'bg-amber-50 dark:bg-amber-500/10',
     borderColor: 'border-amber-300 dark:border-amber-500/30',
     glowColor: 'shadow-[0_0_15px_rgba(245,158,11,0.15)]',
+  },
+  'draining-nexttick': {
+    icon: ArrowUpNarrowWide,
+    label: 'Draining nextTick',
+    color: 'text-teal-600 dark:text-teal-400',
+    bgColor: 'bg-teal-50 dark:bg-teal-500/10',
+    borderColor: 'border-teal-300 dark:border-teal-500/30',
+    glowColor: 'shadow-[0_0_15px_rgba(20,184,166,0.2)]',
+  },
+  'running-raf': {
+    icon: Film,
+    label: 'Running rAF Callbacks',
+    color: 'text-rose-600 dark:text-rose-400',
+    bgColor: 'bg-rose-50 dark:bg-rose-500/10',
+    borderColor: 'border-rose-300 dark:border-rose-500/30',
+    glowColor: 'shadow-[0_0_15px_rgba(244,63,94,0.15)]',
+  },
+  rendering: {
+    icon: Paintbrush,
+    label: 'Rendering (Paint)',
+    color: 'text-rose-600 dark:text-rose-400',
+    bgColor: 'bg-rose-50 dark:bg-rose-500/10',
+    borderColor: 'border-rose-300 dark:border-rose-500/30',
+    glowColor: 'shadow-[0_0_15px_rgba(244,63,94,0.1)]',
+  },
+  'idle-callback': {
+    icon: Coffee,
+    label: 'Idle Callback',
+    color: 'text-slate-600 dark:text-slate-400',
+    bgColor: 'bg-slate-100 dark:bg-slate-500/10',
+    borderColor: 'border-slate-300 dark:border-slate-500/30',
+    glowColor: '',
   },
   idle: {
     icon: CheckCircle2,

@@ -5,7 +5,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Info, X, BookOpen, Lock, Code2, LayoutGrid, Terminal, Settings2, Keyboard } from 'lucide-react';
 
 import { EXAMPLES } from '../lib/examples';
-import type { SimulationSnapshot } from '../lib/types';
+import type { SimulationSnapshot, RuntimeMode } from '../lib/types';
 import { generateSnapshots } from '../lib/simulator';
 import { executeUserCode } from '../lib/runtime/execute';
 
@@ -34,10 +34,14 @@ const EMPTY_SNAPSHOT: SimulationSnapshot = {
   webAPIs: [],
   microtaskQueue: [],
   macrotaskQueue: [],
+  rafQueue: [],
+  nextTickQueue: [],
+  immediateQueue: [],
   consoleOutput: [],
   eventLoopPhase: 'idle',
   description: 'Click "Run" to execute your code and see it step through the event loop.',
   activeCodeLine: 1,
+  mode: 'browser',
 };
 
 type View = 'code' | 'runtime' | 'console' | 'settings';
@@ -84,6 +88,7 @@ export default function EventLoopVisualizer({
 
   // ── Free-form mode (beta) ──────────────────────────────────
   const [mode, setMode] = useState<'preset' | 'freeform'>('preset');
+  const [runtimeMode, setRuntimeMode] = useState<RuntimeMode>('browser');
   const [freeformSource, setFreeformSource] = useState(FREEFORM_STARTER);
   const [freeformSnapshots, setFreeformSnapshots] = useState<SimulationSnapshot[] | null>(null);
   const [freeformError, setFreeformError] = useState<string | undefined>(undefined);
@@ -236,8 +241,8 @@ export default function EventLoopVisualizer({
     // Synchronous today (no real network/timers), but kept as a
     // discrete state transition so a future async engine (e.g. a
     // Worker) is a drop-in swap here.
-    const result = executeUserCode(freeformSource);
-    setFreeformSnapshots(generateSnapshots(result.instructions));
+    const result = executeUserCode(freeformSource, { mode: runtimeMode });
+    setFreeformSnapshots(generateSnapshots(result.instructions, runtimeMode));
     setFreeformError(result.error);
     setFreeformNote(result.note);
     setCurrentStep(0);
@@ -256,7 +261,7 @@ export default function EventLoopVisualizer({
         return next;
       });
     }
-  }, [freeformSource, hasCompletedExperiment, onExperimentComplete, onFreeformRunsChange]);
+  }, [freeformSource, runtimeMode, hasCompletedExperiment, onExperimentComplete, onFreeformRunsChange]);
 
   const handleStepForward = useCallback(() => {
     setCurrentStep(prev => Math.min(prev + 1, totalSteps - 1));
@@ -388,6 +393,8 @@ export default function EventLoopVisualizer({
             onExampleChange={handleExampleChange}
             mode={mode}
             onModeChange={handleModeChange}
+            runtimeMode={runtimeMode}
+            onRuntimeModeChange={setRuntimeMode}
           />
           {mode === 'freeform' ? (
             <>
@@ -439,7 +446,7 @@ export default function EventLoopVisualizer({
           <div className="flex-1 min-h-0 overflow-y-auto pr-1 custom-scrollbar flex flex-col gap-2">
             {/* Runtime tab */}
             <div className={`${view === 'runtime' ? 'flex' : 'hidden'} ${rightTab === 'runtime' ? 'lg:flex' : 'lg:hidden'} xl:flex flex-col gap-2`}>
-              <RuntimePanelGroup snapshot={currentSnapshot} />
+              <RuntimePanelGroup snapshot={currentSnapshot} snapshots={snapshots} />
               <EventLoopIndicator
                 phase={currentSnapshot.eventLoopPhase}
                 description={currentSnapshot.description}
@@ -508,12 +515,29 @@ export default function EventLoopVisualizer({
               </div>
 
               <div className="rounded-xl border border-border bg-card p-4">
+                <h4 className="text-sm font-bold text-foreground mb-2">Free-form mode: available APIs</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed mb-2">
+                  Beyond the basics (console, setTimeout/setInterval, Promise, async/await,
+                  queueMicrotask), your code can also use:
+                </p>
+                <ul className="text-xs text-muted-foreground space-y-1 font-mono">
+                  <li><code className="text-foreground">fetch(url)</code> — fully simulated, ~300ms latency, no real request</li>
+                  <li><code className="text-foreground">requestAnimationFrame(fn)</code> / <code className="text-foreground">cancelAnimationFrame(id)</code></li>
+                  <li><code className="text-foreground">requestIdleCallback(fn)</code> / <code className="text-foreground">cancelIdleCallback(id)</code></li>
+                  <li><code className="text-foreground">button.addEventListener(type, fn)</code> / <code className="text-foreground">button.click()</code> — simulates a user click, deterministically, from your own code</li>
+                  <li><code className="text-foreground">process.nextTick(fn)</code> / <code className="text-foreground">setImmediate(fn)</code> — Node runtime mode only</li>
+                </ul>
+              </div>
+
+              <div className="rounded-xl border border-border bg-card p-4">
                 <h4 className="text-sm font-bold text-foreground mb-3">Color legend</h4>
                 <div className="flex flex-wrap gap-x-4 gap-y-2">
                   <LegendItem color="bg-blue-500" label="Call Stack" />
                   <LegendItem color="bg-violet-500" label="Web APIs" />
                   <LegendItem color="bg-emerald-500" label="Microtask Queue" />
                   <LegendItem color="bg-amber-500" label="Macrotask Queue" />
+                  <LegendItem color="bg-rose-500" label="rAF Queue" />
+                  <LegendItem color="bg-teal-500" label="Node Queues" />
                   <LegendItem color="bg-primary" label="Event Loop" />
                 </div>
               </div>

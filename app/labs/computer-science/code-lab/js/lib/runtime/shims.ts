@@ -3,9 +3,15 @@
 // code. Everything async is OURS, so the Scheduler has full,
 // deterministic control and the Recorder captures precise steps.
 
-import type { StackFrame } from '../types';
+import type { StackFrame, RuntimeMode } from '../types';
 import { Scheduler } from './scheduler';
 import { createLoopGuard } from './loopGuard';
+
+// Fixed, non-random simulated network latency — the whole point of
+// this simulator is deterministic, reproducible traces, so fetch
+// never uses Math.random() for timing.
+const FETCH_LATENCY_MS = 300;
+const DEFAULT_FETCH_PAYLOAD = { id: 1, name: 'sample' };
 
 // Realistic-but-small cap so accidental unbounded recursion in
 // free-form user code is caught fast, mirroring the loop guard's
@@ -14,7 +20,7 @@ import { createLoopGuard } from './loopGuard';
 const MAX_CALL_DEPTH = 500;
 
 // ── Value formatting for console output ────────────────────────
-function formatValue(v: unknown, depth = 0): string {
+export function formatValue(v: unknown, depth = 0): string {
   if (typeof v === 'string') return depth === 0 ? v : `'${v}'`;
   if (typeof v === 'number' || typeof v === 'boolean' || v === null) return String(v);
   if (v === undefined) return 'undefined';
@@ -41,9 +47,11 @@ export interface Sandbox {
   globals: Record<string, unknown>;
   /** All console text captured, in order (for the console pane / tests). */
   readonly consoleLines: string[];
+  /** Call once, after the run finishes draining, for any rejected promise that never got a `.then`/`.catch` reaction attached. */
+  getUnhandledRejections: () => unknown[];
 }
 
-export function createSandbox(scheduler: Scheduler): Sandbox {
+export function createSandbox(scheduler: Scheduler, mode: RuntimeMode = 'browser'): Sandbox {
   const recorder = scheduler.recorder;
   const consoleLines: string[] = [];
 
@@ -60,6 +68,10 @@ export function createSandbox(scheduler: Scheduler): Sandbox {
     switch (scheduler.currentSource) {
       case 'microtask': return 'microtask';
       case 'macrotask': return 'callback';
+      case 'raf': return 'raf-callback';
+      case 'dom-event': return 'dom-handler';
+      case 'nexttick':
+      case 'immediate': return 'node-callback';
       default: return 'function';
     }
   };
@@ -123,7 +135,7 @@ export function createSandbox(scheduler: Scheduler): Sandbox {
   };
 
   // ── Our Promise implementation ───────────────────────────
-  const SbPromise = createSbPromise(scheduler, uniqueLabel);
+  const { SbPromise, getUnhandledRejections } = createSbPromise(scheduler, uniqueLabel);
 
   // ── async/await runtime ──────────────────────────────────
   const __await = (v: unknown) => ({ __sbAwait: true, value: v });
@@ -152,6 +164,132 @@ export function createSandbox(scheduler: Scheduler): Sandbox {
     return p;
   };
 
+  // ── fetch (fully mocked — no real network call, ever) ─────
+  // Modeled as "a timer that resolves a Response-shaped promise when
+  // it fires": a fetch sits in Web APIs for a fixed simulated latency,
+  // then resolves. `.json()`/`.text()` each add their OWN microtask
+  // hop, which is what produces the "multiple microtask hops" a real
+  // fetch().then(r => r.json()).then(data => ...) chain has.
+  const createMockResponse = (payload: unknown) => ({
+    ok: true,
+    status: 200,
+    json: () => {
+      const label = uniqueLabel('response.json');
+      recorder.addMicrotask(label, 'response.json() parses the body — queued as its own microtask.');
+      const p = SbPromise.__internal();
+      scheduler.enqueueMicrotask(label, () => { p.__resolve(payload); });
+      return p;
+    },
+    text: () => {
+      const label = uniqueLabel('response.text');
+      recorder.addMicrotask(label, 'response.text() reads the body — queued as its own microtask.');
+      const p = SbPromise.__internal();
+      scheduler.enqueueMicrotask(label, () => { p.__resolve(JSON.stringify(payload)); });
+      return p;
+    },
+  });
+
+  const fetchShim = (url: unknown): unknown => {
+    const urlStr = typeof url === 'string' ? url : String(url);
+    const label = uniqueLabel('fetch');
+    recorder.addWebApi(label, 'fetch', FETCH_LATENCY_MS, `fetch("${urlStr}") registers a simulated network request in Web APIs (no real request is made).`, urlStr);
+    const p = SbPromise.__internal();
+    scheduler.addTimer(FETCH_LATENCY_MS, label, () => {
+      p.__resolve(createMockResponse(DEFAULT_FETCH_PAYLOAD));
+    });
+    return p;
+  };
+
+  // ── requestAnimationFrame / cancelAnimationFrame ──────────
+  const requestAnimationFrameShim = (fn: unknown): number => {
+    const name = (typeof fn === 'function' && (fn as { name?: string }).name) || 'anonymous';
+    const label = uniqueLabel(name);
+    recorder.addRafCallback(label, `requestAnimationFrame schedules "${name}" for the next frame — runs after this turn's microtasks drain, before paint.`);
+    return scheduler.addRaf(label, () => {
+      if (typeof fn === 'function') (fn as (...a: unknown[]) => unknown)(0);
+    });
+  };
+  const cancelAnimationFrameShim = (id: unknown): void => {
+    if (typeof id === 'number') scheduler.cancelRaf(id);
+  };
+
+  // ── requestIdleCallback / cancelIdleCallback ──────────────
+  // No real idle-time modeling (this simulator isn't cycle-accurate) —
+  // approximated as running shortly after the current work settles,
+  // via the same timer/macrotask funnel every other deferred callback
+  // uses.
+  const requestIdleCallbackShim = (fn: unknown): number => {
+    const name = (typeof fn === 'function' && (fn as { name?: string }).name) || 'anonymous';
+    const label = uniqueLabel(name);
+    recorder.addWebApi(label, 'idle-callback', undefined, `requestIdleCallback schedules "${name}" for whenever the browser has spare time.`);
+    return scheduler.addTimer(0, label, () => {
+      recorder.phase('idle-callback', `💤 Idle time — running "${name}".`);
+      if (typeof fn === 'function') (fn as (...a: unknown[]) => unknown)({ didTimeout: false, timeRemaining: () => 50 });
+    });
+  };
+  const cancelIdleCallbackShim = (id: unknown): void => {
+    if (typeof id === 'number') scheduler.clearTimer(id);
+  };
+
+  // ── A single simulated DOM node ───────────────────────────
+  // Real free-form user interaction can't be scripted ahead of time,
+  // so this exposes one fake element with a real DOM-like API
+  // (addEventListener/removeEventListener/click) — call button.click()
+  // from your own code to simulate a user click deterministically.
+  // Listener registrations are persistent (removed only via
+  // removeEventListener, never consumed by a single click, matching
+  // real DOM semantics); each click() call is its own transient
+  // Web-API entry that funnels into a single macrotask running every
+  // matching listener, in registration order.
+  const domListeners: { type: string; handler: (...a: unknown[]) => unknown; label: string }[] = [];
+  const buttonShim = {
+    addEventListener: (type: unknown, handler: unknown) => {
+      if (typeof type !== 'string' || typeof handler !== 'function') return;
+      const label = uniqueLabel(`button.on${type}`);
+      domListeners.push({ type, handler: handler as (...a: unknown[]) => unknown, label });
+      recorder.addWebApi(label, 'dom-event', undefined, `button.addEventListener("${type}", ...) registers a listener — it sits in Web APIs, ready to fire on the next matching click().`, type);
+    },
+    removeEventListener: (type: unknown, handler: unknown) => {
+      const idx = domListeners.findIndex(l => l.type === type && l.handler === handler);
+      if (idx === -1) return;
+      recorder.removeWebApi(domListeners[idx].label, `button.removeEventListener("${type}", ...) — listener removed from Web APIs.`);
+      domListeners.splice(idx, 1);
+    },
+    click: () => {
+      const matching = domListeners.filter(l => l.type === 'click');
+      if (matching.length === 0) return;
+      const label = uniqueLabel('click');
+      recorder.addWebApi(label, 'dom-event', 0, 'button.click() dispatches a click event — queued as a macrotask, like any other user-interaction callback.', 'click');
+      scheduler.addTimer(0, label, () => {
+        for (const l of matching) l.handler();
+      }, undefined, 'dom-event');
+    },
+  };
+
+  // ── Node mode only: process.nextTick / setImmediate ────────
+  const processShim = {
+    nextTick: (fn: unknown, ...args: unknown[]) => {
+      const name = (typeof fn === 'function' && (fn as { name?: string }).name) || 'anonymous';
+      const label = uniqueLabel(name);
+      recorder.addNextTick(label, `process.nextTick schedules "${name}" — drains before any Promise microtask, even ones already queued.`);
+      scheduler.addNextTick(label, () => {
+        if (typeof fn === 'function') (fn as (...a: unknown[]) => unknown)(...args);
+      });
+    },
+  };
+
+  const setImmediateShim = (fn: unknown, ...args: unknown[]): number => {
+    const name = (typeof fn === 'function' && (fn as { name?: string }).name) || 'anonymous';
+    const label = uniqueLabel(name);
+    recorder.addImmediate(label, `setImmediate schedules "${name}" for the "check" phase — after the current macrotask's microtasks/nextTicks drain.`);
+    return scheduler.addImmediate(label, () => {
+      if (typeof fn === 'function') (fn as (...a: unknown[]) => unknown)(...args);
+    });
+  };
+  const clearImmediateShim = (id: unknown): void => {
+    if (typeof id === 'number') scheduler.clearImmediate(id);
+  };
+
   const globals: Record<string, unknown> = {
     console: consoleShim,
     setTimeout: setTimeoutShim,
@@ -160,6 +298,12 @@ export function createSandbox(scheduler: Scheduler): Sandbox {
     clearInterval: clearShim,
     queueMicrotask: queueMicrotaskShim,
     Promise: SbPromise,
+    fetch: fetchShim,
+    requestAnimationFrame: requestAnimationFrameShim,
+    cancelAnimationFrame: cancelAnimationFrameShim,
+    requestIdleCallback: requestIdleCallbackShim,
+    cancelIdleCallback: cancelIdleCallbackShim,
+    button: buttonShim,
     __enter,
     __exit,
     __line,
@@ -168,7 +312,25 @@ export function createSandbox(scheduler: Scheduler): Sandbox {
     __runAsync,
   };
 
-  return { globals, consoleLines };
+  // Node-mode-only globals. `new Function(...)` only shadows names we
+  // explicitly pass as parameters — anything we DON'T pass falls
+  // through to whatever the true host global happens to be (which,
+  // depending on environment, might not always be `undefined`, e.g. a
+  // bundler polyfill). Explicitly set these to `undefined` in browser
+  // mode instead of just omitting them, so the Browser/Node toggle is
+  // correct regardless of host environment quirks, not just usually
+  // correct by accident.
+  if (mode === 'node') {
+    globals.process = processShim;
+    globals.setImmediate = setImmediateShim;
+    globals.clearImmediate = clearImmediateShim;
+  } else {
+    globals.process = undefined;
+    globals.setImmediate = undefined;
+    globals.clearImmediate = undefined;
+  }
+
+  return { globals, consoleLines, getUnhandledRejections };
 }
 
 // ── Promises/A+-style implementation driven by the Scheduler ────
@@ -185,6 +347,16 @@ interface SbHandler {
 
 function createSbPromise(scheduler: Scheduler, uniqueLabel: (b: string) => string) {
   const recorder = scheduler.recorder;
+
+  // Approximation of unhandled-rejection tracking (the real algorithm
+  // is microtask-checkpoint-based; this is "still rejected with no
+  // handler ever attached by the time the whole run finishes drain-
+  // ing", which matches this lab's own "conceptual model" framing).
+  // A promise is added here the moment it rejects, and removed the
+  // moment ANY `.then`/`.catch` reaction is attached to it, whether
+  // that happens immediately (already-settled case, in
+  // _scheduleHandler's else branch) or later via _flush().
+  const unhandledRejections = new Set<SbPromise>();
 
   class SbPromise {
     private _state: SbState = 'pending';
@@ -238,6 +410,7 @@ function createSbPromise(scheduler: Scheduler, uniqueLabel: (b: string) => strin
       if (this._state !== 'pending') return;
       this._state = 'rejected';
       this._value = e;
+      unhandledRejections.add(this);
       this._flush();
     }
 
@@ -249,6 +422,10 @@ function createSbPromise(scheduler: Scheduler, uniqueLabel: (b: string) => strin
     }
 
     private _scheduleHandler(h: SbHandler): void {
+      // Any reaction being wired up — whether attached before this
+      // promise settled (this path, via _flush) or after (the
+      // immediate else-branch in __thenLabeled) — counts as "handled".
+      unhandledRejections.delete(this);
       const cb = this._state === 'fulfilled' ? h.onF : h.onR;
       const cbName = (typeof cb === 'function' && (cb as { name?: string }).name) || h.labelHint || (this._state === 'fulfilled' ? 'onFulfilled' : 'onRejected');
       const label = uniqueLabel(cbName);
@@ -349,6 +526,11 @@ function createSbPromise(scheduler: Scheduler, uniqueLabel: (b: string) => strin
       });
     }
 
+    /** @internal — for unhandled-rejection reporting only. */
+    __debugValue(): unknown {
+      return this._value;
+    }
+
     static any(iterable: Iterable<unknown>): SbPromise {
       const items = Array.from(iterable);
       return new SbPromise((resolve, reject) => {
@@ -365,7 +547,10 @@ function createSbPromise(scheduler: Scheduler, uniqueLabel: (b: string) => strin
     }
   }
 
-  return SbPromise as typeof SbPromise & {
-    __internal(): InstanceType<typeof SbPromise> & { __resolve(v: unknown): void; __reject(e: unknown): void };
+  return {
+    SbPromise: SbPromise as typeof SbPromise & {
+      __internal(): InstanceType<typeof SbPromise> & { __resolve(v: unknown): void; __reject(e: unknown): void };
+    },
+    getUnhandledRejections: (): unknown[] => Array.from(unhandledRejections).map(p => p.__debugValue()),
   };
 }

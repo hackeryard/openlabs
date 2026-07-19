@@ -5,9 +5,10 @@
 // console output and any error / budget note.
 
 import type { Instruction } from '../simulator';
+import type { RuntimeMode } from '../types';
 import { Recorder } from './recorder';
 import { Scheduler } from './scheduler';
-import { createSandbox } from './shims';
+import { createSandbox, formatValue } from './shims';
 import { transform } from './transform';
 import { LOOP_BUDGET_MESSAGE } from './loopGuard';
 
@@ -32,15 +33,21 @@ export interface ExecuteResult {
   note?: string;
 }
 
-export function executeUserCode(source: string): ExecuteResult {
+export interface ExecuteOptions {
+  /** Browser (default) or Node.js queue-ordering semantics — Node mode additionally exposes process.nextTick/setImmediate. */
+  mode?: RuntimeMode;
+}
+
+export function executeUserCode(source: string, options: ExecuteOptions = {}): ExecuteResult {
+  const mode = options.mode ?? 'browser';
   const { code, error: transformError } = transform(source);
   if (transformError) {
     return { instructions: [], consoleLines: [], error: transformError };
   }
 
   const recorder = new Recorder();
-  const scheduler = new Scheduler(recorder);
-  const { globals, consoleLines } = createSandbox(scheduler);
+  const scheduler = new Scheduler(recorder, mode);
+  const { globals, consoleLines, getUnhandledRejections } = createSandbox(scheduler, mode);
 
   recorder.stackPush('global()', 'global', 'Script starts — the global execution context is pushed onto the Call Stack.', 1);
   recorder.phase('executing', 'The engine runs the top-level code, line by line.', 1);
@@ -75,6 +82,14 @@ export function executeUserCode(source: string): ExecuteResult {
     } catch (e) {
       const err = e as Error;
       runtimeError ??= `${err.name}: ${err.message}`;
+    }
+
+    // Approximation of the browser's unhandled-rejection warning: any
+    // promise still rejected with no `.then`/`.catch` reaction ever
+    // attached, checked once the whole run has finished draining.
+    for (const reason of getUnhandledRejections()) {
+      const text = `Uncaught (in promise) ${formatValue(reason)}`;
+      recorder.log(text, 'unhandled-rejection', text);
     }
   }
 

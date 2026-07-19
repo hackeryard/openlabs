@@ -1,22 +1,37 @@
 'use client';
 
+import { useMemo } from 'react';
 import type { SimulationSnapshot } from '../lib/types';
 import CallStack from './CallStack';
 import WebAPIsPanel from './WebAPIsPanel';
 import MicrotaskQueue from './MicrotaskQueue';
 import MacrotaskQueue from './MacrotaskQueue';
+import RafQueuePanel from './RafQueuePanel';
+import NodeQueuesPanel from './NodeQueuesPanel';
 
 interface RuntimePanelGroupProps {
   snapshot: SimulationSnapshot;
+  /** The full timeline for the current run — used only to decide
+   * whether the rAF panel is worth showing at all (a beginner doing a
+   * sync-only example shouldn't see an always-empty queue strip). */
+  snapshots: SimulationSnapshot[];
 }
 
-// Groups Call Stack / Web APIs / Micro+Macrotask queues into one
-// scrollable region with sub-headers, so the responsive shell can use
-// this as a single "Runtime" tab target instead of exposing a wall of
-// flat panels.
-export default function RuntimePanelGroup({ snapshot }: RuntimePanelGroupProps) {
+// Groups Call Stack / Web APIs / Micro+Macrotask queues (plus rAF and
+// Node queues when relevant) into one scrollable region with
+// sub-headers, so the responsive shell can use this as a single
+// "Runtime" tab target instead of exposing a wall of flat panels.
+export default function RuntimePanelGroup({ snapshot, snapshots }: RuntimePanelGroupProps) {
   const isDrainingMicrotasks = snapshot.eventLoopPhase === 'draining-microtasks';
   const isPickingMacrotask = snapshot.eventLoopPhase === 'picking-macrotask';
+  const isRunningRaf = snapshot.eventLoopPhase === 'running-raf';
+  const isDrainingNextTick = snapshot.eventLoopPhase === 'draining-nexttick';
+
+  // Empty-state suppression: only show the rAF strip if this run ever
+  // actually populates it. Node queues are simpler — `mode` is fixed
+  // for the whole run, so just check the current snapshot.
+  const usesRaf = useMemo(() => snapshots.some(s => s.rafQueue.length > 0), [snapshots]);
+  const isNodeMode = snapshot.mode === 'node';
 
   return (
     <div className="flex flex-col gap-3">
@@ -47,6 +62,28 @@ export default function RuntimePanelGroup({ snapshot }: RuntimePanelGroupProps) 
           </div>
         </div>
       </section>
+
+      {usesRaf && (
+        <section className="flex flex-col gap-2">
+          <h4 className="px-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Animation Frame</h4>
+          <div className="rounded-xl border border-rose-200 dark:border-rose-500/20 bg-card overflow-hidden shadow-[0_0_20px_rgba(244,63,94,0.05)] flex flex-col">
+            <RafQueuePanel entries={snapshot.rafQueue} isActive={isRunningRaf} />
+          </div>
+        </section>
+      )}
+
+      {isNodeMode && (
+        <section className="flex flex-col gap-2">
+          <h4 className="px-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Node.js</h4>
+          <div className="rounded-xl border border-teal-200 dark:border-teal-500/20 bg-card overflow-hidden shadow-[0_0_20px_rgba(20,184,166,0.05)] flex flex-col">
+            <NodeQueuesPanel
+              nextTickQueue={snapshot.nextTickQueue}
+              immediateQueue={snapshot.immediateQueue}
+              isDrainingNextTick={isDrainingNextTick}
+            />
+          </div>
+        </section>
+      )}
     </div>
   );
 }

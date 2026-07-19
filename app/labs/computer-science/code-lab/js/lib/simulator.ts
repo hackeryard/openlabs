@@ -9,6 +9,7 @@ import type {
   ConsoleEntry,
   EventLoopPhase,
   SimulationSnapshot,
+  RuntimeMode,
 } from './types';
 
 // ── Instruction types ──────────────────────────────────────────
@@ -23,6 +24,12 @@ export type InstructionType =
   | 'ADD_MACROTASK'
   | 'REMOVE_MICROTASK'
   | 'REMOVE_MACROTASK'
+  | 'ADD_RAF_CALLBACK'
+  | 'REMOVE_RAF_CALLBACK'
+  | 'ADD_NEXTTICK'
+  | 'REMOVE_NEXTTICK'
+  | 'ADD_IMMEDIATE'
+  | 'REMOVE_IMMEDIATE'
   | 'SET_PHASE';
 
 export interface Instruction {
@@ -40,6 +47,7 @@ export interface Instruction {
   label?: string;
   apiType?: WebAPIItem['type'];
   delay?: number;
+  detail?: string;
 
   // SET_PHASE
   phase?: EventLoopPhase;
@@ -56,18 +64,24 @@ interface SimulatorState {
   webAPIs: WebAPIItem[];
   microtaskQueue: QueueEntry[];
   macrotaskQueue: QueueEntry[];
+  rafQueue: QueueEntry[];
+  nextTickQueue: QueueEntry[];
+  immediateQueue: QueueEntry[];
   consoleOutput: ConsoleEntry[];
   eventLoopPhase: EventLoopPhase;
 }
 
 // ── Snapshot generator ────────────────────────────────────────
 
-export function generateSnapshots(instructions: Instruction[]): SimulationSnapshot[] {
+export function generateSnapshots(instructions: Instruction[], mode: RuntimeMode = 'browser'): SimulationSnapshot[] {
   const state: SimulatorState = {
     callStack: [],
     webAPIs: [],
     microtaskQueue: [],
     macrotaskQueue: [],
+    rafQueue: [],
+    nextTickQueue: [],
+    immediateQueue: [],
     consoleOutput: [],
     eventLoopPhase: 'idle',
   };
@@ -86,10 +100,14 @@ export function generateSnapshots(instructions: Instruction[]): SimulationSnapsh
       webAPIs: state.webAPIs.map(a => ({ ...a })),
       microtaskQueue: state.microtaskQueue.map(e => ({ ...e })),
       macrotaskQueue: state.macrotaskQueue.map(e => ({ ...e })),
+      rafQueue: state.rafQueue.map(e => ({ ...e })),
+      nextTickQueue: state.nextTickQueue.map(e => ({ ...e })),
+      immediateQueue: state.immediateQueue.map(e => ({ ...e })),
       consoleOutput: state.consoleOutput.map(c => ({ ...c })),
       eventLoopPhase: state.eventLoopPhase,
       description: instructions[i].description,
       activeCodeLine: instructions[i].codeLine,
+      mode,
     });
   }
 
@@ -132,6 +150,7 @@ function applyInstruction(
         label: instr.label!,
         type: instr.apiType ?? 'timer',
         delay: instr.delay,
+        detail: instr.detail,
       });
       break;
 
@@ -166,6 +185,36 @@ function applyInstruction(
     case 'REMOVE_MACROTASK': {
       const idx = state.macrotaskQueue.findIndex(e => e.label === instr.label);
       if (idx !== -1) state.macrotaskQueue.splice(idx, 1);
+      break;
+    }
+
+    case 'ADD_RAF_CALLBACK':
+      state.rafQueue.push({ id: genId(), label: instr.label!, type: 'raf' });
+      break;
+
+    case 'REMOVE_RAF_CALLBACK': {
+      const idx = state.rafQueue.findIndex(e => e.label === instr.label);
+      if (idx !== -1) state.rafQueue.splice(idx, 1);
+      break;
+    }
+
+    case 'ADD_NEXTTICK':
+      state.nextTickQueue.push({ id: genId(), label: instr.label!, type: 'nexttick' });
+      break;
+
+    case 'REMOVE_NEXTTICK': {
+      const idx = state.nextTickQueue.findIndex(e => e.label === instr.label);
+      if (idx !== -1) state.nextTickQueue.splice(idx, 1);
+      break;
+    }
+
+    case 'ADD_IMMEDIATE':
+      state.immediateQueue.push({ id: genId(), label: instr.label!, type: 'immediate' });
+      break;
+
+    case 'REMOVE_IMMEDIATE': {
+      const idx = state.immediateQueue.findIndex(e => e.label === instr.label);
+      if (idx !== -1) state.immediateQueue.splice(idx, 1);
       break;
     }
 

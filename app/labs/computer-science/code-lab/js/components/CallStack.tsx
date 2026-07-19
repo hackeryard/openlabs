@@ -14,6 +14,9 @@ const frameColors: Record<StackFrame['type'], { bg: string; border: string; text
   callback:         { bg: 'bg-amber-50 dark:bg-amber-500/10',    border: 'border-amber-300 dark:border-amber-500/30',   text: 'text-amber-700 dark:text-amber-300',   badge: 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400' },
   microtask:        { bg: 'bg-emerald-50 dark:bg-emerald-500/10', border: 'border-emerald-300 dark:border-emerald-500/30', text: 'text-emerald-700 dark:text-emerald-300', badge: 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400' },
   'promise-executor': { bg: 'bg-violet-50 dark:bg-violet-500/10', border: 'border-violet-300 dark:border-violet-500/30', text: 'text-violet-700 dark:text-violet-300', badge: 'bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-400' },
+  'raf-callback':   { bg: 'bg-rose-50 dark:bg-rose-500/10',      border: 'border-rose-300 dark:border-rose-500/30',     text: 'text-rose-700 dark:text-rose-300',     badge: 'bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-400' },
+  'dom-handler':    { bg: 'bg-cyan-50 dark:bg-cyan-500/10',      border: 'border-cyan-300 dark:border-cyan-500/30',     text: 'text-cyan-700 dark:text-cyan-300',     badge: 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-400' },
+  'node-callback':  { bg: 'bg-teal-50 dark:bg-teal-500/10',      border: 'border-teal-300 dark:border-teal-500/30',     text: 'text-teal-700 dark:text-teal-300',     badge: 'bg-teal-100 dark:bg-teal-500/20 text-teal-700 dark:text-teal-400' },
 };
 
 export default function CallStack({ frames }: CallStackProps) {

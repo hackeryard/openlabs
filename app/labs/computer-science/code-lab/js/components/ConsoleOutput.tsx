@@ -13,6 +13,11 @@ const sourceBadge: Record<ConsoleEntry['source'], { label: string; cls: string }
   sync:      { label: 'sync',  cls: 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 border-blue-300 dark:border-blue-500/30' },
   microtask: { label: 'micro', cls: 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-500/30' },
   macrotask: { label: 'macro', cls: 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-500/30' },
+  raf:       { label: 'raf',   cls: 'bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-400 border-rose-300 dark:border-rose-500/30' },
+  nexttick:  { label: 'nextTick', cls: 'bg-teal-100 dark:bg-teal-500/20 text-teal-700 dark:text-teal-400 border-teal-300 dark:border-teal-500/30' },
+  immediate: { label: 'immediate', cls: 'bg-teal-100 dark:bg-teal-500/20 text-teal-700 dark:text-teal-400 border-teal-300 dark:border-teal-500/30' },
+  'dom-event': { label: 'dom', cls: 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 border-cyan-300 dark:border-cyan-500/30' },
+  'unhandled-rejection': { label: 'unhandled', cls: 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 border-red-300 dark:border-red-500/30' },
 };
 
 export default function ConsoleOutput({ entries }: ConsoleOutputProps) {
@@ -71,7 +76,7 @@ export default function ConsoleOutput({ entries }: ConsoleOutputProps) {
                 <span className="text-muted-foreground font-mono text-[10px] w-4 text-right select-none shrink-0">
                   {i + 1}
                 </span>
-                <span className="text-foreground dark:text-green-400 font-mono text-xs flex-1">
+                <span className={`font-mono text-xs flex-1 ${entry.source === 'unhandled-rejection' ? 'text-red-700 dark:text-red-400' : 'text-foreground dark:text-green-400'}`}>
                   {entry.text}
                 </span>
                 {/* Always visible (subtle at rest) — a hover-only badge is
