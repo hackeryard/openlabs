@@ -65,10 +65,25 @@ export interface SimulationSnapshot {
   mode: RuntimeMode;
 }
 
+/** Groups presets in the example picker so related concepts sit together. */
+export type ExampleCategory = 'fundamentals' | 'promises' | 'async-await' | 'modern-apis' | 'node-mode' | 'challenge';
+
+export const CATEGORY_ORDER: ExampleCategory[] = ['fundamentals', 'promises', 'async-await', 'modern-apis', 'node-mode', 'challenge'];
+
+export const CATEGORY_LABELS: Record<ExampleCategory, string> = {
+  fundamentals: 'Fundamentals',
+  promises: 'Promises',
+  'async-await': 'Async/Await',
+  'modern-apis': 'fetch, rAF & DOM',
+  'node-mode': 'Node.js Mode',
+  challenge: 'Challenge',
+};
+
 /** A fully-resolved example ready for the UI */
 export interface Example {
   id: string;
   title: string;
+  category: ExampleCategory;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   description: string;
   sourceCode: string;
