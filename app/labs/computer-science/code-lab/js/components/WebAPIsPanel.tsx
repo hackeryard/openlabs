@@ -22,12 +22,12 @@ export default function WebAPIsPanel({ items }: WebAPIsPanelProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center gap-2 px-3 py-2.5 border-b border-violet-500/20">
-        <div className="w-6 h-6 rounded-md bg-violet-500/20 flex items-center justify-center">
-          <Globe className="w-3.5 h-3.5 text-violet-400" />
+      <div className="flex items-center gap-2 px-3 py-2.5 border-b border-violet-200 dark:border-violet-500/20">
+        <div className="w-6 h-6 rounded-md bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center">
+          <Globe className="w-3.5 h-3.5 text-violet-600 dark:text-violet-400" />
         </div>
-        <h3 className="text-sm font-semibold text-violet-300 tracking-wide">Web APIs</h3>
-        <span className="ml-auto text-xs font-mono text-violet-400/60">{items.length} pending</span>
+        <h3 className="text-sm font-semibold text-violet-700 dark:text-violet-300 tracking-wide">Web APIs</h3>
+        <span className="ml-auto text-xs font-mono text-violet-600/70 dark:text-violet-400/60">{items.length} pending</span>
       </div>
 
       {/* API items */}
@@ -39,7 +39,7 @@ export default function WebAPIsPanel({ items }: WebAPIsPanelProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex items-center justify-center h-full min-h-[60px] text-slate-500 text-xs italic border border-dashed border-slate-700/50 rounded-lg"
+              className="flex items-center justify-center h-full min-h-[60px] text-muted-foreground text-xs italic border border-dashed border-border rounded-lg"
             >
               No active Web APIs
             </motion.div>
@@ -52,19 +52,19 @@ export default function WebAPIsPanel({ items }: WebAPIsPanelProps) {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-              className="px-3 py-2.5 rounded-lg border bg-violet-500/10 border-violet-500/30"
+              className="px-3 py-2.5 rounded-lg border bg-violet-50 dark:bg-violet-500/10 border-violet-300 dark:border-violet-500/30"
             >
               <div className="flex items-center gap-2">
-                <span className="font-mono text-xs font-medium text-violet-300 truncate">
+                <span className="font-mono text-xs font-medium text-violet-700 dark:text-violet-300 truncate">
                   {item.label}
                 </span>
-                <span className="ml-auto shrink-0 text-[10px] px-1.5 py-0.5 rounded-full font-semibold bg-violet-500/20 text-violet-400 uppercase tracking-wider">
+                <span className="ml-auto shrink-0 text-[10px] px-1.5 py-0.5 rounded-full font-semibold bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-400 uppercase tracking-wider">
                   {item.type}
                 </span>
               </div>
               {item.delay !== undefined && (
                 <div className="mt-1.5 flex items-center gap-1.5">
-                  <div className="flex-1 h-1 rounded-full bg-violet-900/50 overflow-hidden">
+                  <div className="flex-1 h-1 rounded-full bg-violet-200 dark:bg-violet-900/50 overflow-hidden">
                     <motion.div
                       className="h-full bg-gradient-to-r from-violet-500 to-purple-400 rounded-full"
                       initial={{ width: '0%' }}
@@ -72,7 +72,7 @@ export default function WebAPIsPanel({ items }: WebAPIsPanelProps) {
                       transition={shouldReduceMotion ? { duration: 0 } : { duration: progressDuration(item.delay), ease: 'easeOut' }}
                     />
                   </div>
-                  <span className="text-[10px] text-violet-400/60 font-mono">{item.delay}ms</span>
+                  <span className="text-[10px] text-violet-600/70 dark:text-violet-400/60 font-mono">{item.delay}ms</span>
                 </div>
               )}
             </motion.div>

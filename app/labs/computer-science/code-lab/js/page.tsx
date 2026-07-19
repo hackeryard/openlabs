@@ -17,6 +17,7 @@ export default function EventLoopPage() {
 
   const [examplesCompleted, setExamplesCompleted] = useState(0);
   const [predictCorrect, setPredictCorrect] = useState(0);
+  const [freeformRunsCompleted, setFreeformRunsCompleted] = useState(0);
 
   useEffect(() => {
     setExperimentData({
@@ -26,17 +27,39 @@ export default function EventLoopPage() {
     });
   }, []);
 
+  // Measure the real height of the site's fixed navbar (rather than
+  // guessing a rem value) so the lab's internal panels size against
+  // the actual remaining viewport instead of an assumed 4rem.
+  useEffect(() => {
+    const navEl = document.querySelector<HTMLElement>("[data-site-navbar]");
+    if (!navEl) return;
+
+    const updateHeight = () => {
+      document.documentElement.style.setProperty(
+        "--code-lab-nav-h",
+        `${navEl.getBoundingClientRect().height}px`
+      );
+    };
+
+    updateHeight();
+
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(navEl);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <>
       <DailyChallengeCard
         labId="computer-science/code-lab/js"
-        currentParams={{ predictCorrect, examplesCompleted }}
+        currentParams={{ predictCorrect, examplesCompleted, freeformRunsCompleted }}
       />
-      <div className="min-h-[calc(100vh-4rem)] w-full flex flex-col min-h-0">
-        <EventLoopVisualizer 
-          onExperimentComplete={completeExperiment} 
+      <div className="min-h-[calc(100vh-var(--code-lab-nav-h,4rem))] w-full flex flex-col min-h-0">
+        <EventLoopVisualizer
+          onExperimentComplete={completeExperiment}
           onExamplesCompletedChange={setExamplesCompleted}
           onPredictCorrectChange={setPredictCorrect}
+          onFreeformRunsChange={setFreeformRunsCompleted}
         />
       </div>
     </>
