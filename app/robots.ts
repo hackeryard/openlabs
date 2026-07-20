@@ -9,8 +9,7 @@ export default function robots(): MetadataRoute.Robots {
         '/physics/',
         '/chemistry/',
         '/biology/',
-        '/computer-science/',
-        '/maths/'
+        '/computer-science/'
       ],
       disallow: [
         '/api/',

@@ -4,7 +4,7 @@ Instructions for AI coding agents (Codex, Cursor, Copilot Workspace, Claude Code
 
 ## Project
 
-OpenLabs — a Next.js 14 (App Router, TypeScript) platform of interactive, in-browser science labs (Physics, Chemistry, Biology, Computer Science, Maths), with auth, a blog, an admin panel, XP/gamification, and an AI chat assistant. MongoDB (Mongoose) + Vercel deployment.
+OpenLabs — a Next.js 14 (App Router, TypeScript) platform of interactive, in-browser science labs (Physics, Chemistry, Biology, Computer Science), with auth, a blog, an admin panel, XP/gamification, and an AI chat assistant. MongoDB (Mongoose) + Vercel deployment.
 
 ## Setup & commands
 

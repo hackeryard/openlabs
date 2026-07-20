@@ -7,7 +7,7 @@
 [![React](https://img.shields.io/badge/react-18.2.0-61dafb?style=flat&logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/typescript-5.4.0-3178c6?style=flat&logo=typescript)](https://www.typescriptlang.org/)
 
-**OpenLabs** is a comprehensive, interactive platform providing in-browser science labs and visualizations across **Chemistry**, **Physics**, **Biology**, **Computer Science**, and **Maths**. Built with modern web technologies, it enables students, educators, and enthusiasts to conduct hands-on experiments and explore scientific concepts without requiring physical lab equipment.
+**OpenLabs** is a comprehensive, interactive platform providing in-browser science labs and visualizations across **Chemistry**, **Physics**, **Biology**, and **Computer Science**. Built with modern web technologies, it enables students, educators, and enthusiasts to conduct hands-on experiments and explore scientific concepts without requiring physical lab equipment.
 
 > Related docs: [CLAUDE.md](CLAUDE.md) (architecture notes for Claude Code), [AGENTS.md](AGENTS.md) (tool-agnostic agent instructions), [REQUIREMENTS.md](REQUIREMENTS.md) (functional/non-functional requirements), [CHANGELOG.md](CHANGELOG.md) (release history).
 
@@ -100,7 +100,6 @@ yarn start
 
 ### Computer Science Labs
 - **HTML/CSS/JS Code Editor** — Live code editor with real-time preview and console output
-- **Java Code Editor** — Java code compilation and execution environment
 - **JavaScript Event Loop Visualizer** — Step-through visualization of the Call Stack, Web APIs, Microtask/Macrotask queues, with a Predict Mode for guessing execution order before running
 - **Data Structures & Algorithms (DSA)** — Interactive DSA visualizations and algorithm implementations
 - **Data Analyzer** — Data visualization and analysis tools with D3 integration
@@ -270,7 +269,6 @@ OpenLabs/
 │   │   ├── chat/                     # AI chat response endpoint
 │   │   └── agent/                    # AI agent service routing
 │   │
-│   ├── maths/                        # Math labs (algebra, etc.)
 │   ├── biology/                      # Biology landing/SEO pages
 │   ├── chemistry/                    # Chemistry landing/SEO pages
 │   ├── physics/                      # Physics landing/SEO pages
@@ -418,12 +416,6 @@ Supports optional `?next=/path` query parameter to redirect users to their inten
 | `/biology/photosynthesis` | Photosynthesis rate simulator (Blackman's Law of Limiting Factors) |
 | `/biology/brainNeuron` | Brain & neuron signal simulator with 3D neuron view and analytics charts |
 | `/biology/blood` | Blood group / compatibility simulator |
-
-### Mathematics Labs
-
-| Route | Experiment |
-|-------|-----------|
-| `/maths/alzebra` | ⚠️ Placeholder only — no functioning lab content yet. Don't cite this as a working feature. |
 
 ### Computer Science Labs
 
@@ -956,7 +948,7 @@ OpenLabs is fully optimized for search engines with comprehensive SEO implementa
 
 **Structured Data (JSON-LD)**
 - ✅ `EducationalOrganization` schema with comprehensive metadata
-- ✅ `Course` schema for all science domains (Physics, Chemistry, Biology, CS, Maths)
+- ✅ `Course` schema for all science domains (Physics, Chemistry, Biology, CS)
 - ✅ `WebPage` schema with breadcrumb navigation
 - ✅ Rich snippets for Google Search and Rich Results
 - ✅ Schema validation compatible with Google's Rich Results Test
@@ -1061,7 +1053,7 @@ The root `app/layout.tsx` includes comprehensive structured data:
 ### Page Coverage 📑
 
 **Complete Metadata Implementation:**
-- ✅ **5 Category Pages** (Physics, Chemistry, Biology, Computer Science, Maths)
+- ✅ **4 Category Pages** (Physics, Chemistry, Biology, Computer Science)
 - ✅ **50+ Experiment Pages** (Individual labs with unique metadata)
 - ✅ **20+ Subsection Pages** (Networking, DSA, Logic Gates, AI Problems, Sorting, etc.)
 - ✅ **5 Authentication Pages** (Login, Signup, Password Reset, Email Verification, Forgot Password)

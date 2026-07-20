@@ -4,7 +4,7 @@ import { Beaker, Users, Target, Globe, Sparkles, GraduationCap, Heart, Zap, Calc
 
 export const metadata: Metadata = {
   title: "About OpenLabs - Free Virtual Labs for STEM Education",
-  description: "Learn about OpenLabs, a free virtual lab platform helping students and teachers explore physics, chemistry, biology, computer science, and mathematics through browser-based simulations.",
+  description: "Learn about OpenLabs, a free virtual lab platform helping students and teachers explore physics, chemistry, biology, and computer science through browser-based simulations.",
   alternates: {
     canonical: "/about",
   },
@@ -133,7 +133,7 @@ const aboutSchema = {
       "@type": "Person",
       name: "Rahul Rajput",
     },
-    knowsAbout: ["Physics", "Chemistry", "Biology", "Computer Science", "Mathematics", "Virtual labs"],
+    knowsAbout: ["Physics", "Chemistry", "Biology", "Computer Science", "Virtual labs"],
   },
 };
 

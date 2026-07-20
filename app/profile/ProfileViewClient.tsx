@@ -79,7 +79,6 @@ function SubjectMasteryCircle({ subject, xp, level }: { subject: string; xp: num
     chemistry: { stroke: "stroke-amber-500", border: "hover:border-amber-400/50", shadow: "hover:shadow-amber-500/20", text: "text-amber-600", bg: "bg-amber-50/50" },
     biology: { stroke: "stroke-emerald-500", border: "hover:border-emerald-400/50", shadow: "hover:shadow-emerald-500/20", text: "text-emerald-600", bg: "bg-emerald-50/50" },
     computerScience: { stroke: "stroke-purple-500", border: "hover:border-purple-400/50", shadow: "hover:shadow-purple-500/20", text: "text-purple-600", bg: "bg-purple-50/50" },
-    mathematics: { stroke: "stroke-cyan-500", border: "hover:border-cyan-400/50", shadow: "hover:shadow-cyan-500/20", text: "text-cyan-600", bg: "bg-cyan-50/50" }
   };
 
   const theme = colorMap[subject] || colorMap.physics;

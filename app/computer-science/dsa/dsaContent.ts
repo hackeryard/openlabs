@@ -310,9 +310,9 @@ export const dsaContent: Record<string, DsaContent> = {
     name: "Merge Sort",
     category: "Sorting Algorithm",
     badge: "Divide and conquer",
-    pageTitle: "Merge Sort Visualizer - Divide and Conquer Sorting Lab | OpenLabs",
+    pageTitle: "Merge Sort Visualizer & Visualization - Divide and Conquer Sorting Lab | OpenLabs",
     metaDescription:
-      "Learn merge sort with an interactive visualizer. Watch divide and conquer recursion, merging, sorted subarrays, and O(n log n) behavior.",
+      "Free merge sort visualizer and step-by-step visualization. Watch divide and conquer recursion, merging, sorted subarrays, and O(n log n) behavior live.",
     heroDescription:
       "Explore merge sort by splitting arrays into smaller parts, sorting them recursively, and merging sorted subarrays back together.",
     definition:

@@ -266,7 +266,6 @@ const llmsTxtSections: Array<[string, LlmsLink[]]> = [
       { path: "/chemistry", title: "Chemistry", description: "Interactive chemistry labs and learning tools." },
       { path: "/biology", title: "Biology", description: "Interactive biology labs and learning tools." },
       { path: "/computer-science", title: "Computer Science", description: "Hands-on computer science learning tools and labs." },
-      { path: "/maths", title: "Mathematics", description: "Mathematics learning resources and interactive tools." },
     ],
   ],
   [
@@ -298,7 +297,7 @@ export function generateLlmsTxt(pages: PageMetadata[]) {
   lines.push("# OpenLabs");
   lines.push("");
   lines.push(
-    "> OpenLabs is a browser-first STEM education platform offering interactive virtual labs in physics, chemistry, biology, computer science, and mathematics for students and teachers.",
+    "> OpenLabs is a browser-first STEM education platform offering interactive virtual labs in physics, chemistry, biology, and computer science for students and teachers.",
   );
   lines.push("");
 
@@ -378,13 +377,13 @@ export function generateLlmsFullTxt(pages: PageMetadata[]) {
   lines.push("");
 
   lines.push("## Company Overview");
-  lines.push("OpenLabs is a browser-based STEM education platform that delivers interactive virtual labs for physics, chemistry, biology, computer science, and mathematics.");
+  lines.push("OpenLabs is a browser-based STEM education platform that delivers interactive virtual labs for physics, chemistry, biology, and computer science.");
   lines.push("The platform supports students, teachers, and remote learning programs with guided simulations, practice labs, and AI-driven explanations.");
   lines.push("OpenLabs positions itself as an accessible, curriculum-friendly learning environment for STEM and computing education.");
   lines.push("");
 
   lines.push("## Core Topics");
-  lines.push("Physics, Chemistry, Biology, Computer Science, Mathematics, Interactive Labs, Virtual Experimentation, AI Learning Assistance, STEM Education");
+  lines.push("Physics, Chemistry, Biology, Computer Science, Interactive Labs, Virtual Experimentation, AI Learning Assistance, STEM Education");
   lines.push("");
 
   lines.push("## Services");
@@ -393,8 +392,7 @@ export function generateLlmsFullTxt(pages: PageMetadata[]) {
       page.url.includes("/physics") ||
       page.url.includes("/chemistry") ||
       page.url.includes("/biology") ||
-      page.url.includes("/computer-science") ||
-      page.url.includes("/maths")
+      page.url.includes("/computer-science")
     ) {
       lines.push(`${page.url} - ${page.title}`);
     }
@@ -453,7 +451,6 @@ export function generateLlmsFullTxt(pages: PageMetadata[]) {
   lines.push("OpenLabs → Chemistry Labs");
   lines.push("OpenLabs → Biology Labs");
   lines.push("OpenLabs → Computer Science Labs");
-  lines.push("OpenLabs → Mathematics Labs");
   lines.push("OpenLabs → AI-Assisted Learning");
   lines.push("OpenLabs → Educational Technology");
   lines.push("");

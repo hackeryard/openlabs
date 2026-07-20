@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   description: 'OpenLabs is an interactive virtual lab experience platform where students can explore physics, chemistry, biology, and computer science experiments online.',
   keywords: [
     'interactive labs', 'physics experiments', 'chemistry simulations', 'biology education',
-    'computer science learning', 'mathematics tools', 'virtual labs', 'science education',
+    'computer science learning', 'virtual labs', 'science education',
     'STEM learning', 'online experiments', 'educational technology', 'simulation software'
   ],
   authors: [{ name: 'OpenLabs Team' }],
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     images: ['/images/twitter-image.svg'],
     title: 'OpenLabs - Virtual Lab Experience Platform for Science & Technology',
-    description: 'Explore interactive physics, chemistry, biology, computer science, and mathematics experiments.',
+    description: 'Explore interactive physics, chemistry, biology, and computer science experiments.',
     creator: '@openlabs', // Replace with actual Twitter handle
   },
   robots: {
@@ -183,15 +183,6 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
                     '@type': 'Organization',
                     name: 'OpenLabs'
                   }
-                },
-                {
-                  '@type': 'Course',
-                  name: 'Mathematics Tools',
-                  description: 'Interactive mathematics tools and visualizations',
-                  provider: {
-                    '@type': 'Organization',
-                    name: 'OpenLabs'
-                  }
                 }
               ],
               educationalCredentialAwarded: 'Certificate of Completion',
@@ -199,8 +190,7 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
                 'Physics',
                 'Chemistry',
                 'Biology',
-                'Computer Science',
-                'Mathematics'
+                'Computer Science'
               ],
               hasEducationalUse: 'Interactive Learning',
               learningResourceType: 'Interactive Simulation'

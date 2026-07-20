@@ -8,15 +8,15 @@ import AnimatedCard from '../components/ui/AnimatedCard'
 
 export const metadata: Metadata = {
   title: 'OpenLabs Virtual Labs for Interactive STEM Learning',
-  description: 'Use OpenLabs to explore interactive virtual labs for physics, chemistry, biology, computer science, and mathematics with guided simulations for students and teachers.',
+  description: 'Use OpenLabs to explore interactive virtual labs for physics, chemistry, biology, and computer science with guided simulations for students and teachers.',
   keywords: [
     'science education', 'interactive learning', 'virtual labs', 'STEM education',
     'physics labs', 'chemistry experiments', 'biology simulations', 'computer science tools',
-    'mathematics interactive', 'educational platform', 'online learning'
+    'educational platform', 'online learning'
   ],
   openGraph: {
     title: 'OpenLabs Virtual Labs for Interactive STEM Learning',
-    description: 'Explore guided virtual labs in physics, chemistry, biology, computer science, and mathematics.',
+    description: 'Explore guided virtual labs in physics, chemistry, biology, and computer science.',
     url: '/',
     type: 'website',
     images: [
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     images: ['/images/twitter-image.svg'],
     title: 'OpenLabs Virtual Labs for Interactive STEM Learning',
-    description: 'Explore guided virtual labs in physics, chemistry, biology, computer science, and mathematics.',
+    description: 'Explore guided virtual labs in physics, chemistry, biology, and computer science.',
   },
   alternates: {
     canonical: '/',
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
 const faqsData = [
   {
     q: "What is OpenLabs and who is it for?",
-    a: "OpenLabs is a virtual lab and learning platform for students, teachers, and self-learners who want interactive, experiment-led learning in science, technology, and mathematics."
+    a: "OpenLabs is a virtual lab and learning platform for students, teachers, and self-learners who want interactive, experiment-led learning in science and technology."
   },
   {
     q: "Do I need any special software to use the labs?",
@@ -97,7 +97,6 @@ const homeSchema = {
     "Chemistry experiments",
     "Biology learning",
     "Computer science tools",
-    "Mathematics visualizations",
   ],
   audience: {
     "@type": "EducationalAudience",
