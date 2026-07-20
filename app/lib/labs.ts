@@ -5,7 +5,7 @@ export type LabType = "simulation" | "exploration" | "editor"
 export interface Lab {
   id: string
   name: string
-  subject: "physics" | "chemistry" | "biology" | "computerScience" | "mathematics"
+  subject: "physics" | "chemistry" | "biology" | "computerScience"
   type: LabType
   challengeParams: string[]
   challengeEnabled: boolean

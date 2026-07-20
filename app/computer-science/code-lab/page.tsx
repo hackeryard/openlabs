@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Code Lab - Interactive Code Visualization | OpenLabs",
-  description: "Interactive code visualization lab for HTML, CSS, JavaScript, Java, and web development with live preview and event loop simulation.",
+  description: "Interactive code visualization lab for HTML, CSS, JavaScript, and web development with live preview and event loop simulation.",
   keywords: [
     "code lab",
     "code visualization",
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Code Lab - Interactive Code Visualization | OpenLabs",
-    description: "Interactive code visualization lab for HTML, CSS, JavaScript, Java, and web development with live preview and event loop simulation.",
+    description: "Interactive code visualization lab for HTML, CSS, JavaScript, and web development with live preview and event loop simulation.",
     url: "https://www.openlabs.org.in/computer-science/code-lab",
     type: "website",
     images: [{
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Code Lab - Interactive Code Visualization | OpenLabs",
-    description: "Interactive code visualization lab for HTML, CSS, JavaScript, Java, and web development with live preview and event loop simulation.",
+    description: "Interactive code visualization lab for HTML, CSS, JavaScript, and web development with live preview and event loop simulation.",
     images: ["https://www.openlabs.org.in/images/computer-science/code-lab-hero.png"]
   },
   robots: {

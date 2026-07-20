@@ -27,9 +27,13 @@ const breadcrumbs = [
 ];
 
 export const metadata: Metadata = {
-  title: "JavaScript Code Lab - Event Loop Visualizer | OpenLabs",
+  // Front-load "JavaScript Visualizer" — GSC shows real search volume for
+  // that exact short phrase (171 impressions, 0.58% CTR at position ~7.5)
+  // that the old "JavaScript Code Lab - Event Loop Visualizer" title
+  // wasn't earning clicks on despite ranking on page 1.
+  title: "JavaScript Visualizer - Event Loop, Call Stack & Code Lab | OpenLabs",
   description:
-    "Learn JavaScript with a free interactive code lab. Write JS, run examples, visualize the event loop, call stack, task queue, microtasks and console output.",
+    "Free JavaScript visualizer and code lab. Write JS, run examples, and visualize the event loop, call stack, task queue, microtasks and console output live.",
   keywords: [
     "JavaScript code lab",
     "JavaScript event loop visualizer",
@@ -44,7 +48,7 @@ export const metadata: Metadata = {
     canonical: pageUrl,
   },
   openGraph: {
-    title: "JavaScript Code Lab - Event Loop Visualizer | OpenLabs",
+    title: "JavaScript Visualizer - Event Loop, Call Stack & Code Lab | OpenLabs",
     description:
       "Practice JavaScript and visualize runtime behavior including the call stack, Web APIs, task queue, microtasks, and console output.",
     url: pageUrl,
@@ -61,7 +65,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "JavaScript Code Lab - Event Loop Visualizer | OpenLabs",
+    title: "JavaScript Visualizer - Event Loop, Call Stack & Code Lab | OpenLabs",
     description:
       "Write JavaScript and watch the event loop, stack, queues, and output step by step.",
     images: ["https://www.openlabs.org.in/images/twitter-image.svg"],

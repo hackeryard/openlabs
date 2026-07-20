@@ -9,6 +9,22 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production' ? true : false,
   },
+  // Canonical host is www (every canonical/OG URL in the app already
+  // hardcodes https://www.openlabs.org.in) — but nothing previously
+  // redirected the apex domain, so Google was indexing
+  // openlabs.org.in and www.openlabs.org.in as two separate sites,
+  // splitting ranking signal for the same content. 308 (permanent,
+  // method-preserving) redirect every apex request to the www host.
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'openlabs.org.in' }],
+        destination: 'https://www.openlabs.org.in/:path*',
+        permanent: true,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

@@ -4,12 +4,12 @@ This document describes the functional and non-functional requirements of OpenLa
 
 ## 1. Purpose
 
-OpenLabs is a web platform providing free, in-browser, interactive science labs and visualizations across Physics, Chemistry, Biology, Computer Science, and Maths, so students/educators/enthusiasts can explore concepts without physical lab equipment.
+OpenLabs is a web platform providing free, in-browser, interactive science labs and visualizations across Physics, Chemistry, Biology, and Computer Science, so students/educators/enthusiasts can explore concepts without physical lab equipment.
 
 ## 2. Functional requirements
 
 ### 2.1 Lab catalog & content
-- FR-1: The system shall provide interactive lab pages across five subjects: Physics, Chemistry, Biology, Computer Science, Maths.
+- FR-1: The system shall provide interactive lab pages across four subjects: Physics, Chemistry, Biology, Computer Science.
 - FR-2: Each lab shall have a public SEO landing page (theory, learning objectives, FAQs) separate from its interactive simulation page, which requires authentication.
 - FR-3: Every lab shall be registered in a central catalog (`app/lib/labs.ts`) with a `type` (`simulation`, `exploration`, or `editor`) that determines its XP reward tier and daily-challenge eligibility.
 - FR-4: The system shall auto-generate an LLM-crawlable site manifest (`/llms.txt`, `/llms-full.txt`) reflecting all current pages, without manual maintenance.
@@ -76,7 +76,6 @@ These exist as placeholders or partial scaffolding in the codebase but are **not
 - The standalone external "AI agent" service integration (`app/api/agent`) — superseded by `app/api/chat`, currently has no caller, and unlike `app/api/chat` has no authentication or rate limiting (a gap to close before ever wiring it up, not a pattern to copy).
 - Google OAuth's dedicated `start`/`callback` routes — actual Google login goes entirely through NextAuth instead.
 - Per-user admin roles (RBAC) — admin access today is a single shared secret, not scoped per user.
-- **Mathematics as a real subject** — despite FR-1 listing five subjects, Maths currently has exactly one lab (`app/maths/alzebra` / `app/labs/maths/alzebra`) and both its landing and simulation pages are unfinished placeholders (literal stub content, no algebra functionality). Treat Maths as not yet delivered when scoping related work, and don't cite it as a working subject in user-facing copy until it has real content.
 - **A single, unified theming system** — the six DSA sorting-algorithm labs (`app/components/computer-science/dsa/sorting/*`) run their own independent local dark/light toggle predating the site-wide `next-themes` rollout; the two are not reconciled, so a user can have the sorting labs in a different visual mode than the rest of the site. See `CLAUDE.md` § Theming for the full list of components not yet migrated to the shared token system.
 
 ## 5. Open questions / suggested follow-ups

@@ -18,7 +18,6 @@ const publicPrefixes = [
   '/chemistry',
   '/biology',
   '/computer-science',
-  '/maths',
 ];
 
 export function middleware(request: NextRequest) {

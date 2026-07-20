@@ -46,11 +46,6 @@ export default function EducationalLandingLayout({ content, launchUrl }: Props) 
       "Track interactions between cells, tissues, and processes.",
       "Connect observations to real-world life science scenarios."
     ],
-    maths: [
-      "Visualize mathematical relationships dynamically.",
-      "Test formulas and algorithmic steps interactively.",
-      "Strengthen problem-solving through guided exploration."
-    ],
     "computer-science": [
       "Trace logic flow and algorithm behavior step by step.",
       "Measure performance and complexity trade-offs.",
