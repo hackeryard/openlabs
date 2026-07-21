@@ -3,7 +3,9 @@ import ClientGrid from "./ClientGrid";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Computer Science Virtual Labs & Interactive Tools | OpenLabs",
+  // No "| OpenLabs" suffix — the root layout's title.template already
+  // appends it for this route; baking it in here doubled it live.
+  title: "Computer Science Virtual Labs & Interactive Tools",
   description: "Explore interactive computer science experiments including code visualization, logic gates, networking, AI problems, blockchain, DSA, and version control.",
   keywords: [
     "computer science",
@@ -101,6 +103,7 @@ export default function ComputerScience() {
     <ClientGrid
       title="Computer Science Experiments"
       description="Coding and Tech related experiments."
+      intro="OpenLabs' computer science labs let you run and visualize code and systems concepts directly in the browser — no installs, no setup. Step through a JavaScript event loop, watch sorting algorithms rearrange data one comparison at a time, simulate logic gates and digital circuits, explore network packet switching, trace Git commit history, or try classic AI search problems like the water jug and monkey-banana puzzles. Each lab pairs a hands-on simulator with the underlying theory, so you can connect what you're watching happen on screen to the concept it demonstrates."
       cards={cards}
     />
   );

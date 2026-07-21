@@ -1,7 +1,11 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-    title: 'Biology Virtual Labs & Interactive Experiments | OpenLabs',
+    // No "| OpenLabs" suffix — the root layout's title.template already
+    // appends it for /biology (page.tsx there has no metadata of its
+    // own, so this layout title is what's used); baking it in doubled
+    // it live ("...| OpenLabs | OpenLabs").
+    title: 'Biology Virtual Labs & Interactive Experiments',
     description: 'Explore interactive biology experiments including cell structure, human anatomy, blood circulation, and brain neuron simulations.',
     keywords: [
         'biology experiments', 'interactive biology', 'cell structure', 'human anatomy',

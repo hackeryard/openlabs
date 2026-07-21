@@ -4,7 +4,7 @@ import { EducationalContent } from "@/types/education";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Animal Cell Simulation | Interactive Cell Biology Lab | OpenLabs",
+  title: "Animal Cell Simulation - Biology Lab | OpenLabs",
   description: "Interactive animal cell explorer with 3D visualization of organelles, nucleus, and cellular structures for biology education.",
   keywords: [
     "animal cell",

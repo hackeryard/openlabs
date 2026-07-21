@@ -53,5 +53,12 @@ const cards = [
 ];
 
 export default function LogicGates() {
-  return <ClientGrid title="Logic Gates Visualisation" description="Explore digital logic fundamentals." cards={cards} />;
+  return (
+    <ClientGrid
+      title="Logic Gates Visualisation"
+      description="Explore digital logic fundamentals."
+      intro="Logic gates are the basic building blocks of every digital circuit — from a calculator to a CPU. Each lab here lets you flip inputs on and off and watch the output respond immediately, alongside a full truth table so you can see every possible input combination at a glance. Work through AND, OR, and NOT first to build intuition for the fundamentals, then move on to the derived gates — NAND, NOR, XOR, and XNOR — to see how more complex logic is built from simpler pieces."
+      cards={cards}
+    />
+  );
 }

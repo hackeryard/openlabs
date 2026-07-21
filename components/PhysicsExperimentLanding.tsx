@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
 
 type Faq = {
@@ -47,7 +45,6 @@ export default function PhysicsExperimentLanding({
   visualDetail,
   heroImageUrl,
 }: PhysicsExperimentLandingProps) {
-  const [mounted, setMounted] = useState(false);
   const words = title.split(" ");
   const schema = {
     "@context": "https://schema.org",
@@ -65,20 +62,6 @@ export default function PhysicsExperimentLanding({
       url: "https://www.openlabs.org.in",
     },
   };
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return (
-      <main
-        className="min-h-screen bg-background"
-        aria-label={`${title} loading`}
-        suppressHydrationWarning
-      />
-    );
-  }
 
   return (
     <>

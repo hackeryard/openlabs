@@ -26,9 +26,9 @@ const breadcrumbs = [
 ];
 
 export const metadata: Metadata = {
-  title: "Data Analyzer Lab - Social Network Analysis Visualizer | OpenLabs",
+  title: "Data Analyzer Lab - Network Analysis Tool | OpenLabs",
   description:
-    "Analyze datasets visually with an interactive data analyzer lab. Explore social network graphs, data cleaning, communities, influencers, hubs, and connection patterns.",
+    "Analyze datasets visually with an interactive lab covering social network graphs, communities, influencers, hubs, and connection patterns.",
   keywords: [
     "data analyzer lab",
     "social network analysis visualizer",

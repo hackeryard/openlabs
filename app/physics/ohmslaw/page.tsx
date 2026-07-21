@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "Ohm's Law Simulator | Voltage Current Resistance Lab | OpenLabs",
+  title: "Ohm's Law Simulator - Voltage & Current Lab | OpenLabs",
   description:
     "Explore Ohm's Law with an interactive circuit simulator for voltage, current, resistance, and V-I behavior.",
   keywords: [

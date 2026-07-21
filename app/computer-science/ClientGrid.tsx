@@ -15,10 +15,15 @@ export default function ClientGrid({
   cards,
   title,
   description,
+  intro,
 }: {
   cards: Card[];
   title?: string;
   description?: string;
+  /** Optional longer-form paragraph rendered under the title/description —
+   *  gives the page real body content beyond the card grid (thin-content
+   *  fix), not just a one-line summary. */
+  intro?: string;
 }) {
   const container: Variants = {
     hidden: { opacity: 0 },
@@ -43,6 +48,11 @@ export default function ClientGrid({
                 {description}
               </motion.p>
             )}
+            {intro && (
+              <motion.p variants={item} className="text-muted-foreground/90 mt-4 max-w-3xl leading-relaxed">
+                {intro}
+              </motion.p>
+            )}
           </div>
         )}
 
@@ -53,7 +63,7 @@ export default function ClientGrid({
                 <div className={`absolute -inset-0.5 bg-gradient-to-r ${card.accent ?? "from-indigo-400 to-indigo-600"} rounded-2xl opacity-0 group-hover:opacity-20 blur transition duration-500`} />
                 <div className="relative h-full bg-card rounded-xl border border-border p-6 shadow-[0_2px_4px_rgba(0,0,0,0.02)] group-hover:shadow-xl group-hover:border-primary/30 transition-all duration-300">
                   <div className={`w-10 h-1 rounded-full bg-gradient-to-r ${card.accent ?? "from-indigo-400 to-indigo-600"} mb-4`} />
-                  <h3 className="text-xl font-bold text-foreground group-hover:text-indigo-600 transition-colors">{card.title}</h3>
+                  <h2 className="text-xl font-bold text-foreground group-hover:text-indigo-600 transition-colors">{card.title}</h2>
                   <p className="text-muted-foreground mt-3 leading-relaxed text-sm">{card.desc}</p>
                   <div className="mt-6 flex items-center text-xs font-bold text-muted-foreground group-hover:text-foreground uppercase tracking-widest transition-colors">
                     Explore

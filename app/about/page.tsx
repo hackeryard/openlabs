@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import { Beaker, Users, Target, Globe, Sparkles, GraduationCap, Heart, Zap, Calculator } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "About OpenLabs - Free Virtual Labs for STEM Education",
-  description: "Learn about OpenLabs, a free virtual lab platform helping students and teachers explore physics, chemistry, biology, and computer science through browser-based simulations.",
+  title: "About OpenLabs - Free STEM Virtual Labs",
+  description: "Learn about OpenLabs, a free virtual lab platform for physics, chemistry, biology, and computer science browser-based simulations.",
   alternates: {
     canonical: "/about",
   },

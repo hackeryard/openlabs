@@ -56,5 +56,12 @@ const cards = [
 ];
 
 export default function CodeLab() {
-  return <ClientGrid title="Code Lab" description="Interactive code visualization labs." cards={cards} />;
+  return (
+    <ClientGrid
+      title="Code Lab"
+      description="Interactive code visualization labs."
+      intro="Code Lab is a set of in-browser editors built for learning by watching code run, not just reading about it. Write HTML, CSS, and JavaScript with a live preview that updates as you type, or open the JavaScript visualizer to step through the event loop line by line — see the call stack, Web APIs, microtask queue, and macrotask queue update in real time as your code executes. Both labs run entirely in your browser, so there's nothing to install and nothing to configure."
+      cards={cards}
+    />
+  );
 }

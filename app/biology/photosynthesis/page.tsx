@@ -4,7 +4,7 @@ import { EducationalContent } from "@/types/education";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Photosynthesis Simulator - Interactive Biology Lab | OpenLabs",
+  title: "Photosynthesis Simulator - Biology Lab | OpenLabs",
   description: "Explore how Light, CO2, Water, and Temperature interact to determine the rate of photosynthesis and understand Blackman's Law of Limiting Factors.",
   keywords: [
     "photosynthesis",
