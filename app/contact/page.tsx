@@ -4,7 +4,7 @@ import { Clock, Mail, MapPin, MessageSquare } from "lucide-react";
 import ContactForm from "./ContactForm";
 
 export const metadata: Metadata = {
-  title: "Contact OpenLabs - Support, Bug Reports, and Partnerships",
+  title: "Contact OpenLabs - Support & Feedback",
   description: "Contact the OpenLabs team for support, bug reports, feature requests, partnerships, and questions about free virtual STEM labs.",
   alternates: {
     canonical: "/contact",

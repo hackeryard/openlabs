@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "Wave Optics Simulator | Diffraction and Interference Lab | OpenLabs",
+  title: "Wave Optics Simulator | Diffraction Lab | OpenLabs",
   description:
     "Interactive wave optics simulator for exploring diffraction, interference, wavelength, slit spacing, and intensity patterns.",
   keywords: [

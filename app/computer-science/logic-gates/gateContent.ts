@@ -82,7 +82,7 @@ export const gateContent: Record<string, LogicGateContent> = {
     name: "NAND Gate",
     shortName: "NAND",
     formula: "Y = (A . B)'",
-    pageTitle: "NAND Gate Simulator - Truth Table and Universal Gate Lab | OpenLabs",
+    pageTitle: "NAND Gate Simulator - Truth Table Lab | OpenLabs",
     metaDescription:
       "Learn the NAND gate with an interactive simulator, truth table, Boolean expression, universal gate behavior, and digital logic examples.",
     heroDescription:
@@ -132,7 +132,7 @@ export const gateContent: Record<string, LogicGateContent> = {
     name: "NOR Gate",
     shortName: "NOR",
     formula: "Y = (A + B)'",
-    pageTitle: "NOR Gate Simulator - Truth Table and Universal Logic Lab | OpenLabs",
+    pageTitle: "NOR Gate Simulator - Truth Table Lab | OpenLabs",
     metaDescription:
       "Learn the NOR gate using an interactive simulator with truth table, Boolean expression, universal gate behavior, and digital electronics examples.",
     heroDescription:
@@ -182,7 +182,7 @@ export const gateContent: Record<string, LogicGateContent> = {
     name: "NOT Gate",
     shortName: "NOT",
     formula: "Y = A'",
-    pageTitle: "NOT Gate Simulator - Inverter Truth Table and Logic Lab | OpenLabs",
+    pageTitle: "NOT Gate Simulator - Truth Table & Logic Lab | OpenLabs",
     metaDescription:
       "Learn the NOT gate with an interactive inverter simulator, truth table, Boolean expression, and digital logic examples on OpenLabs.",
     heroDescription:
@@ -280,7 +280,7 @@ export const gateContent: Record<string, LogicGateContent> = {
     name: "XNOR Gate",
     shortName: "XNOR",
     formula: "Y = (A xor B)'",
-    pageTitle: "XNOR Gate Simulator - Truth Table and Equality Logic Lab | OpenLabs",
+    pageTitle: "XNOR Gate Simulator - Truth Table Lab | OpenLabs",
     metaDescription:
       "Learn the XNOR gate with an interactive simulator, truth table, Boolean expression, equality logic behavior, and circuit examples.",
     heroDescription:
@@ -330,7 +330,7 @@ export const gateContent: Record<string, LogicGateContent> = {
     name: "XOR Gate",
     shortName: "XOR",
     formula: "Y = A xor B",
-    pageTitle: "XOR Gate Simulator - Truth Table and Exclusive OR Lab | OpenLabs",
+    pageTitle: "XOR Gate Simulator - Truth Table Lab | OpenLabs",
     metaDescription:
       "Learn the XOR gate with an interactive simulator, truth table, Boolean expression, exclusive OR behavior, and digital logic examples.",
     heroDescription:

@@ -85,6 +85,11 @@ const cards = [
 
 export default function Page() {
   return (
-    <ClientGrid title="AI Problems & Solutions" description="Explore artificial intelligence problems with interactive visualizers." cards={cards} />
+    <ClientGrid
+      title="AI Problems & Solutions"
+      description="Explore artificial intelligence problems with interactive visualizers."
+      intro="These labs walk through classic artificial intelligence problems that show up in almost every AI course, each one a small, self-contained puzzle for a specific technique. Watch hill climbing search for a local maximum step by step, see Q-learning navigate a maze through trial and reward, work through the water jug and monkey-banana problems as examples of state-space search, apply forward and backward chaining to logical inference, and test constraint satisfaction on problems where every variable has to agree with its neighbors. Each one pairs the algorithm with a visual you can watch update as it runs."
+      cards={cards}
+    />
   );
 }

@@ -3,8 +3,8 @@ import { Metadata } from "next";
 import { Atom, Compass, Layers, Milestone, FlaskConical, Award, Globe } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Interactive Periodic Table of Elements - Chemistry Lab | OpenLabs",
-  description: "Explore chemical elements with our interactive learning guides. Discover atomic properties, orbital blocks, periodic trends, and launch our 3D quantum model simulation.",
+  title: "Interactive Periodic Table - Chemistry Lab | OpenLabs",
+  description: "Explore chemical elements with interactive guides covering atomic properties, orbital blocks, periodic trends, and a 3D quantum model.",
   keywords: [
     "periodic table of elements",
     "chemistry elements",
@@ -312,7 +312,7 @@ export default function Page() {
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 h-6 w-6 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-xs font-black text-primary mt-1">1</div>
                   <div>
-                    <h4 className="font-extrabold text-foreground text-sm">Periods (Horizontal Rows)</h4>
+                    <h3 className="font-extrabold text-foreground text-sm">Periods (Horizontal Rows)</h3>
                     <p className="text-muted-foreground text-xs mt-0.5 leading-relaxed">
                       There are 7 periods. The period number corresponds directly to the total number of electron energy shells filled with electrons in their lowest state (ground state).
                     </p>
@@ -322,7 +322,7 @@ export default function Page() {
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 h-6 w-6 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-xs font-black text-primary mt-1">2</div>
                   <div>
-                    <h4 className="font-extrabold text-foreground text-sm">Groups / Families (Vertical Columns)</h4>
+                    <h3 className="font-extrabold text-foreground text-sm">Groups / Families (Vertical Columns)</h3>
                     <p className="text-muted-foreground text-xs mt-0.5 leading-relaxed">
                       The 18 vertical columns collect elements sharing identical valence shell electron configurations, which ensures they engage in highly similar chemical bonding reactions.
                     </p>
@@ -367,7 +367,7 @@ export default function Page() {
                 <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300">
                   s-Block Elements
                 </span>
-                <h4 className="font-extrabold text-foreground text-lg my-2">Spherical Orbitals</h4>
+                <h3 className="font-extrabold text-foreground text-lg my-2">Spherical Orbitals</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed mb-4">
                   Groups 1 & 2 plus Helium. Features outer shell electrons in simple spherical s-orbitals. Highly electropositive, active metals with low ionization energies.
                 </p>
@@ -381,7 +381,7 @@ export default function Page() {
                 <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">
                   p-Block Elements
                 </span>
-                <h4 className="font-extrabold text-foreground text-lg my-2">Lobed Orbitals</h4>
+                <h3 className="font-extrabold text-foreground text-lg my-2">Lobed Orbitals</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed mb-4">
                   Groups 13 through 18. Outer shell p-orbitals filled. Features highly diverse chemical families containing metals, metalloids, halogens, and noble gases.
                 </p>
@@ -395,7 +395,7 @@ export default function Page() {
                 <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300">
                   d-Block Elements
                 </span>
-                <h4 className="font-extrabold text-foreground text-lg my-2">Transition Metals</h4>
+                <h3 className="font-extrabold text-foreground text-lg my-2">Transition Metals</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed mb-4">
                   Groups 3 to 12. Characterized by filled inner d-orbitals. Exhibit multiple stable oxidation states, strong mechanical properties, and form highly colorful solutions.
                 </p>
@@ -409,7 +409,7 @@ export default function Page() {
                 <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-pink-50 dark:bg-pink-950/40 text-pink-700 dark:text-pink-300">
                   f-Block Elements
                 </span>
-                <h4 className="font-extrabold text-foreground text-lg my-2">Inner Transition</h4>
+                <h3 className="font-extrabold text-foreground text-lg my-2">Inner Transition</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed mb-4">
                   Lanthanides & Actinides. Features deep, filled f-subshells. Lanthanides are magnetic rare-earth metals; Actinides are heavy, unstable radioactive species.
                 </p>
@@ -435,7 +435,7 @@ export default function Page() {
               {/* Electronegativity */}
               <div className="bg-card border border-border p-6 rounded-2xl shadow-sm hover:shadow-lg hover:border-indigo-300 transition duration-300 relative group overflow-hidden">
                 <div className="absolute top-0 left-0 h-1 w-full bg-indigo-500/20 group-hover:bg-indigo-500 transition" />
-                <h4 className="font-extrabold text-foreground text-lg mb-2">Electronegativity</h4>
+                <h3 className="font-extrabold text-foreground text-lg mb-2">Electronegativity</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed mb-4">
                   An atom's relative affinity to pull shared valence bonding electrons closer to itself in a chemical compound.
                 </p>
@@ -447,7 +447,7 @@ export default function Page() {
               {/* Atomic Radius */}
               <div className="bg-card border border-border p-6 rounded-2xl shadow-sm hover:shadow-lg hover:border-purple-300 transition duration-300 relative group overflow-hidden">
                 <div className="absolute top-0 left-0 h-1 w-full bg-purple-500/20 group-hover:bg-purple-500 transition" />
-                <h4 className="font-extrabold text-foreground text-lg mb-2">Atomic Radius</h4>
+                <h3 className="font-extrabold text-foreground text-lg mb-2">Atomic Radius</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed mb-4">
                   The physical distance between the atomic nucleus center and the boundary of its surrounding outer valence shell.
                 </p>
@@ -459,7 +459,7 @@ export default function Page() {
               {/* Ionization Energy */}
               <div className="bg-card border border-border p-6 rounded-2xl shadow-sm hover:shadow-lg hover:border-pink-300 transition duration-300 relative group overflow-hidden">
                 <div className="absolute top-0 left-0 h-1 w-full bg-pink-500/20 group-hover:bg-pink-500 transition" />
-                <h4 className="font-extrabold text-foreground text-lg mb-2">Ionization Energy</h4>
+                <h3 className="font-extrabold text-foreground text-lg mb-2">Ionization Energy</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed mb-4">
                   The quantitative thermodynamic energy required to successfully remove an electron from a gaseous atom in ground state.
                 </p>
@@ -471,7 +471,7 @@ export default function Page() {
               {/* Electron Affinity */}
               <div className="bg-card border border-border p-6 rounded-2xl shadow-sm hover:shadow-lg hover:border-emerald-300 transition duration-300 relative group overflow-hidden">
                 <div className="absolute top-0 left-0 h-1 w-full bg-emerald-500/20 group-hover:bg-emerald-500 transition" />
-                <h4 className="font-extrabold text-foreground text-lg mb-2">Electron Affinity</h4>
+                <h3 className="font-extrabold text-foreground text-lg mb-2">Electron Affinity</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed mb-4">
                   The energy change that occurs when an additional electron is successfully acquired by a neutral gaseous atom.
                 </p>
@@ -531,9 +531,9 @@ export default function Page() {
                 className="group border border-border rounded-2xl bg-card p-6 [&_summary::-webkit-details-marker]:hidden transition-all duration-300 open:shadow-md"
               >
                 <summary className="flex items-center justify-between cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background">
-                  <h4 className="font-extrabold text-foreground text-base md:text-lg group-open:text-indigo-600 transition-colors duration-300">
+                  <h3 className="font-extrabold text-foreground text-base md:text-lg group-open:text-indigo-600 transition-colors duration-300">
                     {faq.question}
-                  </h4>
+                  </h3>
                   <span className="relative h-5 w-5 shrink-0 text-muted-foreground group-open:text-indigo-600 group-open:rotate-180 transition-transform duration-300">
                     <svg
                       className="absolute inset-0 h-5 w-5 opacity-100 group-open:opacity-0 transition-opacity"

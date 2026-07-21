@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "Uniform Motion Lab | Distance Time Physics Simulator | OpenLabs",
+  title: "Uniform Motion Lab - Physics Simulator | OpenLabs",
   description:
     "Interactive uniform motion simulator for exploring constant velocity, displacement, time, and distance-time graphs.",
   keywords: [

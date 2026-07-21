@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "RC Circuit Lab | Charging and Discharging Simulator | OpenLabs",
+  title: "RC Circuit Lab - Charge & Discharge Simulator | OpenLabs",
   description:
     "Interactive RC circuit simulator for capacitor charging, discharging, resistance, capacitance, voltage, and time constant.",
   keywords: [

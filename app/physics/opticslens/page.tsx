@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "Optics Lens Simulator | Image Formation Physics Lab | OpenLabs",
+  title: "Optics Lens Simulator | Image Formation Lab | OpenLabs",
   description:
     "Interactive optics lens simulator for exploring focal length, object distance, image distance, magnification, and ray diagrams.",
   keywords: [

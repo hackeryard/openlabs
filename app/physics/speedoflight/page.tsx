@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "Speed of Light Lab | Interactive Physics Simulator | OpenLabs",
+  title: "Speed of Light Lab - Physics Simulator | OpenLabs",
   description:
     "Interactive speed of light lab for exploring light propagation, media, refractive index, and measurement concepts.",
   keywords: [

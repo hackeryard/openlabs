@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "Energy Conservation Simulator | Interactive Physics Lab | OpenLabs",
+  title: "Energy Conservation Simulator - Physics Lab | OpenLabs",
   description:
     "Investigate energy transformation and conservation with an interactive browser-based physics simulation.",
   keywords: [

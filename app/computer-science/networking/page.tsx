@@ -50,5 +50,12 @@ const cards = [
 ];
 
 export default function Page() {
-  return <ClientGrid title="Computer Networking Visualisation" description="Explore networking concepts with interactive simulators." cards={cards} />;
+  return (
+    <ClientGrid
+      title="Computer Networking Visualisation"
+      description="Explore networking concepts with interactive simulators."
+      intro="Networking concepts are easier to understand once you can watch data actually move. These labs simulate how information travels across a network: compare packet switching (data split into independently-routed packets) against circuit switching (a dedicated path reserved for the whole connection), build and rearrange network topologies to see how layout affects reliability, and step through the OSI model's seven layers to see which layer handles what as a message travels from one device to another."
+      cards={cards}
+    />
+  );
 }

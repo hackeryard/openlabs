@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "Simple Pendulum Simulator Online | Interactive Physics Lab | OpenLabs",
+  title: "Simple Pendulum Simulator | Physics Lab | OpenLabs",
   description:
     "Interactive simple pendulum simulator with length, gravity, damping, period, and angle controls for browser-based physics learning.",
   keywords: [

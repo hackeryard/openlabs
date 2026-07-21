@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Chemistry Virtual Labs & Interactive Experiments | OpenLabs",
+  // No "| OpenLabs" suffix here — the root layout's title.template
+  // ('%s | OpenLabs') already appends it for this route; baking the
+  // suffix in doubled it live ("...| OpenLabs | OpenLabs"). The
+  // openGraph/twitter copies below keep the suffix since those aren't
+  // subject to the template and render fine as-is.
+  title: "Chemistry Virtual Labs & Interactive Experiments",
   description: "Explore interactive chemistry experiments including periodic table, chemical bonds, reaction simulation, and water quality analysis.",
   keywords: [
     "chemistry experiments",
