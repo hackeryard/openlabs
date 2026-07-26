@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 
+import { usePathname } from "next/navigation";
+
 const footerLinks = [
   {
     label: "Physics",
@@ -23,6 +25,11 @@ const footerLinks = [
 ];
 
 export default function Footer() {
+  const pathname = usePathname();
+  if (pathname === '/login' || pathname === '/signup') {
+    return null;
+  }
+
   return (
     <footer className="bg-gradient-to-r from-slate-800 to-indigo-900 text-white py-8">
       <motion.div

@@ -1,4 +1,6 @@
 import GoogleProvider from "next-auth/providers/google";
+import GithubProvider from "next-auth/providers/github";
+import AzureADProvider from "next-auth/providers/azure-ad";
 import { NextAuthOptions } from "next-auth";
 import { connectDB } from "@/app/lib/mongodb";
 import User from "@/app/models/User";
@@ -8,6 +10,15 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+    }),
+    GithubProvider({
+      clientId: process.env.GITHUB_ID || "",
+      clientSecret: process.env.GITHUB_SECRET || "",
+    }),
+    AzureADProvider({
+      clientId: process.env.AZURE_AD_CLIENT_ID || "",
+      clientSecret: process.env.AZURE_AD_CLIENT_SECRET || "",
+      tenantId: process.env.AZURE_AD_TENANT_ID || "",
     }),
   ],
   session: {
