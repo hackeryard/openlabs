@@ -5,10 +5,18 @@ import { useRouter } from "next/navigation"
 import { analyticsService } from "@/lib/analytics"
 
 const AVATARS = [
-  "/images/avatars/avatar1.png",
-  "/images/avatars/avatar2.png",
-  "/images/avatars/avatar3.png",
-  "/images/avatars/avatar4.png",
+  "/images/avatars/avatar-01.png",
+  "/images/avatars/avatar-02.png",
+  "/images/avatars/avatar-03.png",
+  "/images/avatars/avatar-04.png",
+  "/images/avatars/avatar-05.png",
+  "/images/avatars/avatar-06.png",
+  "/images/avatars/avatar-07.png",
+  "/images/avatars/avatar-08.png",
+  "/images/avatars/avatar-09.png",
+  "/images/avatars/avatar-10.png",
+  "/images/avatars/avatar-11.png",
+  "/images/avatars/avatar-12.png",
 ]
 
 export default function SetupProfilePage() {
@@ -131,15 +139,18 @@ export default function SetupProfilePage() {
 
           <div>
             <label className="text-sm font-medium text-foreground">Avatar</label>
-            <div className="mt-3 flex gap-3">
+            <div className="mt-3 grid grid-cols-4 gap-3 sm:gap-4 max-w-sm">
               {AVATARS.map((a) => (
                 <button
                   type="button"
                   key={a}
                   onClick={() => { setAvatar(a); setKeepExistingAvatar(false); }}
-                  className={`w-20 h-20 rounded-lg overflow-hidden border-2 ${avatar === a ? 'border-indigo-400' : 'border-transparent'} focus:outline-none`}
+                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-[1.25rem] overflow-hidden border-[3px] transition-all duration-300 bg-card p-1 ${avatar === a
+                    ? "border-indigo-500 shadow-lg shadow-indigo-500/20 scale-110 ring-4 ring-indigo-500/10"
+                    : "border-border hover:border-muted-foreground/40 opacity-60 hover:opacity-100 grayscale hover:grayscale-0 hover:scale-105"
+                    }`}
                 >
-                  <img src={a} alt="avatar" className="w-full h-full object-cover" />
+                  <img src={a} alt="avatar" className="w-full h-full object-cover rounded-xl" />
                 </button>
               ))}
             </div>

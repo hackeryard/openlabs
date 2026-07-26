@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, Variants } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Trophy } from "lucide-react";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 
 /* ---------------- Animations ---------------- */
@@ -306,6 +306,21 @@ export default function Navbar() {
               </li>
             ))}
 
+            {/* Leaderboard */}
+            {user && (
+              <li>
+                <Link
+                  href="/leaderboard"
+                  className={`
+                    px-3 py-2 rounded-md transition text-sm font-medium
+                    ${pathname === "/leaderboard" ? "bg-white/20 font-semibold text-white" : "hover:bg-white/10 text-white"}
+                  `}
+                >
+                  Leaderboard
+                </Link>
+              </li>
+            )}
+
             {/* Auth / Avatar */}
             {!user ? (
               <li className="ml-2">
@@ -336,7 +351,7 @@ export default function Navbar() {
                   "
                 >
                   <Image
-                    src={user.avatar || "/images/avatars/avatar1.svg"}
+                    src={user.avatar || "/images/avatars/avatar-01.png"}
                     alt="User profile"
                     width={36}
                     height={36}
@@ -452,6 +467,22 @@ export default function Navbar() {
                   </li>
                 ))}
 
+                {/* Leaderboard */}
+                {user && (
+                  <li>
+                    <Link
+                      href="/leaderboard"
+                      onClick={() => setMobileOpen(false)}
+                      className={`
+                        block px-4 py-2.5 rounded-lg transition text-sm font-medium
+                        ${pathname === "/leaderboard" ? "bg-primary/10 text-primary font-semibold" : "hover:bg-accent text-foreground"}
+                      `}
+                    >
+                      Leaderboard
+                    </Link>
+                  </li>
+                )}
+
                 {/* Divider */}
                 <li><hr className="my-1 border-border" /></li>
 
@@ -481,7 +512,7 @@ export default function Navbar() {
                       className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-accent transition"
                     >
                       <Image
-                        src={user.avatar || "/images/avatars/avatar1.svg"}
+                        src={user.avatar || "/images/avatars/avatar-01.png"}
                         alt=""
                         width={32}
                         height={32}

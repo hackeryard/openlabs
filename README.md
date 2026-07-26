@@ -120,7 +120,7 @@ yarn start
 - ✅ **Database-backed user management** with MongoDB Atlas
 - ✅ **Redirect-after-login** — Users redirected to their intended page after authentication
 - ✅ **Protected API routes** — Automatic authentication checks with session redirect
-- ✅ **User Profile Setup** — Custom onboarding banner prompting profile setup completion
+- ✅ **User Profile Setup** — Custom onboarding banner prompting profile setup completion on the dashboard and global leaderboard
 
 ### Gamification & Progress Tracking 🏆
 - 🏆 **Daily Challenges Overhaul** — A floating, non-intrusive challenge widget: a pulsing "Daily Challenge" pill docked above the AI chat button expands into a compact glassmorphic popover (difficulty badges, expandable hints, submission states) — it never covers or pushes down the lab content.
@@ -131,7 +131,8 @@ yarn start
 - 🏆 **Level Progression** — Advance through levels with visual progress meters and level up logic.
 - 🏆 **Subject Mastery** — Tailored expertise tracking (e.g. Physics, Chemistry, Biology, CS) visualizing progress as students explore labs.
 - 🏆 **Achievements & Badges** — Reward system offering unlockable badges stamped with award dates, viewable on profiles.
-- 🏆 **Recent Activity Tracker** — Automatic tracking of user engagement and recent experiment history in the profile dashboard.
+- 🏆 **Global Leaderboard** — Rank and compete against other users globally, with filters ensuring only fully set-up profiles appear.
+- 🏆 **Recent Activity Tracker** — Automatic tracking of user engagement and recent experiment history in the private dashboard (kept secure and hidden from public profiles).
 
 ### Full-Stack Blog & Media Engine 📝
 - 📝 **Editorial Grid** — Public articles display with rich details: reading times, snippets, visual cover photo frames, and modern hovers
@@ -404,7 +405,7 @@ Supports optional `?next=/path` query parameter to redirect users to their inten
 | `/physics/speedoflight` | Speed of light experiments |
 | `/physics/uniformmotionlab` | Uniform motion visualizations |
 | `/physics/waveoptics` | Wave optics and diffraction |
-| `/physics/opticslens` | Optical lens experiments ⚠️ *(not yet in `app/lib/labs.ts` — works, but earns no XP/daily-challenge credit; see `CLAUDE.md`)* |
+| `/physics/opticslens` | Optical lens experiments |
 
 ### Biology Labs
 
@@ -499,9 +500,14 @@ NEXTAUTH_SECRET=your_nextauth_secret        # falls back to JWT_SECRET if unset
 # MongoDB Atlas
 MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/OpenLabs?retryWrites=true&w=majority
 
-# Google OAuth (NextAuth)
+# OAuth Providers (NextAuth)
 GOOGLE_CLIENT_ID=your_google_oauth_client_id
 GOOGLE_CLIENT_SECRET=your_google_oauth_client_secret
+GITHUB_ID=your_github_oauth_client_id
+GITHUB_SECRET=your_github_oauth_client_secret
+AZURE_AD_CLIENT_ID=your_azure_ad_client_id
+AZURE_AD_CLIENT_SECRET=your_azure_ad_client_secret
+AZURE_AD_TENANT_ID=your_azure_ad_tenant_id
 
 # Email Service (Gmail SMTP, used for OTP delivery)
 EMAIL_USER=your_email@gmail.com

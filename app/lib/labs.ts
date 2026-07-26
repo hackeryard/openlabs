@@ -105,6 +105,15 @@ export const LABS: Lab[] = [
     challengeEnabled: true,
     description: "Wave optics and diffraction",
   },
+  {
+    id: "physics/opticslens",
+    name: "Optics Lens",
+    subject: "physics",
+    type: "simulation",
+    challengeParams: ["focalLength", "objectDistance"],
+    challengeEnabled: true,
+    description: "Explore optical lens behavior and image formation",
+  },
 
 
   // ─── CHEMISTRY ─────────────────────────────────────────
