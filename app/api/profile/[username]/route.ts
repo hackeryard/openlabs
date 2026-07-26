@@ -22,9 +22,17 @@ export async function GET(req: Request, { params }: { params: { username: string
     await connectDB();
 
     const username = (params.username || "").toLowerCase().trim();
-    if (!username) return Response.json({ error: "Username required" }, { status: 400 });
+    if (!username) return Response.json({ error: "Username or ID required" }, { status: 400 });
 
-    const user = (await (User as any).findOne({ username }).select("-password -email").lean()) as PublicUser | null;
+    let user: PublicUser | null = null;
+    if (mongoose.Types.ObjectId.isValid(username)) {
+      user = (await (User as any).findById(username).select("-password -email").lean()) as PublicUser | null;
+    }
+
+    if (!user) {
+      user = (await (User as any).findOne({ username }).select("-password -email").lean()) as PublicUser | null;
+    }
+
     if (!user) return Response.json({ error: "Not found" }, { status: 404 });
 
     const publicUser = {
@@ -37,8 +45,6 @@ export async function GET(req: Request, { params }: { params: { username: string
       streak: user.streak,
       badges: user.badges || [],
       subjectProgress: user.subjectProgress || [],
-      completedExperiments: user.completedExperiments || [],
-      activityLog: user.activityLog || [],
       profileSetupComplete: user.profileSetupComplete || false,
     };
 

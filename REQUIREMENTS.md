@@ -18,7 +18,7 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 - FR-5: Users shall be able to sign up with email/password; passwords are hashed before storage.
 - FR-6: New accounts shall verify their email via a one-time 6-digit code (OTP), expiring after a fixed window.
 - FR-7: Users shall be able to reset a forgotten password via an emailed OTP.
-- FR-8: Users shall be able to sign in with Google (OAuth); a first-time Google sign-in shall provision an account automatically with the email pre-verified.
+- FR-8: Users shall be able to sign in with OAuth (Google, GitHub, or Azure AD); a first-time OAuth sign-in shall provision an account automatically with the email pre-verified.
 - FR-9: Regardless of sign-in method, an authenticated session shall be represented by a single JWT stored in an httpOnly cookie.
 - FR-10: Unauthenticated users shall be redirected to login when accessing any lab simulation (`/labs/*`) or admin (`/admin/*`) route; subject landing pages, the blog, and marketing pages shall remain public.
 - FR-11: Users shall complete a one-time profile setup (unique username, avatar, bio) after account creation.
@@ -30,7 +30,8 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 - FR-15: The system shall generate one daily challenge per challenge-eligible lab, refreshed once every 24 hours.
 - FR-16: Submitting a correct challenge answer shall award bonus XP (scaled by difficulty) and may grant badges (e.g. first challenge completed, streak milestones, subject mastery).
 - FR-16a: The in-lab daily-challenge UI shall be presented as a floating, dismissible widget that draws attention without occupying lab page space or covering the lab's initial view.
-- FR-17: Each user shall have a public profile page showing level, badges, and progress, and a private dashboard showing full account/activity detail.
+- FR-17: Each user shall have a public profile page showing level, badges, and subject mastery (with sensitive data like activity logs hidden), and a private dashboard showing full account/activity detail.
+- FR-17a: The system shall provide a global leaderboard, listing only users who have completed their profile setup (`profileSetupComplete: true`).
 
 ### 2.4 AI assistant
 - FR-18: Authenticated users shall be able to ask an AI chat assistant questions about the lab/page they are currently viewing.

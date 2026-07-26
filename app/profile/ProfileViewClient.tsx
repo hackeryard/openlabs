@@ -27,6 +27,21 @@ import {
   Microscope
 } from "lucide-react";
 
+const AVATARS = [
+  "/images/avatars/avatar-01.png",
+  "/images/avatars/avatar-02.png",
+  "/images/avatars/avatar-03.png",
+  "/images/avatars/avatar-04.png",
+  "/images/avatars/avatar-05.png",
+  "/images/avatars/avatar-06.png",
+  "/images/avatars/avatar-07.png",
+  "/images/avatars/avatar-08.png",
+  "/images/avatars/avatar-09.png",
+  "/images/avatars/avatar-10.png",
+  "/images/avatars/avatar-11.png",
+  "/images/avatars/avatar-12.png",
+];
+
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   show: {
@@ -75,10 +90,10 @@ function SubjectMasteryCircle({ subject, xp, level }: { subject: string; xp: num
   const strokeDashoffset = circumference - (pct / 100) * circumference;
 
   const colorMap: Record<string, { stroke: string; border: string; shadow: string; text: string; bg: string }> = {
-    physics: { stroke: "stroke-indigo-500", border: "hover:border-indigo-400/50", shadow: "hover:shadow-indigo-500/20", text: "text-indigo-600", bg: "bg-indigo-50/50" },
-    chemistry: { stroke: "stroke-amber-500", border: "hover:border-amber-400/50", shadow: "hover:shadow-amber-500/20", text: "text-amber-600", bg: "bg-amber-50/50" },
-    biology: { stroke: "stroke-emerald-500", border: "hover:border-emerald-400/50", shadow: "hover:shadow-emerald-500/20", text: "text-emerald-600", bg: "bg-emerald-50/50" },
-    computerScience: { stroke: "stroke-purple-500", border: "hover:border-purple-400/50", shadow: "hover:shadow-purple-500/20", text: "text-purple-600", bg: "bg-purple-50/50" },
+    physics: { stroke: "stroke-indigo-500", border: "hover:border-indigo-500/50", shadow: "hover:shadow-indigo-500/20", text: "text-indigo-500", bg: "bg-indigo-500/10" },
+    chemistry: { stroke: "stroke-amber-500", border: "hover:border-amber-500/50", shadow: "hover:shadow-amber-500/20", text: "text-amber-500", bg: "bg-amber-500/10" },
+    biology: { stroke: "stroke-emerald-500", border: "hover:border-emerald-500/50", shadow: "hover:shadow-emerald-500/20", text: "text-emerald-500", bg: "bg-emerald-500/10" },
+    computerScience: { stroke: "stroke-purple-500", border: "hover:border-purple-500/50", shadow: "hover:shadow-purple-500/20", text: "text-purple-500", bg: "bg-purple-500/10" },
   };
 
   const theme = colorMap[subject] || colorMap.physics;
@@ -261,12 +276,7 @@ function ActivityAreaChart({ activityLog }: { activityLog: any[] }) {
   );
 }
 
-const AVATARS = [
-  "/images/avatars/avatar1.svg",
-  "/images/avatars/avatar2.svg",
-  "/images/avatars/avatar3.svg",
-  "/images/avatars/avatar4.svg",
-];
+
 
 const BADGE_THEMES: Record<string, { gradient: string; text: string; bg: string; iconColor: string }> = {
   "First Challenge": { gradient: "from-amber-300 via-yellow-400 to-amber-500", text: "text-amber-800", bg: "bg-amber-50", iconColor: "text-amber-600" },
@@ -418,7 +428,7 @@ export default function ProfileViewClient() {
                 {!editing ? (
                   <>
                     <div className="flex flex-col md:flex-row md:items-center gap-3 justify-center md:justify-start">
-                      <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+                      <h2 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">
                         {user.name}
                       </h2>
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md shadow-indigo-500/20 self-center md:self-auto">
@@ -426,7 +436,7 @@ export default function ProfileViewClient() {
                         Scientist Lvl {user.level}
                       </span>
                     </div>
-                    <p className="text-indigo-600 font-bold text-sm tracking-wide">@{user.username || "unnamed"}</p>
+                    <p className="text-primary font-bold text-sm tracking-wide">@{user.username || "unnamed"}</p>
 
                     <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center md:justify-start gap-4 pt-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                       <span className="flex items-center gap-1.5 bg-muted px-3 py-1.5 rounded-lg border border-border">
@@ -439,7 +449,7 @@ export default function ProfileViewClient() {
                   </>
                 ) : (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full max-w-sm mx-auto md:mx-0 pt-3 space-y-2">
-                    <label className="text-[10px] font-black text-indigo-600 uppercase tracking-widest block text-left">Your Username</label>
+                    <label className="text-[10px] font-black text-primary uppercase tracking-widest block text-left">Your Username</label>
                     <div className="relative">
                       <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground font-bold text-sm select-none">@</span>
                       <input
@@ -458,7 +468,7 @@ export default function ProfileViewClient() {
                 {!editing ? (
                   <>
                     <button onClick={() => setEditing(true)} className="flex items-center justify-center w-12 h-12 bg-card hover:bg-accent text-foreground rounded-2xl transition-all shadow-sm border border-border hover:shadow-md hover:-translate-y-0.5 duration-200 group">
-                      <Edit2 size={18} className="group-hover:text-indigo-600 transition-colors" />
+                      <Edit2 size={18} className="group-hover:text-primary transition-colors" />
                     </button>
                     <button onClick={() => {
                       analyticsService.trackLogoutCompleted();
@@ -469,7 +479,7 @@ export default function ProfileViewClient() {
                   </>
                 ) : (
                   <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
-                    <button onClick={handleSave} disabled={saving} className="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold shadow-lg shadow-slate-900/20 transition-all disabled:opacity-50 text-xs tracking-wider uppercase active:scale-[0.98]">
+                    <button onClick={handleSave} disabled={saving} className="px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-bold shadow-lg shadow-primary/20 transition-all disabled:opacity-50 text-xs tracking-wider uppercase active:scale-[0.98]">
                       {saving ? "Saving..." : "Save Changes"}
                     </button>
                     <button onClick={() => setEditing(false)} className="px-6 py-3 bg-card border border-border text-muted-foreground rounded-xl font-bold hover:bg-accent transition-all text-xs tracking-wider uppercase active:scale-[0.98]">
@@ -496,12 +506,12 @@ export default function ProfileViewClient() {
                   </div>
 
                   {/* Rank Status Badge */}
-                  <div className="bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-100/80 rounded-2xl px-5 py-3.5 flex items-center gap-4 shrink-0 self-center lg:self-auto shadow-sm">
-                    <div className="w-10 h-10 rounded-xl bg-card border border-indigo-100 shadow-sm flex items-center justify-center text-indigo-600">
+                  <div className="bg-primary/10 border border-primary/20 rounded-2xl px-5 py-3.5 flex items-center gap-4 shrink-0 self-center lg:self-auto shadow-sm">
+                    <div className="w-10 h-10 rounded-xl bg-card border border-border shadow-sm flex items-center justify-center text-primary">
                       <Microscope size={20} />
                     </div>
                     <div>
-                      <span className="text-[9px] uppercase tracking-[0.2em] text-indigo-400 font-black block mb-0.5">Current Rank</span>
+                      <span className="text-[9px] uppercase tracking-[0.2em] text-primary font-black block mb-0.5">Current Rank</span>
                       <span className="text-sm font-black text-foreground tracking-tight">{rank}</span>
                     </div>
                   </div>
@@ -560,7 +570,7 @@ export default function ProfileViewClient() {
             <motion.div variants={containerVariants} className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5">
 
               <motion.div variants={itemVariants} className="bg-card border border-border rounded-3xl p-5 flex flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(99,102,241,0.12)] group">
-                <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Zap size={22} className="animate-pulse" />
                 </div>
                 <div>
@@ -570,7 +580,7 @@ export default function ProfileViewClient() {
               </motion.div>
 
               <motion.div variants={itemVariants} className="bg-card border border-border rounded-3xl p-5 flex flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(249,115,22,0.12)] group">
-                <div className="w-12 h-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-2xl bg-orange-500/10 text-orange-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Flame size={22} />
                 </div>
                 <div>
@@ -582,7 +592,7 @@ export default function ProfileViewClient() {
               </motion.div>
 
               <motion.div variants={itemVariants} className="bg-card border border-border rounded-3xl p-5 flex flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(16,185,129,0.12)] group">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Beaker size={22} />
                 </div>
                 <div>
@@ -592,7 +602,7 @@ export default function ProfileViewClient() {
               </motion.div>
 
               <motion.div variants={itemVariants} className="bg-card border border-border rounded-3xl p-5 flex flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(59,130,246,0.12)] group">
-                <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Trophy size={22} />
                 </div>
                 <div>
@@ -607,7 +617,7 @@ export default function ProfileViewClient() {
             <motion.div variants={itemVariants} className="bg-card p-6 sm:p-8 rounded-[2rem] border border-border shadow-[0_8px_30px_rgb(0,0,0,0.03)] space-y-8 flex-grow">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-black text-foreground tracking-tight flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">
+                  <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-500">
                     <Compass size={20} />
                   </div>
                   Core Mastery
@@ -632,12 +642,12 @@ export default function ProfileViewClient() {
             <motion.div variants={itemVariants} className="bg-card p-6 sm:p-8 rounded-[2rem] border border-border shadow-[0_8px_30px_rgb(0,0,0,0.03)] space-y-6">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-lg font-black text-foreground tracking-tight flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600">
+                  <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-500">
                     <CheckCircle2 size={20} />
                   </div>
                   Experiment Log
                 </h3>
-                <button className="text-[10px] font-black uppercase tracking-widest text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors">
+                <button className="text-[10px] font-black uppercase tracking-widest text-indigo-500 hover:text-indigo-400 flex items-center gap-1 transition-colors">
                   View Archive <ChevronRight size={14} />
                 </button>
               </div>
@@ -655,7 +665,7 @@ export default function ProfileViewClient() {
                       className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl bg-card border border-border hover:border-indigo-100 hover:shadow-md hover:shadow-indigo-500/5 transition-all gap-4 group cursor-pointer"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-[1rem] bg-muted text-muted-foreground border border-border flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                        <div className="w-12 h-12 rounded-[1rem] bg-muted text-muted-foreground border border-border flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-500/10 group-hover:text-indigo-500 transition-colors">
                           <Beaker size={20} />
                         </div>
                         <div>
@@ -663,14 +673,14 @@ export default function ProfileViewClient() {
                             {exp.experimentId?.replace(/-/g, " ")}
                           </p>
                           <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest flex items-center gap-2 mt-1">
-                            <span className="text-indigo-600">{exp.subject === "computerScience" ? "Comp Sci" : exp.subject}</span>
+                            <span className="text-indigo-500">{exp.subject === "computerScience" ? "Comp Sci" : exp.subject}</span>
                             <span className="opacity-30">•</span>
                             <span>{new Date(exp.completedAt).toLocaleDateString()}</span>
                           </p>
                         </div>
                       </div>
                       <div className="text-left sm:text-right shrink-0 pl-16 sm:pl-0">
-                        <span className="inline-flex items-center gap-1 px-3.5 py-1.5 bg-emerald-50 border border-emerald-100 text-emerald-700 font-black text-xs rounded-full shadow-sm">
+                        <span className="inline-flex items-center gap-1 px-3.5 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 font-black text-xs rounded-full shadow-sm">
                           +{exp.xpEarned || 0} XP
                         </span>
                       </div>
@@ -691,7 +701,7 @@ export default function ProfileViewClient() {
 
               <div className="relative z-10 flex flex-col h-full space-y-6">
                 <h3 className="text-lg font-black text-foreground tracking-tight flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-amber-50 text-amber-500">
+                  <div className="p-2 rounded-xl bg-amber-500/10 text-amber-500">
                     <Award size={20} />
                   </div>
                   Badges
@@ -772,7 +782,7 @@ export default function ProfileViewClient() {
             {/* Activity Chart */}
             <motion.div variants={itemVariants} className="bg-card p-6 sm:p-8 rounded-[2rem] border border-border shadow-[0_8px_30px_rgb(0,0,0,0.03)] space-y-5">
               <h3 className="text-lg font-black text-foreground tracking-tight flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-blue-50 text-blue-600">
+                <div className="p-2 rounded-xl bg-blue-500/10 text-blue-500">
                   <Activity size={20} />
                 </div>
                 Throughput
