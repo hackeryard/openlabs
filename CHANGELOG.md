@@ -4,6 +4,15 @@ All notable changes to OpenLabs are documented in this file. Format loosely foll
 
 ## Unreleased
 
+- **Ohm's Law Simulator Overhaul**: 
+  - Refactored the Ohm's Law physics lab (`/physics/ohmslaw`) into a freeform, full-screen interactive circuit builder.
+  - Replaced the simple static DC calculation with a dynamic node-voltage simulation engine (`engine.ts`), supporting real-time transient simulation with Backward Euler integration for Capacitors.
+  - Added support for AC (sine wave) batteries with adjustable frequency and amplitude.
+  - Built an interactive Component Tray with drag-and-drop components (Resistor, Variable Resistor, Capacitor, Bulb, Switch, Fuse, Wire) and probes.
+  - Added a draggable Multimeter widget with independent red and black probes to measure voltage drops across arbitrary nodes in real-time.
+  - Added a live Oscilloscope view in the Circuit Canvas to graph voltages across components over time.
+  - Added a global Properties Panel for live stats and a Voltage Sweep plot analyzer.
+
 - **Profile & Leaderboard Polish**:
   - Restructured the public profile view (`/profile/[username]`) for better privacy by removing sensitive data (activity logs, throughput metrics, experiment timelines, daily targets, and join date) from both the UI and the API response. Guest viewers now only see core stats, subject mastery, and badges.
   - Fixed hardcoded theme colors (`bg-indigo-50`, `text-indigo-600`, `text-white`) across both the private and public profile dashboards. They now use adaptive semantic CSS variable tokens (`bg-primary/10`, `text-primary`, `text-foreground`) to render beautifully in both Light and Dark mode.

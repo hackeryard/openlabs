@@ -10,6 +10,7 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 
 ### 2.1 Lab catalog & content
 - FR-1: The system shall provide interactive lab pages across four subjects: Physics, Chemistry, Biology, Computer Science.
+- FR-1a: The Physics Ohm's Law Lab shall support freeform circuit building with transient simulation (capacitors, AC sources) and provide real-time diagnostic tools (multimeter, oscilloscope).
 - FR-2: Each lab shall have a public SEO landing page (theory, learning objectives, FAQs) separate from its interactive simulation page, which requires authentication.
 - FR-3: Every lab shall be registered in a central catalog (`app/lib/labs.ts`) with a `type` (`simulation`, `exploration`, or `editor`) that determines its XP reward tier and daily-challenge eligibility.
 - FR-4: The system shall auto-generate an LLM-crawlable site manifest (`/llms.txt`, `/llms-full.txt`) reflecting all current pages, without manual maintenance.

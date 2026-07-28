@@ -41,4 +41,4 @@ When you change behavior, update the relevant doc(s) in the same change:
 
 ## PR / commit conventions
 
-Follow the existing git history style: short, lowercase, imperative commit subjects (e.g. `fix github workflow failing`, `feat: add simulator engine and core types for JS event loop visualization`). No enforced conventional-commit format, but `feat:`/`fix:` prefixes appear in recent history for notable changes.
+Follow the existing git history style: short, lowercase, imperative commit subjects (e.g. `fix github workflow failing`, `feat: add node-voltage engine and transient simulation for ohms law`). No enforced conventional-commit format, but `feat:`/`fix:` prefixes appear in recent history for notable changes.
