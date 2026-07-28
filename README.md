@@ -398,7 +398,7 @@ Supports optional `?next=/path` query parameter to redirect users to their inten
 | `/physics/freefall` | Free fall motion simulation |
 | `/physics/projectilemotion` | Projectile motion analysis |
 | `/physics/hookelaw` | Hooke's Law spring experiments |
-| `/physics/ohmslaw` | Ohm's Law circuit simulations |
+| `/physics/ohmslaw` | Interactive full-screen Ohm's Law & AC/DC circuit simulator with real-time multimeter and oscilloscope |
 | `/physics/energyconservation` | Energy conservation demonstrations |
 | `/physics/rclab` | RC circuit simulator |
 | `/physics/simplependulum` | Simple pendulum oscillations |
