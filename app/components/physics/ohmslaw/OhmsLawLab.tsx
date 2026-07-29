@@ -327,7 +327,7 @@ export default function OhmsLawLab() {
   };
 
   return (
-    <div className="flex flex-col min-h-full w-full bg-background relative">
+    <div className="flex flex-col h-full w-full lg:overflow-hidden overflow-y-auto bg-background relative">
       <div className="bg-card border-b border-border p-4 flex justify-between items-center">
           <div>
             <h1 className="text-xl font-bold flex items-center gap-2">
@@ -364,10 +364,10 @@ export default function OhmsLawLab() {
           </div>
       </div>
 
-      <div className="flex flex-1 items-stretch">
+      <div className="flex flex-col lg:flex-row flex-1 items-stretch lg:overflow-hidden">
         <ComponentTray selectedTool={selectedTool} onSelectTool={setSelectedTool} />
         
-        <div className="flex-1 bg-background flex flex-col relative border-x border-border/50">
+        <div className="flex-1 bg-background flex flex-col relative lg:border-x border-y lg:border-y-0 border-border/50 min-h-[50vh] lg:min-h-0">
           <CircuitCanvas 
             state={circuit}
             solverResult={solverResult}
@@ -390,7 +390,7 @@ export default function OhmsLawLab() {
           />
         </div>
 
-        <div className="w-72 flex flex-col border-l border-border bg-card">
+        <div className="w-full lg:w-72 flex flex-col lg:border-l border-t lg:border-t-0 border-border bg-card flex-shrink-0">
           <div className="flex-1 overflow-y-auto">
             <PropertiesPanel 
               selectedComponentId={selectedComponentId}

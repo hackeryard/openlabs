@@ -27,7 +27,7 @@ export default function Page() {
     });
   }, []);
   const [selectedOrgan, setSelectedOrgan] = useState("")
-  const [type, setType] = useState<"human" | "animal">("human")
+  const [type, setType] = useState<"human" | "skeleton">("human")
   const { completeExperiment } = useLab("biology/human", "biology", "exploration");
   const [explored, setExplored] = useState<Set<string>>(new Set());
 
@@ -55,7 +55,7 @@ export default function Page() {
       <div className="border-l">
         <div className="flex gap-2 p-2">
           <button onClick={() => setType("human")}>Human</button>
-          <button onClick={() => setType("animal")}>Animal</button>
+          <button onClick={() => setType("skeleton")}>Skeleton</button>
         </div>
         <InfoPanel organ={selectedOrgan} />
       </div>

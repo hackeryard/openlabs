@@ -50,22 +50,22 @@ export default function ComponentTray({ selectedTool, onSelectTool }: ComponentT
   );
 
   return (
-    <div className="bg-card border-r border-border w-64 p-4 flex flex-col gap-2 h-full">
+    <div className="bg-card lg:border-r border-border w-full lg:w-64 p-4 flex flex-col gap-2 h-auto lg:h-full flex-shrink-0">
       <h2 className="font-semibold text-lg mb-2">Tools & Components</h2>
       
-      <div className="flex flex-col gap-1">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2">
         {selectionTools.map(renderTool)}
       </div>
 
       <hr className="my-2 border-border/50" />
       
-      <div className="flex flex-col gap-1">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2">
         {componentTools.map(renderTool)}
       </div>
 
       <hr className="my-2 border-border/50" />
       
-      <div className="flex flex-col gap-1">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2">
         {meterTools.map(renderTool)}
       </div>
     </div>
