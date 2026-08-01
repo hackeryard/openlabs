@@ -92,6 +92,14 @@ const cards = [
     color: "sky",
     icon: Activity,
   },
+  {
+    href: "/chemistry/titration",
+    title: "Virtual Titration Lab",
+    desc: "Perform precision acid-base and redox titrations with live pH curves.",
+    badge: "Volumetric Analysis",
+    color: "indigo",
+    icon: FlaskConical,
+  },
 ];
 
 const webpageSchema = {

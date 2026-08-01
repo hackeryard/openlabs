@@ -162,6 +162,15 @@ export const LABS: Lab[] = [
     challengeEnabled: true,
     description: "Test water quality parameters",
   },
+  {
+    id: "chemistry/titration",
+    name: "Virtual Titration",
+    subject: "chemistry",
+    type: "simulation",
+    challengeParams: ["volumeUsed", "calculatedConcentration"],
+    challengeEnabled: true,
+    description: "Virtual acid-base titration lab",
+  },
 
   // ─── BIOLOGY ───────────────────────────────────────────
   {
