@@ -4,10 +4,10 @@ import { useGLTF } from "@react-three/drei"
 import { useMemo } from "react"
 
 useGLTF.preload("/models/human.glb")
-useGLTF.preload("/models/animal.glb")
+useGLTF.preload("/models/skeleton.glb")
 
 interface ModelProps {
-  type: "human" | "animal"
+  type: "human" | "skeleton"
   onSelect: (name: string) => void
 }
 
@@ -15,7 +15,7 @@ export default function Model({ type, onSelect }: ModelProps) {
   const path =
     type === "human"
       ? "/models/human.glb"
-      : "/models/animal.glb"
+      : "/models/skeleton.glb"
 
   const gltf = useGLTF(path)
 

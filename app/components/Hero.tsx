@@ -24,6 +24,7 @@ const labsData = {
       { name: "Periodic Table", path: "/chemistry/periodictable" },
       { name: "Chemical Bonds", path: "/chemistry/chemicalbonds" },
       { name: "Reaction Simulator", path: "/chemistry/reaction-simulation" },
+      { name: "Titration Lab", path: "/chemistry/titration" },
     ],
   },
   "Biology": {
