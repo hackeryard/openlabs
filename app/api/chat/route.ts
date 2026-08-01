@@ -98,6 +98,7 @@ export async function POST(req: Request) {
         { role: "user", content: message },
       ],
       temperature: 0.7,
+      max_tokens: 1000,
     });
     
     const reply = completion.choices?.[0]?.message?.content;

@@ -304,16 +304,16 @@ export default function OpenLabsAI() {
         setRemainingQueries(data.remainingQueries);
       }
       if (!res.ok && !data.reply) {
-        throw new Error(data.error || "Failed to connect to AI server");
+        throw new Error("Failed to connect to AI server");
       }
-      const reply = data.reply || "⚠️ AI returned empty response";
+      const reply = data.reply || "Something went wrong. Please try again.";
 
       runTypewriter(reply);
     } catch (err: any) {
       setIsTyping(false);
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "⚠️ Error: " + err.message },
+        { role: "assistant", content: "Something went wrong. Please try again." },
       ]);
       setLoading(false);
     }
