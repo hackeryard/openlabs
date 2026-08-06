@@ -4,6 +4,30 @@ All notable changes to OpenLabs are documented in this file. Format loosely foll
 
 ## Unreleased
 
+- **Virtual Titration Lab**:
+  - Added interactive Virtual Titration Lab (`/chemistry/titration` and `/labs/chemistry/titration`) featuring unified SVG apparatus (burette, stopcock drop animation, Erlenmeyer flask, and live indicator color transitions).
+  - Integrated live pH curve graphing (Chart.js), stoichiometry calculations ($C_1 V_1 = C_2 V_2$), practice modes, and human-readable indicator color observation log exporter.
+  - Fully mobile & tablet responsive layout (desktop 3-column application layout, mobile vertical scroll).
+
+- **Auth & Login Redirect Fix**:
+  - Fixed `AuthPage.tsx` hardcoding `callbackUrl: "/"` for Google and GitHub OAuth providers. It now extracts `next` or `callbackUrl` from search parameters (`useSearchParams()`), ensuring users who get redirected to login from protected labs (e.g. `/labs/chemistry/titration` or `/labs/physics/ohmslaw`) are returned directly back to their target lab post-login instead of the homepage.
+  - Wired up password & signup form handling in `AuthPage.tsx` to submit to `/api/auth/login` and `/api/auth/signup`, set authentication cookies, handle errors gracefully, and perform dynamic redirection to `nextPath`.
+  - Wrapped `AuthPage` in `<Suspense>` boundaries in `app/login/page.tsx` and `app/signup/page.tsx` for proper SSR/CSR hydration.
+
+- **Admin User Management & Telemetry Dashboard** (`/admin/users`, `/api/admin/users`):
+  - **Admin Route UI** (`app/admin/users/page.tsx`): Built a comprehensive user management portal gated by Admin Secret authentication. Includes real-time search, email verification filters, aggregated platform statistics (Total Users, Verified Count, Profile Setup %, Platform XP, Completed Labs, AI Queries), tabular user telemetry view, and a slide-over telemetry drawer for inspecting complete user metadata (XP, Level, Streak, Completed Experiments, Subject Mastery, Badges, AI Assistant activity, and Account deletion).
+  - **Admin API Endpoints** (`app/api/admin/users/route.ts`, `app/api/admin/users/[id]/route.ts`): Built secure endpoints gated by `x-admin-secret` to query MongoDB user documents, calculate platform statistics, fetch individual user telemetry, and support account deletion.
+
+- **Enterprise Technical SEO & Modular Educational Knowledge Graph Architecture**:
+  - **Site-Wide Layout Rollout**: Integrated `<Breadcrumbs />`, `<FormulaSection />`, and `<EducationalGraphSection />` directly into both shared landing layouts (`EducationalLandingLayout.tsx` and `PhysicsExperimentLanding.tsx`). Every single lab page across Physics, Chemistry, Biology, and Computer Science now automatically renders breadcrumb navigation, formula tables, and the Educational Knowledge Graph (Prerequisites, Next Steps, and Related Labs).
+  - **Schema Deduplication**: Consolidated schema injection into a single `<StructuredData />` script wrapper inside `SchemaMarkup.tsx` and `PhysicsExperimentLanding.tsx`, eliminating duplicate JSON-LD script tags across all lab pages.
+  - **Shared Type System & Constants** (`app/lib/types/`, `app/lib/constants/`): Centralized interfaces (`knowledge.ts`, `seo.ts`, `schema.ts`) and subject metadata constants (`subjects.ts`, `difficulty.ts`, `levels.ts`).
+  - **Focused SEO Builders & Recommendation Engine** (`app/lib/seo/`): Normalizing canonical builder (`canonicalBuilder.ts`), intent-based keyword builder (`keywordBuilder.ts`), focused metadata creators (`metadata/lab.ts`, `metadata/subject.ts`, `metadata/article.ts`), and schema creators (`schema/breadcrumb.ts`, `schema/learning.ts`, `schema/faq.ts`, `schema/article.ts`). Fixed brand title template duplication (`%s | OpenLabs`).
+  - **Recommendations API** (`app/lib/seo/relatedContent.ts`): Clean internal linking API (`getRelatedContent()`, `getRelatedLabs()`).
+  - **Modular Knowledge Graph** (`app/lib/knowledge/`): Domain concept registries (`concepts/`), learning paths (`paths/`), formula registries (`formulas/`), graph query engine (`graph.ts`), and build-time validator (`validator.ts`).
+  - **Robots, Sitemap, Edge OG & AI Discoverability**: Dynamic sitemap (`sitemap.ts`) iterating LABS registry and blogs, updated `robots.ts`, Edge OG Image Generator (`app/api/og/route.tsx`) with 1-year immutable CDN headers, AI search crawler markdown route (`/llms.txt`), internal SEO dashboard (`app/admin/seo-dashboard`), and build-time CI audit script (`scripts/seo-audit.ts`).
+
+
 - **Ohm's Law Simulator Overhaul**: 
   - Refactored the Ohm's Law physics lab (`/physics/ohmslaw`) into a freeform, full-screen interactive circuit builder.
   - Replaced the simple static DC calculation with a dynamic node-voltage simulation engine (`engine.ts`), supporting real-time transient simulation with Backward Euler integration for Capacitors.

@@ -77,6 +77,7 @@ yarn start
 ## Features ✨
 
 ### Chemistry Labs
+- **Virtual Titration Lab** — Acid-base and redox titration simulation with unified SVG apparatus (burette, stopcock drop animation, Erlenmeyer flask), live pH curves (Chart.js), stoichiometry calculations, and color observation logs
 - **Interactive Periodic Table** — Comprehensive element explorer with visual assets and detailed atomic information
 - **Electronic Configuration Visualizer** — Atomic structure visualization with per-element interactive pages
 - **Chemical Bond Types** — Visual demonstrations of ionic, covalent, and metallic bonding
@@ -141,6 +142,16 @@ yarn start
 - 📝 **Admin Dashboard (CRUD)** — Robust administrative control panel (`/admin/blogs`) supporting secure creating, editing, and deleting of articles
 - 📝 **x-admin-secret Protection** — Rest API uploads and mutations strictly restricted using secure header auth validation
 - 📝 **Dynamic FAQ Schema** — SEO-optimal automated injection of structured JSON-LD rich results from customized blog FAQs
+
+### Enterprise Technical SEO & Educational Knowledge Graph 🌐
+- 🌐 **Modular Knowledge Graph** — Domain-driven STEM concept registries (`app/lib/knowledge/concepts/`), sequential learning paths (`paths/`), and formula registries (`formulas/`) mapping prerequisites, next steps, and related labs.
+- 🌐 **Focused SEO Utilities & Metadata Creators** — Standardized metadata builders (`app/lib/seo/metadata/`) for labs, subjects, and articles preventing title brand template duplication (`%s | OpenLabs`).
+- 🌐 **Canonical URL Normalizer** — Automatic absolute canonical generator enforcing HTTPS, lowercase paths, removing trailing slashes, and stripping tracking parameters (`utm_*`, `gclid`, `fbclid`).
+- 🌐 **Schema.org JSON-LD Suite** — Modular schema creators (`app/lib/seo/schema/`) producing valid `LearningResource`, `BreadcrumbList`, `FAQPage`, `BlogPosting`, and `DefinedTerm` payloads.
+- 🌐 **Recommendations & Internal Linking API** — `getRelatedContent()`, `getRelatedLabs()`, `getPrerequisites()`, and `getNextTopics()` driving contextual internal linking.
+- 🌐 **Edge Dynamic OG Image Generator** — Edge API (`/api/og`) producing branded OpenGraph share cards with 1-year immutable CDN headers.
+- 🌐 **AI Search Optimization (`/llms.txt`)** — Formatted Markdown knowledge route optimized for ChatGPT, Perplexity, Claude, Gemini, and Copilot AI crawlers.
+- 🌐 **Admin SEO Dashboard & CI Audit** — Internal health monitoring panel (`/admin/seo-dashboard`) and static build-time validator (`scripts/seo-audit.ts`).
 
 ### AI & Chat Features
 - ✅ **OpenLabsAI Chat Assistant** — Context-aware AI assistant integrated across all labs
@@ -378,6 +389,7 @@ Supports optional `?next=/path` query parameter to redirect users to their inten
 | `/blog` | Visual listing grid of all public articles with reading time and cover photo hovers |
 | `/blog/[slug]` | Dedicated editorial view with cover image and auto-injected dynamic FAQ Schema JSON-LD |
 | `/admin/blogs` | Admin blog manager dashboard listing (published vs draft status) |
+| `/admin/users` | Comprehensive User Telemetry Dashboard for inspecting all users, XP, labs completed, and activity logs |
 | `/admin/blogs/create` | Admin blog creator tool equipped with custom drag-and-drop Cloudinary file uploader |
 | `/admin/blogs/[slug]/edit` | Admin blog editor updating cover image, markdown content, metadata, and FAQs |
 
