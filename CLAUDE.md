@@ -93,7 +93,10 @@ app/
 ├── src/data/elements.js             # AUTO-GENERATED periodic table data (118 elements) —
 │                                     #   don't hand-edit
 ├── middleware/middleware.js          # DEAD CODE — see Auth section, Next.js never loads this
-└── admin/blogs/**                   # admin blog CRUD UI (gated by ADMIN_SECRET, not JWT)
+└── admin/                            # admin panels (gated by ADMIN_SECRET)
+    ├── blogs/                       # admin blog CRUD UI
+    ├── users/                       # admin user telemetry & database dashboard
+    └── seo-dashboard/               # internal SEO performance audit dashboard
 
 components/    (root, NOT app/components) — EducationalLandingLayout, PhysicsExperimentLanding,
                SchemaMarkup, ProfileSetupBanner(+Client), ClarityProvider, ClarityTrackerObserver
@@ -170,6 +173,16 @@ The app supports a user-toggleable light/dark theme via `next-themes`, added on 
   - `app/components/chemistry/ChemicalBondTypes.jsx`'s data-table cells use bare `border` (not `border-border`) — likely low-contrast in dark mode, minor follow-up.
   - Several labs are intentionally dark-only by design and were left untouched on purpose: `data-science`, `data-analyzer`, `blockchain`, `code-lab/html-css-js` (Monaco + console), `brainNeuron`, `ai-problem/{maze-qlearn,forward-backward,hangman,blockchain}`, all `logic-gates/*`, `TopologyBuilder.tsx`, `OSIModel.tsx`/`OSIModel2D.tsx`, `blood/blood.tsx`. Don't "fix" these to be theme-aware without confirming the dark aesthetic isn't intentional (several are — circuit-board/terminal/cosmic themes are a deliberate design choice per lab, not a bug).
   - Subject-specific themed error pages (`app/{physics,chemistry,biology,computer-science}/error.tsx`) are deliberately, permanently dark branded pages (see their description under Directory map) — out of scope for the theme toggle by design, do not convert.
+
+## Enterprise Technical SEO & Educational Knowledge Graph Architecture
+
+- **Shared Types & Constants** (`app/lib/types/`, `app/lib/constants/`): Centralized interfaces (`knowledge.ts`, `seo.ts`, `schema.ts`) and subject metadata constants (`subjects.ts`, `difficulty.ts`, `levels.ts`).
+- **Focused SEO Builders** (`app/lib/seo/`): Normalizing canonical URL builder (`canonicalBuilder.ts`), intent-driven keyword builder (`keywordBuilder.ts`), modular metadata creators (`metadata/lab.ts`, `metadata/subject.ts`, `metadata/article.ts`), and schema creators (`schema/breadcrumb.ts`, `schema/learning.ts`, `schema/faq.ts`, `schema/article.ts`).
+- **Recommendations API** (`app/lib/seo/relatedContent.ts`): Clean internal linking API (`getRelatedContent()`, `getRelatedLabs()`).
+- **Modular Educational Knowledge Graph** (`app/lib/knowledge/`): Domain concept registries (`concepts/`), learning paths (`paths/`), formula registries (`formulas/`), graph query engine (`graph.ts`), and build-time validator (`validator.ts`).
+- **SEO & Knowledge UI Components** (`app/components/seo/`): `<Breadcrumbs />` (accessible DOM + `BreadcrumbList` JSON-LD), `<StructuredData />` script wrapper, `<EducationalGraphSection />` (Prerequisites, Next Steps, Related Labs), `<FormulaSection />`, and `<KnowledgeGraphVisualizer />`.
+- **Robots, Sitemap, Edge OG & AI Discoverability**: Dynamic sitemap (`sitemap.ts`) iterating LABS registry and blogs, updated `robots.ts`, Edge OG Image Generator (`app/api/og/route.tsx`) with 1-year immutable CDN headers, AI search crawler markdown route (`/llms.txt`), internal SEO dashboard (`app/admin/seo-dashboard`), and build-time CI audit script (`scripts/seo-audit.ts`).
+
 
 ## Environment variables
 
