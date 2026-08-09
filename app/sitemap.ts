@@ -1,445 +1,78 @@
-import { MetadataRoute } from 'next'
-import { connectDB } from '@/app/lib/mongodb'
-import Blog from '@/app/models/Blog'
+// app/sitemap.ts
+import { MetadataRoute } from "next";
+import { connectDB } from "@/app/lib/mongodb";
+import Blog from "@/app/models/Blog";
+import { LABS } from "@/app/lib/labs";
+import { SITE_METADATA, SUBJECTS } from "@/app/lib/constants/subjects";
 
-export const revalidate = 43200 // revalidate every 12 hours
+export const revalidate = 43200; // 12 hours
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://www.openlabs.org.in'
+  const baseUrl = SITE_METADATA.baseUrl.replace(/\/+$/, "");
 
-  // Dynamic Blog posts fetching
-  let blogUrls: MetadataRoute.Sitemap = []
-  try {
-    await connectDB()
-    const blogs = await Blog.find({ published: true }).select('slug updatedAt').lean()
-    blogUrls = blogs.map((b: any) => ({
-      url: `${baseUrl}/blog/${b.slug}`,
-      lastModified: b.updatedAt ? new Date(b.updatedAt) : new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    }))
-  } catch (error) {
-    console.error('✗ Sitemap blog generation error:', error)
-  }
-
-  const staticRoutes: MetadataRoute.Sitemap = [
+  // 1. Static subject hubs & core pages
+  const coreRoutes: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 1,
+      changeFrequency: "daily",
+      priority: 1.0,
     },
-    {
-      url: `${baseUrl}/physics`,
+    ...Object.values(SUBJECTS).map((s) => ({
+      url: `${baseUrl}${s.slug}`,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: "weekly" as const,
       priority: 0.9,
-    },
+    })),
     {
-      url: `${baseUrl}/chemistry`,
+      url: `${baseUrl}/blog`,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/biology`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/computer-science`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.9,
+      changeFrequency: "daily" as const,
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/about`,
       lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
     },
     {
       url: `${baseUrl}/contact`,
       lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/blog`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    // Physics experiments
-    {
-      url: `${baseUrl}/physics/simplependulum`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/physics/projectilemotion`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/physics/hookelaw`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/physics/ohmslaw`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/physics/waveoptics`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/physics/opticslens`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/physics/rclab`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/physics/energyconservation`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/physics/uniformmotionlab`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/physics/freefall`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/physics/speedoflight`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    // Chemistry experiments
-    {
-      url: `${baseUrl}/chemistry/periodictable`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/chemistry/chemicalbonds`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/chemistry/reaction-simulation`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/chemistry/water-quality`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/biology/blood`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/biology/brainNeuron`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/biology/cell/animal`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
+      changeFrequency: "monthly" as const,
       priority: 0.7,
     },
-    {
-      url: `${baseUrl}/biology/cell/plant`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/biology/human`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/biology/photosynthesis`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    // Computer Science tools
-    {
-      url: `${baseUrl}/computer-science/code-lab`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/computer-science/data-analyzer`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/computer-science/data-science`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/computer-science/dsa`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/computer-science/git-simulator`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/computer-science/logic-gates`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    // Logic gate subpages
-    {
-      url: `${baseUrl}/computer-science/logic-gates/and-gate`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/computer-science/logic-gates/or-gate`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/computer-science/logic-gates/not-gate`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/computer-science/logic-gates/nand-gate`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/computer-science/logic-gates/nor-gate`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/computer-science/logic-gates/xor-gate`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/computer-science/logic-gates/xnor-gate`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/computer-science/networking`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/computer-science/blockchain`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/computer-science/ai-problem`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    // AI-problem subpages
-    {
-      url: `${baseUrl}/computer-science/ai-problem/hangman`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/computer-science/ai-problem/hill-climb`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/computer-science/ai-problem/maze-qlearn`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/computer-science/ai-problem/constraint-satisfy`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/computer-science/ai-problem/forward-backward`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/computer-science/ai-problem/monkey-banana`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/computer-science/ai-problem/water-jug`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    // DSA subpages
-    {
-      url: `${baseUrl}/computer-science/dsa/stack`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/computer-science/dsa/queue`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/computer-science/dsa/linked-list`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/computer-science/dsa/sorting`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/computer-science/dsa/sorting/bubble-sort`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/computer-science/dsa/sorting/heap-sort`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/computer-science/dsa/sorting/insertion-sort`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/computer-science/dsa/sorting/merge-sort`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/computer-science/dsa/sorting/quick-sort`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/computer-science/dsa/sorting/selection-sort`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    // Code Lab subpages
-    {
-      url: `${baseUrl}/computer-science/code-lab/js`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/computer-science/code-lab/html-css-js`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    // Networking subpages
-    {
-      url: `${baseUrl}/computer-science/networking/topology-builder`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/computer-science/networking/packet-switching`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/computer-science/networking/osi-model`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/computer-science/networking/circuit-switching`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-  ]
+  ];
 
-  return [...staticRoutes, ...blogUrls]
+  // 2. Dynamic Lab / Simulation routes from LABS registry
+  const labRoutes: MetadataRoute.Sitemap = LABS.map((lab) => {
+    // Check whether the route is /labs/[id] or /[id]
+    const routePath = lab.id.startsWith("physics/") || lab.id.startsWith("chemistry/") || lab.id.startsWith("biology/") || lab.id.startsWith("computer-science/")
+      ? `/${lab.id}`
+      : `/labs/${lab.id}`;
+
+    return {
+      url: `${baseUrl}${routePath}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    };
+  });
+
+  // 3. Dynamic Blog posts from MongoDB
+  let blogRoutes: MetadataRoute.Sitemap = [];
+  try {
+    await connectDB();
+    const blogs = await Blog.find({ published: true }).select("slug updatedAt").lean();
+    blogRoutes = blogs.map((b: any) => ({
+      url: `${baseUrl}/blog/${b.slug}`,
+      lastModified: b.updatedAt ? new Date(b.updatedAt) : new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    }));
+  } catch (error) {
+    console.error("✗ Sitemap blog query error:", error);
+  }
+
+  return [...coreRoutes, ...labRoutes, ...blogRoutes];
 }

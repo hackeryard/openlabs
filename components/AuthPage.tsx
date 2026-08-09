@@ -3,12 +3,21 @@
 import React, { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 
 export default function AuthPage({ initialMode = "login" }: { initialMode?: "login" | "signup" }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextPath = searchParams?.get("next") || searchParams?.get("callbackUrl") || "/";
+
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState(false);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState("");
   const [mounted, setMounted] = useState(false);
 
   const { theme, setTheme, resolvedTheme } = useTheme();
@@ -29,17 +38,80 @@ export default function AuthPage({ initialMode = "login" }: { initialMode?: "log
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
     setEmailError(false);
+    if (serverError) setServerError("");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    if (!valid) {
+    setServerError("");
+
+    const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!validEmail) {
       setEmailError(true);
+      return;
+    }
+
+    if (!password || password.length < 6) {
+      setServerError("Password must be at least 6 characters long.");
+      return;
+    }
+
+    if (isSignup && !name.trim()) {
+      setServerError("Please enter your full name.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      if (isSignup) {
+        // 1. Submit Signup
+        const signupRes = await fetch("/api/auth/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password }),
+        });
+
+        if (!signupRes.ok) {
+          const signupData = await signupRes.json();
+          throw new Error(signupData.error || "Signup failed");
+        }
+
+        // 2. Auto Login after Signup
+        const loginRes = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (!loginRes.ok) {
+          throw new Error("Account created! Please log in.");
+        }
+      } else {
+        // 1. Submit Login
+        const loginRes = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (!loginRes.ok) {
+          const loginData = await loginRes.json();
+          throw new Error(loginData.error || "Invalid email or password");
+        }
+      }
+
+      // Redirect to original intended path or home
+      router.push(nextPath);
+      router.refresh();
+    } catch (err: any) {
+      setServerError(err.message || "An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // The intricate background inline styles
+  // Background inline styles
   const leftPanelBg = isDark
     ? `radial-gradient(ellipse 70% 60% at 25% 15%, rgba(91,79,233,0.55), transparent 60%), radial-gradient(ellipse 60% 55% at 80% 85%, rgba(56,189,248,0.35), transparent 60%), radial-gradient(ellipse 80% 70% at 50% 100%, rgba(45,212,191,0.18), transparent 65%), #0d0b1c`
     : `radial-gradient(ellipse 70% 60% at 25% 15%, rgba(91,79,233,0.15), transparent 60%), radial-gradient(ellipse 60% 55% at 80% 85%, rgba(56,189,248,0.15), transparent 60%), radial-gradient(ellipse 80% 70% at 50% 100%, rgba(45,212,191,0.1), transparent 65%), #f4f6f8`;
@@ -57,6 +129,8 @@ export default function AuthPage({ initialMode = "login" }: { initialMode?: "log
       WebkitMaskImage: 'radial-gradient(ellipse 80% 70% at 40% 40%, black 40%, transparent 85%)',
       maskImage: 'radial-gradient(ellipse 80% 70% at 40% 40%, black 40%, transparent 85%)'
     };
+
+  const redirectQuery = nextPath && nextPath !== "/" ? `?next=${encodeURIComponent(nextPath)}` : "";
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-56px)] lg:h-[calc(100vh-56px)] lg:overflow-hidden bg-white dark:bg-[#0A0A12] text-[#0A0A12] dark:text-[#F3F3FA] font-[family-name:Inter,ui-sans-serif,-apple-system,sans-serif] antialiased">
@@ -146,30 +220,32 @@ export default function AuthPage({ initialMode = "login" }: { initialMode?: "log
                 : "Welcome back. Choose a method to continue."}
             </p>
 
+            {/* Social OAuth Buttons */}
             <div className="flex flex-row gap-[10px] mb-[22px]">
               <button
                 type="button"
-                onClick={() => signIn("google", { callbackUrl: "/" })}
+                onClick={() => signIn("google", { callbackUrl: nextPath })}
                 className="flex items-center justify-center gap-[10px] w-full bg-white dark:bg-[#14141F] border border-[rgba(0,0,0,0.08)] dark:border-[rgba(255,255,255,0.08)] text-[#0A0A12] dark:text-[#F3F3FA] text-[13px] min-[400px]:text-[14px] font-semibold py-[11px] min-[400px]:py-[12px] rounded-[10px] cursor-pointer hover:bg-[#f3f4f6] dark:hover:bg-[#181826] hover:border-[#cfd1dc] dark:hover:border-[#33344a] transition-all duration-150 ease-out active:translate-y-[-1px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B7CFF]">
                 <svg viewBox="0 0 24 24" className="w-[18px] h-[18px] shrink-0"><path fill="#4285F4" d="M23.52 12.27c0-.82-.07-1.42-.22-2.05H12v3.72h6.53c-.13 1.03-.85 2.6-2.44 3.65l-.02.15 3.54 2.68.25.02c2.25-2.02 3.66-5 3.66-8.17z" /><path fill="#34A853" d="M12 24c3.24 0 5.95-1.05 7.93-2.86l-3.78-2.85c-1.02.7-2.4 1.19-4.15 1.19-3.17 0-5.86-2.04-6.82-4.87l-.14.01-3.68 2.78-.05.13C3.35 21.3 7.34 24 12 24z" /><path fill="#FBBC05" d="M5.18 14.6a6.9 6.9 0 0 1-.38-2.6c0-.9.15-1.78.37-2.6l-.01-.17-3.72-2.83-.12.06A11.94 11.94 0 0 0 0 12c0 1.93.47 3.76 1.32 5.53l3.86-2.93z" /><path fill="#EA4335" d="M12 4.75c2.26 0 3.78.94 4.65 1.73l3.4-3.24C17.94 1.2 15.24 0 12 0 7.34 0 3.35 2.7 1.32 6.47l3.85 2.93C6.14 6.8 8.83 4.75 12 4.75z" /></svg>
               </button>
               <button
                 type="button"
-                onClick={() => signIn("github", { callbackUrl: "/" })}
+                onClick={() => signIn("github", { callbackUrl: nextPath })}
                 className="flex items-center justify-center gap-[10px] w-full bg-white dark:bg-[#14141F] border border-[rgba(0,0,0,0.08)] dark:border-[rgba(255,255,255,0.08)] text-[#0A0A12] dark:text-[#F3F3FA] text-[13px] min-[400px]:text-[14px] font-semibold py-[11px] min-[400px]:py-[12px] rounded-[10px] cursor-pointer hover:bg-[#f3f4f6] dark:hover:bg-[#181826] hover:border-[#cfd1dc] dark:hover:border-[#33344a] transition-all duration-150 ease-out active:translate-y-[-1px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B7CFF]">
                 <svg viewBox="0 0 24 24" fill={isDark ? "#F3F3FA" : "#0A0A12"} className="w-[18px] h-[18px] shrink-0"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.3-1.4-1.7-1.4-1.7-1.1-.8.1-.8.1-.8 1.2.1 1.9 1.3 1.9 1.3 1.1 1.9 2.9 1.3 3.6 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.4-1.3-5.4-5.9 0-1.3.5-2.4 1.3-3.2-.1-.3-.6-1.5.1-3.2 0 0 1-.3 3.4 1.2a11.6 11.6 0 0 1 6.2 0c2.3-1.6 3.4-1.2 3.4-1.2.6 1.7.2 2.9.1 3.2.8.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3Z" /></svg>
               </button>
-              {/* <button 
-                type="button"
-                onClick={() => signIn("azure-ad", { callbackUrl: "/" })}
-                className="flex items-center justify-center gap-[10px] w-full bg-white dark:bg-[#14141F] border border-[rgba(0,0,0,0.08)] dark:border-[rgba(255,255,255,0.08)] text-[#0A0A12] dark:text-[#F3F3FA] text-[13px] min-[400px]:text-[14px] font-semibold py-[11px] min-[400px]:py-[12px] rounded-[10px] cursor-pointer hover:bg-[#f3f4f6] dark:hover:bg-[#181826] hover:border-[#cfd1dc] dark:hover:border-[#33344a] transition-all duration-150 ease-out active:translate-y-[-1px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B7CFF]">
-                <svg viewBox="0 0 24 24" className="w-[18px] h-[18px] shrink-0"><rect x="1" y="1" width="10" height="10" fill="#F35325" /><rect x="13" y="1" width="10" height="10" fill="#81BC06" /><rect x="1" y="13" width="10" height="10" fill="#05A6F0" /><rect x="13" y="13" width="10" height="10" fill="#FFBA08" /></svg>
-              </button> */}
             </div>
 
             <div className="flex items-center gap-[14px] text-[#8E8FA6] dark:text-[#63647C] text-[11.5px] font-[700] tracking-[0.06em] my-[22px] before:content-[''] before:flex-1 before:h-[1px] before:bg-[rgba(0,0,0,0.08)] dark:before:bg-[rgba(255,255,255,0.08)] after:content-[''] after:flex-1 after:h-[1px] after:bg-[rgba(0,0,0,0.08)] dark:after:bg-[rgba(255,255,255,0.08)]">
               OR USE EMAIL
             </div>
+
+            {/* Server Error Alert */}
+            {serverError && (
+              <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-500 text-xs font-semibold">
+                {serverError}
+              </div>
+            )}
 
             <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-[17px]">
 
@@ -187,6 +263,8 @@ export default function AuthPage({ initialMode = "login" }: { initialMode?: "log
                       id="name"
                       placeholder="Ada Lovelace"
                       autoComplete="name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                       className="w-full bg-white dark:bg-[#131320] border border-[rgba(0,0,0,0.08)] dark:border-[rgba(255,255,255,0.08)] rounded-[10px] py-[12px] pr-[14px] pl-[38px] text-[14px] text-[#0A0A12] dark:text-[#F3F3FA] outline-none transition-all duration-200 placeholder:text-[#8E8FA6] dark:placeholder:text-[#63647C] focus:border-[#8B7CFF] focus:shadow-[0_0_0_3px_rgba(139,124,255,0.15)]"
                     />
                   </div>
@@ -231,6 +309,8 @@ export default function AuthPage({ initialMode = "login" }: { initialMode?: "log
                     id="password"
                     placeholder="••••••••"
                     autoComplete="current-password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="w-full bg-white dark:bg-[#131320] border border-[rgba(0,0,0,0.08)] dark:border-[rgba(255,255,255,0.08)] rounded-[10px] py-[12px] pr-[14px] pl-[38px] text-[14px] text-[#0A0A12] dark:text-[#F3F3FA] outline-none transition-all duration-200 placeholder:text-[#8E8FA6] dark:placeholder:text-[#63647C] focus:border-[#8B7CFF] focus:shadow-[0_0_0_3px_rgba(139,124,255,0.15)]"
                   />
                   <button
@@ -259,16 +339,17 @@ export default function AuthPage({ initialMode = "login" }: { initialMode?: "log
                   <label className="flex items-center gap-[8px] text-[#63647C] dark:text-[#B7B8CE] cursor-pointer">
                     <input type="checkbox" className="w-[14px] h-[14px] accent-[#8B7CFF]" /> Remember for 30 days
                   </label>
-                  <a href="#" className="text-[#8B7CFF] font-[600] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B7CFF]">Forgot password?</a>
+                  <Link href="/forgotpassword" className="text-[#8B7CFF] font-[600] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B7CFF]">Forgot password?</Link>
                 </div>
               )}
 
               <button
                 type="submit"
-                className="mt-[6px] flex items-center justify-center gap-[8px] w-full py-[13.5px] border-none rounded-[10px] text-white text-[14.5px] font-[700] cursor-pointer transition-all duration-200 ease-out hover:brightness-110 active:scale-[0.985] group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B7CFF]"
+                disabled={loading}
+                className="mt-[6px] flex items-center justify-center gap-[8px] w-full py-[13.5px] border-none rounded-[10px] text-white text-[14.5px] font-[700] cursor-pointer transition-all duration-200 ease-out hover:brightness-110 active:scale-[0.985] group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B7CFF] disabled:opacity-60"
                 style={{ background: `linear-gradient(95deg, ${cIndigo}, ${cIndigo2})` }}
               >
-                <span>{isSignup ? "Create Account" : "Sign In"}</span>
+                <span>{loading ? (isSignup ? "Creating..." : "Signing In...") : (isSignup ? "Create Account" : "Sign In")}</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="w-4 h-4 transition-transform duration-200 ease-out group-hover:translate-x-[3px]">
                   <path d="M5 12h14M13 6l6 6-6 6" />
                 </svg>
@@ -277,9 +358,9 @@ export default function AuthPage({ initialMode = "login" }: { initialMode?: "log
 
             <div className="text-center text-[13.5px] text-[#63647C] dark:text-[#8E8FA6] mt-[26px]">
               {isSignup ? (
-                <>Already have an account? <Link href="/login" className="bg-transparent border-none text-[#8B7CFF] font-[700] text-[13.5px] cursor-pointer hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B7CFF]">Log in</Link></>
+                <>Already have an account? <Link href={`/login${redirectQuery}`} className="bg-transparent border-none text-[#8B7CFF] font-[700] text-[13.5px] cursor-pointer hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B7CFF]">Log in</Link></>
               ) : (
-                <>New here? <Link href="/signup" className="bg-transparent border-none text-[#8B7CFF] font-[700] text-[13.5px] cursor-pointer hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B7CFF]">Create an account</Link></>
+                <>New here? <Link href={`/signup${redirectQuery}`} className="bg-transparent border-none text-[#8B7CFF] font-[700] text-[13.5px] cursor-pointer hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B7CFF]">Create an account</Link></>
               )}
             </div>
           </div>

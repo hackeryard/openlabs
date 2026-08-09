@@ -4,19 +4,18 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { EducationalContent } from "@/types/education";
 import SchemaMarkup from "./SchemaMarkup";
+import Breadcrumbs from "@/app/components/seo/Breadcrumbs";
+import EducationalGraphSection from "@/app/components/seo/EducationalGraphSection";
+import FormulaSection from "@/app/components/seo/FormulaSection";
 import { 
   ChevronDown, 
-  ArrowLeft, 
   ArrowRight, 
   FlaskConical, 
   Activity, 
   Gauge, 
-  Milestone, 
-  Layers, 
   BookOpen, 
   CheckCircle2, 
-  Info,
-  Compass
+  Info
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -64,7 +63,7 @@ export default function EducationalLandingLayout({ content, launchUrl }: Props) 
   };
 
   return (
-    <main className="min-h-screen text-foreground pb-20 pt-8 font-sans relative overflow-hidden bg-[radial-gradient(hsl(var(--border))_1.5px,transparent_1.5px)] bg-[size:24px_24px]">
+    <main className="min-h-screen text-foreground pb-20 pt-4 font-sans relative overflow-hidden bg-[radial-gradient(hsl(var(--border))_1.5px,transparent_1.5px)] bg-[size:24px_24px]">
       {/* Dynamic ambient glowing background spheres */}
       <div className="absolute top-0 left-1/4 h-[400px] w-[400px] rounded-full bg-indigo-500/5 blur-[90px] pointer-events-none" />
       <div className="absolute bottom-20 right-1/4 h-[500px] w-[500px] rounded-full bg-purple-500/5 blur-[120px] pointer-events-none" />
@@ -73,21 +72,20 @@ export default function EducationalLandingLayout({ content, launchUrl }: Props) 
       <SchemaMarkup
         title={content.title}
         description={content.description}
-        url={`https://www.openlabs.org.in/${content.subject.toLowerCase()}/${content.slug}`}
+        url={`https://www.openlabs.org.in/${subjectSlug}/${content.slug}`}
         subject={content.subject}
         faqs={content.faqs}
       />
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10 space-y-8">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10 space-y-6">
         
         {/* Navigation Breadcrumb */}
-        <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-4" aria-label="Breadcrumb">
-          <Link href="/" className="hover:text-foreground transition font-medium">Home</Link>
-          <span>/</span>
-          <Link href={`/${subjectSlug}`} className="hover:text-foreground transition font-medium">{content.subject}</Link>
-          <span>/</span>
-          <span className="text-indigo-600 font-bold">{content.title}</span>
-        </nav>
+        <Breadcrumbs
+          items={[
+            { name: content.subject, url: `/${subjectSlug}` },
+            { name: content.title, url: `/${subjectSlug}/${content.slug}` },
+          ]}
+        />
 
         {/* 1. Dynamic 2-Column Hero Section Grid */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-card border border-border rounded-3xl p-6 md:p-8 lg:p-10 shadow-xl relative overflow-hidden">
@@ -187,6 +185,10 @@ export default function EducationalLandingLayout({ content, launchUrl }: Props) 
                 {content.howItWorks}
               </p>
             </div>
+
+            {/* Formulas Section & Educational Knowledge Graph for all subject pages */}
+            <FormulaSection conceptId={content.slug} />
+            <EducationalGraphSection conceptId={content.slug} subject={(subjectSlug === "computer-science" ? "computerScience" : subjectSlug) as any} />
 
             {/* FAQs Accordion section */}
             <div className="bg-card border border-border rounded-3xl p-6 md:p-8 shadow-md space-y-6">

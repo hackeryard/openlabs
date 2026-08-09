@@ -1,5 +1,10 @@
 import React from "react";
 import Link from "next/link";
+import { createLearningResourceSchema, createFAQSchema } from "@/app/lib/seo/schema";
+import StructuredData from "@/app/components/seo/StructuredData";
+import Breadcrumbs from "@/app/components/seo/Breadcrumbs";
+import EducationalGraphSection from "@/app/components/seo/EducationalGraphSection";
+import FormulaSection from "@/app/components/seo/FormulaSection";
 
 type Faq = {
   question: string;
@@ -46,31 +51,20 @@ export default function PhysicsExperimentLanding({
   heroImageUrl,
 }: PhysicsExperimentLandingProps) {
   const words = title.split(" ");
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "LearningResource",
+
+  const learningSchema = createLearningResourceSchema({
     name: `${title} Interactive Simulator`,
     description,
-    url: `https://www.openlabs.org.in/physics/${slug}`,
+    pathname: `/physics/${slug}`,
+    subject: "physics",
     learningResourceType: "Simulation",
-    teaches: `${title}, physics simulation, interactive experiment, data observation`,
-    isAccessibleForFree: true,
-    inLanguage: "en",
-    provider: {
-      "@type": "Organization",
-      name: "OpenLabs",
-      url: "https://www.openlabs.org.in",
-    },
-  };
+  });
+
+  const faqSchema = faqs && faqs.length > 0 ? createFAQSchema(faqs) : null;
 
   return (
     <>
-      <script
-        id={`${slug}-schema`}
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-      />
+      <StructuredData data={[learningSchema, faqSchema].filter(Boolean)} />
 
       <main
         className="px-page"
@@ -83,15 +77,14 @@ export default function PhysicsExperimentLanding({
         }
         suppressHydrationWarning
       >
-        <nav className="px-crumbs" aria-label="Breadcrumb">
-          <div className="px-shell px-crumbs-inner">
-            <Link href="/">Home</Link>
-            <span>/</span>
-            <Link href="/physics">Physics</Link>
-            <span>/</span>
-            <span aria-current="page">{title}</span>
-          </div>
-        </nav>
+        <div className="px-shell py-3">
+          <Breadcrumbs
+            items={[
+              { name: "Physics", url: "/physics" },
+              { name: title, url: `/physics/${slug}` },
+            ]}
+          />
+        </div>
 
         <section className="px-hero">
           <div className="px-shell px-hero-grid">
@@ -221,6 +214,10 @@ export default function PhysicsExperimentLanding({
                     ))}
                   </div>
                 </article>
+
+                {/* Formula Section & Educational Graph for all Physics pages */}
+                <FormulaSection conceptId={slug} />
+                <EducationalGraphSection conceptId={slug} subject="physics" />
               </div>
 
               <aside className="px-side" aria-label="Learning details">
