@@ -16,7 +16,8 @@ export async function GET(req: Request) {
 
     // Calculate Global Rank
     const globalRank = await (User as any).countDocuments({ 
-      username: { $exists: true, $ne: null },
+      profileSetupComplete: true,
+      email: { $ne: "rahulrajput3621@gmail.com" },
       xp: { $gt: currentUser.xp } 
     }) + 1;
 
@@ -31,7 +32,8 @@ export async function GET(req: Request) {
       // Count users who have more xp in this subject
       // Mongoose query using dot notation in array of documents
       const count = await (User as any).countDocuments({
-        username: { $exists: true, $ne: null },
+        profileSetupComplete: true,
+        email: { $ne: "rahulrajput3621@gmail.com" },
         subjectProgress: {
           $elemMatch: {
             subject: subject,
