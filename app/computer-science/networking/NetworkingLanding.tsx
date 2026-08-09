@@ -16,6 +16,8 @@ import {
   Sparkles,
   Wifi,
 } from "lucide-react";
+import FormulaSection from "@/app/components/seo/FormulaSection";
+import EducationalGraphSection from "@/app/components/seo/EducationalGraphSection";
 import type { NetworkingContent } from "./networkingContent";
 
 type Props = {
@@ -385,7 +387,10 @@ export default function NetworkingLanding({ content }: Props) {
       </section>
 
       <section className="border-t border-border bg-card">
-        <div className="mx-auto max-w-6xl px-6 py-14 lg:px-8">
+        <div className="mx-auto max-w-6xl px-6 py-14 lg:px-8 space-y-8">
+          <FormulaSection conceptId={content.slug} />
+          <EducationalGraphSection conceptId={content.slug} subject="computerScience" />
+
           <h2 className="text-3xl font-black tracking-tight text-foreground">{content.shortName} FAQs</h2>
           <div className="mt-8 grid grid-cols-1 gap-4">
             {content.faqs.map((faq) => (

@@ -13,6 +13,8 @@ import {
   ToggleLeft,
   Zap,
 } from "lucide-react";
+import FormulaSection from "@/app/components/seo/FormulaSection";
+import EducationalGraphSection from "@/app/components/seo/EducationalGraphSection";
 import type { LogicGateContent } from "./gateContent";
 
 type Props = {
@@ -364,7 +366,10 @@ export default function LogicGateLanding({ gate }: Props) {
       </section>
 
       <section className="border-t border-border bg-card">
-        <div className="mx-auto max-w-6xl px-6 py-14 lg:px-8">
+        <div className="mx-auto max-w-6xl px-6 py-14 lg:px-8 space-y-8">
+          <FormulaSection conceptId={gate.slug} />
+          <EducationalGraphSection conceptId={gate.slug} subject="computerScience" />
+
           <h2 className="text-3xl font-black tracking-tight text-foreground">
             {gate.name} FAQs
           </h2>

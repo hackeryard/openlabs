@@ -1,46 +1,34 @@
+// app/physics/ohmslaw/page.tsx
 import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
+import { createLabMetadata } from "@/app/lib/seo/metadata";
 
-export const metadata: Metadata = {
-  title: "Ohm's Law Simulator - Voltage & Current Lab | OpenLabs",
-  description:
-    "Explore Ohm's Law with an interactive circuit simulator for voltage, current, resistance, and V-I behavior.",
-  keywords: [
-    "ohm's law",
-    "circuit simulator",
-    "voltage current resistance",
-    "physics lab",
-    "electrical circuits",
-    "v-i relationship"
-  ],
-  alternates: {
-    canonical: "https://www.openlabs.org.in/physics/ohmslaw",
+const PAGE_TITLE = "Ohm's Law Simulator & DC Circuit Analysis";
+const PAGE_DESCRIPTION = "Explore Ohm's Law (V = I * R) with an interactive virtual circuit simulator for voltage, current, resistance, and V-I behavior.";
+
+export const metadata: Metadata = createLabMetadata({
+  title: PAGE_TITLE,
+  description: PAGE_DESCRIPTION,
+  pathname: "/physics/ohmslaw",
+  subject: "physics",
+  topic: "Ohm's Law",
+  keywords: ["ohm's law", "circuit simulator", "voltage current resistance", "dc circuits"],
+});
+
+const FAQS = [
+  {
+    question: "What does Ohm's Law state?",
+    answer: "Ohm's Law states that voltage (V) equals current (I) multiplied by resistance (R): V = I * R.",
   },
-  openGraph: {
-    title: "Ohm's Law Simulator | Voltage Current Resistance Lab | OpenLabs",
-    description:
-      "Explore Ohm's Law with an interactive circuit simulator for voltage, current, resistance, and V-I behavior.",
-    url: "https://www.openlabs.org.in/physics/ohmslaw",
-    type: "website",
-    images: [
-      {
-        url: "https://www.openlabs.org.in/images/physics/ohms-law-hero.png",
-        alt: "Ohm's Law Simulator | OpenLabs",
-      },
-    ],
+  {
+    question: "What happens if resistance increases?",
+    answer: "For a constant voltage, increasing resistance reduces current proportionally.",
   },
-  twitter: {
-    card: "summary_large_image",
-    title: "Ohm's Law Simulator | Voltage Current Resistance Lab | OpenLabs",
-    description:
-      "Explore Ohm's Law with an interactive circuit simulator for voltage, current, resistance, and V-I behavior.",
-    images: ["https://www.openlabs.org.in/images/physics/ohms-law-hero.png"],
+  {
+    question: "Is Ohm's Law valid for all materials?",
+    answer: "It applies to ohmic conductors at constant temperature, but non-ohmic devices (like diodes) have non-linear V-I characteristics.",
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+];
 
 export default function OhmsLawPage() {
   return (
@@ -50,7 +38,7 @@ export default function OhmsLawPage() {
       description="Explore V-I behavior with virtual instruments."
       heroDescription="Build intuition for circuits by changing voltage and resistance, then observing how current responds through virtual instruments."
       theory="Ohm's Law describes the relationship between voltage, current, and resistance in an ideal conductor. If resistance stays constant, current changes directly with voltage."
-      formula="V = I R"
+      formula="V = I * R"
       formulaLabel="Circuit relationship"
       launchUrl="/labs/physics/ohmslaw"
       heroImageUrl="/images/physics/ohms-law-hero.png"
@@ -69,28 +57,7 @@ export default function OhmsLawPage() {
         "Power supply testing",
         "Sensor and resistor networks",
       ]}
-      faqs={[
-        {
-          question: "What does Ohm's Law state?",
-          answer:
-            "Ohm's Law states that voltage equals current multiplied by resistance: V = I R.",
-        },
-        {
-          question: "What happens if resistance increases?",
-          answer:
-            "For the same voltage, increasing resistance reduces current.",
-        },
-        {
-          question: "Is Ohm's Law always valid?",
-          answer:
-            "It works well for ohmic materials with constant resistance, but not all devices have linear V-I behavior.",
-        },
-        {
-          question: "Why use virtual instruments?",
-          answer:
-            "Virtual meters make it easier to observe current and voltage changes safely while experimenting.",
-        },
-      ]}
+      faqs={FAQS}
     />
   );
 }

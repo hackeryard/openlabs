@@ -13,6 +13,7 @@ import ClarityProvider from '@/components/ClarityProvider'
 import ClarityTrackerObserver from '@/components/ClarityTrackerObserver'
 import ThemeProvider from '@/components/ThemeProvider'
 import AmbientBackground from '@/components/ui/AmbientBackground'
+import StructuredData from './components/seo/StructuredData'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.openlabs.org.in'
 
@@ -119,83 +120,70 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
         </ThemeProvider>
 
         {/* Structured Data */}
-        <Script
-          id="website-structured-data"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
+        <StructuredData
+          data={[
+            {
               "@context": "https://schema.org",
               "@type": "WebSite",
               name: "OpenLabs",
               alternateName: "OpenLabs Virtual Labs",
-              url: "https://www.openlabs.org.in",
-            }),
-          }}
-        />
-        <Script
-          id="structured-data"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'EducationalOrganization',
-              name: 'OpenLabs',
-              description: 'Interactive science and technology learning platform with virtual labs and simulations',
-              url: 'https://www.openlabs.org.in',
-              logo: 'https://www.openlabs.org.in/images/logo.png',
+              url: siteUrl,
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "EducationalOrganization",
+              name: "OpenLabs",
+              description: "Interactive science and technology learning platform with virtual labs and simulations",
+              url: siteUrl,
+              logo: `${siteUrl}/images/logo.png`,
               sameAs: [
-                'https://twitter.com/openlabs',
-                'https://github.com/openlabs'
+                "https://twitter.com/openlabs",
+                "https://github.com/openlabs"
               ],
               offers: [
                 {
-                  '@type': 'Course',
-                  name: 'Physics Experiments',
-                  description: 'Interactive physics simulations and experiments',
+                  "@type": "Course",
+                  name: "Physics Experiments",
+                  description: "Interactive physics simulations and experiments",
                   provider: {
-                    '@type': 'Organization',
-                    name: 'OpenLabs'
+                    "@type": "Organization",
+                    name: "OpenLabs"
                   }
                 },
                 {
-                  '@type': 'Course',
-                  name: 'Chemistry Experiments',
-                  description: 'Interactive chemistry simulations and experiments',
+                  "@type": "Course",
+                  name: "Chemistry Experiments",
+                  description: "Interactive chemistry simulations and experiments",
                   provider: {
-                    '@type': 'Organization',
-                    name: 'OpenLabs'
+                    "@type": "Organization",
+                    name: "OpenLabs"
                   }
                 },
                 {
-                  '@type': 'Course',
-                  name: 'Biology Experiments',
-                  description: 'Interactive biology simulations and experiments',
+                  "@type": "Course",
+                  name: "Biology Experiments",
+                  description: "Interactive biology simulations and experiments",
                   provider: {
-                    '@type': 'Organization',
-                    name: 'OpenLabs'
+                    "@type": "Organization",
+                    name: "OpenLabs"
                   }
                 },
                 {
-                  '@type': 'Course',
-                  name: 'Computer Science Tools',
-                  description: 'Interactive computer science tools and simulations',
+                  "@type": "Course",
+                  name: "Computer Science Tools",
+                  description: "Interactive computer science tools and simulations",
                   provider: {
-                    '@type': 'Organization',
-                    name: 'OpenLabs'
+                    "@type": "Organization",
+                    name: "OpenLabs"
                   }
                 }
               ],
-              educationalCredentialAwarded: 'Certificate of Completion',
-              teaches: [
-                'Physics',
-                'Chemistry',
-                'Biology',
-                'Computer Science'
-              ],
-              hasEducationalUse: 'Interactive Learning',
-              learningResourceType: 'Interactive Simulation'
-            })
-          }}
+              educationalCredentialAwarded: "Certificate of Completion",
+              teaches: ["Physics", "Chemistry", "Biology", "Computer Science"],
+              hasEducationalUse: "Interactive Learning",
+              learningResourceType: "Interactive Simulation"
+            }
+          ]}
         />
       </body>
     </html>

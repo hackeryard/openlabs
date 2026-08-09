@@ -44,6 +44,7 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 - FR-22: The system shall support published/draft blog posts with slug-based URLs, categories, and cover images.
 - FR-23: Only published posts shall be visible through public endpoints/pages.
 - FR-24: Content administrators shall be able to create, edit, and delete blog posts, including uploading cover images, through an admin interface gated by a shared admin secret (in addition to standard authentication).
+- FR-24a: Content administrators shall be able to inspect, search, filter, sort, export to CSV, and delete user accounts through an admin user telemetry dashboard (`/admin/users`) gated by a shared admin secret.
 
 ### 2.6 Code editor labs
 - FR-25: The Computer Science "code lab" shall provide an in-browser HTML/CSS/JS editor with saved projects per user.
