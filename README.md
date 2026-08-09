@@ -1352,32 +1352,24 @@ Usage is capped at 10 queries/day/user, enforced server-side in `app/api/chat`.
 ## Future Roadmap 💡
 
 ### High Priority
-- [ ] Automated testing suite (Jest + React Testing Library)
-- [ ] Accessibility audit and WCAG 2.1 compliance improvements
-- [ ] User progress tracking and learning statistics
-- [ ] Student certificates and achievement system
-- [ ] Voice synthesis for AI responses (text-to-speech)
+- [ ] Automated end-to-end & unit testing suite (Playwright + Vitest)
+- [ ] Accessibility audit and WCAG 2.1 AA compliance improvements for canvas simulators
+- [ ] Voice synthesis for AI assistant responses (text-to-speech output)
+- [ ] Interactive self-assessment quizzes & knowledge checks on experiment landing pages
+- [ ] Student experiment completion certificates (PDF generator)
 
 ### Medium Priority
-- [ ] OAuth2 integration (Google, GitHub single sign-in)
-- [ ] User profile dashboard with customization
-- [ ] Advanced physics labs (thermodynamics, quantum mechanics)
-- [ ] Interactive quiz and assessment system
-- [ ] Code lab templates and starter code
-- [ ] Streaming AI responses for real-time chat
-- [ ] AI-powered code review and suggestions
+- [ ] Advanced physics simulation engines (Thermodynamics & Quantum mechanics wavepackets)
+- [ ] Code lab starter templates & project sharing/forking gallery
+- [ ] Real-time collaborative lab sessions via WebSockets
+- [ ] Instructor / Teacher dashboard for classroom assignment tracking & student progress analytics
+- [ ] Fine-tuned domain-specific AI model integration for lab assistance
 
 ### Long-term Vision
-- [ ] Internationalization (i18n) — Multi-language support
-- [ ] Real-time collaborative labs (WebSockets)
-- [ ] Discussion forums for peer learning
-- [ ] Instructor dashboard for class management
-- [ ] Mobile native app (React Native)
-- [ ] AI-powered personalized learning paths
-- [ ] Laboratory video demonstrations
-- [ ] Advanced 3D simulations with physics engines
-- [ ] Fine-tuned AI models for domain-specific expertise
-- [ ] AI-generated lab reports and documentation
+- [ ] Internationalization (i18n) — Multi-language STEM curriculum support
+- [ ] Peer discussion forums & community experiment sharing
+- [ ] Mobile native application (React Native)
+- [ ] Automated AI-generated laboratory experiment reports & data exports
 
 ---
 
@@ -1423,9 +1415,10 @@ Detailed changes are tracked in [CHANGELOG.md](CHANGELOG.md), generated from git
 ### Latest Updates
 
 **Most recent (see [CHANGELOG.md § Unreleased](CHANGELOG.md#unreleased) for the full list):**
-- ✅ **Photosynthesis Simulator** — new Biology lab modeling Blackman's Law of Limiting Factors
-- ✅ **JavaScript Event Loop Visualizer** — Computer Science `code-lab/js` rebuilt around a Call Stack / Web APIs / Microtask / Macrotask visualization with Predict Mode
-- ✅ **Full agent-context doc system** — `CLAUDE.md`, `AGENTS.md`, `REQUIREMENTS.md`, and `CHANGELOG.md` kept in sync, plus Claude Code skills for scaffolding labs, auditing the lab registry, and checking env var health
+- ✅ **Virtual Titration Lab** — Interactive Chemistry lab (`/chemistry/titration`) with burette animation, live pH curves (Chart.js), stoichiometry calculations, and observation log exporter
+- ✅ **Admin User Telemetry Dashboard** — Secure admin management portal (`/admin/users`) featuring real-time search, multi-attribute filtering, column header sorting, telemetry detail drawer, and CSV data export
+- ✅ **Enterprise Technical SEO & Educational Knowledge Graph** — 29-concept STEM Knowledge Graph, breadcrumb navigation, formula tables, single-source JSON-LD schemas, Edge OG Image generator (`/api/og`), AI search discoverability (`/llms.txt`), and static build audit CLI (`scripts/seo-audit.ts`)
+- ✅ **Auth & Login Redirect Fix** — OAuth & password authentication flow updated to extract target `next` parameters, redirecting users directly back to their target lab post-login
 
 **Previous (May 2026 - v4.0):**
 - ✅ **Gamification & Rewards Engine** — Comprehensive interactive Daily Challenges, user Streak counting, Level Ups, and custom unlockable Achievements & Badges displayed on profile dashboards
