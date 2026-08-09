@@ -383,13 +383,14 @@ Supports optional `?next=/path` query parameter to redirect users to their inten
 | `/reset-password` | Password reset with OTP |
 | `/profile` | Fully mobile-responsive user stats, badges, streaks, and customization |
 
-### Blog Platform (Public & Admin Panels)
+### Blog & Admin Platform
 | Route | Purpose |
 |-------|---------|
 | `/blog` | Visual listing grid of all public articles with reading time and cover photo hovers |
 | `/blog/[slug]` | Dedicated editorial view with cover image and auto-injected dynamic FAQ Schema JSON-LD |
 | `/admin/blogs` | Admin blog manager dashboard listing (published vs draft status) |
 | `/admin/users` | Comprehensive User Telemetry Dashboard for inspecting all users, XP, labs completed, and activity logs |
+| `/admin/seo-dashboard` | Internal Technical SEO Audit & Knowledge Graph node coverage monitoring panel |
 | `/admin/blogs/create` | Admin blog creator tool equipped with custom drag-and-drop Cloudinary file uploader |
 | `/admin/blogs/[slug]/edit` | Admin blog editor updating cover image, markdown content, metadata, and FAQs |
 
@@ -397,6 +398,7 @@ Supports optional `?next=/path` query parameter to redirect users to their inten
 
 | Route | Experiment |
 |-------|-----------|
+| `/chemistry/titration` | Virtual acid-base titration lab with live pH curves and indicator color transitions |
 | `/chemistry/periodictable` | Interactive periodic table with element details |
 | `/chemistry/chemicalbonds` | Chemical bond type visualizations |
 | `/chemistry/electronic-configuration/[atomicNumber]` | Per-atom electronic configuration viewer |
@@ -1481,4 +1483,4 @@ OpenLabs is built with ❤️ using:
 
 **Built for curious minds, by educators, for learning. 🎓**
 
-*Last Updated: July 18, 2026*
+*Last Updated: August 9, 2026*
