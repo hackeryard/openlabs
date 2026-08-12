@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { ChevronDown, Trophy } from "lucide-react";
 import ThemeToggle from "@/components/ui/ThemeToggle";
+import { useAuth } from "@/components/AuthProvider";
 
 /* ---------------- Animations ---------------- */
 
@@ -67,7 +68,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [labsOpen, setLabsOpen] = useState(false);
   const [mobileLabsOpen, setMobileLabsOpen] = useState(false);
-  const [user, setUser] = useState<any | null>(null);
+  const { user, authState } = useAuth();
 
   const pathname = usePathname();
   const labsRef = useRef<HTMLLIElement>(null);
@@ -98,29 +99,6 @@ export default function Navbar() {
     setMobileOpen(false);
     setLabsOpen(false);
     setMobileLabsOpen(false);
-  }, [pathname]);
-
-  /* ---------------- Load User ---------------- */
-
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const res = await fetch("/api/auth/me");
-
-        if (!res.ok) {
-          setUser(null);
-          return;
-        }
-
-        const data = await res.json();
-        setUser(data.user || null);
-      } catch (error) {
-        console.error("Failed to load user:", error);
-        setUser(null);
-      }
-    };
-
-    loadUser();
   }, [pathname]);
 
   /* ---------------- Helpers ---------------- */

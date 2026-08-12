@@ -5,11 +5,13 @@ import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { useAuth } from "@/components/AuthProvider";
 
 export default function AuthPage({ initialMode = "login" }: { initialMode?: "login" | "signup" }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextPath = searchParams?.get("next") || searchParams?.get("callbackUrl") || "/";
+  const { checkAuth } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState(false);
@@ -109,7 +111,8 @@ export default function AuthPage({ initialMode = "login" }: { initialMode?: "log
         }
       }
 
-      // Redirect to original intended path or home
+      // Refresh central auth state & redirect to original intended path or home
+      await checkAuth();
       router.push(nextPath);
       router.refresh();
     } catch (err: any) {

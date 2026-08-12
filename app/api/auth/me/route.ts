@@ -1,6 +1,5 @@
 import { connectDB } from "@/app/lib/mongodb";
 import User from "@/app/models/User";
-import mongoose from "mongoose";
 import { getUserFromToken } from "@/app/lib/getUserFromToken";
 
 export async function GET(req: Request) {
@@ -13,9 +12,26 @@ export async function GET(req: Request) {
     }
 
     const user = await (User as any).findById(payload.id).select("-password").lean();
-    if (!user) return Response.json({ error: "User not found" }, { status: 404 });
+    if (!user) {
+      return Response.json({ error: "User not found" }, { status: 404 });
+    }
+
     if (!user.emailVerified) {
-      return Response.json({ error: "Email not verified", emailVerified: false }, { status: 403 });
+      return Response.json(
+        { 
+          error: "Email not verified", 
+          emailVerified: false, 
+          email: user.email 
+        }, 
+        { 
+          status: 403,
+          headers: {
+            "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0",
+          }
+        }
+      );
     }
 
     return Response.json(

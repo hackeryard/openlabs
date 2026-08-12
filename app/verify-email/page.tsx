@@ -5,11 +5,13 @@ import React, { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Mail, ArrowRight, Loader2, AlertCircle, CheckCircle2, Timer } from "lucide-react"
+import { useAuth } from "@/components/AuthProvider"
 
 function VerifyEmailPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const email = searchParams.get("email")
+  const { checkAuth } = useAuth()
 
   // State
   const [otp, setOtp] = useState("")
@@ -56,26 +58,16 @@ function VerifyEmailPageContent() {
       }
 
       setSuccess(true)
-      // After success, fetch current user to decide redirect
+      // After success, sync central auth state & redirect
       setTimeout(async () => {
         try {
-          const res = await fetch("/api/auth/me");
-          if (res.ok) {
-            const data = await res.json();
-            const next = searchParams.get("next") || "/";
-            const profileSetupComplete = data?.user?.profileSetupComplete;
-            if (!profileSetupComplete) {
-              router.push("/setup-profile");
-            } else {
-              router.push(next);
-            }
-          } else {
-            router.push("/");
-          }
+          await checkAuth();
+          const next = searchParams.get("next") || "/";
+          router.push(next);
         } catch (e) {
           router.push("/");
         }
-      }, 1200)
+      }, 1000)
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
     } finally {
