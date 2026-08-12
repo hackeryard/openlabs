@@ -145,7 +145,7 @@ export default function ForgotPasswordPage() {
                       : "border-border hover:border-primary/40 focus:border-indigo-500 focus:ring-4 focus:ring-primary/20"
                     }
                   `}
-                  placeholder="name@company.com"
+                  placeholder="name@example.com"
                 />
               </div>
             </div>

@@ -57,8 +57,18 @@ export default function LoginFormWithParams() {
         body: JSON.stringify({ email, password }),
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        const data = await res.json();
+        if (res.status === 403 && data.requiresVerification) {
+          await fetch("/api/auth/send-otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          });
+          router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+          return;
+        }
         throw new Error(data.error || "Login failed");
       }
 
@@ -153,7 +163,7 @@ export default function LoginFormWithParams() {
                     setEmail(e.target.value);
                     if (errors.email) setErrors({ ...errors, email: undefined });
                   }}
-                  placeholder="alex@example.com"
+                  placeholder="name@example.com"
                   className={`w-full pl-10 pr-4 py-2.5 bg-card border ${errors.email ? 'border-red-400 ring-2 ring-red-500/20' : 'border-border hover:border-primary/40'} rounded-xl outline-none focus:border-indigo-600 focus:ring-4 focus:ring-primary/20 transition-all text-foreground placeholder:text-muted-foreground font-medium text-sm`}
                 />
               </div>
@@ -177,7 +187,7 @@ export default function LoginFormWithParams() {
                     setPassword(e.target.value);
                     if (errors.password) setErrors({ ...errors, password: undefined });
                   }}
-                  placeholder="••••••••"
+                  placeholder="Enter your password"
                   className={`w-full pl-10 pr-10 py-2.5 bg-card border ${errors.password ? 'border-red-400 ring-2 ring-red-500/20' : 'border-border hover:border-primary/40'} rounded-xl outline-none focus:border-indigo-600 focus:ring-4 focus:ring-primary/20 transition-all text-foreground placeholder:text-muted-foreground font-medium text-sm`}
                 />
                 <button

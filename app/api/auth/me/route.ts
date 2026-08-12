@@ -14,6 +14,9 @@ export async function GET(req: Request) {
 
     const user = await (User as any).findById(payload.id).select("-password").lean();
     if (!user) return Response.json({ error: "User not found" }, { status: 404 });
+    if (!user.emailVerified) {
+      return Response.json({ error: "Email not verified", emailVerified: false }, { status: 403 });
+    }
 
     return Response.json(
       { user },

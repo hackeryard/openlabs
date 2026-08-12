@@ -190,7 +190,7 @@ export default function Home() {
                       {faq.q}
                     </span>
                     <span className="flex-shrink-0 w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center group-open:bg-primary/10 group-open:border-primary/20 group-hover:bg-accent transition-colors">
-                      <ChevronDown className="w-4 h-4 text-muted-foreground group-open:text-indigo-600 group-open:rotate-180 transition-transform duration-500 ease-[0.16,1,0.3,1]" />
+                      <ChevronDown className="w-4 h-4 text-muted-foreground group-open:text-indigo-600 group-open:rotate-180 transition-transform duration-500 ease-&lsqb;0.16,1,0.3,1&rsqb;" />
                     </span>
                   </summary>
                   <div className="px-6 pb-6 pt-1 text-muted-foreground leading-relaxed border-t border-border mt-1">

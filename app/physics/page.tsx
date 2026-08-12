@@ -409,7 +409,7 @@ export default function PhysicsPage() {
                         </span>
                         <span className="flex-shrink-0 w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center group-open:bg-primary/10 group-open:border-primary/20 group-hover:bg-accent transition-colors">
                           <svg
-                            className="w-4 h-4 text-muted-foreground group-open:text-indigo-600 group-open:rotate-180 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                            className="w-4 h-4 text-muted-foreground group-open:text-indigo-600 group-open:rotate-180 transition-transform duration-500 ease-&lsqb;cubic-bezier(0.16,1,0.3,1)&rsqb;"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"

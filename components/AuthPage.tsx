@@ -77,16 +77,14 @@ export default function AuthPage({ initialMode = "login" }: { initialMode?: "log
           throw new Error(signupData.error || "Signup failed");
         }
 
-        // 2. Auto Login after Signup
-        const loginRes = await fetch("/api/auth/login", {
+        // 2. Send OTP for verification and redirect
+        await fetch("/api/auth/send-otp", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ email }),
         });
-
-        if (!loginRes.ok) {
-          throw new Error("Account created! Please log in.");
-        }
+        router.push(`/verify-email?email=${encodeURIComponent(email)}&next=${encodeURIComponent(nextPath)}`);
+        return;
       } else {
         // 1. Submit Login
         const loginRes = await fetch("/api/auth/login", {
@@ -95,8 +93,18 @@ export default function AuthPage({ initialMode = "login" }: { initialMode?: "log
           body: JSON.stringify({ email, password }),
         });
 
+        const loginData = await loginRes.json();
+
         if (!loginRes.ok) {
-          const loginData = await loginRes.json();
+          if (loginRes.status === 403 && loginData.requiresVerification) {
+            await fetch("/api/auth/send-otp", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email }),
+            });
+            router.push(`/verify-email?email=${encodeURIComponent(email)}&next=${encodeURIComponent(nextPath)}`);
+            return;
+          }
           throw new Error(loginData.error || "Invalid email or password");
         }
       }
@@ -261,7 +269,7 @@ export default function AuthPage({ initialMode = "login" }: { initialMode?: "log
                     <input
                       type="text"
                       id="name"
-                      placeholder="Ada Lovelace"
+                      placeholder="e.g. Marie Curie"
                       autoComplete="name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
@@ -282,7 +290,7 @@ export default function AuthPage({ initialMode = "login" }: { initialMode?: "log
                   <input
                     type="email"
                     id="email"
-                    placeholder="rahul@gmail.com"
+                    placeholder="name@example.com"
                     autoComplete="email"
                     value={email}
                     onChange={handleEmailChange}
@@ -307,7 +315,7 @@ export default function AuthPage({ initialMode = "login" }: { initialMode?: "log
                   <input
                     type={showPassword ? "text" : "password"}
                     id="password"
-                    placeholder="••••••••"
+                    placeholder="Enter your password"
                     autoComplete="current-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}

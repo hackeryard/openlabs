@@ -10,22 +10,46 @@ const isDev = process.env.NODE_ENV === 'development'
 export async function POST(req) {
   await connectDB()
 
-const { email, password } = await req.json()
+  const { email, password } = await req.json()
 
-let user
-  if (isDev) {
+  if (!email || !password) {
+    return Response.json({ error: "Email and password are required" }, { status: 400 })
+  }
+
+  let user
+  if (isDev && email === "test@test.com") {
     user = await mockFindUser(email)
   } else {
     user = await User.findOne({ email })
   }
-  if (!user) return Response.json({ error: "Invalid credentials" }, { status: 401 })
 
-const valid = isDev ? (password === user.password) : await bcrypt.compare(password, user.password)
-  if (!valid) return Response.json({ error: "Invalid credentials" }, { status: 401 })
+  if (!user) {
+    return Response.json({ error: "Invalid credentials" }, { status: 401 })
+  }
+
+  const valid = isDev && email === "test@test.com" 
+    ? password === user.password 
+    : await bcrypt.compare(password, user.password)
+
+  if (!valid) {
+    return Response.json({ error: "Invalid credentials" }, { status: 401 })
+  }
+
+  // Enforce Email Verification Requirement
+  if (!user.emailVerified) {
+    return Response.json(
+      {
+        error: "Your email address is not verified. Please verify your email before logging in.",
+        requiresVerification: true,
+        email: user.email,
+      },
+      { status: 403 }
+    )
+  }
 
   const token = generateToken(user)
 
-  return new Response(JSON.stringify({ message: "Login success" }), {
+  return new Response(JSON.stringify({ message: "Login success", emailVerified: true }), {
     headers: {
       "Set-Cookie": serialize("auth-token", token, {
         httpOnly: true,

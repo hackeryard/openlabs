@@ -9,7 +9,9 @@ All notable changes to OpenLabs are documented in this file. Format loosely foll
   - Integrated live pH curve graphing (Chart.js), stoichiometry calculations ($C_1 V_1 = C_2 V_2$), practice modes, and human-readable indicator color observation log exporter.
   - Fully mobile & tablet responsive layout (desktop 3-column application layout, mobile vertical scroll).
 
-- **Auth & Login Redirect Fix**:
+- **Auth, Email Verification & Login Security Enforcement**:
+  - Enforced strict `emailVerified` checking in `POST /api/auth/login` and `GET /api/auth/me`. Attempting to log in to an unverified email account is now denied with HTTP status 403 Forbidden (`requiresVerification: true`).
+  - Integrated automatic OTP trigger (`POST /api/auth/send-otp`) and automatic redirection to `/verify-email?email=...` in `AuthPage.tsx` and `LoginFormWithParams.tsx` whenever an unverified user submits login or completes signup.
   - Fixed `AuthPage.tsx` hardcoding `callbackUrl: "/"` for Google and GitHub OAuth providers. It now extracts `next` or `callbackUrl` from search parameters (`useSearchParams()`), ensuring users who get redirected to login from protected labs (e.g. `/labs/chemistry/titration` or `/labs/physics/ohmslaw`) are returned directly back to their target lab post-login instead of the homepage.
   - Wired up password & signup form handling in `AuthPage.tsx` to submit to `/api/auth/login` and `/api/auth/signup`, set authentication cookies, handle errors gracefully, and perform dynamic redirection to `nextPath`.
   - Wrapped `AuthPage` in `<Suspense>` boundaries in `app/login/page.tsx` and `app/signup/page.tsx` for proper SSR/CSR hydration.
