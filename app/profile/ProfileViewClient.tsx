@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { analyticsService } from "@/lib/analytics";
+import { useAuth } from "@/components/AuthProvider";
 import {
   Edit2,
   LogOut,
@@ -292,6 +293,7 @@ export default function ProfileViewClient() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const { logout } = useAuth();
 
   useEffect(() => {
     async function load() {
@@ -472,7 +474,7 @@ export default function ProfileViewClient() {
                     </button>
                     <button onClick={() => {
                       analyticsService.trackLogoutCompleted();
-                      fetch("/api/auth/logout", { method: "POST" }).then(() => router.push("/"));
+                      logout().then(() => router.push("/"));
                     }} className="flex items-center justify-center w-12 h-12 bg-card border border-border hover:bg-rose-50 hover:border-rose-200 text-muted-foreground hover:text-rose-600 rounded-2xl transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 duration-200 group">
                       <LogOut size={18} className="group-hover:scale-110 transition-transform" />
                     </button>

@@ -84,6 +84,8 @@ export const metadata: Metadata = {
   applicationName: "OpenLabs",
 }
 
+import { AuthProvider } from '@/components/AuthProvider'
+
 export default function RootLayout({ children, }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -101,23 +103,25 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
         </Script>
       </head>
       <body className="bg-background text-foreground">
-        <ThemeProvider>
-        <AmbientBackground />
-        <Analytics />
-        <Navbar />
-        <div className="mx-auto">
-          <div data-ol-page-root>
-            <ChatProvider>
-              {children}
-              <OpenLabsAILoader />
-              <ClarityProvider />
-              <ClarityTrackerObserver />
-            </ChatProvider>
+        <AuthProvider>
+          <ThemeProvider>
+          <AmbientBackground />
+          <Analytics />
+          <Navbar />
+          <div className="mx-auto">
+            <div data-ol-page-root>
+              <ChatProvider>
+                {children}
+                <OpenLabsAILoader />
+                <ClarityProvider />
+                <ClarityTrackerObserver />
+              </ChatProvider>
+            </div>
           </div>
-        </div>
-        <Footer />
-        <SpeedInsights />
-        </ThemeProvider>
+          <Footer />
+          <SpeedInsights />
+          </ThemeProvider>
+        </AuthProvider>
 
         {/* Structured Data */}
         <StructuredData

@@ -20,6 +20,26 @@ const publicPrefixes = [
   '/computer-science',
 ];
 
+function isJwtExpired(tokenString: string): boolean {
+  try {
+    const parts = tokenString.split('.');
+    if (parts.length !== 3) return true;
+    const base64Url = parts[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    const payload = JSON.parse(jsonPayload);
+    if (!payload.exp) return false;
+    return Date.now() >= payload.exp * 1000;
+  } catch {
+    return true;
+  }
+}
+
 export function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
@@ -42,33 +62,43 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const authToken = request.cookies.get('auth-token');
+  const rawCookie = request.cookies.get('auth-token')?.value;
+  let hasValidAuthToken = false;
+  let isExpired = false;
+
+  if (rawCookie) {
+    if (isJwtExpired(rawCookie)) {
+      isExpired = true;
+    } else {
+      hasValidAuthToken = true;
+    }
+  }
+
   const isPublicPath =
     publicPaths.includes(pathname) ||
-    publicPrefixes.some(prefix =>
-      pathname.startsWith(prefix)
-    );
+    publicPrefixes.some((prefix) => pathname.startsWith(prefix));
 
   // If user is not authenticated and trying to access a protected route
-  if (!authToken && !isPublicPath) {
-    // If it's an API route (other than /api/auth), return 401 Unauthorized
+  if (!hasValidAuthToken && !isPublicPath) {
     if (pathname.startsWith('/api/')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      const res = NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      if (isExpired) res.cookies.delete('auth-token');
+      return res;
     }
 
     const url = request.nextUrl.clone();
     url.pathname = '/login';
-    // Save the original requested url to redirect back after login
     url.searchParams.set('next', pathname + search);
-    return NextResponse.redirect(url);
+    const res = NextResponse.redirect(url);
+    if (isExpired) res.cookies.delete('auth-token');
+    return res;
   }
 
-  // If user is logged in and trying to access login/signup pages, redirect them to home or the next path if specified
-  if (authToken && (pathname === '/login' || pathname === '/signup')) {
+  // If user has a valid authenticated token and tries to access login/signup
+  if (hasValidAuthToken && (pathname === '/login' || pathname === '/signup')) {
     const nextPath = request.nextUrl.searchParams.get('next') || '/';
     const url = request.nextUrl.clone();
-    // We parse the nextPath to ensure we don't redirect to an external URL or loop
-    if (nextPath.startsWith('/')) {
+    if (nextPath.startsWith('/') && !nextPath.startsWith('/login') && !nextPath.startsWith('/signup')) {
       url.pathname = nextPath.split('?')[0];
       url.search = nextPath.split('?')[1] ? `?${nextPath.split('?')[1]}` : '';
     } else {
@@ -78,10 +108,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  if (isExpired) {
+    response.cookies.delete('auth-token');
+  }
+  return response;
 }
 
 export const config = {
-  // Apply middleware to all routes except _next/static, _next/image
   matcher: ['/((?!_next/static|_next/image).*)'],
 };

@@ -9,6 +9,12 @@ All notable changes to OpenLabs are documented in this file. Format loosely foll
   - Integrated live pH curve graphing (Chart.js), stoichiometry calculations ($C_1 V_1 = C_2 V_2$), practice modes, and human-readable indicator color observation log exporter.
   - Fully mobile & tablet responsive layout (desktop 3-column application layout, mobile vertical scroll).
 
+- **Single Source of Truth Auth Architecture & Cookie Invalidation**:
+  - Implemented global `AuthProvider` (`components/AuthProvider.tsx`) providing explicit 4-state state machine: `LOADING`, `UNAUTHENTICATED`, `AUTHENTICATED_BUT_UNVERIFIED`, and `AUTHENTICATED`.
+  - Added automatic cookie invalidation: whenever `/api/auth/me` rejects a session with HTTP status 401 (invalid/expired JWT), 403 (unverified email / `emailVerified` flipped to false in DB), or 404 (user deleted), `AuthProvider` automatically calls `POST /api/auth/logout` to destroy stale `auth-token` and `next-auth` cookies from the browser.
+  - Hardened `middleware.ts` to decode JWT expiration in Edge Runtime (`isJwtExpired`) and delete expired cookies on response, completely eliminating stale cookie presence and preventing redirect loops to `/`.
+  - Unified `Navbar.tsx`, `AuthPage.tsx`, `ProfileViewClient.tsx`, and `verify-email/page.tsx` around `useAuth()`.
+
 - **Auth, Email Verification & Login Security Enforcement**:
   - Enforced strict `emailVerified` checking in `POST /api/auth/login` and `GET /api/auth/me`. Attempting to log in to an unverified email account is now denied with HTTP status 403 Forbidden (`requiresVerification: true`).
   - Integrated automatic OTP trigger (`POST /api/auth/send-otp`) and automatic redirection to `/verify-email?email=...` in `AuthPage.tsx` and `LoginFormWithParams.tsx` whenever an unverified user submits login or completes signup.
