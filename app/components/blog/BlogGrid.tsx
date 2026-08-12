@@ -76,7 +76,7 @@ export default function BlogGrid({ posts }: { posts: BlogPost[] }) {
                       src={post.coverImage}
                       alt={post.title}
                       fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-1000 ease-[0.16,1,0.3,1]"
+                      className="object-cover group-hover:scale-110 transition-transform duration-1000 ease-&lsqb;0.16,1,0.3,1&rsqb;"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                     {/* Dynamic Image Overlay */}

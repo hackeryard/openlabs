@@ -1,30 +1,52 @@
-import mongoose from "mongoose"
-import type { Connection } from "mongoose"
+import mongoose from "mongoose";
+import type { Connection } from "mongoose";
 
-const MONGO_URI = process.env.MONGO_URI
+const MONGO_URI = process.env.MONGO_URI;
 
 if (!MONGO_URI) {
-  throw new Error("Mongo URI missing")
+  throw new Error("Mongo URI missing in environment variables (.env)");
 }
 
-let cached: { conn: Connection | null } = (global as any).mongoose || {
-  conn: null,
+interface MongooseCache {
+  conn: Connection | null;
+  promise: Promise<typeof mongoose> | null;
 }
+
+let cached: MongooseCache = (global as any).mongoose;
+
+if (!cached) {
+  cached = (global as any).mongoose = { conn: null, promise: null };
+}
+
 export async function connectDB() {
-  if (cached.conn) return cached.conn
+  if (cached.conn && cached.conn.readyState === 1) {
+    return cached.conn;
+  }
 
-  try {
-    const mongooseInstance = await mongoose.connect(MONGO_URI, {
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false, // Don't buffer for 10s if connection fails; fail fast
+      serverSelectionTimeoutMS: 5000, // Timeout server selection after 5s instead of 30s
       connectTimeoutMS: 10000,
       socketTimeoutMS: 45000,
-    })
+      family: 4, // Force IPv4 resolution to prevent Windows/ISP DNS SRV IPv6 lookup timeouts
+    };
 
-    cached.conn = mongooseInstance.connection
-      ; (global as any).mongoose = cached
+    cached.promise = mongoose.connect(MONGO_URI!, opts).then((mongooseInstance) => {
+      return mongooseInstance;
+    }).catch((err) => {
+      cached.promise = null; // Reset promise on failure so subsequent calls retry
+      throw err;
+    });
+  }
 
-    return cached.conn
+  try {
+    const mongooseInstance = await cached.promise;
+    cached.conn = mongooseInstance.connection;
+    return cached.conn;
   } catch (error: any) {
-    console.error("✗ MongoDB Connection Error:", error.message)
-    throw error
+    cached.promise = null;
+    console.error("✗ MongoDB Connection Error:", error.message || error);
+    throw error;
   }
 }

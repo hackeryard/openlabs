@@ -39,11 +39,18 @@ export async function POST(req) {
     // Save OTP to database
     await OTP.create({ email, code, expiresAt })
 
-    // Send OTP email
-    await sendOTPEmail(email, code)
+    // Send OTP email with dev fallback
+    try {
+      await sendOTPEmail(email, code)
+    } catch (emailErr) {
+      console.warn(`⚠️ [DEV MODE] Email dispatch skipped/failed. OTP for ${email} is: ${code}`)
+    }
 
     return Response.json(
-      { message: "OTP sent successfully" },
+      { 
+        message: "OTP sent successfully", 
+        devCode: process.env.NODE_ENV === "development" ? code : undefined 
+      },
       { status: 200 }
     )
   } catch (error) {

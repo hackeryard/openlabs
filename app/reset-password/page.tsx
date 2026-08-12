@@ -158,7 +158,7 @@ function ResetPasswordPageContent() {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   className="block w-full rounded-lg border border-border pl-10 pr-10 py-2.5 text-sm transition-all outline-none focus:border-indigo-500 focus:ring-4 focus:ring-primary/20"
-                  placeholder="••••••••"
+                  placeholder="Enter new password"
                 />
                 <button
                   type="button"
@@ -184,7 +184,7 @@ function ResetPasswordPageContent() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="block w-full rounded-lg border border-border pl-10 pr-3 py-2.5 text-sm transition-all outline-none focus:border-indigo-500 focus:ring-4 focus:ring-primary/20"
-                  placeholder="••••••••"
+                  placeholder="Confirm new password"
                 />
                 <button
                   type="button"

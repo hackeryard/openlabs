@@ -43,7 +43,7 @@ const PouringVessel = ({ active, color }) => (
     <div className="w-24 h-6 bg-gray-400 absolute -right-2 top-4 rounded-full opacity-30 rotate-45" />
     <div className="w-8 h-28 border-2 border-white/50 bg-white/10 rounded-full backdrop-blur-md relative overflow-hidden shadow-lg">
       <div 
-        className={`absolute bottom-0 w-full bg-opacity-90 transition-all duration-[1000ms] ease-linear ${
+        className={`absolute bottom-0 w-full bg-opacity-90 transition-all duration-&lsqb;1000ms&rsqb; ease-linear ${
             active ? "h-0 delay-300" : "h-3/4"
         }`} 
         style={{ backgroundColor: color }} 
@@ -77,7 +77,7 @@ const Beaker = ({ baseColor, addedColor, finalColor, bubbles, phase }) => {
             <div className="relative w-44 h-56 border-4 border-white/20 bg-white/5 rounded-b-3xl overflow-hidden backdrop-blur-sm shadow-2xl">
                 <SplashZone active={phase === 'pouring'} color={addedColor} />
                 <div 
-                    className="absolute bottom-0 w-full transition-all duration-[2000ms] ease-in-out"
+                    className="absolute bottom-0 w-full transition-all duration-&lsqb;2000ms&rsqb; ease-in-out"
                     style={{ height: height, backgroundColor: currentColor }}
                 >
                     <div className="w-full h-3 bg-white/30 absolute top-0" />
