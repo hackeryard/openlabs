@@ -1,24 +1,11 @@
-import OpenAI from "openai";
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 import { connectDB } from "@/app/lib/mongodb";
 import { getUserFromToken } from "@/app/lib/getUserFromToken";
-
-const openai = new OpenAI({
-  apiKey: process.env.CHATBOT_API_KEY,
-  baseURL: "https://openrouter.ai/api/v1",
-});
+import { createChatCompletionWithFallback } from "@/app/lib/openrouter";
 
 export async function POST(req: Request) {
-  const requestId = Math.random().toString(36).substring(7);
   try {
-    if (!process.env.CHATBOT_API_KEY) {
-      return NextResponse.json(
-        { error: "Server misconfiguration: Missing API key" },
-        { status: 500 }
-      );
-    }
-
     // 1. Authenticate user from JWT token cookie
     await connectDB();
     const payload = getUserFromToken();
@@ -87,13 +74,13 @@ export async function POST(req: Request) {
       );
     }
 
-    // 3. Request Completion from LLM (Soften instructions to avoid false-refusal on theory/STEM questions)
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+    // 3. Request Completion from LLM with automatic multi-key failover
+    const completion = await createChatCompletionWithFallback({
+      model: "openai/gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: "You are OpenLabs AI Assistant. You are a friendly, highly helpful educational companion designed to help students learn STEM subjects (Physics, Chemistry, Biology, Computer Science) and understand the lab experiments. You must answer all academic, scientific, coding, or learning-related questions with great detail and support. Refuse to answer ONLY if the question is completely and obviously off-topic and has absolutely nothing to do with science, coding, technology, mathematics, academic subjects, or the OpenLabs platform (for example, queries about general non-scientific history, entertainment, cooking recipes, gossip, or general chit-chat)."
+          content: "You are OpenLabs AI Assistant. You are a friendly, highly helpful educational companion designed to help students learn STEM subjects (Physics, Chemistry, Biology, Computer Science, Mathematics) and understand the lab experiments. You must answer all academic, scientific, coding, or learning-related questions with great detail and support. Refuse to answer ONLY if the question is completely and obviously off-topic and has absolutely nothing to do with science, coding, technology, mathematics, academic subjects, or the OpenLabs platform (for example, queries about general non-scientific history, entertainment, cooking recipes, gossip, or general chit-chat)."
         },
         { role: "user", content: message },
       ],
