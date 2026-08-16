@@ -4,6 +4,12 @@ All notable changes to OpenLabs are documented in this file. Format loosely foll
 
 ## Unreleased
 
+- **OpenRouter Multi-Key Automatic Fallback & Rotation**:
+  - Implemented multi-key failover system in `app/lib/openrouter.ts`:
+    - Reads single or multiple comma-separated keys from `CHATBOT_API_KEY`, `CHATBOT_API_KEYS`, `OPENROUTER_API_KEY`, `OPENROUTER_API_KEYS`, or enumerated env vars (`CHATBOT_API_KEY_1`, `CHATBOT_API_KEY_2`, etc.).
+    - Automatically catches API errors (402 Insufficient Credits, 429 Rate Limits, 401 Unauthorized) and seamlessly falls back to the next configured key without dropping user requests.
+    - Integrated across both AI Chat Assistant (`/api/chat`) and Daily Challenge Generator (`/api/challenges/generate`).
+
 - **Number Theory & Cryptography Studio Lab**:
   - Added the **Number Theory & Cryptography Studio** lab (`/mathematics/number-theory` and `/labs/mathematics/number-theory`):
     - **Prime Factorization & Sieve of Eratosthenes**: Sieve of Eratosthenes grid up to $N = 200$, unique prime factor trees (Fundamental Theorem of Arithmetic), divisor counts $d(n)$, divisor sums $\sigma(n)$, and number classifications.
