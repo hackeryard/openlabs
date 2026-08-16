@@ -53,6 +53,16 @@ export const SUBJECTS: Record<SubjectId, SubjectMeta> = {
     iconName: "Code2",
     primaryBranches: ["Data Structures & Algorithms", "Digital Logic", "Networking", "AI & Machine Learning", "Web Development"],
   },
+  mathematics: {
+    id: "mathematics",
+    name: "Mathematics",
+    slug: "/mathematics",
+    description: "Plot continuous functions in real time, explore transformations, and calculate roots, extrema, and integrals.",
+    color: "#6366f1", // indigo-500
+    gradient: "from-indigo-600 to-violet-500",
+    iconName: "Sigma",
+    primaryBranches: ["Algebra", "Calculus", "Trigonometry", "Coordinate Geometry", "Analysis"],
+  },
 };
 
 export const SITE_METADATA = {

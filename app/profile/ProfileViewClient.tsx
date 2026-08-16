@@ -95,10 +95,11 @@ function SubjectMasteryCircle({ subject, xp, level }: { subject: string; xp: num
     chemistry: { stroke: "stroke-amber-500", border: "hover:border-amber-500/50", shadow: "hover:shadow-amber-500/20", text: "text-amber-500", bg: "bg-amber-500/10" },
     biology: { stroke: "stroke-emerald-500", border: "hover:border-emerald-500/50", shadow: "hover:shadow-emerald-500/20", text: "text-emerald-500", bg: "bg-emerald-500/10" },
     computerScience: { stroke: "stroke-purple-500", border: "hover:border-purple-500/50", shadow: "hover:shadow-purple-500/20", text: "text-purple-500", bg: "bg-purple-500/10" },
+    mathematics: { stroke: "stroke-indigo-600", border: "hover:border-indigo-600/50", shadow: "hover:shadow-indigo-600/20", text: "text-indigo-600", bg: "bg-indigo-600/10" },
   };
 
   const theme = colorMap[subject] || colorMap.physics;
-  const displayName = subject === "computerScience" ? "Comp Sci" : subject;
+  const displayName = subject === "computerScience" ? "Comp Sci" : subject === "mathematics" ? "Math" : subject;
 
   return (
     <motion.div

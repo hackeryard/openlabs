@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Beaker, Atom, Dna, Code, ArrowRight } from "lucide-react";
+import { Beaker, Atom, Dna, Code, Sigma, ArrowRight } from "lucide-react";
 import AnimatedCard from "@/components/ui/AnimatedCard";
 
 const labsData = {
@@ -44,6 +44,26 @@ const labsData = {
     items: [
       { name: "HTML/CSS/JS Editor", path: "/computer-science/code-lab/html-css-js" },
       { name: "Logic Gates", path: "/computer-science/logic-gates" },
+      { name: "Graph Algorithms", path: "/computer-science/dsa/graph-algorithms" },
+    ],
+  },
+  "Mathematics": {
+    color: "from-indigo-600 to-violet-500",
+    shadow: "shadow-indigo-200/50",
+    icon: <Sigma className="w-6 h-6" aria-hidden="true" />,
+    items: [
+      { name: "Function Grapher", path: "/mathematics/functiongrapher" },
+      { name: "Trigonometry Visualizer", path: "/mathematics/trigonometry" },
+      { name: "Polynomial Explorer", path: "/mathematics/polynomials" },
+      { name: "Calculus Sandbox", path: "/mathematics/calculus" },
+      { name: "Linear Algebra", path: "/mathematics/linear-algebra" },
+      { name: "Statistics Sandbox", path: "/mathematics/statistics" },
+      { name: "Fractals & Complex Plane", path: "/mathematics/complex-numbers" },
+      { name: "Set Theory & Venn Diagrams", path: "/mathematics/set-theory" },
+      { name: "Interactive Geometry Studio", path: "/mathematics/geometry" },
+      { name: "Vector Algebra & 3D Space", path: "/mathematics/vector-algebra" },
+      { name: "Combinatorics & Discrete Counting", path: "/mathematics/combinatorics" },
+      { name: "Number Theory & Cryptography", path: "/mathematics/number-theory" },
     ],
   },
 };
@@ -53,6 +73,7 @@ const mainButtons = [
   { label: "Chemistry", path: "/chemistry", bg: "bg-emerald-700" }, // Changed from 600
   { label: "Biology", path: "/biology", bg: "bg-rose-700" },      // Changed from 600
   { label: "CS", path: "/computer-science", bg: "bg-violet-700" }, // Changed from 600
+  { label: "Math", path: "/mathematics", bg: "bg-indigo-700" },
 ];
 
 export default function Hero() {

@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Dna, Atom, FlaskConical, Cpu, Layers } from "lucide-react";
+import { Dna, Atom, FlaskConical, Cpu, Layers, Sigma } from "lucide-react";
 import { motion } from "framer-motion";
 
-type SubjectType = "biology" | "chemistry" | "physics" | "computer-science" | "default";
+type SubjectType = "biology" | "chemistry" | "physics" | "computer-science" | "mathematics" | "default";
 
 interface SubjectTheme {
   primary: string;
@@ -108,6 +108,29 @@ const SUBJECT_THEMES: Record<SubjectType, SubjectTheme> = {
       "Git is a distributed version control system designed to track changes in source code.",
       "Q-learning is a reinforcement learning algorithm used to find the optimal action-selection policy.",
       "The OSI model defines seven layers of computer network protocols.",
+    ],
+  },
+  mathematics: {
+    primary: "text-indigo-600",
+    border: "border-indigo-500",
+    accent: "bg-indigo-500",
+    bgGradient: "from-indigo-500/10 via-transparent to-transparent",
+    glowColor: "bg-indigo-500/5",
+    icon: Sigma,
+    statuses: [
+      "Calibrating Cartesian coordinate axes...",
+      "Compiling symbolic mathematical AST...",
+      "Sampling continuous curve intervals...",
+      "Detecting real roots and critical points...",
+      "Rendering GPU vector plot...",
+    ],
+    facts: [
+      "Euler's identity (e^(iπ) + 1 = 0) connects five fundamental mathematical constants.",
+      "A function's derivative represents its instantaneous rate of change and the slope of its tangent line.",
+      "The definite integral calculates the cumulative area bounded between a curve and the horizontal axis.",
+      "Fourier analysis shows that any periodic wave can be synthesized from a sum of sine and cosine waves.",
+      "Pi (π) is an irrational number that has been computed to over 100 trillion decimal digits.",
+      "Roots of polynomial equations correspond geometrically to the points where the graph crosses the x-axis.",
     ],
   },
   default: {

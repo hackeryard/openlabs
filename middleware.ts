@@ -18,6 +18,7 @@ const publicPrefixes = [
   '/chemistry',
   '/biology',
   '/computer-science',
+  '/mathematics',
 ];
 
 function isJwtExpired(tokenString: string): boolean {
