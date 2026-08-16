@@ -1,6 +1,6 @@
 // app/lib/types/knowledge.ts
 
-export type SubjectId = "physics" | "chemistry" | "biology" | "computerScience";
+export type SubjectId = "physics" | "chemistry" | "biology" | "computerScience" | "mathematics";
 export type DifficultyLevel = "beginner" | "intermediate" | "advanced";
 export type EducationalLevel = "middleSchool" | "highSchool" | "undergraduate";
 

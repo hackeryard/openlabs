@@ -62,6 +62,7 @@ const labCategories = [
   { label: "Chemistry", path: "/chemistry" },
   { label: "Biology", path: "/biology" },
   { label: "Computer Science", path: "/computer-science" },
+  { label: "Mathematics", path: "/mathematics" },
 ];
 
 export default function Navbar() {

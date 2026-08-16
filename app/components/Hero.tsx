@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Beaker, Atom, Dna, Code, ArrowRight } from "lucide-react";
+import { Beaker, Atom, Dna, Code, Sigma, ArrowRight } from "lucide-react";
 import AnimatedCard from "@/components/ui/AnimatedCard";
 
 const labsData = {
@@ -46,6 +46,14 @@ const labsData = {
       { name: "Logic Gates", path: "/computer-science/logic-gates" },
     ],
   },
+  "Mathematics": {
+    color: "from-indigo-600 to-violet-500",
+    shadow: "shadow-indigo-200/50",
+    icon: <Sigma className="w-6 h-6" aria-hidden="true" />,
+    items: [
+      { name: "Function Grapher", path: "/mathematics/functiongrapher" },
+    ],
+  },
 };
 
 const mainButtons = [
@@ -53,6 +61,7 @@ const mainButtons = [
   { label: "Chemistry", path: "/chemistry", bg: "bg-emerald-700" }, // Changed from 600
   { label: "Biology", path: "/biology", bg: "bg-rose-700" },      // Changed from 600
   { label: "CS", path: "/computer-science", bg: "bg-violet-700" }, // Changed from 600
+  { label: "Math", path: "/mathematics", bg: "bg-indigo-700" },
 ];
 
 export default function Hero() {

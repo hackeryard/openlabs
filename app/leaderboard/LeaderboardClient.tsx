@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trophy, Flame, Medal, Compass, Beaker, Zap, Activity } from "lucide-react";
+import { Trophy, Flame, Medal, Compass, Beaker, Zap, Activity, Sigma } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-type Subject = "all" | "physics" | "chemistry" | "biology" | "computerScience";
+type Subject = "all" | "physics" | "chemistry" | "biology" | "computerScience" | "mathematics";
 
 const SUBJECTS: { id: Subject; label: string; icon: any; color: string }[] = [
   { id: "all", label: "All Subjects", icon: Trophy, color: "text-indigo-500" },
@@ -13,6 +13,7 @@ const SUBJECTS: { id: Subject; label: string; icon: any; color: string }[] = [
   { id: "chemistry", label: "Chemistry", icon: Beaker, color: "text-amber-500" },
   { id: "biology", label: "Biology", icon: Activity, color: "text-emerald-500" },
   { id: "computerScience", label: "Comp Sci", icon: Compass, color: "text-purple-500" },
+  { id: "mathematics", label: "Mathematics", icon: Sigma, color: "text-indigo-600" },
 ];
 
 export default function LeaderboardClient() {

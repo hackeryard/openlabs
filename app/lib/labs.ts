@@ -5,7 +5,7 @@ export type LabType = "simulation" | "exploration" | "editor"
 export interface Lab {
   id: string
   name: string
-  subject: "physics" | "chemistry" | "biology" | "computerScience"
+  subject: "physics" | "chemistry" | "biology" | "computerScience" | "mathematics"
   type: LabType
   challengeParams: string[]
   challengeEnabled: boolean
@@ -489,6 +489,17 @@ export const LABS: Lab[] = [
     challengeParams: ["experimentsRun"],
     challengeEnabled: true,
     description: "Data science and ML experiments",
+  },
+
+  // ─── MATHEMATICS ───────────────────────────────────────
+  {
+    id: "mathematics/functiongrapher",
+    name: "Function Grapher",
+    subject: "mathematics",
+    type: "exploration",
+    challengeParams: ["rootsFound", "functionsPlotted", "transformationsApplied"],
+    challengeEnabled: true,
+    description: "Interactive function plotter with real-time transformations and analysis",
   },
 ]
 

@@ -108,6 +108,57 @@ const matchers: KnowledgeMatcher[] = [
       ],
     },
   },
+  {
+    match: (p) => p === "/mathematics",
+    knowledge: {
+      title: "Mathematics Lab Hub",
+      overview:
+        "Hub for mathematics interactive labs: real-time function plotting, curve transformations, polynomial roots, calculus tangent slopes, and definite integration.",
+      howToUse: [
+        "Select an interactive mathematics laboratory (e.g. Function Grapher).",
+        "Ask the AI assistant to explain mathematical definitions, function behaviors, or transformation mechanics.",
+      ],
+      keyConcepts: [
+        "Continuous 2D function plotting and Cartesian coordinates",
+        "Function transformations: a·f(b(x - h)) + k",
+        "Polynomial roots and sign change analysis",
+        "Instantaneous rate of change and tangent line slopes f'(x)",
+        "Definite integrals and area bounded under curves",
+      ],
+    },
+  },
+  {
+    match: (p) => p === "/mathematics/functiongrapher" || p === "/labs/mathematics/functiongrapher",
+    knowledge: {
+      title: "Function Grapher Lab",
+      overview:
+        "Interactive mathematical sandbox for plotting functions, exploring real-time scaling and phase shifts, inspecting tangent lines, finding roots and extrema, and calculating definite integrals.",
+      howToUse: [
+        "Enter any mathematical formula (e.g. x^3 - 3*x, sin(x), exp(-x^2)) or choose a preset from the gallery.",
+        "Use the Transformation sliders to manipulate amplitude (a), frequency (b), horizontal shift (h), and vertical shift (k).",
+        "Hover over the curve or click to pin points, inspect tangent slopes f'(x), and view multi-function comparisons.",
+        "Open the Analysis panel to view detected roots, y-intercepts, local extrema, and compute definite integrals.",
+      ],
+      keyConcepts: [
+        "Parent functions vs transformed graphs",
+        "Roots (x-intercepts) where f(x) = 0",
+        "Turning points (local minima and maxima) where f'(x) = 0",
+        "Numerical derivative and tangent equation: y - y0 = m(x - x0)",
+        "Simpson's composite rule for definite numerical integration",
+      ],
+      whatToTry: [
+        "Try transforming sin(x) into 2*sin(2*(x - 1)) + 1 and observe the amplitude and period changes.",
+        "Plot a cubic polynomial like x^3 - 3*x and find all 3 real roots and both turning points.",
+        "Compute the definite integral of sin(x) from 0 to π and verify the area equals 2.",
+      ],
+      glossary: {
+        "Root": "A value of x for which f(x) = 0 (an x-intercept).",
+        "Extrema": "Local maximum or minimum turning points where the derivative changes sign.",
+        "Tangent line": "A straight line that touches a curve at a single point with slope equal to the derivative at that point.",
+        "Definite integral": "The net signed area under a function curve between lower bound a and upper bound b.",
+      },
+    },
+  },
 
   // Networking
   {

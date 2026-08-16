@@ -4,13 +4,14 @@ This document describes the functional and non-functional requirements of OpenLa
 
 ## 1. Purpose
 
-OpenLabs is a web platform providing free, in-browser, interactive science labs and visualizations across Physics, Chemistry, Biology, and Computer Science, so students/educators/enthusiasts can explore concepts without physical lab equipment.
+OpenLabs is a web platform providing free, in-browser, interactive science labs and visualizations across Physics, Chemistry, Biology, Computer Science, and Mathematics, so students/educators/enthusiasts can explore concepts without physical lab equipment.
 
 ## 2. Functional requirements
 
 ### 2.1 Lab catalog & content
-- FR-1: The system shall provide interactive lab pages across four subjects: Physics, Chemistry, Biology, Computer Science.
+- FR-1: The system shall provide interactive lab pages across five subjects: Physics, Chemistry, Biology, Computer Science, Mathematics.
 - FR-1a: The Physics Ohm's Law Lab shall support freeform circuit building with transient simulation (capacitors, AC sources) and provide real-time diagnostic tools (multimeter, oscilloscope).
+- FR-1b: The Mathematics Function Grapher Lab shall provide real-time 2D plotting via D3, dynamic $a \cdot f(b(x-h))+k$ transformations, numerical root finding, local extrema detection, tangent line slope calculations, and Simpson's composite rule definite integration.
 - FR-2: Each lab shall have a public SEO landing page (theory, learning objectives, FAQs) separate from its interactive simulation page, which requires authentication.
 - FR-3: Every lab shall be registered in a central catalog (`app/lib/labs.ts`) with a `type` (`simulation`, `exploration`, or `editor`) that determines its XP reward tier and daily-challenge eligibility.
 - FR-4: The system shall auto-generate an LLM-crawlable site manifest (`/llms.txt`, `/llms-full.txt`) reflecting all current pages, without manual maintenance.

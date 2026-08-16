@@ -47,7 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 2. Dynamic Lab / Simulation routes from LABS registry
   const labRoutes: MetadataRoute.Sitemap = LABS.map((lab) => {
     // Check whether the route is /labs/[id] or /[id]
-    const routePath = lab.id.startsWith("physics/") || lab.id.startsWith("chemistry/") || lab.id.startsWith("biology/") || lab.id.startsWith("computer-science/")
+    const routePath = lab.id.startsWith("physics/") || lab.id.startsWith("chemistry/") || lab.id.startsWith("biology/") || lab.id.startsWith("computer-science/") || lab.id.startsWith("mathematics/")
       ? `/${lab.id}`
       : `/labs/${lab.id}`;
 

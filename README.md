@@ -112,6 +112,9 @@ yarn start
 - **Git Simulator** — Interactive Git version control simulator
 - **Project Management** — Save, load, and manage projects with type-based filtering and persistent storage
 
+### Mathematics Labs
+- **Function Grapher** — Real-time mathematical plotting with D3, curve transformations ($a \cdot f(b(x - h)) + k$), numerical root-finding, local extrema detection, tangent slopes $f'(x)$, and definite integral calculation ($\int_a^b f(x) dx$). Includes multi-function overlays, click-to-pin point inspection, and standard math function presets.
+
 ### Authentication & Security
 - ✅ **Email verification** with 6-digit OTP (10-minute expiry)
 - ✅ **Secure password storage** using bcryptjs (10 salt rounds)

@@ -4,6 +4,17 @@ All notable changes to OpenLabs are documented in this file. Format loosely foll
 
 ## Unreleased
 
+- **Mathematics Subject & Function Grapher Lab**:
+  - Introduced the new **Mathematics** subject category with dedicated portal page (`/mathematics`) and themed error boundary (`app/mathematics/error.tsx`).
+  - Added the **Function Grapher** lab (`/mathematics/functiongrapher` and `/labs/mathematics/functiongrapher`):
+    - Real-time 2D mathematical curve plotting built with D3 and safe symbolic math AST parsing via `mathjs`.
+    - Live function transformations ($a \cdot f(b(x - h)) + k$) with interactive sliders, reflections, and automatic plain-English explanations.
+    - Numerical calculus engine with bisection root-finding ($f(x) = 0$), $y$-intercepts, local extrema detection (turning points), instantaneous tangent lines ($f'(x)$), and Simpson's composite rule definite integration ($\int_a^b f(x) dx$).
+    - Point inspector with click-to-pin coordinate lock, live tangent readout, and multi-function evaluation comparison table.
+    - Mathematical function preset gallery (Polynomials, Trigonometric, Rational, Exponential, Gaussians, Dampened Oscillators) and quick keypad.
+    - Daily Challenge and XP integration (`mathematics/functiongrapher` registry entry, `rootsFound`, `functionsPlotted`, `transformationsApplied` challenge metrics).
+    - SEO landing page with schema markup, curriculum alignment (NCERT, AP Calculus, IB Math, A-Levels), and AI assistant context integration (`useChat().setExperimentData`).
+
 - **Virtual Titration Lab**:
   - Added interactive Virtual Titration Lab (`/chemistry/titration` and `/labs/chemistry/titration`) featuring unified SVG apparatus (burette, stopcock drop animation, Erlenmeyer flask, and live indicator color transitions).
   - Integrated live pH curve graphing (Chart.js), stoichiometry calculations ($C_1 V_1 = C_2 V_2$), practice modes, and human-readable indicator color observation log exporter.
