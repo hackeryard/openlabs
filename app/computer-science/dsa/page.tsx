@@ -65,6 +65,11 @@ const cards = [
     title: "Linked-list Visualizer",
     desc: "Interactive lab that help in visualizing the linked-list data-structure.",
   },
+  {
+    href: "/computer-science/dsa/graph-algorithms",
+    title: "Graph Algorithms & Networks",
+    desc: "Interactive Dijkstra shortest path, Kruskal/Prim MST, coloring, and Ford-Fulkerson Max Flow.",
+  },
 ];
 
 export default function ComputerScience() {

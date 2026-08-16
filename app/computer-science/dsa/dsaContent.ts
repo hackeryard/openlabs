@@ -4,7 +4,7 @@ export type DsaContent = {
   slug: string;
   route: string;
   name: string;
-  category: "Data Structure" | "Sorting Algorithm";
+  category: "Data Structure" | "Sorting Algorithm" | "Graph Algorithm";
   badge: string;
   pageTitle: string;
   metaDescription: string;
@@ -22,6 +22,55 @@ export type DsaContent = {
 };
 
 export const dsaContent: Record<string, DsaContent> = {
+  "graph-algorithms": {
+    slug: "graph-algorithms",
+    route: "graph-algorithms",
+    name: "Graph Algorithms & Network Flow",
+    category: "Graph Algorithm",
+    badge: "Node-Edge Network & Pathfinding Engine",
+    pageTitle: "Graph Algorithms & Network Flow Visualizer - Interactive DSA Lab | OpenLabs",
+    metaDescription:
+      "Learn graph algorithms with an interactive DSA visualizer. Practice Dijkstra's shortest path, BFS, Bellman-Ford, Kruskal & Prim MST, chromatic vertex coloring, and Ford-Fulkerson max network flow.",
+    heroDescription:
+      "Construct custom weighted networks, trace Dijkstra shortest paths, compute Kruskal Minimum Spanning Trees, test 2-colorability, and simulate Ford-Fulkerson maximum network flow step by step.",
+    definition:
+      "A graph G = (V, E) is a non-linear data structure consisting of vertices (nodes) connected by edges, used to model networks, routing paths, and relationships.",
+    behavior:
+      "Graph algorithms traverse or optimize network topologies using greedy relaxations (Dijkstra), disjoint set cycle checks (Kruskal), level-order exploration (BFS), or augmenting residual paths (Ford-Fulkerson).",
+    complexity: "Dijkstra: O((V + E) log V), Kruskal: O(E log E), BFS: O(V + E), Max Flow: O(V E²)",
+    visualSteps: ["Build Graph", "Trace Shortest Path", "Compute Spanning Tree", "Color Vertices", "Augment Network Flow"],
+    learningObjectives: [
+      "Construct and manipulate directed and undirected weighted graphs.",
+      "Trace Dijkstra, BFS, and Bellman-Ford shortest path algorithms with live distance tables.",
+      "Compare Kruskal's (DSU) and Prim's cut-property Minimum Spanning Tree algorithms.",
+      "Solve chromatic vertex coloring and evaluate bipartite graph 2-colorability.",
+      "Simulate Ford-Fulkerson / Edmonds-Karp maximum network flow along residual capacity paths.",
+    ],
+    useCases: [
+      "GPS navigation and shortest route planning",
+      "Network packet routing and telecom infrastructure",
+      "Social networks and dependency graphs",
+      "Compiler register allocation and job scheduling",
+      "Maximum bipartite matching and pipeline flow optimization",
+    ],
+    faqs: [
+      {
+        question: "How does Dijkstra's algorithm work?",
+        answer:
+          "Dijkstra uses a priority queue to greedily visit the unvisited node with the smallest tentative distance, updating/relaxing neighbor distances until the target is reached.",
+      },
+      {
+        question: "What is the difference between Kruskal and Prim for MST?",
+        answer:
+          "Kruskal sorts all edges globally and uses Union-Find (DSU) to avoid cycles. Prim starts from a seed vertex and greedily grows a single cut-property tree outward.",
+      },
+      {
+        question: "What is the Ford-Fulkerson method?",
+        answer:
+          "It computes maximum network flow by iteratively finding augmenting paths in a residual capacity graph using BFS (Edmonds-Karp) until no more capacity paths exist.",
+      },
+    ],
+  },
   "linked-list": {
     slug: "linked-list",
     route: "linked-list",

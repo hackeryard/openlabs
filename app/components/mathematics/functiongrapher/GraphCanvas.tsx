@@ -366,15 +366,6 @@ export default function GraphCanvas({
             <rect x="0" y="0" width={width} height={height} rx="24" ry="24" />
           </clipPath>
 
-          {/* Glowing Filters */}
-          <filter id="curve-glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-
           {/* Integral Shading Linear Gradient */}
           <linearGradient id="integral-gradient" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#6366f1" stopOpacity="0.45" />
@@ -530,7 +521,6 @@ export default function GraphCanvas({
                     strokeWidth={fn.isPrimary ? 3.5 : 2.5}
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    filter={fn.isPrimary ? "url(#curve-glow)" : undefined}
                     className="transition-colors duration-200"
                   />
                 ))}
@@ -549,7 +539,6 @@ export default function GraphCanvas({
                 stroke="#ec4899"
                 strokeWidth="2"
                 strokeDasharray="6 3"
-                className="animate-pulse"
               />
             </g>
           )}
@@ -565,7 +554,6 @@ export default function GraphCanvas({
 
                 return (
                   <g key={`extrema-${idx}`} className="group/extrema cursor-pointer">
-                    <circle cx={px} cy={py} r="8" className="fill-amber-500/20 animate-ping" />
                     <polygon
                       points={
                         isMax
@@ -578,7 +566,7 @@ export default function GraphCanvas({
                       x={px}
                       y={isMax ? py - 10 : py + 16}
                       textAnchor="middle"
-                      className="fill-amber-500 font-mono text-[9px] font-black pointer-events-none drop-shadow"
+                      className="fill-amber-500 font-mono text-[9px] font-black pointer-events-none"
                     >
                       {ex.formatted}
                     </text>
@@ -598,18 +586,17 @@ export default function GraphCanvas({
 
                 return (
                   <g key={`root-${idx}`} className="group/root cursor-pointer">
-                    <circle cx={px} cy={py} r="9" className="fill-emerald-500/20 animate-pulse" />
                     <circle
                       cx={px}
                       cy={py}
                       r="4.5"
-                      className="fill-emerald-500 stroke-card stroke-2 shadow-sm"
+                      className="fill-emerald-500 stroke-card stroke-2"
                     />
                     <text
                       x={px}
                       y={py - 10}
                       textAnchor="middle"
-                      className="fill-emerald-500 font-mono text-[9px] font-black pointer-events-none drop-shadow"
+                      className="fill-emerald-500 font-mono text-[9px] font-black pointer-events-none"
                     >
                       x={rt.x}
                     </text>
@@ -628,8 +615,7 @@ export default function GraphCanvas({
                 if (px < 0 || px > width || py < 0 || py > height) return null;
                 return (
                   <g>
-                    <circle cx={px} cy={py} r="14" className="fill-purple-500/20 animate-ping" />
-                    <circle cx={px} cy={py} r="6" className="fill-purple-500 stroke-white stroke-2 shadow-md" />
+                    <circle cx={px} cy={py} r="6" className="fill-purple-500 stroke-white stroke-2" />
                     <rect
                       x={px + 8}
                       y={py - 24}
@@ -678,15 +664,14 @@ export default function GraphCanvas({
                 className="text-muted-foreground/60"
               />
 
-              {/* Snapped Point Glowing Dot */}
+              {/* Snapped Point Dot */}
               <circle
                 cx={currentHoverData.px}
                 cy={currentHoverData.py}
-                r="7"
+                r="6"
                 fill={currentHoverData.color}
                 stroke="#ffffff"
-                strokeWidth="2.5"
-                className="shadow-lg"
+                strokeWidth="2"
               />
             </g>
           )}

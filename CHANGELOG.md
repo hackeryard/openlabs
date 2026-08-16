@@ -4,6 +4,131 @@ All notable changes to OpenLabs are documented in this file. Format loosely foll
 
 ## Unreleased
 
+- **Number Theory & Cryptography Studio Lab**:
+  - Added the **Number Theory & Cryptography Studio** lab (`/mathematics/number-theory` and `/labs/mathematics/number-theory`):
+    - **Prime Factorization & Sieve of Eratosthenes**: Sieve of Eratosthenes grid up to $N = 200$, unique prime factor trees (Fundamental Theorem of Arithmetic), divisor counts $d(n)$, divisor sums $\sigma(n)$, and number classifications.
+    - **Euclidean Algorithm & Bézout's Identity**: Step-by-step division algorithm, Extended Euclidean Algorithm (EEA) for Bézout coefficients ($ax + by = \gcd(a, b)$), $\text{LCM}(a, b)$, and **geometric rectangle square tiling visualizer**.
+    - **Modular Arithmetic & Chinese Remainder Theorem**: Interactive modular clock wheel for $\mathbb{Z}_m$, multiplicative inverses $a^{-1} \pmod m$, and Chinese Remainder Theorem simultaneous system solver.
+    - **Euler's Totient $\phi(n)$ & Modular Theorems**: Coprimality spoke wheel, Euler's totient theorem ($a^{\phi(n)} \equiv 1 \pmod n$), Fermat's Little Theorem, and Wilson's theorem.
+    - **RSA Public-Key Cryptography**: Step-by-step key generation ($p, q \to n, \phi(n), e, d$), live text encryption and decryption ($C = M^e \pmod n \implies M = C^d \pmod n$), and Square-and-Multiply modular exponentiation trace.
+    - **Collatz Conjecture & Continued Fractions**: Dynamic trajectory orbit plot ($3n + 1$) with stopping time and maximum peak height, plus continued fraction expansions for rational and irrational numbers.
+    - Gamification & AI Integration: `useLab` XP progression, `DailyChallengeCard` metrics (`primesFactored`, `gcdsComputed`, `ciphersTested`), and `useChat().setExperimentData` context registration.
+    - SEO Landing page with `EducationalLandingLayout`, JSON-LD schema markup, theory, formulas, and FAQs.
+
+- **Combinatorics & Discrete Counting Studio Lab**:
+  - Added the **Combinatorics & Discrete Counting Studio** lab (`/mathematics/combinatorics` and `/labs/mathematics/combinatorics`):
+    - **Permutations ($P(n, r)$) & Combinations ($C(n, r)$) & Anagrams**: Fully customizable item element pool (custom additions, removals, and color tagging), multiset anagram generator with letter frequency breakdown ($\frac{n!}{n_1! n_2! \dots n_k!}$), circular permutations ($(n-1)!$), and searchable enumeration gallery.
+    - **Pascal's Triangle & Binomial Theorem**: Interactive matrix ($n \le 12$) with **Modulo $p$ prime fractal explorer** (Sierpinski carpet), **Fibonacci Diagonals**, **Hockey-Stick Identity**, and live algebraic **Binomial Theorem Expansion Generator** ($(ax + by)^n$).
+    - **Pigeonhole Principle & Ramsey Graph Theory**: Interactive Dirichlet box distributor ($\lceil n/k \rceil$) plus **Party Problem Ramsey Theorem $R(3, 3) = 6$** with interactive $K_6$ red/blue friend-stranger edge toggling.
+    - **Stars & Bars & Integer Partitions**: Candy/bars divider simulator for non-negative ($\binom{n+k-1}{k-1}$) and positive ($\binom{n-1}{k-1}$) integer equations, plus **Integer Partitions $p(n)$ with Ferrers & Young Diagrams**.
+    - **Catalan Numbers & Dyck Paths / Expressions**: Live $C_n = \frac{1}{n+1}\binom{2n}{n}$ generator with interactive Dyck monotonic grid paths, balanced parentheses expressions, and convex polygon triangulations.
+    - **Derangements ($!n$) & Hat-Check Problem**: Subfactorial $!n$ engine, zero-fixed-point permutation generator, and empirical $1/e \approx 0.367879$ probability convergence simulator.
+    - Gamification & AI Integration: `useLab` XP progression, `DailyChallengeCard` metrics (`countsComputed`, `trianglesExplored`, `partitionsGenerated`), and `useChat().setExperimentData` context registration.
+    - SEO Landing page with `EducationalLandingLayout`, JSON-LD schema markup, theory, formulas, and FAQs.
+
+- **Vector Algebra & 3D Space Studio Lab**:
+  - Added the **Vector Algebra & 3D Space Studio** lab (`/mathematics/vector-algebra` and `/labs/mathematics/vector-algebra`):
+    - **2D Vector Operations & Parallelogram Law**: Draggable vector heads $\vec{u}$ and $\vec{v}$ with **two-way editable numerical inputs**, custom vector renamers (e.g. $\vec{F}_1, \vec{F}_2$), **Tip-to-Tail addition**, **Parallelogram Law of forces**, vector subtraction, scalar linear combinations ($c_1\vec{u} + c_2\vec{v}$), and on-canvas magnitude badges and direction angles ($\theta_u, \theta_v, \theta_R$).
+    - **Dot Product & Orthogonal Projections**: Live computation of $\vec{u} \cdot \vec{v} = |\vec{u}||\vec{v}|\cos\theta$ with **editable component inputs**, angle classification gauge (Acute, Orthogonal, Obtuse), right-angle projection shadow $\text{proj}_{\vec{v}}(\vec{u})$, and work done formula.
+    - **3D Cross Product & Right-Hand Rule**: Interactive 3D rotation canvas with editable components rendering $\vec{w} = \vec{u} \times \vec{v}$ perpendicular to both inputs, spanned parallelogram surface area ($|\vec{u} \times \vec{v}|$), and triangle area ($\frac{1}{2}|\vec{u} \times \vec{v}|$).
+    - **Scalar Triple Product & Parallelepiped Volume**: $[\vec{u}, \vec{v}, \vec{w}] = \det(M)$ with 3D wireframe volume box and live **Coplanarity Indicator**.
+    - **3D Lines & Planes Geometry**: **Directly editable 3D parametric lines** ($\vec{r} = \vec{a} + t\vec{d}$) and **Cartesian plane equations** ($Ax + By + Cz = D$) with shortest point-to-plane distance calculations.
+    - Gamification & AI Integration: `useLab` XP progression, `DailyChallengeCard` metrics (`operationsPerformed`, `productsComputed`, `projectionsTested`), and `useChat().setExperimentData` context registration.
+    - SEO Landing page with `EducationalLandingLayout`, JSON-LD schema markup, theory, formulas, and FAQs.
+
+- **Interactive Geometry Studio Lab**:
+  - Added the **Interactive Geometry Studio** lab (`/mathematics/geometry` and `/labs/mathematics/geometry`):
+    - **GeoGebra-Style Construction Studio**: Dynamic construction canvas for Points, Segments, Lines, Circles, and Midpoints with real-time draggable precision points, coordinate table, and Euclidean distance readouts.
+    - **Triangle Centers & Euler Line Explorer**: Real-time computation of **Centroid ($G$)**, **Incenter ($I$)**, **Circumcenter ($O$)**, **Orthocenter ($H$)**, **Nine-Point Circle**, and the collinear **Euler Line** with constant ratio $HG = 2 \cdot GO$, plus **direct on-canvas SVG angle arcs with degree tags** and **edge length dimension badges**.
+    - **Circle Theorems Interactive Playground**: Draggable points on circumferences verifying the **Inscribed Angle Theorem** ($\angle AOB = 2\angle ACB$), **Thales' Theorem** (right angle $90^\circ$ in semicircle), **Angles in Same Segment**, and **Cyclic Quadrilaterals** with direct arc badges.
+    - **Pythagorean Theorem Area Decomposition**: Right triangle simulator rendering geometric squares on legs $a^2$ (blue) and $b^2$ (pink) and hypotenuse $c^2$ (purple) verifying $a^2 + b^2 = c^2$, plus standard triples (3-4-5, 5-12-13, 8-15-17).
+    - **2D Geometric Transformations Sandbox**: Real-time **Translation**, **Rotation**, **Reflection**, and **Dilation** on polygons with coordinate matrices and ghost pre-image overlays.
+    - **Regular Polygons & Metric Analyzer**: Sides $n \in [3, 16]$ with apothem, perimeter, interior/exterior angle formulas, and exact trigonometric area.
+    - **3D Solid Polyhedra Explorer**: Interactive 3D wireframe projection for Cube, Tetrahedron, Octahedron, and Cylinder with mouse rotation, surface area, volume formulas, and **Euler's Polyhedral Formula** ($V - E + F = 2$).
+    - Gamification & AI Integration: `useLab` XP progression, `DailyChallengeCard` metrics (`constructionsMade`, `centersExplored`, `theoremsTested`), and `useChat().setExperimentData` context registration.
+    - SEO Landing page with `EducationalLandingLayout`, JSON-LD schema markup, theory, formulas, and FAQs.
+
+- **Set Theory & Boolean Algebra Lab**:
+  - Added the **Set Theory & Boolean Algebra** interactive lab (`/mathematics/set-theory` and `/labs/mathematics/set-theory`):
+    - **Interactive 2-Set & 3-Set Venn Diagram Sandbox**: Full clickable SVG region overlays for all 8 partitions ($A_{only}, B_{only}, C_{only}, AB_{only}, AC_{only}, BC_{only}, ABC, \text{outside}$), dynamic element token placement, custom set naming (e.g. Football, Basketball, Tennis) and color pickers.
+    - **Set Operations & Expression Evaluator**: Real-time parser for arbitrary set expressions (`(A | B) & ~C`, `A ^ B`, etc.), matching elements summary, and interactive visual proofs for **De Morgan's Laws** and **Distributive Laws**.
+    - **Principle of Inclusion-Exclusion (PIE) Solver**: Cardinality calculations for $|A \cup B|$ and $|A \cup B \cup C|$ with step-by-step addition/subtraction breakdown to prevent double-counting, plus hypothetical survey counting problem solver.
+    - **Relations & Functions Mapping Studio**: Domain-to-codomain ($X \to Y$) bipartite arrow editor with live automated classification of **Injective (One-to-One)**, **Surjective (Onto)**, **Bijective (Invertible)**, and **Equivalence Relations** (Reflexive, Symmetric, Transitive).
+    - **Propositional Logic & Truth Table Builder**: Dynamic arbitrary proposition parser ($p, q, r, s$), interactive logic operator keypad ($\land, \lor, \neg, \to, \leftrightarrow, \oplus$), truth table generator, and tautology/contradiction detector.
+    - Gamification & AI Integration: `useLab` XP progression, `DailyChallengeCard` metrics (`regionsShaded`, `operationsEvaluated`, `functionsMapped`), and `useChat().setExperimentData` context registration.
+    - SEO Landing page with `EducationalLandingLayout`, JSON-LD schema markup, theory, formulas, and FAQs.
+
+- **Graph Algorithms & Network Flow Lab (Computer Science - DSA)**:
+  - Relocated and integrated the **Graph Algorithms & Network Flow** lab into Computer Science DSA (`/computer-science/dsa/graph-algorithms` and `/labs/computer-science/dsa/graph-algorithms`):
+    - **Interactive Graph Studio Canvas**: Add/delete/drag nodes with live Coulomb-Hooke **Spring Physics Force Relaxation** simulation, construct directed & undirected weighted edges with SVG arrows, edit weights, clear canvas, load 8 presets (Petersen, Complete $K_5$, Bipartite $K_{3,3}$, Binary Tree, Wheel $W_6$, Grid $2\times 3$, Weighted Network, Flow Network), and inspect invariants (Degrees, Density, Connectedness, Adjacency Matrix).
+    - **Multi-Algorithm Shortest Path Visualizer**: Step-by-step priority queue trace for **Dijkstra's Algorithm**, **Breadth-First Search (BFS)**, and **Bellman-Ford Algorithm** with distance table ($dist[v]$, $prev[v]$) and golden shortest path glow.
+    - **Minimum Spanning Tree (MST) Visualizer**: Kruskal's (DSU cycle detection) and Prim's cut-property algorithms with step-by-step edge acceptance/rejection and total weight counter.
+    - **Interactive Vertex Coloring & Conflict Checker**: Manual painting mode with color swatches, live edge conflict detection (warning lines when adjacent nodes share identical colors), Welsh-Powell greedy coloring, and Bipartite 2-coloring test.
+    - **Ford-Fulkerson Maximum Network Flow**: Residual network visualizer with Edmonds-Karp BFS augmenting paths, bottleneck capacity tracking, and maximum throughput computation.
+    - Gamification & AI Integration: `useLab` XP progression, `DailyChallengeCard` metrics (`pathsFound`, `mstsComputed`, `graphsColored`), and `useChat().setExperimentData` context registration.
+    - SEO Landing page using `DsaLanding` and `dsaContent.ts`, curriculum alignment, and FAQs.
+
+- **Complex Numbers & Fractals Explorer Lab**:
+  - Added the **Complex Numbers & Fractals Explorer** interactive lab (`/mathematics/complex-numbers` and `/labs/mathematics/complex-numbers`):
+    - **Interactive Argand Complex Plane**: Dual coordinate modes (Cartesian $a + bi$ and Polar $r \angle \theta$ sliders/inputs), draggable complex numbers $z_1, z_2$, expanded operation suite (Addition, Subtraction, Multiplication with rotation/dilation, Division, Power $z^n$, Square Root $\sqrt{z}$, Natural Logarithm $\text{Ln}(z)$, and Linear Combinations $\alpha z_1 + \beta z_2$ with $\alpha, \beta$ sliders), and layer toggles for Parallelogram, Conjugate, and Axis Projections.
+    - **General Polynomial Roots of Equations ($z^n = W$)**: Solve arbitrary complex polynomial equations for any target constant $W = u + vi$ ($n \in [1, 20]$), inscribed regular polygon geometry, customizable cycle speed, and cyclic power orbits.
+    - **Euler's Formula & Taylor Phasor ($r e^{i\theta}$)**: Amplitude radius slider $r \in [0.2, 3.0]$, continuous rotation angle $\theta \in [0^\circ, 720^\circ]$, automated phasor rotation with speed controls, and customizable Taylor expansion order ($N \in [1, 16]$).
+    - **Fractal Universe Engine**: Real-time Canvas escape-time renderer supporting **Mandelbrot ($z^2+c$)**, **Julia Sets (custom $c$)**, **Burning Ship**, and **Multibrot ($z^3+c$)**, interactive Orbit Trajectory Inspector, PNG snapshot downloads, 6 color palettes (Cosmic, Fire, Emerald, Electric, Rainbow, Monochrome), and landmark presets.
+    - Gamification & AI Integration: `useLab` XP progression, `DailyChallengeCard` metrics (`complexOperationsPerformed`, `rootsExplored`, `fractalsRendered`), and `useChat().setExperimentData` context registration.
+    - SEO Landing page with `EducationalLandingLayout`, JSON-LD schema markup, theory, formulas, and FAQs.
+
+- **Probability & Statistics Sandbox Lab**:
+  - Added the **Probability & Statistics Sandbox** interactive lab (`/mathematics/statistics` and `/labs/mathematics/statistics`):
+    - **Physics Bean Machine (Galton Board)**: Canvas 2D particle physics engine with elastic peg collisions, lateral Bernoulli deflection bias ($p \in [0.1, 0.9]$), continuous cascade streams and instant 500-ball batch drops, glowing peg lattice, and stacked binomial histogram tubes with theoretical Gaussian envelope.
+    - **Central Limit Theorem (CLT) Sandbox**: Sampling distribution generator with parent populations (Uniform, Exponential, Bimodal, Discrete Dice), live animated single-trial rolls, gradient histogram bins, and variance reduction tracking ($\sigma_{\bar{x}} = \sigma/\sqrt{n}$).
+    - **Probability Distributions & Confidence Intervals**: Interactive PDF/CDF model views (Normal, Binomial, Poisson, Uniform) with draggable integral bounds $[x_1, x_2]$, $Z$-score calculations, and $1\sigma/2\sigma/3\sigma$ empirical rule presets ($68.3\%, 95.5\%, 99.7\%$).
+    - **Linear Regression & Error Squares Studio**: Interactive 2D scatter plot with Ordinary Least Squares (OLS) line of best fit, vertical residual error lines, literal geometric Error Squares mode (SSE visualization), Pearson's $r$, and determination $R^2$.
+    - Gamification & AI Integration: `useLab` XP progression, `DailyChallengeCard` metrics (`samplesGenerated`, `distributionsExplored`, `regressionsFitted`), and `useChat().setExperimentData` context registration.
+    - SEO Landing page with `EducationalLandingLayout`, JSON-LD schema markup, theory, formulas, and FAQs.
+
+- **Linear Algebra & Matrix Transformations Lab**:
+  - Added the **Linear Algebra & Matrix Transformations** interactive lab (`/mathematics/linear-algebra` and `/labs/mathematics/linear-algebra`):
+    - **Interactive 2D Transformation Canvas**: Live warped coordinate grid, draggable standard basis vectors $\hat{i} = [a, c]^T$ and $\hat{j} = [b, d]^T$, customizable shapes (Unit Square, Circle $\to$ Ellipse, House Polygon, Letter 'F' Chirality Indicator, Grid Dots), and manual scrub slider ($t \in [0, 1]$) with play/pause animations.
+    - **Determinant & Orientation Engine ($\det(A) = ad - bc$)**: Live area scaling factor ($|\det(A)|$), chiral orientation flip detection ($\det(A) < 0$), singular collapsed space detection ($\det(A) = 0$), and step-by-step matrix inverse $A^{-1}$.
+    - **Linear System of Equations Solver ($A\vec{x} = \vec{b}$)**: Interactive draggable target vector $\vec{b}$ with real-time solution vector $\vec{x} = A^{-1}\vec{b}$ visualizer and column space collapse warnings.
+    - **Eigenvalues ($\lambda$), Invariant Eigen-Lines & SVD ($\sigma_1, \sigma_2$)**: Characteristic polynomial solver, real and complex eigenvalue classification, invariant eigen-lines ($A\vec{v} = \lambda \vec{v}$), and Singular Value Decomposition (SVD) principal semi-major/minor ellipse axes.
+    - **Transformation Gallery & Presets**: Continuous rotation angle slider ($\theta \in [0^\circ, 360^\circ]$), horizontal/vertical shears, non-uniform scaling, squeeze mapping, reflections, and 1D projections.
+    - Gamification & AI Integration: `useLab` XP progression, `DailyChallengeCard` metrics (`determinantsComputed`, `eigenvectorsFound`, `transformsApplied`), and `useChat().setExperimentData` context registration.
+    - SEO Landing page with `EducationalLandingLayout`, JSON-LD schema markup, theory, formulas, and FAQs.
+
+- **Calculus & Derivatives Sandbox Lab**:
+  - Added the **Calculus & Derivatives Sandbox** interactive lab (`/mathematics/calculus` and `/labs/mathematics/calculus`):
+    - **Differential Calculus & Secant Limits**: Interactive limit explorer ($f'(x_0) = \lim_{h \to 0} \frac{f(x_0 + h) - f(x_0)}{h}$) with a variable step size slider ($h \to 0$), pivoting secant lines snapping to the instantaneous tangent line, difference quotient readout ($\frac{\Delta y}{\Delta x}$), and $f'(x)$ derivative curve overlay.
+    - **Riemann Sums & Definite Integrals**: 5 numerical partition rules (**Left Sum**, **Right Sum**, **Midpoint Rule**, **Trapezoidal Rule**, **Simpson's Parabolic Rule**) with variable partition slider ($N \in [2, 80]$), color-coded SVG rectangular/trapezoidal slices, and error convergence tracking against the exact definite integral $\int_a^b f(x) dx$.
+    - **Optimization & Critical Extrema Studio**: Stationary critical points detector ($f'(x) = 0$), Second Derivative concavity test ($f''(x) > 0 \implies \text{Local Min}$, $f''(x) < 0 \implies \text{Local Max}$), function presets, and calculus rule quick-reference table.
+    - Gamification & AI Integration: `useLab` XP awards, `DailyChallengeCard` metrics (`limitsApproached`, `integralsComputed`, `extremaFound`), and `useChat().setExperimentData` context registration.
+    - SEO Landing page with `EducationalLandingLayout`, JSON-LD schema markup, theory, formulas, and FAQs.
+
+- **Quadratic & Polynomial Explorer Lab**:
+  - Added the **Quadratic & Polynomial Explorer** interactive lab (`/mathematics/polynomials` and `/labs/mathematics/polynomials`):
+    - **Interactive Parabola Sandbox**: Standard form ($y = ax^2 + bx + c$) and Vertex form ($y = a(x - h)^2 + k$) with live coefficient sliders, vertex $(h, k)$ markers, axis of symmetry ($x = -b/(2a)$), focus & directrix line ($y = k - 1/(4a)$), and instantaneous tangent line slope preview.
+    - **Discriminant & Complex Roots Engine ($\Delta = b^2 - 4ac$)**: Real-time classification gauge for 2 distinct real roots ($\Delta > 0$), 1 repeated real root ($\Delta = 0$), and 2 complex conjugate roots ($\Delta < 0$) with Argand complex plane decomposition ($x = \alpha \pm \beta i$).
+    - **Higher-Degree Polynomial Explorer**: Curve visualizer for Linear ($n=1$), Quadratic ($n=2$), Cubic ($n=3$), Quartic ($n=4$), and Quintic ($n=5$) polynomials with numerical critical points detection (Local Minima, Maxima, Inflection Points) and end-behavior analysis.
+    - **Step-by-Step Synthetic Division Tableau**: Interactive polynomial division by $(x - c)$ demonstrating the Remainder Theorem ($P(c) = R$) and Factor Theorem root confirmation ($R = 0$).
+    - Gamification & AI Integration: `useLab` XP progression, `DailyChallengeCard` metrics (`rootsFound`, `discriminantAnalyzed`, `polynomialsSolved`), and `useChat().setExperimentData` context registration.
+    - SEO Landing page with `EducationalLandingLayout`, JSON-LD schema markup, theory, formulas, and FAQs.
+
+- **Trigonometry Visualizer Lab**:
+  - Added the **Trigonometry Visualizer** interactive lab (`/mathematics/trigonometry` and `/labs/mathematics/trigonometry`):
+    - Interactive SVG **Unit Circle** ($r = 1$) with draggable angle arm, exact angle snapping ($0^\circ, 30^\circ, 45^\circ, 60^\circ, 90^\circ\dots$), right-triangle decomposition ($\sin, \cos, \tan$ legs), and quadrant rules (ASTC sign convention).
+    - Real-time **Wave Unfolding Engine**: Synchronized continuous projection drawing periodic $\sin(\theta), \cos(\theta), \tan(\theta)$ waves on the adjacent Cartesian grid as the point rotates around the circle.
+    - **Wave Transformation Sandbox**: Interactive sliders for Amplitude ($A$), Frequency ($B$, with period $T = 2\pi/B$), Phase Shift ($C$), Vertical Shift ($D$), and Fourier 2nd-harmonic superposition ($A_1\sin(x) + A_2\sin(2x)$).
+    - **Identities & Reference Matrix**: Real-time Pythagorean ($\sin^2\theta + \cos^2\theta = 1$, $1 + \tan^2\theta = \sec^2\theta$) and double-angle identity verifiers with live numeric calculations, plus interactive 16-angle exact radical table.
+    - Gamification & AI Chat Assistant: `useLab` XP awards, `DailyChallengeCard` integration (`anglesExplored`, `identitiesVerified`, `wavesTransformed`), and `useChat().setExperimentData` context registration.
+    - SEO Landing page with `EducationalLandingLayout`, JSON-LD schema markup, NCERT/AP calculus curriculum alignment, theory, and FAQs.
+
+- **Navbar Mega-Dropdown & Hover Expansion**:
+  - Redesigned the main desktop navbar "Labs" dropdown into a rich, modern mega-menu with glassmorphism backdrop blur, categorized subject cards, icons, concise descriptions, and quick-access highlight links for top simulations.
+  - Added seamless hover-to-expand support with grace-period timeout debounce on desktop, as well as toggle support for click and keyboard navigation.
+  - Enhanced the mobile navigation accordion with categorized icons, stylish pill badges, and direct access links.
+  - Integrated theme token styling (`bg-card`, `text-foreground`, `border-border`, `bg-accent`, `text-primary`) for seamless Light and Dark mode transitions.
+
+
 - **Mathematics Subject & Function Grapher Lab**:
   - Introduced the new **Mathematics** subject category with dedicated portal page (`/mathematics`) and themed error boundary (`app/mathematics/error.tsx`).
   - Added the **Function Grapher** lab (`/mathematics/functiongrapher` and `/labs/mathematics/functiongrapher`):

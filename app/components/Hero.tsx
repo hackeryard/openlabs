@@ -44,6 +44,7 @@ const labsData = {
     items: [
       { name: "HTML/CSS/JS Editor", path: "/computer-science/code-lab/html-css-js" },
       { name: "Logic Gates", path: "/computer-science/logic-gates" },
+      { name: "Graph Algorithms", path: "/computer-science/dsa/graph-algorithms" },
     ],
   },
   "Mathematics": {
@@ -52,6 +53,17 @@ const labsData = {
     icon: <Sigma className="w-6 h-6" aria-hidden="true" />,
     items: [
       { name: "Function Grapher", path: "/mathematics/functiongrapher" },
+      { name: "Trigonometry Visualizer", path: "/mathematics/trigonometry" },
+      { name: "Polynomial Explorer", path: "/mathematics/polynomials" },
+      { name: "Calculus Sandbox", path: "/mathematics/calculus" },
+      { name: "Linear Algebra", path: "/mathematics/linear-algebra" },
+      { name: "Statistics Sandbox", path: "/mathematics/statistics" },
+      { name: "Fractals & Complex Plane", path: "/mathematics/complex-numbers" },
+      { name: "Set Theory & Venn Diagrams", path: "/mathematics/set-theory" },
+      { name: "Interactive Geometry Studio", path: "/mathematics/geometry" },
+      { name: "Vector Algebra & 3D Space", path: "/mathematics/vector-algebra" },
+      { name: "Combinatorics & Discrete Counting", path: "/mathematics/combinatorics" },
+      { name: "Number Theory & Cryptography", path: "/mathematics/number-theory" },
     ],
   },
 };
