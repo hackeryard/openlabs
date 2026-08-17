@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ALL_CONCEPTS } from "@/app/lib/knowledge/concepts";
 import { validateKnowledgeGraph } from "@/app/lib/knowledge/validator";
 import { LABS } from "@/app/lib/labs";
-import { Activity, CheckCircle2, AlertTriangle, FileCode2, Layers, Network, Database, Users, BookOpen, MessageSquare, Inbox } from "lucide-react";
+import { Activity, CheckCircle2, AlertTriangle, FileCode2, Layers, Network, Database, Users, BookOpen, MessageSquare, Inbox, BarChart3 } from "lucide-react";
 
 export const metadata = {
   title: "Internal SEO & Knowledge Graph Dashboard | OpenLabs Admin",
@@ -63,6 +63,13 @@ export default function AdminSeoDashboardPage() {
           >
             <Inbox size={13} />
             <span>Contacts</span>
+          </Link>
+          <Link
+            href="/admin/analytics"
+            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
+          >
+            <BarChart3 size={13} />
+            <span>Analytics</span>
           </Link>
         </div>
       </div>

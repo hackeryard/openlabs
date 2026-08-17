@@ -8,6 +8,7 @@ import {
   Activity,
   MessageSquare,
   Inbox,
+  BarChart3,
   Search,
   CheckCircle2,
   XCircle,
@@ -438,6 +439,13 @@ export default function AdminUsersDashboard() {
             >
               <Inbox size={13} />
               <span>Contacts</span>
+            </Link>
+            <Link
+              href="/admin/analytics"
+              className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
+            >
+              <BarChart3 size={13} />
+              <span>Analytics</span>
             </Link>
           </div>
         </div>

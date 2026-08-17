@@ -4,6 +4,13 @@ All notable changes to OpenLabs are documented in this file. Format loosely foll
 
 ## Unreleased
 
+- **First-Party Web Analytics & Runtime Error Diagnostics Dashboard (`/api/analytics/collect`, `/api/analytics/error`, `/admin/analytics`)**:
+  - **Client-Side Telemetry Engine (`app/components/OpenLabsTracker.tsx`, `app/lib/tracker.ts`)**: Lightweight, non-blocking beacon observer capturing pageviews, active dwell time, scroll depth milestones (25%, 50%, 75%, 100%), traffic referrers, UTM parameters, devices, and countries.
+  - **Global Runtime Error & Boundary Capture**: Automated error reporting for uncaught window exceptions, unhandled Promise rejections, and Next.js React Error Boundaries (`app/error.tsx`), with 24h smart deduplication on `{ message, pathname }` to prevent database bloat.
+  - **Data Layer (`app/models/PageView.js`, `app/models/AnalyticsEvent.js`, `app/models/ErrorLog.js`, `app/lib/analyticsDb.ts`)**: High-performance Mongoose models with compound indexes and parallel aggregation pipelines.
+  - **Executive Admin Analytics & Error Triage Dashboard (`/admin/analytics`)**: Real-time active users pulse (`online now`), multi-timeframe traffic trend charts, top labs and pages ranking table, traffic acquisition channels, device & tech matrix, custom learning events stream, and complete Error Log Triage panel with 1-click status actions (`new` &rarr; `investigating` &rarr; `resolved` &rarr; `ignored`).
+  - **Unified Admin Header Navigation**: Synchronized 6-tab header navigation across all admin views (`Users`, `Blogs`, `SEO`, `Feedback`, `Contacts`, `Analytics`).
+
 - **Contact Form Database Persistence & Admin Inbox Dashboard (`/api/contact`, `/admin/contacts`, `app/models/Contact.js`)**:
   - Added Mongoose `Contact` model with fields for `name`, `email`, `subject`, `message`, `userId` (optional association), `status` (`new`/`read`/`replied`/`archived`), `emailSent`, `emailError`, and client telemetry.
   - Upgraded `POST /api/contact` to persist all inquiries in MongoDB before sending notification emails, ensuring submissions are never lost even if SMTP experiences network timeouts.
