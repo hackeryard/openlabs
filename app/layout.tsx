@@ -12,6 +12,7 @@ import { Analytics } from "@vercel/analytics/next"
 import Script from 'next/script'
 import ClarityProvider from '@/components/ClarityProvider'
 import ClarityTrackerObserver from '@/components/ClarityTrackerObserver'
+import OpenLabsTracker from './components/OpenLabsTracker'
 import ThemeProvider from '@/components/ThemeProvider'
 import AmbientBackground from '@/components/ui/AmbientBackground'
 import StructuredData from './components/seo/StructuredData'
@@ -115,6 +116,7 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
                 {children}
                 <OpenLabsAILoader />
                 <FloatingLabFeedback />
+                <OpenLabsTracker />
                 <ClarityProvider />
                 <ClarityTrackerObserver />
               </ChatProvider>

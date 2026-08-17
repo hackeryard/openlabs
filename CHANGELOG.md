@@ -4,10 +4,22 @@ All notable changes to OpenLabs are documented in this file. Format loosely foll
 
 ## Unreleased
 
+- **First-Party Web Analytics & Runtime Error Diagnostics Dashboard (`/api/analytics/collect`, `/api/analytics/error`, `/admin/analytics`)**:
+  - **Client-Side Telemetry Engine (`app/components/OpenLabsTracker.tsx`, `app/lib/tracker.ts`)**: Lightweight, non-blocking beacon observer capturing pageviews, active dwell time, scroll depth milestones (25%, 50%, 75%, 100%), traffic referrers, UTM parameters, devices, and countries.
+  - **Global Runtime Error & Boundary Capture**: Automated error reporting for uncaught window exceptions, unhandled Promise rejections, and Next.js React Error Boundaries (`app/error.tsx`), with 24h smart deduplication on `{ message, pathname }` to prevent database bloat.
+  - **Data Layer (`app/models/PageView.js`, `app/models/AnalyticsEvent.js`, `app/models/ErrorLog.js`, `app/lib/analyticsDb.ts`)**: High-performance Mongoose models with compound indexes and parallel aggregation pipelines.
+  - **Executive Admin Analytics & Error Triage Dashboard (`/admin/analytics`)**: Real-time active users pulse (`online now`), multi-timeframe traffic trend charts, top labs and pages ranking table, traffic acquisition channels, device & tech matrix, custom learning events stream, and complete Error Log Triage panel with 1-click status actions (`new` &rarr; `investigating` &rarr; `resolved` &rarr; `ignored`).
+  - **Unified Admin Header Navigation**: Synchronized 6-tab header navigation across all admin views (`Users`, `Blogs`, `SEO`, `Feedback`, `Contacts`, `Analytics`).
+
+- **Contact Form Database Persistence & Admin Inbox Dashboard (`/api/contact`, `/admin/contacts`, `app/models/Contact.js`)**:
+  - Added Mongoose `Contact` model with fields for `name`, `email`, `subject`, `message`, `userId` (optional association), `status` (`new`/`read`/`replied`/`archived`), `emailSent`, `emailError`, and client telemetry.
+  - Upgraded `POST /api/contact` to persist all inquiries in MongoDB before sending notification emails, ensuring submissions are never lost even if SMTP experiences network timeouts.
+  - Built dedicated Admin Inbox Dashboard at `/admin/contacts` with search, multi-status filtering, 1-click email replies, message text copying, deletion, and rich sender cards.
+
 - **Two-Tier Lab Feedback System & Admin Triage Dashboard (`/api/feedback`, `/admin/feedback`)**:
   - **Data Model & Schema (`app/models/Feedback.js`)**: Mongoose schema with `helpful` boolean pulse, `rating` (1–5 stars), `category` (bug, confusing, wrong-content, suggestion, praise), `comment`, `labStep`, and status lifecycle (`new` &rarr; `reviewed` &rarr; `fixed`).
   - **Public & Admin APIs (`/api/feedback`, `/api/feedback/[labId]`, `/api/admin/feedback`)**: Single endpoint supporting pulse and deep feedback with 24h rate-limiting/upserting, aggregation stats helper (`app/lib/feedback.ts`), and status patching.
-  - **Frontend UI Components (`FeedbackPulse.tsx`, `FeedbackForm.tsx`)**: Non-intrusive thumbs up/down pulse widget that auto-expands into structured deep feedback upon negative rating; modal deep form with floating trigger.
+  - **Frontend UI Components (`FeedbackPulse.tsx`, `FeedbackForm.tsx`, `FloatingLabFeedback.tsx`)**: Non-intrusive thumbs up/down pulse widget and globally mounted floating feedback trigger for 100% of labs in Physics, Chemistry, Biology, Math, and CS.
   - **Gamification & XP Tie-in**: Automatically awards `+10 XP` for first feedback on a lab and grants the `Contributor` badge upon 5+ submissions.
   - **Admin Triage Dashboard (`/admin/feedback`)**: Full sortable/filterable triage interface with global metrics, per-lab ratings and helpfulness %, rich user profile cards (avatar, full name, email, @username, level & XP badge, profile links), client device tags, dual Live Stream / Lab Summary view modes, and instant status updates.
 

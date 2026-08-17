@@ -8,6 +8,8 @@ export default function ClarityTrackerObserver() {
   const pathname = usePathname();
 
   useEffect(() => {
+    if (process.env.NODE_ENV !== "production") return;
+
     const syncUserSession = async () => {
       try {
         const res = await fetch("/api/auth/me");

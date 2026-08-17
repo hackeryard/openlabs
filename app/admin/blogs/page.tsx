@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Plus, Edit2, Trash2, Eye, Lock, Globe, FileEdit } from 'lucide-react';
+import { Plus, Edit2, Trash2, Eye, Lock, Globe, FileEdit, Users, BookOpen, Activity, MessageSquare, Inbox, BarChart3 } from 'lucide-react';
 
 export default function AdminBlogsDashboard() {
   const [adminSecret, setAdminSecret] = useState('');
@@ -99,7 +99,61 @@ export default function AdminBlogsDashboard() {
 
   return (
     <main className="min-h-screen text-foreground py-24">
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-6 space-y-6">
+        {/* Navigation Breadcrumb & Tabs */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
+          <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+            <Link href="/admin/seo-dashboard" className="hover:text-foreground">Admin</Link>
+            <span>/</span>
+            <span className="text-foreground">Blog Management</span>
+          </div>
+
+          <div className="flex items-center gap-2 text-xs font-bold flex-wrap">
+            <Link
+              href="/admin/users"
+              className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
+            >
+              <Users size={13} />
+              <span>Users</span>
+            </Link>
+            <Link
+              href="/admin/blogs"
+              className="px-3 py-1.5 rounded-xl bg-primary text-primary-foreground font-bold shadow-sm flex items-center gap-1.5"
+            >
+              <BookOpen size={13} />
+              <span>Blogs</span>
+            </Link>
+            <Link
+              href="/admin/seo-dashboard"
+              className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
+            >
+              <Activity size={13} />
+              <span>SEO</span>
+            </Link>
+            <Link
+              href="/admin/feedback"
+              className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
+            >
+              <MessageSquare size={13} />
+              <span>Feedback</span>
+            </Link>
+            <Link
+              href="/admin/contacts"
+              className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
+            >
+              <Inbox size={13} />
+              <span>Contacts</span>
+            </Link>
+            <Link
+              href="/admin/analytics"
+              className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
+            >
+              <BarChart3 size={13} />
+              <span>Analytics</span>
+            </Link>
+          </div>
+        </div>
+
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-12">
           <div>
             <h1 className="text-3xl font-bold text-foreground mb-2">Blog Management</h1>

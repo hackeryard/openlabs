@@ -1,9 +1,9 @@
-// app/admin/seo-dashboard/page.tsx
 import React from "react";
+import Link from "next/link";
 import { ALL_CONCEPTS } from "@/app/lib/knowledge/concepts";
 import { validateKnowledgeGraph } from "@/app/lib/knowledge/validator";
 import { LABS } from "@/app/lib/labs";
-import { Activity, CheckCircle2, AlertTriangle, FileCode2, Layers, Network, Database } from "lucide-react";
+import { Activity, CheckCircle2, AlertTriangle, FileCode2, Layers, Network, Database, Users, BookOpen, MessageSquare, Inbox, BarChart3 } from "lucide-react";
 
 export const metadata = {
   title: "Internal SEO & Knowledge Graph Dashboard | OpenLabs Admin",
@@ -22,6 +22,58 @@ export default function AdminSeoDashboardPage() {
 
   return (
     <div className="min-h-screen bg-background p-6 space-y-6 max-w-7xl mx-auto">
+      {/* Navigation Breadcrumb & Tabs */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
+        <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+          <span className="text-foreground">Admin / SEO & Knowledge Graph</span>
+        </div>
+
+        <div className="flex items-center gap-2 text-xs font-bold flex-wrap">
+          <Link
+            href="/admin/users"
+            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
+          >
+            <Users size={13} />
+            <span>Users</span>
+          </Link>
+          <Link
+            href="/admin/blogs"
+            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
+          >
+            <BookOpen size={13} />
+            <span>Blogs</span>
+          </Link>
+          <Link
+            href="/admin/seo-dashboard"
+            className="px-3 py-1.5 rounded-xl bg-primary text-primary-foreground font-bold shadow-sm flex items-center gap-1.5"
+          >
+            <Activity size={13} />
+            <span>SEO</span>
+          </Link>
+          <Link
+            href="/admin/feedback"
+            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
+          >
+            <MessageSquare size={13} />
+            <span>Feedback</span>
+          </Link>
+          <Link
+            href="/admin/contacts"
+            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
+          >
+            <Inbox size={13} />
+            <span>Contacts</span>
+          </Link>
+          <Link
+            href="/admin/analytics"
+            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
+          >
+            <BarChart3 size={13} />
+            <span>Analytics</span>
+          </Link>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="flex justify-between items-center border-b border-border pb-4">
         <div>

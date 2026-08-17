@@ -12,6 +12,7 @@ import {
   Bug
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { trackError } from "@/app/lib/tracker";
 
 export default function Error({
   error,
@@ -23,8 +24,14 @@ export default function Error({
   const [isExpended, setIsExpanded] = useState(false);
 
   useEffect(() => {
-    // Log privately to console, away from the user's immediate view
+    // Log privately to console
     console.error("OpenLabs System Log:", error);
+
+    // Automatically record to MongoDB error diagnostics
+    trackError(error, {
+      errorType: "boundary",
+      digest: error.digest,
+    });
   }, [error]);
 
   return (
@@ -160,11 +167,10 @@ export default function Error({
           </div>
           <div className="w-1 h-1 bg-slate-800 rounded-full" />
           <Link 
-            href="https://github.com/rahulra3621/openlabs/issues"
-            target="_blank"
+            href="/contact"
             className="hover:text-emerald-500 transition-colors decoration-emerald-500/30 underline underline-offset-4"
           >
-            Report Breach
+            Report Issue
           </Link>
         </div>
       </motion.div>

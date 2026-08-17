@@ -3,6 +3,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import {
+  Users,
+  BookOpen,
+  Inbox,
   MessageSquare,
   Star,
   ThumbsUp,
@@ -470,30 +473,48 @@ export default function AdminFeedbackPage() {
           <span className="text-foreground">Feedback Triage Dashboard</span>
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-bold">
+        <div className="flex items-center gap-2 text-xs font-bold flex-wrap">
           <Link
             href="/admin/users"
-            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition"
+            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
           >
-            Users
+            <Users size={13} />
+            <span>Users</span>
           </Link>
           <Link
             href="/admin/blogs"
-            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition"
+            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
           >
-            Blogs
+            <BookOpen size={13} />
+            <span>Blogs</span>
           </Link>
           <Link
             href="/admin/seo-dashboard"
-            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition"
+            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
           >
-            SEO
+            <Activity size={13} />
+            <span>SEO</span>
           </Link>
           <Link
             href="/admin/feedback"
-            className="px-3 py-1.5 rounded-xl bg-primary text-primary-foreground font-bold shadow-sm"
+            className="px-3 py-1.5 rounded-xl bg-primary text-primary-foreground font-bold shadow-sm flex items-center gap-1.5"
           >
-            Feedback
+            <MessageSquare size={13} />
+            <span>Feedback</span>
+          </Link>
+          <Link
+            href="/admin/contacts"
+            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
+          >
+            <Inbox size={13} />
+            <span>Contacts</span>
+          </Link>
+          <Link
+            href="/admin/analytics"
+            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
+          >
+            <BarChart3 size={13} />
+            <span>Analytics</span>
           </Link>
         </div>
       </div>
