@@ -3,7 +3,30 @@ import Link from "next/link";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { elements } from "@/app/src/data/elements";
-import { Award, ShieldAlert, GraduationCap, Compass, Layers, Milestone, Info, Calendar, Hash, Activity, Atom, FlaskConical } from "lucide-react";
+import {
+  Award,
+  ShieldAlert,
+  GraduationCap,
+  Compass,
+  Layers,
+  Milestone,
+  Info,
+  Calendar,
+  Hash,
+  Activity,
+  Atom,
+  FlaskConical,
+  ArrowLeft,
+  ArrowRight,
+  Sparkles,
+  ExternalLink,
+  Zap,
+  Globe,
+  Flame,
+  Scale,
+  Play,
+  Orbit,
+} from "lucide-react";
 
 interface PageProps {
   params: {
@@ -11,78 +34,91 @@ interface PageProps {
   };
 }
 
-// 1. Dynamic Category Coloring System for Light Theme Premium Styling
-const categoryMap: Record<string, { label: string; bg: string; text: string; border: string; glow: string }> = {
-  "nonmetal": {
+// 1. Dynamic Category Coloring System for Light & Dark Theme Support
+const categoryMap: Record<
+  string,
+  { label: string; bg: string; text: string; border: string; glow: string; accent: string }
+> = {
+  nonmetal: {
     label: "Reactive Nonmetal",
-    bg: "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-100 dark:border-emerald-900",
-    text: "text-emerald-700",
-    border: "border-emerald-200",
-    glow: "shadow-emerald-100 dark:shadow-black/30 hover:border-emerald-350"
+    bg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
+    text: "text-emerald-600 dark:text-emerald-400",
+    border: "border-emerald-500/30",
+    glow: "shadow-emerald-500/10 hover:border-emerald-500/60",
+    accent: "bg-emerald-500",
   },
   "noble-gas": {
     label: "Noble Gas",
-    bg: "bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border-blue-100 dark:border-blue-900",
-    text: "text-blue-700",
-    border: "border-blue-200",
-    glow: "shadow-blue-100 dark:shadow-black/30 hover:border-blue-350"
+    bg: "bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/30",
+    text: "text-sky-600 dark:text-sky-400",
+    border: "border-sky-500/30",
+    glow: "shadow-sky-500/10 hover:border-sky-500/60",
+    accent: "bg-sky-500",
   },
   "alkali-metal": {
     label: "Alkali Metal",
-    bg: "bg-red-50 dark:bg-red-950/40 text-red-800 dark:text-red-300 border-red-100 dark:border-red-900",
-    text: "text-red-700",
-    border: "border-red-200",
-    glow: "shadow-red-100 dark:shadow-black/30 hover:border-red-350"
+    bg: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30",
+    text: "text-rose-600 dark:text-rose-400",
+    border: "border-rose-500/30",
+    glow: "shadow-rose-500/10 hover:border-rose-500/60",
+    accent: "bg-rose-500",
   },
   "alkaline-earth": {
     label: "Alkaline Earth Metal",
-    bg: "bg-orange-50 dark:bg-orange-950/40 text-orange-800 dark:text-orange-300 border-orange-100 dark:border-orange-900",
-    text: "text-orange-700",
-    border: "border-orange-200",
-    glow: "shadow-orange-100 dark:shadow-black/30 hover:border-orange-350"
+    bg: "bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/30",
+    text: "text-orange-600 dark:text-orange-400",
+    border: "border-orange-500/30",
+    glow: "shadow-orange-500/10 hover:border-orange-500/60",
+    accent: "bg-orange-500",
   },
-  "metalloid": {
+  metalloid: {
     label: "Metalloid",
-    bg: "bg-teal-50 dark:bg-teal-950/40 text-teal-800 dark:text-teal-300 border-teal-100 dark:border-teal-900",
-    text: "text-teal-700",
-    border: "border-teal-200",
-    glow: "shadow-teal-100 dark:shadow-black/30 hover:border-teal-350"
+    bg: "bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/30",
+    text: "text-teal-600 dark:text-teal-400",
+    border: "border-teal-500/30",
+    glow: "shadow-teal-500/10 hover:border-teal-500/60",
+    accent: "bg-teal-500",
   },
   "post-transition": {
     label: "Post-Transition Metal",
-    bg: "bg-slate-50 dark:bg-slate-800/40 text-slate-800 dark:text-slate-300 border-slate-100 dark:border-slate-700",
-    text: "text-slate-700",
-    border: "border-slate-200",
-    glow: "shadow-slate-100 dark:shadow-black/30 hover:border-slate-350"
+    bg: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30",
+    text: "text-blue-600 dark:text-blue-400",
+    border: "border-blue-500/30",
+    glow: "shadow-blue-500/10 hover:border-blue-500/60",
+    accent: "bg-blue-500",
   },
   "transition-metal": {
     label: "Transition Metal",
-    bg: "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-800 dark:text-indigo-300 border-indigo-100 dark:border-indigo-900",
-    text: "text-indigo-755",
-    border: "border-indigo-200",
-    glow: "shadow-indigo-100 dark:shadow-black/30 hover:border-indigo-350"
+    bg: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/30",
+    text: "text-indigo-600 dark:text-indigo-400",
+    border: "border-indigo-500/30",
+    glow: "shadow-indigo-500/10 hover:border-indigo-500/60",
+    accent: "bg-indigo-500",
   },
-  "lanthanide": {
+  lanthanide: {
     label: "Lanthanide",
-    bg: "bg-pink-50 dark:bg-pink-950/40 text-pink-800 dark:text-pink-300 border-pink-100 dark:border-pink-900",
-    text: "text-pink-700",
-    border: "border-pink-200",
-    glow: "shadow-pink-100 dark:shadow-black/30 hover:border-pink-350"
+    bg: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30",
+    text: "text-amber-600 dark:text-amber-400",
+    border: "border-amber-500/30",
+    glow: "shadow-amber-500/10 hover:border-amber-500/60",
+    accent: "bg-amber-500",
   },
-  "actinide": {
+  actinide: {
     label: "Actinide",
-    bg: "bg-yellow-50 dark:bg-yellow-950/40 text-yellow-800 dark:text-yellow-300 border-yellow-100 dark:border-yellow-900",
-    text: "text-yellow-755",
-    border: "border-yellow-200",
-    glow: "shadow-yellow-100 dark:shadow-black/30 hover:border-yellow-350"
+    bg: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/30",
+    text: "text-yellow-600 dark:text-yellow-400",
+    border: "border-yellow-500/30",
+    glow: "shadow-yellow-500/10 hover:border-yellow-500/60",
+    accent: "bg-yellow-500",
   },
-  "halogen": {
+  halogen: {
     label: "Halogen",
-    bg: "bg-purple-50 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300 border-purple-100 dark:border-purple-900",
-    text: "text-purple-700",
-    border: "border-purple-200",
-    glow: "shadow-purple-100 dark:shadow-black/30 hover:border-purple-350"
-  }
+    bg: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30",
+    text: "text-purple-600 dark:text-purple-400",
+    border: "border-purple-500/30",
+    glow: "shadow-purple-500/10 hover:border-purple-500/60",
+    accent: "bg-purple-500",
+  },
 };
 
 const ORBITALS = [
@@ -111,32 +147,52 @@ const ELECTRON_EXCEPTIONS: Record<number, { reason: string; ideal: string; activ
   24: {
     ideal: "[Ar] 3d⁴ 4s²",
     active: "[Ar] 3d⁵ 4s¹",
-    reason: "Half-filled d-subshell (d⁵) is symmetrical and provides maximum exchange energy, which is thermodynamically more stable than a d⁴ 4s² arrangement."
+    reason: "Half-filled d-subshell (d⁵) provides maximum exchange energy and spherical symmetry, thermodynamically stabilizing the atom over the standard 3d⁴ 4s² state.",
   },
   29: {
     ideal: "[Ar] 3d⁹ 4s²",
     active: "[Ar] 3d¹⁰ 4s¹",
-    reason: "A completely filled d-subshell (d¹⁰) provides extra electrostatic shielding and symmetry, making it more stable."
+    reason: "A completely filled d-subshell (d¹⁰) provides complete electrostatic shielding and symmetry, lowering total electronic energy.",
+  },
+  41: {
+    ideal: "[Kr] 4d³ 5s²",
+    active: "[Kr] 4d⁴ 5s¹",
+    reason: "Minimizes inter-electronic repulsion in the compact 5s subshell.",
   },
   42: {
     ideal: "[Kr] 4d⁴ 5s²",
     active: "[Kr] 4d⁵ 5s¹",
-    reason: "Half-filled d-subshell stability."
+    reason: "Half-filled 4d⁵ subshell provides maximum quantum exchange stabilization.",
+  },
+  44: {
+    ideal: "[Kr] 4d⁶ 5s²",
+    active: "[Kr] 4d⁷ 5s¹",
+    reason: "Favors increased d-orbital exchange energy over paired 5s electrons.",
+  },
+  45: {
+    ideal: "[Kr] 4d⁷ 5s²",
+    active: "[Kr] 4d⁸ 5s¹",
+    reason: "Lowering of the 4d orbital energy relative to 5s in Period 5 transition metals.",
   },
   46: {
     ideal: "[Kr] 4d⁸ 5s²",
     active: "[Kr] 4d¹⁰",
-    reason: "Completely filled d-subshell providing unique chemical inertness."
+    reason: "Completely filled 4d¹⁰ subshell with 0 electrons in the 5s shell (5s⁰). The extreme stability of a closed d-shell outweighs the cost of promoting two 5s electrons into the 4d orbital, making Palladium unique.",
   },
   47: {
     ideal: "[Kr] 4d⁹ 5s²",
     active: "[Kr] 4d¹⁰ 5s¹",
-    reason: "Filled d-subshell stability."
+    reason: "Full d-subshell (4d¹⁰) stability.",
+  },
+  78: {
+    ideal: "[Xe] 4f¹⁴ 5d⁸ 6s²",
+    active: "[Xe] 4f¹⁴ 5d⁹ 6s¹",
+    reason: "Relativistic orbital contraction and d-subshell stabilization.",
   },
   79: {
     ideal: "[Xe] 4f¹⁴ 5d⁹ 6s²",
     active: "[Xe] 4f¹⁴ 5d¹⁰ 6s¹",
-    reason: "Strong relativistic contraction of s-orbitals pulls electrons closer, combined with filled d-subshell stability."
+    reason: "Strong relativistic contraction of the 6s orbital combined with filled 5d¹⁰ subshell stability gives Gold its unique nobility and golden hue.",
   },
 };
 
@@ -160,41 +216,40 @@ function calculateConfiguration(Z: number) {
     shells[o.n] = (shells[o.n] || 0) + e;
   }
 
-  const exception = ELECTRON_EXCEPTIONS[Z];
-  if (exception) {
-    const targetFix = Z === 24 ? [{ label: "4s", electrons: 1 }, { label: "3d", electrons: 5 }] :
-      Z === 29 ? [{ label: "4s", electrons: 1 }, { label: "3d", electrons: 10 }] : [];
-
-    targetFix.forEach((fix) => {
-      const target = orbitals.find((o) => o.label === fix.label);
-      if (target) {
-        const diff = fix.electrons - target.electrons;
-        target.electrons = fix.electrons;
-        shells[target.shell] += diff;
-      }
-    });
+  // Handle known quantum exceptions
+  if (Z === 46) {
+    return { 1: 2, 2: 8, 3: 18, 4: 18 };
+  } else if (Z === 24) {
+    return { 1: 2, 2: 8, 3: 13, 4: 1 };
+  } else if (Z === 29) {
+    return { 1: 2, 2: 8, 3: 18, 4: 1 };
+  } else if (Z === 47) {
+    return { 1: 2, 2: 8, 3: 18, 4: 18, 5: 1 };
+  } else if (Z === 79) {
+    return { 1: 2, 2: 8, 3: 18, 4: 32, 5: 18, 6: 1 };
   }
 
   return shells;
 }
 
 const etymologyMap: Record<number, { origin: string; meaning: string; geography: string }> = {
-  1: { origin: "Greek 'hydro' + 'genes'", meaning: "Water-former", geography: "Co-discovered in London, UK / Paris, France" },
-  2: { origin: "Greek 'helios' (Sun)", meaning: "Sun element", geography: "Discovered during solar eclipse in Guntur, India" },
-  6: { origin: "Latin 'carbo'", meaning: "Coal / charcoal", geography: "Known since ancient prehistoric times globally" },
-  8: { origin: "Greek 'oxy' + 'genes'", meaning: "Acid-former", geography: "Co-discovered in Uppsala, Sweden / Wiltshire, UK" },
-  24: { origin: "Greek 'chroma' (color)", meaning: "Vibrant / colored compounds", geography: "Discovered by Louis Nicolas Vauquelin in Paris, France (1797)" },
-  26: { origin: "Latin 'ferrum'", meaning: "Strength / firm", geography: "Used since early Iron Age civilizations globally" },
-  29: { origin: "Latin 'cuprum'", meaning: "From Cyprus island", geography: "Mined extensively in ancient Cyprus" },
-  79: { origin: "Proto-Germanic 'gulth'", meaning: "Shining yellow / gold", geography: "Prized since earliest Egyptian dynasties" }
+  1: { origin: "Greek 'hydro' + 'genes'", meaning: "Water-former", geography: "Discovered in London, UK (1766)" },
+  2: { origin: "Greek 'helios' (Sun)", meaning: "Sun element", geography: "Discovered during solar eclipse in Guntur, India (1868)" },
+  6: { origin: "Latin 'carbo'", meaning: "Coal / Charcoal", geography: "Known since ancient prehistoric times globally" },
+  8: { origin: "Greek 'oxy' + 'genes'", meaning: "Acid-former", geography: "Co-discovered in Uppsala, Sweden / Wiltshire, UK (1774)" },
+  24: { origin: "Greek 'chroma' (Color)", meaning: "Vibrant colored compounds", geography: "Discovered by Louis Nicolas Vauquelin in Paris, France (1797)" },
+  26: { origin: "Latin 'ferrum'", meaning: "Strength / Firmness", geography: "Smelted since the early Iron Age (c. 1200 BCE)" },
+  29: { origin: "Latin 'cuprum'", meaning: "From Cyprus Island", geography: "Mined in Cyprus since 4000 BCE" },
+  46: { origin: "Asteroid 'Pallas' (Greek goddess Pallas Athena)", meaning: "Goddess of wisdom / Defender", geography: "Discovered by William Hyde Wollaston in London, UK (1803)" },
+  47: { origin: "Anglo-Saxon 'seolfor' / Latin 'argentum'", meaning: "Shining white / Bright", geography: "Mined in Anatolia & Greece since 3000 BCE" },
+  79: { origin: "Proto-Germanic 'gulth' / Latin 'aurum'", meaning: "Glowing dawn / Shining yellow", geography: "Prized in ancient Egypt and Mesopotamia" },
 };
 
 function getElementImageSrc(name: string) {
   return `/images/elements/${name
     .toLowerCase()
     .replace(/\s+/g, "")
-    .replace(/[^a-z]/g, "")
-  }.jpg`;
+    .replace(/[^a-z]/g, "")}.jpg`;
 }
 
 function getElementExplanations(el: any) {
@@ -204,54 +259,60 @@ function getElementExplanations(el: any) {
   const cat = el.category;
 
   const overviews: Record<number, string> = {
-    1: "Hydrogen is the simplest, lightest, and most abundant chemical element in the universe, constituting roughly 75% of all baryonic mass. It exists as a highly flammable diatomic gas at standard conditions and acts as a central building block of stars, water, and life.",
-    2: "Helium is a colorless, odorless, and chemically inert noble gas. It is the second-lightest and second-most abundant element in the universe, synthesized in massive quantities during stellar nucleosynthesis and the Big Bang.",
-    6: "Carbon is the foundational cornerstone of all organic chemistry and life on Earth. Due to its unique ability to form four stable covalent bonds (catenation), it forms the structural backbone of proteins, lipids, carbohydrates, and nucleic acids.",
-    7: "Nitrogen is a diatomic nonmetallic gas forming 78% of Earth's atmosphere. Crucial to life, it forms the molecular basis for amino acids, proteins, and DNA, and plays a vital role in biochemical cycling.",
-    8: "Oxygen is a highly reactive nonmetal and potent oxidizer essential for cellular respiration in most aerobic organisms. Making up 21% of Earth's atmosphere, it is the most abundant element in the Earth's crust by mass, primarily bound in oxide minerals.",
-    24: "Chromium is a lustrous, hard, and steel-gray transition metal. Prized for its exceptionally high corrosion resistance and high melting point, it is the primary alloy ingredient in stainless steel and is responsible for the deep green color of emeralds and red color of rubies.",
-    26: "Iron is a vital transition metal that represents the most common element on Earth by mass, comprising much of our planet's inner and outer core. Biologically, it form the active oxygen-binding center in blood hemoglobin.",
-    79: "Gold is a dense, exceptionally malleable, and chemically unreactive noble metal. Prize since antiquity for its beauty, non-tarnishing properties, and extreme stability, it is widely utilized in aerospace shielding, modern electronics, and currency."
+    46: "Palladium is a rare, lustrous silvery-white transition metal and a premier member of the platinum group metals (PGM). Discovered in 1803 by William Hyde Wollaston, it possesses an extraordinary affinity for hydrogen, capable of absorbing up to 900 times its own volume of H₂ gas at standard conditions. It is an indispensable heterogeneous catalyst in automotive emission systems, pharmaceutical synthesis (Suzuki coupling), and clean hydrogen energy tech.",
+    1: "Hydrogen is the simplest, lightest, and most abundant chemical element in the universe, constituting roughly 75% of all baryonic mass. It acts as the primary stellar fuel and the elemental backbone of water and organic molecules.",
+    6: "Carbon is the foundational cornerstone of all organic chemistry. Its unique capacity for catenation (forming stable covalent bonds with other carbon atoms) gives rise to millions of biological and synthetic molecules.",
+    24: "Chromium is a lustrous, corrosion-resistant transition metal famous for creating stainless steel alloys and producing the brilliant green of emeralds and red of rubies.",
+    26: "Iron is the most abundant element on Earth by mass and the principal metal of modern engineering. In biology, it forms the active oxygen-binding center in hemoglobin.",
+    79: "Gold is a dense, corrosion-proof noble metal revered since antiquity for its beauty, high electrical conductivity, and chemical nobility.",
   };
 
   const biologicalRoles: Record<number, string> = {
-    1: "Hydrogen is present in every biological cell. Combined with oxygen, it forms water, which makes up about 60% of human body weight, and acts as the hydrogen ion gradient driving ATP synthase.",
-    2: "Helium is completely inert and has no known biological role. It is non-toxic but poses oxygen deprivation risks if inhaled.",
-    6: "Carbon constitutes 18.5% of human body mass. Every biomolecule—from DNA base pairs to fatty acid chains—is built upon a stable framework of carbon-carbon covalent bonds.",
-    7: "Nitrogen is a key building block of nucleic acids (DNA/RNA) and amino acids (proteins). Plants absorb nitrogen in soil compounds, which enters the food chain to supply human nutrition.",
-    8: "Oxygen is vital for aerobic life. It serves as the terminal electron acceptor in the cellular electron transport chain, enabling mitochondria to synthesize ATP during cellular respiration.",
-    24: "Chromium (specifically trivalent Cr³⁺) is a trace essential element in human glucose metabolism, facilitating the action of insulin. Conversely, hexavalent chromium (Cr⁶⁺) is highly toxic and carcinogenic.",
-    26: "Iron is indispensable for oxygen transport. It resides at the core of the heme group in hemoglobin and myoglobin, binding O2 molecules for distribution across muscles and organs.",
-    79: "Gold is biologically inert. Because it is non-reactive and does not oxidize inside tissues, it is extensively used in high-quality dental crowns and selected gold salt treatments for arthritis."
+    46: "Palladium has no known biological function in the human body. Because of its exceptional resistance to corrosion and biological inertness, palladium-gold alloys are widely used in high-durability dental crowns and specialized biomedical implants.",
+    1: "Hydrogen is present in every living cell, forming water (60% of human weight) and generating the proton motive force that drives ATP synthase.",
+    6: "Carbon constitutes 18.5% of human body mass, forming the backbone of carbohydrates, lipids, proteins, and nucleic acids.",
+    24: "Chromium (trivalent Cr³⁺) is a trace essential nutrient that potentiates insulin action in glucose metabolism. Hexavalent Cr⁶⁺ is toxic.",
+    26: "Iron is critical for life, acting as the oxygen carrier in hemoglobin and the catalytic core in cytochrome enzymes.",
+    79: "Gold is biologically inert and non-toxic in its metallic form, with historical therapeutic use in gold salt arthritis treatments.",
   };
 
   const reactivities: Record<number, string> = {
-    1: "Hydrogen is moderately reactive. Under light, heat, or catalytic activation, it reacts vigorously with oxygen and halogens. It acts as a primary reducing agent in hydrocracking and hydrogenation processes.",
-    2: "Helium has zero chemical reactivity. Its electrons form a closed 1s² shell which is incredibly stable, rendering it unable to form ordinary chemical compounds even at high temperatures.",
-    6: "Carbon is moderately reactive but exceptionally versatile. While kinetically stable at room temperature, it readily undergoes combustion at high temperatures and forms covalent compounds with hydrogen, oxygen, nitrogen, and halogens.",
-    7: "Diatomic nitrogen (N2) is highly unreactive at standard conditions due to its powerful triple covalent bond (bond dissociation energy of 945 kJ/mol), requiring severe industrial pressures or nitrogenase enzymes to react.",
-    8: "Oxygen is exceptionally reactive and electronegative. It participates in oxidizing processes, combustion, rust formation, and corrosion, bonding with nearly every element except for lighter noble gases.",
-    24: "Chromium is passive against corrosion. It reacts with oxygen in the air to immediately form an ultra-thin, dense protective layer of chromium(III) oxide (Cr₂O₃) that prevents further oxygen penetration, a property known as passivation.",
-    26: "Iron reacts slowly with moist air to form hydrated iron oxide (rust). It dissolves readily in dilute acids and exhibits multiple common oxidation states, primarily +2 (ferrous) and +3 (ferric).",
-    79: "Gold is the most chemically inert metal in the periodic table. It does not react with air, water, or acids, and is only dissolved by aqua regia (a specialized 3:1 mixture of hydrochloric and nitric acids)."
+    46: "Palladium is resistant to corrosion and atmospheric tarnishing at ambient temperatures. It does not react with oxygen under standard conditions but dissolves readily in concentrated nitric acid and hot sulfuric acid, as well as aqua regia. Remarkably, palladium acts as a super-sponge for hydrogen, expanding slightly as it forms palladium hydride (PdHₓ) without losing its metallic ductility.",
+    1: "Hydrogen is a versatile reducing agent that burns vigorously in air/oxygen to produce pure water with high energy density.",
+    6: "Carbon is chemically versatile, forming single, double, and triple covalent bonds with diverse elements.",
+    24: "Chromium passivates spontaneously in air by forming an ultra-thin, impermeable layer of Cr₂O₃.",
+    26: "Iron oxidizes in moist air to form porous hydrated iron oxide (rust) and exhibits common +2 and +3 oxidation states.",
+    79: "Gold is the most chemically unreactive metal in the periodic table, unaffected by air, moisture, and single acids.",
   };
 
   const applications: Record<number, string> = {
-    1: "Hydrogen is used for synthesizing ammonia (Haber process), upgrading petroleum fuels, producing methanol, launching rockets (liquid hydrogen fuel), and powering fuel cells for clean transportation.",
-    2: "Helium is critical in cryogenics, cooling the superconducting magnets of MRI scanners to 4 Kelvin. It is also used to pressurize space booster tanks, shield gas welding, and fill balloons.",
-    6: "Carbon is used globally in carbon steels, activated carbon filters, carbon-fiber composites, synthetic polymers, graphite electrodes, diamond tools, and carbon dating (Carbon-14).",
-    7: "Nitrogen is used as a protective liquid coolant (liquid nitrogen) for biology and manufacturing, to provide an inert atmosphere in pharmaceutical synthesis, and to manufacture ammonium fertilizers.",
-    8: "Oxygen is used in massive quantities in blast furnace steelmaking, wastewater purification, industrial welding, medical life support in hospitals, and liquid oxygen rocket propellants.",
-    24: "Chromium is primarily used in chrome plating, producing stainless steels (typically containing 18% chromium), manufacturing nichrome resistance wires, superalloys for jet engines, and pigment paints.",
-    26: "Iron is the backbone of human structural civil engineering. Alloyed with carbon to produce structural steels, it builds skyscrapers, cargo vessels, railway lines, automobiles, and mechanical tools.",
-    79: "Highly prized in high-end microelectronics due to its high electrical conductivity and total corrosion resistance. It is used in semiconductor wire bonding, premium jewelry, gold bullion, and infrared satellites."
+    46: "Over 80% of all mined palladium is used in automotive catalytic converters to convert toxic hydrocarbons, carbon monoxide, and nitrogen oxides into harmless gases. It is also vital in Suzuki-Miyaura cross-coupling reactions (Nobel Prize in Chemistry 2010), multilayer ceramic capacitors (MLCCs) in smartphones, hydrogen purification membranes, dental alloys, and fine jewelry.",
+    1: "Used in ammonia synthesis (Haber process), clean fuel cells, petroleum hydrocracking, and liquid rocket propellant.",
+    6: "Employed in carbon fibers, structural steels, lithium-ion battery anodes (graphite), and diamond tools.",
+    24: "Used in stainless steel manufacturing, chrome electroplating, and nichrome resistance heating elements.",
+    26: "Forms 90% of all refined metals worldwide, used in structural steel, automotive chassis, and tools.",
+    79: "Used in aerospace reflective heat shields, semiconductor wire bonding, fine jewelry, and financial reserves.",
   };
 
   return {
-    overview: overviews[Z] || `${name} (${symbol}) is a chemical element with atomic number ${Z}, classified as a ${cat.replace("-", " ")}. Located in Period ${el.period} and Group ${el.group} of the periodic table, it features an electron configuration of ${el.electronConfig}. Like other elements in its class, its chemical behavior is dictated by its valence electrons and position relative to periodic trends.`,
-    bioRole: biologicalRoles[Z] || `${name} does not have a primary biological role in human physiology, but exists as a trace element in some ecosystems. In heavier metals, biological toxicity often replaces utility, where heavy metal interactions can disrupt cellular enzymes.`,
-    reactivity: reactivities[Z] || `${name} belongs to the ${cat.replace("-", " ")} class. Its reactivity is governed by its valence shell of electrons. Elements of this category typically participate in chemical bonding via ${el.block}-block orbitals, exhibiting characteristic properties such as an electronegativity of ${el.electronegativity ?? "n/a"} and forming compounds in standard oxidation states.`,
-    industrialUse: applications[Z] || `${name} finds various specialized applications in modern industry, technological fabrication, materials science, or laboratory settings, depending on its specific thermal and chemical properties.`
+    overview:
+      overviews[Z] ||
+      `${name} (${symbol}) is an element with atomic number ${Z}, classified as a ${cat.replace(
+        "-",
+        " "
+      )}. Positioned in Period ${el.period}, Group ${el.group}, and ${el.block.toUpperCase()}-block, its chemical and physical profile is defined by its electron configuration (${el.electronConfig}) and periodic trends.`,
+    bioRole:
+      biologicalRoles[Z] ||
+      `${name} does not play a prominent biological role in human biochemistry, existing primarily as a trace element or mineral component in natural ecosystems.`,
+    reactivity:
+      reactivities[Z] ||
+      `${name} exhibits chemical reactivity characteristic of the ${cat.replace(
+        "-",
+        " "
+      )} family, governed by an electronegativity of ${el.electronegativity ?? "n/a"} and standard valence interactions.`,
+    industrialUse:
+      applications[Z] ||
+      `${name} is utilized in industrial fabrication, materials engineering, electronic manufacturing, and advanced laboratory research based on its specific thermodynamic properties.`,
   };
 }
 
@@ -267,8 +328,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   return {
-    title: `${el.name} (${el.symbol}) - Atomic Number ${el.atomicNumber} | OpenLabs`,
-    description: `Learn about ${el.name} (${el.symbol}), atomic number ${el.atomicNumber}. Explore its properties, electron configuration exception, atomic mass, period/group trends, and launch the interactive 3D Bohr model laboratory.`,
+    title: `${el.name} (${el.symbol}) - Atomic No. ${el.atomicNumber} | Periodic Table | OpenLabs`,
+    description: `Scientific profile and interactive 3D laboratory for ${el.name} (${el.symbol}), atomic number ${el.atomicNumber}. Explore orbital configuration, quantum shells, periodic trends, and chemical reactivity.`,
     keywords: [
       el.name,
       el.symbol,
@@ -279,17 +340,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       `${el.name} chemical reactivity`,
       "periodic table of elements",
       "chemistry interactive lab",
-      "openlabs chemistry"
+      "openlabs chemistry",
     ],
     alternates: {
       canonical: `https://www.openlabs.org.in/chemistry/periodictable/atom/${el.atomicNumber}`,
     },
     openGraph: {
       title: `${el.name} (${el.symbol}) - Interactive Periodic Table | OpenLabs`,
-      description: `Comprehensive scientific monograph and interactive 3D laboratory for ${el.name}. Discover properties, atomic trends, and valence shells.`,
+      description: `Scientific monograph and interactive quantum model for ${el.name}. Explore electron configuration, orbitals, and chemical properties.`,
       url: `https://www.openlabs.org.in/chemistry/periodictable/atom/${el.atomicNumber}`,
       type: "website",
-    }
+    },
   };
 }
 
@@ -301,12 +362,16 @@ export default function Page({ params }: PageProps) {
     return notFound();
   }
 
+  const prevEl = elements.find((e) => e.atomicNumber === Z - 1);
+  const nextEl = elements.find((e) => e.atomicNumber === Z + 1);
+
   const categoryStyle = categoryMap[el.category] || {
-    label: el.category,
-    bg: "bg-slate-100 dark:bg-slate-800/40 text-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700",
-    text: "text-slate-700",
-    border: "border-slate-200",
-    glow: "shadow-slate-100 dark:shadow-black/30 hover:border-slate-350"
+    label: el.category.replace("-", " "),
+    bg: "bg-muted text-muted-foreground border-border",
+    text: "text-foreground",
+    border: "border-border",
+    glow: "shadow-sm hover:border-primary/50",
+    accent: "bg-primary",
   };
 
   const shells = calculateConfiguration(Z);
@@ -315,344 +380,395 @@ export default function Page({ params }: PageProps) {
   const etymology = etymologyMap[Z];
   const exception = ELECTRON_EXCEPTIONS[Z];
 
-  const propertiesGrid = (
-    <div className="grid grid-cols-2 gap-4 w-full">
-      <div className="bg-card border border-border p-4 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition duration-200">
-        <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-extrabold uppercase tracking-wider">
-          <Atom className="h-3 w-3 text-indigo-500" /> Electron Config
-        </div>
-        <div className="font-extrabold font-mono text-[13px] text-indigo-755 mt-2 truncate" title={el.electronConfiguration || el.electronConfig || "—"}>
-          {el.electronConfiguration || el.electronConfig || "—"}
-        </div>
-      </div>
-
-      <div className="bg-card border border-border p-4 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition duration-200">
-        <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-extrabold uppercase tracking-wider">
-          <Activity className="h-3 w-3 text-indigo-500" /> Electronegativity
-        </div>
-        <div className="font-extrabold font-mono text-[13px] text-indigo-755 mt-2">
-          {el.electronegativity ?? "n/a"} <span className="text-[9px] text-muted-foreground font-normal">Pauling</span>
-        </div>
-      </div>
-
-      <div className="bg-card border border-border p-4 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition duration-200">
-        <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-extrabold uppercase tracking-wider">
-          <Calendar className="h-3 w-3 text-indigo-500" /> Year Discovered
-        </div>
-        <div className="font-extrabold text-[13px] text-indigo-755 mt-2 truncate">
-          {el.yearDiscovered ?? "Ancient"}
-        </div>
-      </div>
-
-      <div className="bg-card border border-border p-4 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition duration-200">
-        <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-extrabold uppercase tracking-wider">
-          <Milestone className="h-3 w-3 text-indigo-500" /> Shells & Levels
-        </div>
-        <div className="font-extrabold text-[13px] text-indigo-755 mt-2">
-          {shellArray.length} energy levels
-        </div>
-      </div>
-
-      <div className="bg-card border border-border p-4 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition duration-200">
-        <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-extrabold uppercase tracking-wider">
-          <Layers className="h-3 w-3 text-indigo-500" /> Orbital Block
-        </div>
-        <div className="font-extrabold text-[13px] text-indigo-755 uppercase mt-2">
-          {el.block}-block orbitals
-        </div>
-      </div>
-
-      <div className="bg-card border border-border p-4 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition duration-200">
-        <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-extrabold uppercase tracking-wider">
-          <Hash className="h-3 w-3 text-indigo-500" /> Group & Period
-        </div>
-        <div className="font-extrabold text-[13px] text-indigo-755 mt-2">
-          G: {el.group} / P: {el.period}
-        </div>
-      </div>
-
-      <div className="bg-card border border-border p-4 rounded-2xl shadow-sm col-span-2 hover:shadow-md transition duration-200">
-        <div className="text-[10px] text-muted-foreground font-extrabold uppercase tracking-wider mb-2.5">Electrons per Shell Level</div>
-        <div className="flex flex-wrap gap-2">
-          {shellArray.map((count, idx) => (
-            <div key={idx} className="flex items-center gap-1.5">
-              <span className="text-xs font-mono font-bold bg-muted border border-border text-foreground px-2 py-0.5 rounded-md">
-                Shell {idx + 1}: {count}
-              </span>
-              {idx < shellArray.length - 1 && <span className="text-muted-foreground font-mono text-xs">→</span>}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
   const faqs = [
     {
-      question: `What are the main physical properties of ${el.name}?`,
-      answer: `${el.name} (${el.symbol}) has an atomic number of ${el.atomicNumber} and an atomic mass of ${el.atomicMass} u. It resides in Period ${el.period}, Group ${el.group}, and is classified within the ${categoryStyle.label} category, operating primarily in the ${el.block}-block orbital system.`
+      question: `What are the key physical and atomic properties of ${el.name}?`,
+      answer: `${el.name} (${el.symbol}) has an atomic number of ${el.atomicNumber} and a standard atomic mass of ${el.atomicMass} u. It is positioned in Period ${el.period}, Group ${el.group}, in the ${el.block.toUpperCase()}-block, and is classified within the ${categoryStyle.label} category.`,
     },
     {
       question: `What is the electron configuration of ${el.name}?`,
-      answer: `The electron configuration of ${el.name} is ${el.electronConfiguration || el.electronConfig || "not defined"}. The electrons are distributed across ${shellArray.length} energy shell levels in a sequence of ${shellArray.join("-")}.`
+      answer: `The ground-state electron configuration of ${el.name} is ${el.electronConfiguration || el.electronConfig || "not defined"}. Its ${Z} electrons are distributed across ${shellArray.length} principal energy levels (${shellArray.join(", ")}).`,
     },
     {
       question: `Why does ${el.name} exhibit an electron configuration exception?`,
-      answer: exception ? exception.reason : `${el.name} follows standard Aufbau principle orbital filling. In transition metals, energy shells fill based on maximum stability parameters.`
+      answer: exception
+        ? exception.reason
+        : `${el.name} follows standard Aufbau principle orbital filling. Transition metals and heavy elements optimize their shell filling based on subshell exchange energy and electrostatic stability.`,
     },
     {
-      question: `What is ${el.name} used for in real-world applications?`,
-      answer: industrialUse
-    }
+      question: `What are the primary commercial and laboratory uses of ${el.name}?`,
+      answer: industrialUse,
+    },
   ];
 
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": faqs.map((faq) => ({
+    mainEntity: faqs.map((faq) => ({
       "@type": "Question",
-      "name": faq.question,
-      "acceptedAnswer": {
+      name: faq.question,
+      acceptedAnswer: {
         "@type": "Answer",
-        "text": faq.answer
-      }
-    }))
+        text: faq.answer,
+      },
+    })),
   };
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://www.openlabs.org.in/"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Chemistry",
-        "item": "https://www.openlabs.org.in/chemistry"
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
-        "name": "Periodic Table",
-        "item": "https://www.openlabs.org.in/chemistry/periodictable"
-      },
-      {
-        "@type": "ListItem",
-        "position": 4,
-        "name": el.name,
-        "item": `https://www.openlabs.org.in/chemistry/periodictable/atom/${el.atomicNumber}`
-      }
-    ]
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.openlabs.org.in/" },
+      { "@type": "ListItem", position: 2, name: "Chemistry", item: "https://www.openlabs.org.in/chemistry" },
+      { "@type": "ListItem", position: 3, name: "Periodic Table", item: "https://www.openlabs.org.in/chemistry/periodictable" },
+      { "@type": "ListItem", position: 4, name: el.name, item: `https://www.openlabs.org.in/chemistry/periodictable/atom/${el.atomicNumber}` },
+    ],
   };
 
   return (
-    <main className="min-h-screen text-foreground pb-20 pt-8 font-sans relative overflow-hidden">
+    <main className="min-h-screen bg-background text-foreground pb-20 pt-6 font-sans relative overflow-hidden">
+      {/* Decorative ambient background glows */}
+      <div className="pointer-events-none absolute top-10 right-1/4 h-[420px] w-[420px] rounded-full bg-indigo-500/10 dark:bg-indigo-500/5 blur-[120px]" />
+      <div className="pointer-events-none absolute bottom-10 left-10 h-[360px] w-[360px] rounded-full bg-purple-500/10 dark:bg-purple-500/5 blur-[100px]" />
 
-      {/* Decorative category-colored glow sphere in background */}
-      <div className="absolute top-24 left-1/4 h-[380px] w-[380px] rounded-full bg-indigo-500/5 blur-[80px] pointer-events-none" />
+      {/* JSON-LD Schemas */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
-      {/* Schemas JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
+      <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10 space-y-6">
+        {/* ─── Top Header Navigation & Element Switcher ─── */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+          <nav className="flex items-center space-x-2 text-xs md:text-sm text-muted-foreground" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-foreground transition font-medium">Home</Link>
+            <span>/</span>
+            <Link href="/chemistry" className="hover:text-foreground transition font-medium">Chemistry</Link>
+            <span>/</span>
+            <Link href="/chemistry/periodictable" className="hover:text-foreground transition font-medium">Periodic Table</Link>
+            <span>/</span>
+            <span className={`font-bold ${categoryStyle.text}`}>{el.name}</span>
+          </nav>
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8 relative">
-        {/* Navigation Breadcrumb */}
-        <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6" aria-label="Breadcrumb">
-          <Link href="/" className="hover:text-foreground transition font-medium">Home</Link>
-          <span>/</span>
-          <Link href="/chemistry" className="hover:text-foreground transition font-medium">Chemistry</Link>
-          <span>/</span>
-          <Link href="/chemistry/periodictable" className="hover:text-foreground transition font-medium">Periodic Table</Link>
-          <span>/</span>
-          <span className="text-indigo-600 font-bold">{el.name}</span>
-        </nav>
+          {/* Previous / Next Quick Element Navigation */}
+          <div className="flex items-center gap-2">
+            {prevEl ? (
+              <Link
+                href={`/chemistry/periodictable/atom/${prevEl.atomicNumber}`}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-card hover:bg-accent border border-border rounded-xl text-xs font-black text-foreground shadow-sm hover:shadow-md transition-all hover:scale-105 active:scale-95"
+              >
+                <ArrowLeft size={13} className="text-primary" />
+                <span>#{prevEl.atomicNumber} {prevEl.symbol}</span>
+              </Link>
+            ) : null}
 
-        {/* Dashboard Grid Header - Balanced Column Layout (Zero wasted space) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8 items-start">
-          {/* Col 1: Dynamic Visual Element Identity Badge & Properties Grid (Left Column) */}
-          <div className="lg:col-span-5 flex flex-col space-y-6 w-full">
-            <div className={`w-full rounded-3xl border bg-card p-6 text-center shadow-xl transition-all duration-300 hover:shadow-2xl ${categoryStyle.glow} ${categoryStyle.border}`}>
+            <Link
+              href="/labs/chemistry/periodictable"
+              className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl text-xs shadow-md shadow-indigo-600/30 transition-all hover:scale-105 active:scale-95 flex items-center gap-1.5"
+            >
+              <FlaskConical size={13} />
+              <span>Full Periodic Matrix</span>
+            </Link>
 
-              {/* Dynamic visual indicator for configuration exceptions */}
-              <div className="flex justify-between items-start mb-6 text-muted-foreground font-mono text-xs px-1">
-                <span>Z = {el.atomicNumber}</span>
+            {nextEl ? (
+              <Link
+                href={`/chemistry/periodictable/atom/${nextEl.atomicNumber}`}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-card hover:bg-accent border border-border rounded-xl text-xs font-black text-foreground shadow-sm hover:shadow-md transition-all hover:scale-105 active:scale-95"
+              >
+                <span>#{nextEl.atomicNumber} {nextEl.symbol}</span>
+                <ArrowRight size={13} className="text-primary" />
+              </Link>
+            ) : null}
+          </div>
+        </div>
+
+        {/* ─── Main 2-Column Responsive Dashboard ─── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* ══════════════════════════════════════════════════════════════
+              LEFT COLUMN: Atom Card (PRESERVED WITH DIRECT 3D LAB LAUNCHER)
+             ══════════════════════════════════════════════════════════════ */}
+          <div className="lg:col-span-5 flex flex-col space-y-5 w-full">
+            <div className={`w-full rounded-3xl border bg-card p-5 sm:p-6 text-center shadow-xl transition-all duration-300 hover:shadow-2xl ${categoryStyle.glow} ${categoryStyle.border}`}>
+              {/* Card Header Badges */}
+              <div className="flex justify-between items-center mb-4 text-muted-foreground font-mono text-xs px-1">
+                <span className="font-black text-foreground bg-muted px-2.5 py-1 rounded-xl border border-border shadow-sm">
+                  Z = {el.atomicNumber}
+                </span>
                 {exception ? (
-                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-900 text-[10px] font-black uppercase tracking-wider animate-pulse shadow-sm">
-                    <ShieldAlert className="h-3 w-3 text-amber-600" /> Quantum Exception
+                  <span className="flex items-center gap-1 px-3 py-1 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-[10px] font-black uppercase tracking-wider animate-pulse shadow-sm">
+                    <ShieldAlert className="h-3.5 w-3.5 text-amber-500" /> Quantum Anomaly
                   </span>
                 ) : (
-                  <span className={`px-2.5 py-0.5 rounded-full border text-[10px] font-bold ${categoryStyle.bg}`}>
+                  <span className={`px-3 py-1 rounded-full border text-[10px] font-bold ${categoryStyle.bg}`}>
                     {categoryStyle.label}
                   </span>
                 )}
               </div>
 
-              {/* Bohr Model Dynamic SVG Vector Representation */}
-              <div className="h-64 flex items-center justify-center mb-6 relative rounded-2xl overflow-hidden bg-muted border border-border shadow-inner">
-                <BohrModelSVG symbol={el.symbol} shells={shells} />
+              {/* Concentric Animated Bohr Model SVG */}
+              <div className="h-64 flex items-center justify-center mb-4 relative rounded-2xl overflow-hidden bg-slate-950/90 border border-border shadow-inner">
+                <BohrModelSVG symbol={el.symbol} shells={shells} accentColor={categoryStyle.accent} />
               </div>
 
-              <h1 className="text-4xl font-black tracking-tight mb-1 text-foreground leading-none">
+              {/* Direct 3D Atom Model Lab CTA Button */}
+              <Link
+                href={`/labs/chemistry/periodictable/atom/${el.atomicNumber}`}
+                className="w-full mb-5 py-3 px-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 hover:from-indigo-500 hover:to-purple-500 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg shadow-indigo-600/30 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+              >
+                <Orbit size={15} />
+                <span>Launch 3D Atom &amp; Orbitals Lab</span>
+              </Link>
+
+              {/* Element Symbol, Name & Mass */}
+              <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground leading-none">
                 {el.name}
               </h1>
-              <p className="text-xl font-mono text-muted-foreground font-bold mb-3">
+              <p className={`text-2xl font-mono font-black mt-1 mb-3 ${categoryStyle.text}`}>
                 {el.symbol}
               </p>
-              <div className="inline-block px-5 py-2 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900 text-sm font-black font-mono text-indigo-755 shadow-sm">
-                Mass: {el.atomicMass} u
+              <div className="inline-block px-4 py-1.5 rounded-xl bg-muted/80 border border-border text-xs font-black font-mono text-foreground shadow-sm">
+                Standard Atomic Mass: {el.atomicMass} u
               </div>
 
-              <div className="mt-6 flex flex-wrap gap-2 justify-center text-xs font-bold font-mono">
-                <span className="px-3.5 py-1.5 rounded-xl bg-muted border border-border text-muted-foreground">Period {el.period}</span>
-                <span className="px-3.5 py-1.5 rounded-xl bg-muted border border-border text-muted-foreground">Group {el.group}</span>
-                <span className="px-3.5 py-1.5 rounded-xl bg-muted border border-border text-muted-foreground">Block {el.block.toUpperCase()}</span>
+              {/* Period / Group / Block Badges */}
+              <div className="mt-4 flex flex-wrap gap-1.5 justify-center text-xs font-bold font-mono">
+                <span className="px-3 py-1 rounded-xl bg-muted/80 border border-border text-foreground font-extrabold">
+                  Period {el.period}
+                </span>
+                <span className="px-3 py-1 rounded-xl bg-muted/80 border border-border text-foreground font-extrabold">
+                  Group {el.group}
+                </span>
+                <span className="px-3 py-1 rounded-xl bg-muted/80 border border-border text-foreground font-extrabold">
+                  {el.block.toUpperCase()}-Block
+                </span>
               </div>
 
-              <div className="mt-6 rounded-2xl border border-border bg-muted p-3 shadow-inner">
+              {/* Element Sample Image */}
+              <div className="mt-5 rounded-2xl border border-border bg-muted/30 p-3 shadow-inner">
                 <div className="mb-2 flex items-center justify-between px-1 text-[10px] font-black uppercase tracking-wider text-muted-foreground">
-                  <span>Element Sample Image</span>
+                  <span>Chemical Specimen</span>
                   <span className="font-mono">/{el.symbol}</span>
                 </div>
-                <div className="flex h-44 items-center justify-center overflow-hidden rounded-xl border border-border bg-card">
+                <div className="flex h-40 items-center justify-center overflow-hidden rounded-xl border border-border bg-card">
                   <img
                     src={getElementImageSrc(el.name)}
-                    alt={`${el.name} element sample`}
-                    className="h-full w-full object-contain p-3"
+                    alt={`${el.name} specimen`}
+                    className="h-full w-full object-contain p-2"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Render propertiesGrid in left column ONLY if there is an exception to cover that space */}
-            {exception && propertiesGrid}
+            {/* Quick Shell Energy Breakdown */}
+            <div className="bg-card border border-border p-4 rounded-3xl shadow-sm space-y-2">
+              <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                <span>Concentric Electron Shells</span>
+                <span className="font-mono text-primary font-bold">{shellArray.length} Energy Levels</span>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {shellArray.map((count, idx) => (
+                  <div key={idx} className="flex items-center gap-1">
+                    <span className="text-[11px] font-mono font-bold bg-muted border border-border text-foreground px-2.5 py-1 rounded-lg shadow-sm">
+                      <span className="text-muted-foreground font-normal">n={idx + 1}:</span> {count}e⁻
+                    </span>
+                    {idx < shellArray.length - 1 && <span className="text-muted-foreground font-mono text-[10px]">→</span>}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
-          {/* Col 2: Integrated Chemistry Monograph & Lab Consoles (Right Column) */}
-          <div className="lg:col-span-7 flex flex-col justify-start space-y-6 w-full">
-            {/* Unified Feature Card: Overview, Category & Action buttons in one premium container */}
-            <div className="bg-card border border-border rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden flex flex-col justify-between">
+          {/* ══════════════════════════════════════════════════════════════
+              RIGHT COLUMN: Scientific Profile & Targeted Simulation Launchers
+             ══════════════════════════════════════════════════════════════ */}
+          <div className="lg:col-span-7 flex flex-col space-y-5 w-full">
+            {/* 1. Main Monograph Hero Card with 3D Atom Simulation Quick Trigger */}
+            <div className="bg-card border border-border rounded-3xl p-6 md:p-7 shadow-xl relative overflow-hidden space-y-4">
               <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
-
-              <div className="space-y-4">
-                <div className="flex items-center gap-2.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-indigo-600 animate-ping" />
-                  <h2 className="text-indigo-600 font-extrabold uppercase tracking-wider text-xs">
-                    Quantum Profile
-                  </h2>
-                </div>
-
-                <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">
-                  Scientific Monograph: {el.name} ({el.symbol})
-                </h2>
-
-                <p className="text-muted-foreground text-base md:text-lg leading-relaxed font-medium">
-                  {overview}
-                </p>
-              </div>
-
-              {/* Redesigned interactive Virtual Experiments Panel */}
-              <div className="mt-8 border-t border-border pt-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-[10px] text-emerald-700 font-extrabold uppercase tracking-wider">
-                    Interactive Virtual Labs Available
+              
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-indigo-500 animate-pulse" />
+                  <span className="text-indigo-600 dark:text-indigo-400 font-black uppercase tracking-wider text-[11px]">
+                    Scientific Monograph &bull; {categoryStyle.label}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Link
-                    href={`/labs/chemistry/periodictable/atom/${el.atomicNumber}`}
-                    className="group border border-border bg-muted hover:bg-card hover:border-indigo-400 hover:shadow-lg rounded-2xl p-4 transition-all duration-300 text-left flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="h-9 w-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300 mb-3 shadow-sm">
-                        <GraduationCap className="h-5 w-5" />
+                <Link
+                  href={`/labs/chemistry/periodictable/atom/${el.atomicNumber}`}
+                  className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold text-xs rounded-xl shadow-md shadow-indigo-600/30 transition-all hover:scale-105 active:scale-95"
+                >
+                  <Orbit size={13} />
+                  <span>3D Atom Simulator</span>
+                </Link>
+              </div>
+
+              <h2 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight leading-tight">
+                {el.name} ({el.symbol}) Scientific Profile
+              </h2>
+
+              <p className="text-muted-foreground text-sm sm:text-base leading-relaxed font-medium">
+                {overview}
+              </p>
+
+              {/* 2. Targeted Simulation Launcher Cards for 3D Atom Model and Electronic Config */}
+              <div className="pt-4 border-t border-border/80 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Sparkles size={14} className="text-primary" />
+                  <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                    Interactive Virtual Labs Available for {el.name}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  {/* Lab Card 1: 3D Orbitals & Valence Lab */}
+                  <div className="border-2 border-indigo-500/30 bg-gradient-to-br from-indigo-500/10 via-card to-card hover:border-indigo-500 hover:shadow-xl hover:shadow-indigo-500/15 rounded-3xl p-4 transition-all duration-300 flex flex-col justify-between space-y-4">
+                    <div className="space-y-2">
+                      <div className="h-10 w-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-600/40">
+                        <Orbit size={20} />
                       </div>
-                      <h4 className="font-extrabold text-foreground text-sm group-hover:text-indigo-600 transition-colors">
-                        3D Orbitals & Valence Lab
+                      <h4 className="font-extrabold text-foreground text-sm">
+                        3D Orbitals &amp; Valence Lab
                       </h4>
-                      <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
-                        Simulate concentric quantum energy levels, observe valence spins, and examine live electron clouds.
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Simulate concentric quantum energy levels, observe valence electron spins, and examine live atomic clouds in full 3D.
                       </p>
                     </div>
-                    <div className="text-[15px] font-bold text-indigo-600 mt-4 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                      Launch 3D Experiment →
-                    </div>
-                  </Link>
 
-                  <Link
-                    href={`/labs/chemistry/electronic-configuration/${el.atomicNumber}`}
-                    className="group border border-border bg-muted hover:bg-card hover:border-purple-400 hover:shadow-lg rounded-2xl p-4 transition-all duration-300 text-left flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="h-9 w-9 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-colors duration-300 mb-3 shadow-sm">
-                        <Atom className="h-5 w-5" />
+                    <Link
+                      href={`/labs/chemistry/periodictable/atom/${el.atomicNumber}`}
+                      className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-extrabold text-xs rounded-xl shadow-md shadow-indigo-600/30 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+                    >
+                      <Play size={13} className="fill-current" />
+                      <span>Launch 3D Atom Lab</span>
+                    </Link>
+                  </div>
+
+                  {/* Lab Card 2: Electronic Configuration Lab */}
+                  <div className="border-2 border-purple-500/30 bg-gradient-to-br from-purple-500/10 via-card to-card hover:border-purple-500 hover:shadow-xl hover:shadow-purple-500/15 rounded-3xl p-4 transition-all duration-300 flex flex-col justify-between space-y-4">
+                    <div className="space-y-2">
+                      <div className="h-10 w-10 rounded-2xl bg-purple-600 text-white flex items-center justify-center shadow-md shadow-purple-600/40">
+                        <Atom size={20} />
                       </div>
-                      <h4 className="font-extrabold text-foreground text-sm group-hover:text-purple-600 transition-colors">
+                      <h4 className="font-extrabold text-foreground text-sm">
                         Electronic Configuration Lab
                       </h4>
-                      <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
-                        Experiment with Aufbau ordering, explore shells, and analyze dynamic quantum configuration exceptions.
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Experiment with Aufbau subshell ordering, explore orbital occupancy, and analyze quantum configuration exceptions.
                       </p>
                     </div>
-                    <div className="text-[15px] font-bold text-purple-600 mt-4 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                      Launch Config Simulator →
-                    </div>
-                  </Link>
+
+                    <Link
+                      href={`/labs/chemistry/electronic-configuration/${el.atomicNumber}`}
+                      className="w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white font-extrabold text-xs rounded-xl shadow-md shadow-purple-600/30 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+                    >
+                      <Zap size={13} className="fill-current" />
+                      <span>Launch Config Lab</span>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Render propertiesGrid in right column if there is NO exception, so the left side under Bohr stays empty */}
-            {!exception && propertiesGrid}
+            {/* 3. Core Thermodynamic & Quantum Metrics Matrix */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              <div className="bg-card border border-border p-3.5 rounded-2xl shadow-sm hover:shadow-md transition">
+                <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-black uppercase tracking-wider">
+                  <Atom className="h-3.5 w-3.5 text-primary" /> Electron Config
+                </div>
+                <div className="font-mono font-black text-xs text-foreground mt-1.5 truncate" title={el.electronConfiguration || el.electronConfig || "—"}>
+                  {el.electronConfiguration || el.electronConfig || "—"}
+                </div>
+              </div>
 
-            {/* Dynamic Quantum Configuration Exception Alert Card */}
+              <div className="bg-card border border-border p-3.5 rounded-2xl shadow-sm hover:shadow-md transition">
+                <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-black uppercase tracking-wider">
+                  <Activity className="h-3.5 w-3.5 text-amber-500" /> Electronegativity
+                </div>
+                <div className="font-mono font-black text-xs text-foreground mt-1.5">
+                  {el.electronegativity ?? "n/a"} <span className="text-[9px] text-muted-foreground font-normal">Pauling</span>
+                </div>
+              </div>
+
+              <div className="bg-card border border-border p-3.5 rounded-2xl shadow-sm hover:shadow-md transition">
+                <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-black uppercase tracking-wider">
+                  <Calendar className="h-3.5 w-3.5 text-emerald-500" /> Year Discovered
+                </div>
+                <div className="font-bold text-xs text-foreground mt-1.5 truncate">
+                  {el.yearDiscovered ?? "Ancient Era"}
+                </div>
+              </div>
+
+              <div className="bg-card border border-border p-3.5 rounded-2xl shadow-sm hover:shadow-md transition">
+                <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-black uppercase tracking-wider">
+                  <Layers className="h-3.5 w-3.5 text-indigo-500" /> Orbital Shells
+                </div>
+                <div className="font-bold text-xs text-foreground mt-1.5">
+                  {shellArray.length} Principal Levels
+                </div>
+              </div>
+
+              <div className="bg-card border border-border p-3.5 rounded-2xl shadow-sm hover:shadow-md transition">
+                <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-black uppercase tracking-wider">
+                  <Milestone className="h-3.5 w-3.5 text-rose-500" /> Orbital Block
+                </div>
+                <div className="font-bold text-xs text-foreground uppercase mt-1.5">
+                  {el.block}-block orbital
+                </div>
+              </div>
+
+              <div className="bg-card border border-border p-3.5 rounded-2xl shadow-sm hover:shadow-md transition">
+                <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-black uppercase tracking-wider">
+                  <Hash className="h-3.5 w-3.5 text-sky-500" /> Group / Period
+                </div>
+                <div className="font-bold text-xs text-foreground mt-1.5">
+                  G: {el.group} &bull; P: {el.period}
+                </div>
+              </div>
+            </div>
+
+            {/* 4. Quantum Exception Detailed Card */}
             {exception && (
-              <div className="border border-amber-200 dark:border-amber-900 bg-amber-50/40 dark:bg-amber-950/20 p-5 rounded-3xl shadow-inner relative overflow-hidden flex gap-4">
-                <div className="absolute top-0 right-0 h-16 w-16 bg-amber-100/30 dark:bg-amber-900/20 rounded-full blur-xl pointer-events-none" />
-                <div className="flex-shrink-0 p-2.5 bg-amber-100 dark:bg-amber-950/40 rounded-xl text-amber-700 dark:text-amber-300 h-fit">
+              <div className="border border-amber-500/40 bg-amber-500/10 p-4 sm:p-5 rounded-3xl shadow-md relative overflow-hidden flex gap-3.5">
+                <div className="shrink-0 p-2.5 bg-amber-500/20 text-amber-600 dark:text-amber-400 rounded-2xl h-fit">
                   <ShieldAlert className="h-5 w-5 animate-pulse" />
                 </div>
-                <div>
-                  <h3 className="font-extrabold text-amber-850 dark:text-amber-200 text-sm tracking-tight mb-1">
+                <div className="space-y-1.5 text-xs">
+                  <h3 className="font-extrabold text-amber-700 dark:text-amber-300 text-sm tracking-tight">
                     Quantum Stability Configuration Exception
                   </h3>
-                  <p className="text-xs text-amber-800 dark:text-amber-200/90 leading-relaxed">
-                    Instead of the anticipated standard filling shell order <code className="bg-amber-100/50 dark:bg-amber-900/30 px-1 rounded font-bold font-mono">{exception.ideal}</code>, {el.name} settles into an active ground state configuration of <strong className="bg-amber-100 dark:bg-amber-900/40 px-1.5 py-0.5 rounded font-mono text-[13px] text-amber-900 dark:text-amber-200 border border-amber-200/50 dark:border-amber-800">{exception.active}</strong>. {exception.reason}
+                  <p className="text-muted-foreground leading-relaxed">
+                    Instead of the textbook Aufbau filling order{" "}
+                    <code className="bg-amber-500/20 text-amber-700 dark:text-amber-300 px-1 py-0.5 rounded font-mono font-bold">
+                      {exception.ideal}
+                    </code>
+                    , {el.name} achieves lowest ground state energy as{" "}
+                    <strong className="bg-amber-500/30 text-amber-800 dark:text-amber-200 px-1.5 py-0.5 rounded font-mono text-xs border border-amber-500/40">
+                      {exception.active}
+                    </strong>
+                    . {exception.reason}
                   </p>
                 </div>
               </div>
             )}
 
-            {/* Etymology origin badge card */}
+            {/* 5. Etymology & Discovery History */}
             {etymology && (
-              <div className="bg-card border border-border p-5 rounded-3xl flex gap-4 shadow-sm">
-                <div className="flex-shrink-0 p-2.5 bg-indigo-50 dark:bg-indigo-950/40 rounded-xl text-indigo-600 h-fit">
-                  <Info className="h-5 w-5" />
+              <div className="bg-card border border-border p-4 sm:p-5 rounded-3xl shadow-sm space-y-3">
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                  <Info size={14} className="text-primary" />
+                  <span>Etymology &amp; Discovery History</span>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full text-xs font-medium">
-                  <div>
-                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-extrabold">Name Origin</div>
-                    <div className="text-foreground font-extrabold text-sm mt-0.5">{etymology.origin}</div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                  <div className="p-2.5 bg-muted/40 rounded-xl border border-border">
+                    <span className="text-[9px] text-muted-foreground uppercase font-black block">Name Origin</span>
+                    <span className="font-bold text-foreground mt-0.5 block">{etymology.origin}</span>
                   </div>
-                  <div>
-                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-extrabold">Literal Meaning</div>
-                    <div className="text-muted-foreground mt-0.5 font-medium">{etymology.meaning}</div>
+                  <div className="p-2.5 bg-muted/40 rounded-xl border border-border">
+                    <span className="text-[9px] text-muted-foreground uppercase font-black block">Literal Meaning</span>
+                    <span className="font-bold text-foreground mt-0.5 block">{etymology.meaning}</span>
                   </div>
-                  <div>
-                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-extrabold">Discovery Hub</div>
-                    <div className="text-muted-foreground mt-0.5 font-bold">{etymology.geography}</div>
+                  <div className="p-2.5 bg-muted/40 rounded-xl border border-border">
+                    <span className="text-[9px] text-muted-foreground uppercase font-black block">Discovery Hub</span>
+                    <span className="font-bold text-foreground mt-0.5 block">{etymology.geography}</span>
                   </div>
                 </div>
               </div>
@@ -660,77 +776,85 @@ export default function Page({ params }: PageProps) {
           </div>
         </div>
 
-        <section className="mt-20 border-t border-border pt-16 pb-12">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-16">
+        {/* ─── Deep Chemistry & Technology Breakdown Grid ─── */}
+        <section className="mt-12 border-t border-border pt-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* Reactivity */}
+            <article className="bg-card border border-border rounded-3xl p-5 sm:p-6 shadow-sm space-y-2.5">
+              <div className="flex items-center gap-2 text-primary font-bold uppercase tracking-wider text-[11px]">
+                <Flame className="h-4 w-4 text-orange-500" />
+                <span>Reactivity &amp; Chemical Bonding</span>
+              </div>
+              <h3 className="text-xl font-black text-foreground">
+                Chemical Behavior &amp; Oxidation States
+              </h3>
+              <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
+                {reactivity}
+              </p>
+            </article>
 
-              <article className="relative pl-6 md:pl-8 border-l-2 border-indigo-100 dark:border-indigo-900 hover:border-indigo-500 transition-colors">
-                <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-widest text-xs mb-3">
-                  <Layers className="h-4 w-4" /> Orbitals & Reactivity
-                </div>
-                <h3 className="text-2xl font-black text-foreground mb-4">Reactivity and Chemical Bonding</h3>
-                <p className="text-muted-foreground leading-relaxed text-base">
-                  {reactivity}
-                </p>
-              </article>
+            {/* Industrial & Tech */}
+            <article className="bg-card border border-border rounded-3xl p-5 sm:p-6 shadow-sm space-y-2.5">
+              <div className="flex items-center gap-2 text-primary font-bold uppercase tracking-wider text-[11px]">
+                <FlaskConical className="h-4 w-4 text-indigo-500" />
+                <span>Technological Utility</span>
+              </div>
+              <h3 className="text-xl font-black text-foreground">
+                Industrial &amp; Energy Applications
+              </h3>
+              <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
+                {industrialUse}
+              </p>
+            </article>
 
-              <article className="relative pl-6 md:pl-8 border-l-2 border-indigo-100 dark:border-indigo-900 hover:border-indigo-500 transition-colors">
-                <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-widest text-xs mb-3">
-                  <Compass className="h-4 w-4" /> Biological Impact
-                </div>
-                <h3 className="text-2xl font-black text-foreground mb-4">Biological Role & Toxicity</h3>
-                <p className="text-muted-foreground leading-relaxed text-base">
-                  {bioRole}
-                </p>
-              </article>
+            {/* Biological Role */}
+            <article className="bg-card border border-border rounded-3xl p-5 sm:p-6 shadow-sm space-y-2.5">
+              <div className="flex items-center gap-2 text-primary font-bold uppercase tracking-wider text-[11px]">
+                <Compass className="h-4 w-4 text-emerald-500" />
+                <span>Biological Role</span>
+              </div>
+              <h3 className="text-xl font-black text-foreground">
+                Biomedical Profile &amp; Toxicity
+              </h3>
+              <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
+                {bioRole}
+              </p>
+            </article>
 
-              <article className="relative pl-6 md:pl-8 border-l-2 border-indigo-100 dark:border-indigo-900 hover:border-indigo-500 transition-colors">
-                <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-widest text-xs mb-3">
-                  <FlaskConical className="h-4 w-4" /> Technological Utility
-                </div>
-                <h3 className="text-2xl font-black text-foreground mb-4">Industrial and Tech Applications</h3>
-                <p className="text-muted-foreground leading-relaxed text-base">
-                  {industrialUse}
-                </p>
-              </article>
-
-              <article className="relative pl-6 md:pl-8 border-l-2 border-indigo-100 dark:border-indigo-900 hover:border-indigo-500 transition-colors">
-                <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-widest text-xs mb-3">
-                  <Milestone className="h-4 w-4" /> Geochemistry
-                </div>
-                <h3 className="text-2xl font-black text-foreground mb-4">Abundance & Geological Occurrence</h3>
-                <p className="text-muted-foreground leading-relaxed text-base">
-                  In nature, elements like {el.name} are distributed across the planet depending on stellar fusion pathways and geochemical classification. Superheavy elements (Z &gt; 92) do not occur naturally on Earth and must be synthesized particle-by-particle in advanced nuclear labs such as CERN (Switzerland), Lawrence Berkeley Lab (USA), RIKEN (Japan), or Dubna (Russia) to study their atomic decay and validate the predicted "Island of Stability".
-                </p>
-              </article>
-
-            </div>
+            {/* Geochemistry */}
+            <article className="bg-card border border-border rounded-3xl p-5 sm:p-6 shadow-sm space-y-2.5">
+              <div className="flex items-center gap-2 text-primary font-bold uppercase tracking-wider text-[11px]">
+                <Globe className="h-4 w-4 text-sky-500" />
+                <span>Geochemistry &amp; Abundance</span>
+              </div>
+              <h3 className="text-xl font-black text-foreground">
+                Cosmic &amp; Terrestrial Occurrence
+              </h3>
+              <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
+                Elements like {el.name} are synthesized through stellar nucleosynthesis and supernovae r-processes. On Earth, {el.name} is concentrated in specific ore deposits or synthesized in nuclear accelerators.
+              </p>
+            </article>
           </div>
         </section>
 
-        <section className="mt-20 border-t border-border pt-20 pb-16 bg-muted/40">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight mb-12 text-center">
-              Common questions about <span className="text-indigo-600">{el.name}</span>
-            </h2>
+        {/* ─── Frequently Asked Questions Accordion ─── */}
+        <section className="mt-10 border-t border-border pt-10 pb-6">
+          <h2 className="text-2xl font-black text-foreground tracking-tight mb-6 text-center">
+            Frequently Asked Questions about <span className={categoryStyle.text}>{el.name}</span>
+          </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-              {faqs.map((faq, idx) => (
-                <div key={idx} className="relative flex gap-4">
-                  <div className="shrink-0 flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100 dark:bg-indigo-950/40 text-indigo-600 font-bold text-lg">
-                    Q.
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-foreground text-lg mb-3">
-                      {faq.question}
-                    </h4>
-                    <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
-                      {faq.answer}
-                    </p>
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {faqs.map((faq, idx) => (
+              <div key={idx} className="bg-card border border-border rounded-2xl p-4 shadow-sm flex gap-3">
+                <div className="shrink-0 flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary font-bold text-sm">
+                  Q
                 </div>
-              ))}
-            </div>
+                <div className="space-y-1">
+                  <h4 className="font-bold text-foreground text-sm">{faq.question}</h4>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{faq.answer}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
       </div>
@@ -738,10 +862,18 @@ export default function Page({ params }: PageProps) {
   );
 }
 
-// Concentric Bohr shell builder SVG Component (Optimized for Light Theme contrast)
-function BohrModelSVG({ symbol, shells }: { symbol: string; shells: Record<number, number> }) {
+// ─── Concentric Bohr Shell Builder SVG (High-Contrast & Animated) ───
+function BohrModelSVG({
+  symbol,
+  shells,
+  accentColor = "bg-primary",
+}: {
+  symbol: string;
+  shells: Record<number, number>;
+  accentColor?: string;
+}) {
   const maxShell = Math.max(...Object.keys(shells).map(Number), 1);
-  const size = 120 + maxShell * 50;
+  const size = 120 + maxShell * 48;
   const center = size / 2;
 
   const shellCircles: React.ReactNode[] = [];
@@ -749,7 +881,7 @@ function BohrModelSVG({ symbol, shells }: { symbol: string; shells: Record<numbe
 
   Object.entries(shells).forEach(([shellStr, count]) => {
     const s = Number(shellStr);
-    const r = 50 + s * 22;
+    const r = 44 + s * 22;
 
     shellCircles.push(
       <circle
@@ -757,8 +889,9 @@ function BohrModelSVG({ symbol, shells }: { symbol: string; shells: Record<numbe
         cx={center}
         cy={center}
         r={r}
-        className="stroke-slate-200 dark:stroke-slate-700 fill-none stroke-[1.5px]"
-        strokeDasharray="4 4"
+        className="stroke-slate-700 dark:stroke-slate-700 stroke-[1.2px]"
+        strokeDasharray="3 3"
+        fill="none"
       />
     );
 
@@ -773,14 +906,13 @@ function BohrModelSVG({ symbol, shells }: { symbol: string; shells: Record<numbe
           key={`dot-${s}-${i}`}
           cx={ex}
           cy={ey}
-          r={5.5}
-          className="fill-indigo-600 stroke-white stroke-[1.5px] shadow-sm hover:scale-125 transition duration-200 cursor-help"
+          r={4.5}
+          className="fill-sky-400 stroke-slate-900 stroke-[1.5px] hover:scale-125 transition"
         />
       );
     }
 
-    // Dynamic rotation speeds & directions (concentric energy shells spin at alternating rates)
-    const rotationSpeed = 10 + s * 5; // shell 1 = 15s, shell 2 = 20s, etc.
+    const rotationSpeed = 12 + s * 4;
     const rotationDirection = s % 2 === 0 ? "normal" : "reverse";
     const animationStyle = {
       transformOrigin: `${center}px ${center}px`,
@@ -795,22 +927,17 @@ function BohrModelSVG({ symbol, shells }: { symbol: string; shells: Record<numbe
   });
 
   return (
-    <svg width="100%" height="100%" viewBox={`0 0 ${size} ${size}`} className="max-w-[280px] mx-auto select-none">
+    <svg width="100%" height="100%" viewBox={`0 0 ${size} ${size}`} className="max-w-[260px] mx-auto select-none">
       <defs>
         <radialGradient id="nucleus-glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#6366f1" stopOpacity="0.25" />
-          <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
+          <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
         </radialGradient>
       </defs>
       {shellCircles}
-      <circle cx={center} cy={center} r={36} fill="url(#nucleus-glow)" />
-      <circle cx={center} cy={center} r={22} className="fill-indigo-600 stroke-white stroke-[2px] shadow-md" />
-      <text
-        x={center}
-        y={center + 5}
-        textAnchor="middle"
-        className="fill-white font-black text-sm tracking-tight"
-      >
+      <circle cx={center} cy={center} r={32} fill="url(#nucleus-glow)" />
+      <circle cx={center} cy={center} r={20} className="fill-indigo-600 stroke-white stroke-[2px] shadow-md" />
+      <text x={center} y={center + 5} textAnchor="middle" className="fill-white font-black text-sm tracking-tight">
         {symbol}
       </text>
       {electronDots}

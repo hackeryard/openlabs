@@ -33,16 +33,16 @@ export default function PeriodicTable({ onComplete }) {
   }, []);
 
   const categoryStyles = {
-    "alkali-metal": { dot: "bg-rose-500", chip: "bg-rose-50 text-rose-700 border-rose-200" },
-    "alkaline-earth": { dot: "bg-orange-500", chip: "bg-orange-50 text-orange-700 border-orange-200" },
-    lanthanide: { dot: "bg-amber-500", chip: "bg-amber-50 text-amber-700 border-amber-200" },
-    actinide: { dot: "bg-yellow-500", chip: "bg-yellow-50 text-yellow-700 border-yellow-200" },
-    "noble-gas": { dot: "bg-sky-500", chip: "bg-sky-50 text-sky-700 border-sky-200" },
-    "transition-metal": { dot: "bg-indigo-500", chip: "bg-indigo-50 text-indigo-700 border-indigo-200" },
-    "post-transition": { dot: "bg-slate-500", chip: "bg-slate-50 text-slate-700 border-slate-200" },
-    metalloid: { dot: "bg-teal-500", chip: "bg-teal-50 text-teal-700 border-teal-200" },
-    nonmetal: { dot: "bg-emerald-500", chip: "bg-emerald-50 text-emerald-700 border-emerald-200" },
-    halogen: { dot: "bg-violet-500", chip: "bg-violet-50 text-violet-700 border-violet-200" },
+    "alkali-metal": { dot: "bg-rose-500", chip: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30" },
+    "alkaline-earth": { dot: "bg-orange-500", chip: "bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/30" },
+    lanthanide: { dot: "bg-amber-500", chip: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30" },
+    actinide: { dot: "bg-yellow-500", chip: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/30" },
+    "noble-gas": { dot: "bg-sky-500", chip: "bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/30" },
+    "transition-metal": { dot: "bg-indigo-500", chip: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/30" },
+    "post-transition": { dot: "bg-slate-500", chip: "bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/30" },
+    metalloid: { dot: "bg-teal-500", chip: "bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/30" },
+    nonmetal: { dot: "bg-emerald-500", chip: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30" },
+    halogen: { dot: "bg-violet-500", chip: "bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/30" },
   };
   const formatCategory = (cat) => cat.replace(/-/g, " ");
 
@@ -66,7 +66,6 @@ export default function PeriodicTable({ onComplete }) {
 
   useEffect(() => {
     const onKeyDown = (e) => {
-      
       if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) return;
 
       const active = document.activeElement;
@@ -171,7 +170,6 @@ export default function PeriodicTable({ onComplete }) {
     return cells;
   };
 
-
   const renderFBlock = (type) => {
     const items = filtered.filter(el => el.category === type);
     if (!items.length) return null;
@@ -202,7 +200,6 @@ export default function PeriodicTable({ onComplete }) {
     );
   };
 
-
   /* ---------------- UI ---------------- */
   return (
     <section className="max-w-[1600px] mx-auto px-0 sm:px-2 py-6 space-y-6">
@@ -228,16 +225,16 @@ export default function PeriodicTable({ onComplete }) {
               </p>
             </div>
             <div className="grid max-w-xl grid-cols-3 gap-2 sm:gap-3">
-              <div className="rounded-2xl border border-border bg-muted p-2 sm:p-3">
+              <div className="rounded-2xl border border-border bg-muted/50 p-2 sm:p-3">
                 <div className="font-mono text-xl font-black text-foreground sm:text-2xl">118</div>
                 <div className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Elements</div>
               </div>
-              <div className="rounded-2xl border border-border bg-muted p-2 sm:p-3">
+              <div className="rounded-2xl border border-border bg-muted/50 p-2 sm:p-3">
                 <div className="font-mono text-xl font-black text-foreground sm:text-2xl">{filtered.length}</div>
                 <div className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Visible</div>
               </div>
-              <div className="rounded-2xl border border-border bg-muted p-2 sm:p-3">
-                <div className="font-mono text-xl font-black text-indigo-600 sm:text-2xl">{explored.size}</div>
+              <div className="rounded-2xl border border-border bg-muted/50 p-2 sm:p-3">
+                <div className="font-mono text-xl font-black text-indigo-500 dark:text-indigo-400 sm:text-2xl">{explored.size}</div>
                 <div className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">Visited</div>
               </div>
             </div>
@@ -268,14 +265,14 @@ export default function PeriodicTable({ onComplete }) {
                 setQuerySelected(null);
                 setActiveCategories(new Set());
               }}
-              className="inline-flex items-center gap-2 rounded-2xl border border-border bg-card px-4 py-2 text-xs font-black text-muted-foreground shadow-sm transition hover:border-border hover:bg-accent"
+              className="inline-flex items-center gap-2 rounded-2xl border border-border bg-card px-4 py-2 text-xs font-black text-muted-foreground shadow-sm transition hover:border-border hover:bg-accent hover:text-foreground"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               Reset
             </button>
             <button
               onClick={handleExportCSV}
-              className="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-4 py-2 text-xs font-black text-white shadow-sm shadow-emerald-200 transition hover:bg-emerald-700"
+              className="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-4 py-2 text-xs font-black text-white shadow-sm transition hover:bg-emerald-700"
             >
               <Download className="h-3.5 w-3.5" />
               Export CSV
@@ -287,7 +284,7 @@ export default function PeriodicTable({ onComplete }) {
           {categories.map(cat => (
             <div
               key={cat}
-              className={`flex items-center gap-2 rounded-xl border px-2.5 py-1 font-bold capitalize ${categoryStyles[cat]?.chip || "border-slate-200 bg-slate-50 text-slate-600"}`}
+              className={`flex items-center gap-2 rounded-xl border px-2.5 py-1 font-bold capitalize ${categoryStyles[cat]?.chip || "border-border bg-muted text-muted-foreground"}`}
             >
               <span className={`h-2.5 w-2.5 rounded-full ${categoryStyles[cat]?.dot || "bg-slate-400"}`} />
               <span>{formatCategory(cat)}</span>

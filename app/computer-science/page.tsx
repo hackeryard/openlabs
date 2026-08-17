@@ -96,6 +96,24 @@ const cards = [
     title: "Computer Networking Lab",
     desc: "Interactive lab that help in visualizing the working of computer networking.",
   },
+  {
+    href: "/computer-science/cryptography",
+    title: "Cryptography & Ciphers",
+    desc: "Interactive Caesar cipher wheel, Vigenère table, WWII Enigma machine, Diffie-Hellman keys, and SHA-256 mining.",
+    accent: "from-indigo-500 to-purple-500",
+  },
+  {
+    href: "/computer-science/cpu-architecture",
+    title: "CPU Micro-Architecture & Assembly",
+    desc: "8-bit assembly editor, 4-stage instruction cycle, datapath bus animation, and register file.",
+    accent: "from-blue-600 to-cyan-500",
+  },
+  {
+    href: "/computer-science/bitwise-operations",
+    title: "Binary & Bitwise Operations Studio",
+    desc: "Interactive 8-bit register tiles, bitwise logic gates, shifts, rotations, Two's complement, and mask hacks.",
+    accent: "from-emerald-500 to-sky-500",
+  },
 ];
 
 export default function ComputerScience() {

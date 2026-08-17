@@ -5,7 +5,7 @@ import { OrbitControls, Sphere, Line } from "@react-three/drei";
 import { useRef } from "react";
 
 /* Orbit ring for a single electron */
-function ElectronOrbit({ radius, tilt }) {
+function ElectronOrbit({ radius, tilt, tiltY }) {
   const points = [];
   for (let i = 0; i <= 64; i++) {
     const a = (i / 64) * Math.PI * 2;
@@ -17,14 +17,14 @@ function ElectronOrbit({ radius, tilt }) {
   }
 
   return (
-    <group rotation={[tilt, 0, 0]}>
-      <Line points={points} color="#d1d5db" lineWidth={0.8} />
+    <group rotation={[tilt, tiltY, 0]}>
+      <Line points={points} color="#818cf8" lineWidth={1.2} transparent opacity={0.45} />
     </group>
   );
 }
 
 /* Electron */
-function Electron({ radius, speed, angle, tilt }) {
+function Electron({ radius, speed, angle, tilt, tiltY }) {
   const ref = useRef();
 
   useFrame((_, delta) => {
@@ -34,22 +34,30 @@ function Electron({ radius, speed, angle, tilt }) {
   });
 
   return (
-    <group ref={ref} rotation={[tilt, 0, 0]}>
-      <mesh
-        position={[
-          Math.cos(angle) * radius,
-          0,
-          Math.sin(angle) * radius,
-        ]}
-      >
-        <sphereGeometry args={[0.05, 16, 16]} />
-        <meshStandardMaterial color="#2563eb" />
-      </mesh>
+    <group rotation={[tilt, tiltY, 0]}>
+      <group ref={ref}>
+        <mesh
+          position={[
+            Math.cos(angle) * radius,
+            0,
+            Math.sin(angle) * radius,
+          ]}
+        >
+          <sphereGeometry args={[0.07, 16, 16]} />
+          <meshStandardMaterial
+            color="#38bdf8"
+            emissive="#0284c7"
+            emissiveIntensity={0.8}
+            roughness={0.2}
+            metalness={0.8}
+          />
+        </mesh>
+      </group>
     </group>
   );
 }
 
-/* Atom (Bohr-style, per-electron orbit) */
+/* Atom (Bohr-style, centered per-electron orbit) */
 function Atom({ atomicNumber }) {
   const shellCapacities = [2, 8, 18, 32];
   let remaining = atomicNumber;
@@ -62,18 +70,19 @@ function Atom({ atomicNumber }) {
     remaining -= count;
     if (count === 0) return;
 
-    const radius = 1 + shellIndex * 0.75;
+    const radius = 1.2 + shellIndex * 0.75;
 
     for (let i = 0; i < count; i++) {
       const angle = (i / count) * Math.PI * 2;
-      const tilt = (i / count) * Math.PI * 0.6;
+      const tilt = ((i * 1.618) % 1) * Math.PI * 0.8 - Math.PI * 0.4;
+      const tiltY = ((i * 2.718) % 1) * Math.PI * 0.8 - Math.PI * 0.4;
 
-      // 🔹 ONE orbit per electron
       orbits.push(
         <ElectronOrbit
           key={`orbit-${shellIndex}-${i}`}
           radius={radius}
           tilt={tilt}
+          tiltY={tiltY}
         />
       );
 
@@ -83,46 +92,55 @@ function Atom({ atomicNumber }) {
           radius={radius}
           angle={angle}
           tilt={tilt}
-          speed={0.3 + shellIndex * 0.1}
+          tiltY={tiltY}
+          speed={0.4 + shellIndex * 0.1}
         />
       );
     }
   });
 
   return (
-    <>
-      {/* Nucleus */}
-      <Sphere args={[0.35, 32, 32]}>
-        <meshStandardMaterial color="#dc2626" />
+    <group position={[0, 0, 0]}>
+      {/* Central Nucleus with dynamic glow */}
+      <Sphere args={[0.42, 32, 32]} position={[0, 0, 0]}>
+        <meshStandardMaterial
+          color="#f43f5e"
+          emissive="#e11d48"
+          emissiveIntensity={0.7}
+          roughness={0.2}
+          metalness={0.8}
+        />
       </Sphere>
 
       {orbits}
       {electrons}
-    </>
+    </group>
   );
 }
 
 export default function AtomicModel3D({ atomicNumber }) {
   return (
-    <div className="w-full h-[600px] bg-card rounded-xl border border-border">
-      <div className="text-center text-sm text-muted-foreground py-1">
-        Bohr Model — One orbit per electron (Z = {atomicNumber})
-      </div>
-
+    <div className="w-full h-full min-h-[460px] relative flex items-center justify-center">
       <Canvas
-        camera={{ position: [0, 0, 7] }}
-        eventSource={undefined}
-        eventPrefix="client"
+        camera={{ position: [0, 0, 9], fov: 45 }}
+        gl={{ alpha: true, antialias: true, preserveDrawingBuffer: true }}
+        style={{ width: "100%", height: "100%", position: "absolute", inset: 0 }}
       >
-        <color attach="background" args={["#ffffff"]} />
+        <ambientLight intensity={1.2} />
+        <pointLight position={[10, 10, 10]} intensity={2} />
+        <pointLight position={[-10, -10, -10]} intensity={1.2} color="#818cf8" />
+        <pointLight position={[0, 0, 5]} intensity={0.8} color="#38bdf8" />
 
-        <ambientLight intensity={0.8} />
-        <pointLight position={[10, 10, 10]} />
+        <Atom atomicNumber={Math.min(atomicNumber, 32)} />
 
-        {/* Cap for performance */}
-        <Atom atomicNumber={Math.min(atomicNumber, 30)} />
-
-        <OrbitControls enableZoom enablePan={false} />
+        <OrbitControls
+          makeDefault
+          target={[0, 0, 0]}
+          enableZoom={true}
+          enablePan={false}
+          autoRotate={true}
+          autoRotateSpeed={0.8}
+        />
       </Canvas>
     </div>
   );

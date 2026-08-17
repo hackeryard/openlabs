@@ -18,7 +18,9 @@ import {
   RotateCw, 
   ZoomIn, 
   BookOpen, 
-  Compass 
+  Compass,
+  Layers,
+  Sparkles
 } from "lucide-react";
 
 export default function AtomPage() {
@@ -43,14 +45,14 @@ export default function AtomPage() {
 
   if (!element) {
     return (
-      <div className="min-h-screen bg-muted flex flex-col items-center justify-center p-6 text-center font-sans">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center font-sans">
         <div className="bg-card border border-border p-8 rounded-3xl shadow-xl max-w-sm">
           <FlaskConical className="h-12 w-12 text-rose-500 mx-auto mb-4 animate-bounce" />
           <h2 className="text-2xl font-black text-foreground mb-2">Element Not Found</h2>
           <p className="text-muted-foreground text-sm mb-6">
             The requested chemical element cannot be resolved in our quantum dataset.
           </p>
-          <Link href="/chemistry/periodictable" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-755 text-white font-bold py-3 px-6 rounded-xl transition shadow-md">
+          <Link href="/chemistry/periodictable" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl transition shadow-md">
             <ArrowLeft className="h-4 w-4" /> Return to Periodic Table
           </Link>
         </div>
@@ -58,34 +60,33 @@ export default function AtomPage() {
     );
   }
 
-  // Curated categories
   const categoryLabel = element.category ? element.category.replace("-", " ") : "Element";
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 text-foreground p-4 md:p-8 font-sans relative overflow-hidden">
+    <div className="min-h-screen bg-background text-foreground p-4 md:p-8 font-sans relative overflow-hidden">
       {/* Soft ambient background glows */}
-      <div className="absolute top-0 right-1/4 h-[400px] w-[400px] rounded-full bg-indigo-500/5 blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-10 left-10 h-[300px] w-[300px] rounded-full bg-purple-500/5 blur-[80px] pointer-events-none" />
+      <div className="pointer-events-none absolute top-0 right-1/4 h-[400px] w-[400px] rounded-full bg-indigo-500/10 dark:bg-indigo-500/5 blur-[120px]" />
+      <div className="pointer-events-none absolute bottom-10 left-10 h-[300px] w-[300px] rounded-full bg-purple-500/10 dark:bg-purple-500/5 blur-[100px]" />
 
       <div className="max-w-[1360px] mx-auto space-y-6 relative z-10">
         
         {/* Navigation & Breadcrumbs Hub */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-4">
-          <div className="flex items-center space-x-2 text-sm text-muted-foreground animate-fade-in">
-            <Link href="/chemistry/periodictable" className="hover:text-slate-950 transition font-medium flex items-center gap-1.5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
+          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+            <Link href="/chemistry/periodictable" className="hover:text-foreground transition font-medium flex items-center gap-1.5">
               <ArrowLeft className="h-4 w-4" /> Back to Table
             </Link>
             <span>/</span>
-            <Link href={`/chemistry/periodictable/atom/${element.atomicNumber}`} className="hover:text-slate-950 transition font-medium">
+            <Link href={`/chemistry/periodictable/atom/${element.atomicNumber}`} className="hover:text-foreground transition font-medium">
               Monograph
             </Link>
             <span>/</span>
-            <span className="text-indigo-600 font-bold">3D Orbitals Lab</span>
+            <span className="text-primary font-bold">3D Orbitals Lab</span>
           </div>
 
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] text-emerald-700 font-extrabold uppercase tracking-wider bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/50">
+            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold uppercase tracking-wider bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/30">
               WebGL Sandbox Online
             </span>
           </div>
@@ -94,15 +95,15 @@ export default function AtomPage() {
         {/* Dynamic Title Header Block */}
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-150 text-[10px] font-black uppercase tracking-wider">
+            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-[10px] font-black uppercase tracking-wider">
               Z = {element.atomicNumber}
             </span>
-            <span className="px-3 py-1 rounded-full bg-slate-100 text-muted-foreground border border-border text-[10px] font-bold uppercase tracking-wider">
+            <span className="px-3 py-1 rounded-full bg-muted text-muted-foreground border border-border text-[10px] font-bold uppercase tracking-wider">
               {categoryLabel}
             </span>
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-foreground tracking-tight leading-none">
-            {element.name} <span className="text-indigo-600">({element.symbol})</span> 3D Orbital Lab
+            {element.name} <span className="text-indigo-600 dark:text-indigo-400">({element.symbol})</span> 3D Orbital Lab
           </h1>
           <p className="text-muted-foreground text-sm md:text-base font-medium max-w-3xl">
             Simulate and interact with the concentric quantum shell configuration of {element.name} in high-fidelity 3D. Inspect valence spin vectors and nuclear parameters.
@@ -114,67 +115,67 @@ export default function AtomPage() {
           
           {/* Column 1: Big WebGL 3D Quantum Canvas (Left Side - lg:col-span-8) */}
           <div className="lg:col-span-8 flex flex-col space-y-4">
-            <div className="bg-slate-900 text-slate-200 rounded-3xl border border-slate-800 p-4 md:p-6 shadow-2xl relative overflow-hidden flex flex-col justify-between min-h-[560px] group">
+            <div className="bg-card text-foreground rounded-3xl border border-border p-4 md:p-6 shadow-2xl relative overflow-hidden flex flex-col justify-between group">
               {/* Glowing decorative laser borders */}
-              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-60" />
+              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
               
               {/* Interactive HUD Overlay header */}
-              <div className="flex justify-between items-center border-b border-slate-850 pb-3 mb-4 select-none">
+              <div className="flex justify-between items-center border-b border-border pb-3 mb-4 select-none">
                 <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-indigo-500 animate-ping" />
-                  <span className="text-[10px] text-slate-400 font-mono tracking-widest font-bold uppercase">
+                  <span className="text-[10px] text-muted-foreground font-mono tracking-widest font-bold uppercase">
                     3D QUANTUM MECHANICAL MODEL
                   </span>
                 </div>
-                <div className="flex items-center gap-4 text-[9px] font-mono text-slate-500">
-                  <span className="hidden sm:inline bg-slate-850 px-2 py-0.5 rounded text-indigo-400 font-bold">WebGL Accelerated</span>
-                  <span className="bg-slate-850 px-2 py-0.5 rounded text-emerald-400 font-bold">60 FPS</span>
+                <div className="flex items-center gap-4 text-[9px] font-mono text-muted-foreground">
+                  <span className="hidden sm:inline bg-muted px-2 py-0.5 rounded text-indigo-600 dark:text-indigo-400 font-bold">WebGL Accelerated</span>
+                  <span className="bg-muted px-2 py-0.5 rounded text-emerald-600 dark:text-emerald-400 font-bold">60 FPS</span>
                 </div>
               </div>
 
-              {/* 3D Model Rendering Canvas */}
-              <div className="flex-1 rounded-2xl bg-slate-950/80 border border-slate-850 relative overflow-hidden flex items-center justify-center shadow-inner min-h-[420px]">
+              {/* 3D Model Rendering Canvas Container (Explicit centering) */}
+              <div className="w-full h-[480px] rounded-2xl bg-slate-950 border border-slate-800 relative overflow-hidden shadow-inner flex items-center justify-center">
                 <AtomicModel3D atomicNumber={element.atomicNumber} />
                 
                 {/* Embedded dynamic compass */}
-                <div className="absolute bottom-4 left-4 bg-slate-900/95 border border-slate-800 p-2.5 rounded-xl text-slate-400 text-[10px] font-mono select-none flex items-center gap-2 backdrop-blur shadow-md">
+                <div className="absolute bottom-4 left-4 z-20 bg-slate-900/90 border border-slate-800 p-2.5 rounded-xl text-slate-300 text-[10px] font-mono select-none flex items-center gap-2 backdrop-blur shadow-md pointer-events-none">
                   <Compass className="h-4 w-4 text-indigo-400 animate-spin [animation-duration:10s]" />
-                  <span>Orbit Rotation Enabled</span>
+                  <span>Orbit Rotation Active &bull; Center-Locked</span>
                 </div>
               </div>
 
-              {/* Simulator Command Deck Controls (UX Enhancement) */}
-              <div className="mt-4 bg-slate-950/40 border border-slate-850/60 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
-                <span className="text-slate-400 text-[10px] flex items-center gap-1.5 font-bold">
-                  <Gauge className="h-3.5 w-3.5 text-indigo-500 animate-pulse" /> SIMULATOR COMMAND DECK:
+              {/* Simulator Command Deck Controls */}
+              <div className="mt-4 bg-muted/40 border border-border rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+                <span className="text-muted-foreground text-[10px] flex items-center gap-1.5 font-bold">
+                  <Gauge className="h-3.5 w-3.5 text-primary animate-pulse" /> SIMULATOR COMMAND DECK:
                 </span>
                 
                 <div className="flex flex-wrap gap-2">
                   <button 
                     onClick={() => alert("Physics simulation engine calibrated successfully!")}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 hover:bg-slate-850 text-slate-350 hover:text-white transition-all duration-200 active:scale-95"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-border hover:bg-accent text-foreground transition-all duration-200 active:scale-95 text-xs font-bold shadow-sm"
                   >
-                    <RotateCw className="h-3 w-3 text-indigo-400" /> Calibrate Engine
+                    <RotateCw className="h-3 w-3 text-primary" /> Calibrate Engine
                   </button>
                   <button 
                     onClick={() => alert("Valence shells isolated. Orbit speed set to 1.0x.")}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 hover:bg-slate-850 text-slate-350 hover:text-white transition-all duration-200 active:scale-95"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-border hover:bg-accent text-foreground transition-all duration-200 active:scale-95 text-xs font-bold shadow-sm"
                   >
-                    <Compass className="h-3 w-3 text-indigo-400" /> Isolate Shells
+                    <Compass className="h-3 w-3 text-primary" /> Isolate Shells
                   </button>
                   <button 
                     onClick={() => alert("Simulation telemetry logged to browser console.")}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-950/45 border border-indigo-900/60 hover:border-indigo-850 hover:bg-indigo-900/30 text-indigo-300 hover:text-indigo-200 transition-all duration-200 active:scale-95 animate-pulse"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 hover:bg-primary/20 text-primary transition-all duration-200 active:scale-95 text-xs font-bold"
                   >
-                    <Activity className="h-3 w-3 text-indigo-400" /> Log Telemetry
+                    <Activity className="h-3 w-3 text-primary" /> Log Telemetry
                   </button>
                 </div>
               </div>
 
               {/* HUD Footer details */}
-              <div className="mt-4 flex justify-between items-center text-[10px] font-mono text-slate-400 select-none">
+              <div className="mt-4 flex justify-between items-center text-[10px] font-mono text-muted-foreground select-none">
                 <span>Mass: {element.atomicMass} u</span>
-                <span className="text-indigo-400 font-bold">Aufbau Filling Block: {element.block.toUpperCase()}</span>
+                <span className="text-primary font-bold">Aufbau Filling Block: {element.block.toUpperCase()}</span>
               </div>
             </div>
           </div>
@@ -190,36 +191,36 @@ export default function AtomPage() {
 
             {/* Scientific Parameters readout card */}
             <div className="bg-card border border-border rounded-3xl p-6 shadow-md space-y-4">
-              <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-wider text-xs">
+              <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-wider text-xs">
                 <Activity className="h-4 w-4" /> Lab Readings
               </div>
-              <h3 className="font-extrabold text-foreground text-lg tracking-tight border-b border-slate-100 pb-2">
+              <h3 className="font-extrabold text-foreground text-lg tracking-tight border-b border-border pb-2">
                 Quantum State Instrumentation
               </h3>
               
               <div className="grid grid-cols-2 gap-3.5 text-xs">
-                <div className="bg-muted border border-slate-150 p-3 rounded-xl hover:shadow-sm transition">
-                  <div className="text-[9px] text-slate-400 uppercase font-extrabold tracking-wider">Symbol</div>
+                <div className="bg-muted/40 border border-border p-3 rounded-2xl hover:shadow-sm transition">
+                  <div className="text-[9px] text-muted-foreground uppercase font-black tracking-wider">Symbol</div>
                   <div className="text-foreground font-extrabold font-mono text-sm mt-0.5">{element.symbol}</div>
                 </div>
 
-                <div className="bg-muted border border-slate-150 p-3 rounded-xl hover:shadow-sm transition">
-                  <div className="text-[9px] text-slate-400 uppercase font-extrabold tracking-wider">Valency Block</div>
+                <div className="bg-muted/40 border border-border p-3 rounded-2xl hover:shadow-sm transition">
+                  <div className="text-[9px] text-muted-foreground uppercase font-black tracking-wider">Valency Block</div>
                   <div className="text-foreground font-extrabold font-mono text-sm mt-0.5 uppercase">{element.block}-block</div>
                 </div>
 
-                <div className="bg-muted border border-slate-150 p-3 rounded-xl hover:shadow-sm transition">
-                  <div className="text-[9px] text-slate-400 uppercase font-extrabold tracking-wider">Group</div>
+                <div className="bg-muted/40 border border-border p-3 rounded-2xl hover:shadow-sm transition">
+                  <div className="text-[9px] text-muted-foreground uppercase font-black tracking-wider">Group</div>
                   <div className="text-foreground font-extrabold font-mono text-sm mt-0.5">{element.group}</div>
                 </div>
 
-                <div className="bg-muted border border-slate-150 p-3 rounded-xl hover:shadow-sm transition">
-                  <div className="text-[9px] text-slate-400 uppercase font-extrabold tracking-wider">Period</div>
+                <div className="bg-muted/40 border border-border p-3 rounded-2xl hover:shadow-sm transition">
+                  <div className="text-[9px] text-muted-foreground uppercase font-black tracking-wider">Period</div>
                   <div className="text-foreground font-extrabold font-mono text-sm mt-0.5">{element.period}</div>
                 </div>
 
-                <div className="bg-muted border border-slate-150 p-3 rounded-xl col-span-2 hover:shadow-sm transition">
-                  <div className="text-[9px] text-slate-400 uppercase font-extrabold tracking-wider">Valence Configuration</div>
+                <div className="bg-muted/40 border border-border p-3 rounded-2xl col-span-2 hover:shadow-sm transition">
+                  <div className="text-[9px] text-muted-foreground uppercase font-black tracking-wider">Valence Configuration</div>
                   <div className="text-foreground font-bold font-mono text-[11px] mt-1 truncate" title={element.electronConfiguration || element.electronConfig}>
                     {element.electronConfiguration || element.electronConfig || "n/a"}
                   </div>
@@ -229,24 +230,24 @@ export default function AtomPage() {
 
             {/* Instruction console card */}
             <div className="bg-card border border-border rounded-3xl p-6 shadow-md space-y-4">
-              <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-wider text-xs">
+              <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-wider text-xs">
                 <Gauge className="h-4 w-4" /> Lab Manual
               </div>
-              <h3 className="font-extrabold text-foreground text-lg tracking-tight border-b border-slate-100 pb-2">
+              <h3 className="font-extrabold text-foreground text-lg tracking-tight border-b border-border pb-2">
                 Experiment Instructions
               </h3>
               
               <ul className="space-y-3 text-xs text-muted-foreground font-medium">
                 <li className="flex items-start gap-2.5">
-                  <div className="flex-shrink-0 h-5 w-5 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-bold text-[10px] mt-0.5">1</div>
+                  <div className="flex-shrink-0 h-5 w-5 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold text-[10px] mt-0.5">1</div>
                   <span><strong>Rotate Nucleus</strong>: Left-click and drag anywhere on the 3D model canvas to rotate your viewing angle.</span>
                 </li>
                 <li className="flex items-start gap-2.5">
-                  <div className="flex-shrink-0 h-5 w-5 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-bold text-[10px] mt-0.5">2</div>
+                  <div className="flex-shrink-0 h-5 w-5 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold text-[10px] mt-0.5">2</div>
                   <span><strong>Zoom Orbits</strong>: Use your mouse scroll-wheel or touch trackpad swipe to zoom in and examine shell interactions.</span>
                 </li>
                 <li className="flex items-start gap-2.5">
-                  <div className="flex-shrink-0 h-5 w-5 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-bold text-[10px] mt-0.5">3</div>
+                  <div className="flex-shrink-0 h-5 w-5 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold text-[10px] mt-0.5">3</div>
                   <span><strong>Explore Spins</strong>: Observe electron spin orientations which represent the fourth quantum number ($m_s = \pm \frac{1}{2}$).</span>
                 </li>
               </ul>

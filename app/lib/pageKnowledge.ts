@@ -97,14 +97,33 @@ const matchers: KnowledgeMatcher[] = [
     knowledge: {
       title: "Biology Lab Hub",
       overview:
-        "Biology hub that links to human anatomy and cell (plant/animal) visualizations.",
+        "Biology hub that links to human anatomy, cell structures, and genetics visualizations.",
       howToUse: [
-        "Open a specific page like Human Body, Plant Cell, or Animal Cell.",
+        "Open a specific page like Genetics, Human Body, Plant Cell, or Animal Cell.",
         "Use the assistant to quiz yourself on organ/cell part functions based on what you see.",
       ],
       keyConcepts: [
         "Human body systems at a high level",
         "Differences between plant and animal cells",
+        "Mendelian genetics and molecular biology",
+      ],
+    },
+  },
+  {
+    match: (p) => p.startsWith("/biology/genetics") || p.startsWith("/labs/biology/genetics"),
+    knowledge: {
+      title: "Genetics & Heredity Studio Lab",
+      overview:
+        "Interactive biology suite covering Monohybrid Punnett Squares with creature avatars, 16-cell Dihybrid crosses, DNA transcription & translation, and 3-generation pedigree trees.",
+      howToUse: [
+        "Switch between the 4 dedicated labs: Monohybrid, Dihybrid, Transcription/Translation, or Pedigree Trees.",
+        "Test 100-offspring random drops to compare theoretical vs experimental ratios.",
+        "Edit DNA templates to watch ribosome codon reading and test mutations live.",
+      ],
+      keyConcepts: [
+        "Law of Segregation & Law of Independent Assortment (9:3:3:1)",
+        "Central Dogma: DNA -> mRNA -> Amino Acid Polypeptide",
+        "Autosomal Dominant, Autosomal Recessive, and X-Linked inheritance patterns",
       ],
     },
   },
@@ -800,6 +819,53 @@ export function getPageKnowledgeText(pathname: string): string | null {
         "Select start node S and target node T in the Shortest Path tab and press 'Play Trace' to watch Dijkstra's algorithm relax distances.",
         "Toggle Kruskal vs Prim in the Spanning Tree tab and step through edge acceptance and cycle rejection.",
         "Check the Graph Coloring tab to see the chromatic number χ(G) and bipartite 2-color partition sets.",
+      ],
+    });
+  }
+
+  if (pathname.startsWith("/mathematics/differential-equations") || pathname.startsWith("/labs/mathematics/differential-equations")) {
+    return formatKnowledge({
+      title: "Differential Equations & Dynamical Systems Studio Lab",
+      overview:
+        "This lab explores 1st-order direction fields (dy/dx = f(x, y)) with Euler/Heun/RK4 numerical integrators, 2D linear phase portraits (ẋ = Ax) with Trace-Determinant stability classifications (saddles, spirals, nodes, centers), Lotka-Volterra predator-prey cyclic orbits, damped and driven harmonic resonance, the 3D Lorenz Strange Attractor with Butterfly Effect sensitive dependence, and Kermack-McKendrick SIR epidemiological models with R0 reproduction numbers.",
+      keyConcepts: [
+        "1st-order slope fields and integral curves with Euler, Heun, and 4th-order Runge-Kutta (RK4) integration",
+        "2D Linear Systems stability classification: Trace τ = tr(A), Determinant Δ = det(A), and eigenvalues",
+        "Lotka-Volterra predator-prey system yielding closed periodic orbits around coexistence center (γ/δ, α/β)",
+        "Damped & Forced Harmonic Oscillators: underdamped (ζ < 1), critically damped (ζ = 1), and overdamped (ζ > 1) with resonance amplitude response",
+        "Lorenz Strange Attractor (dx/dt = σ(y-x), dy/dt = x(ρ-z)-y, dz/dt = xy-βz) and Butterfly Effect divergence (Δx₀ = 10⁻⁴)",
+        "SIR Epidemic Model: Susceptible S(t), Infected I(t), Recovered R(t), with basic reproduction number R₀ = β/γ and curve flattening",
+      ],
+      whatToTry: [
+        "In Slope Fields tab, click anywhere on the vector field to instantiate initial conditions (x₀, y₀) and compare Euler vs Heun vs RK4 trajectories.",
+        "In 2D Phase Plane tab, edit matrix coefficients [[a, b], [c, d]] to observe transitions between saddles, spirals, and nodes.",
+        "In Lotka-Volterra tab, adjust prey birth rates and predation efficiency to observe population phase-lag oscillations.",
+        "In Oscillators tab, adjust damping coefficient c to achieve critical damping (ζ = 1) and test driving frequency resonance.",
+        "In 3D Lorenz Chaos tab, drag mouse to rotate the strange attractor and toggle dual chaos divergence to watch exponential separation.",
+        "In SIR Epidemic tab, test social distancing interventions to flatten the infection peak.",
+      ],
+    });
+  }
+
+  if (pathname.startsWith("/computer-science/cryptography") || pathname.startsWith("/labs/computer-science/cryptography")) {
+    return formatKnowledge({
+      title: "Classical & Modern Cryptography Studio Lab",
+      overview:
+        "This lab explores Classical Substitution Ciphers (Caesar shift, ROT13, frequency analysis, Chi-squared auto-cracker), Polyalphabetic Ciphers (Vigenère 26x26 Tabula Recta, repeating keystreams), WWII Enigma Rotor Machine (3 stepping rotors, turnover notches, Reflector UKW-B, Steckerbrett plugboard, signal trace), Asymmetric Cryptography (Diffie-Hellman Key Exchange, paint color mixing, discrete logarithm trapdoor function), and Cryptographic Hash Functions (SHA-256 bit avalanche effect, Bitcoin Proof-of-Work block mining).",
+      keyConcepts: [
+        "Caesar shift cipher C = (P + k) mod 26 and frequency analysis cracking using English letter spikes (E, T, A)",
+        "Polyalphabetic Vigenère cipher and 26x26 Tabula Recta coordinate mapping",
+        "WWII Enigma electro-mechanical rotor stepping and why self-encryption impossibility was a fatal flaw",
+        "Diffie-Hellman Key Exchange: public color mixing and discrete logarithm one-way trapdoor function g^ab mod p",
+        "SHA-256 Avalanche Effect: single-bit input change flips ~50% of 256 output bits unpredictably",
+        "Bitcoin Proof-of-Work: finding nonces to produce hashes with N leading zeros",
+      ],
+      whatToTry: [
+        "In Caesar tab, rotate the cipher wheel and click 'Auto-Crack Key' to see Chi-squared statistics in action.",
+        "In Vigenère tab, enter a keyword and click on the 26x26 Tabula Recta grid to inspect row/column intersections.",
+        "In Enigma tab, press typewriter keys to watch current route through 3 stepping rotors, plugboard, and reflector.",
+        "In Diffie-Hellman tab, check Alice and Bob's boxes to see how they calculate identical secret keys over an open channel.",
+        "In SHA-256 tab, change 1 letter to watch the bit avalanche, then mine a Bitcoin block with Proof-of-Work.",
       ],
     });
   }

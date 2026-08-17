@@ -18,80 +18,82 @@ import {
   Layers, 
   Info, 
   ShieldAlert, 
-  Compass 
+  Compass,
+  ArrowRight,
+  BookOpen
 } from "lucide-react";
 
-// Dynamic Category Coloring for Light Theme consistent panels
+// Dynamic Category Coloring for Light & Dark Theme consistent panels
 const categoryMap: Record<string, { label: string; bg: string; text: string; border: string; glow: string }> = {
   "nonmetal": {
     label: "Reactive Nonmetal",
-    bg: "bg-emerald-50 text-emerald-800 border-emerald-100",
-    text: "text-emerald-700",
-    border: "border-emerald-200",
-    glow: "shadow-emerald-100 hover:border-emerald-350"
+    bg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
+    text: "text-emerald-600 dark:text-emerald-400",
+    border: "border-emerald-500/30",
+    glow: "shadow-emerald-500/10 hover:border-emerald-500/60"
   },
   "noble-gas": {
     label: "Noble Gas",
-    bg: "bg-blue-50 text-blue-800 border-blue-100",
-    text: "text-blue-700",
-    border: "border-blue-200",
-    glow: "shadow-blue-100 hover:border-blue-350"
+    bg: "bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/30",
+    text: "text-sky-600 dark:text-sky-400",
+    border: "border-sky-500/30",
+    glow: "shadow-sky-500/10 hover:border-sky-500/60"
   },
   "alkali-metal": {
     label: "Alkali Metal",
-    bg: "bg-red-50 text-red-800 border-red-100",
-    text: "text-red-700",
-    border: "border-red-200",
-    glow: "shadow-red-100 hover:border-red-350"
+    bg: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30",
+    text: "text-rose-600 dark:text-rose-400",
+    border: "border-rose-500/30",
+    glow: "shadow-rose-500/10 hover:border-rose-500/60"
   },
   "alkaline-earth": {
     label: "Alkaline Earth Metal",
-    bg: "bg-orange-50 text-orange-800 border-orange-100",
-    text: "text-orange-700",
-    border: "border-orange-200",
-    glow: "shadow-orange-100 hover:border-orange-350"
+    bg: "bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/30",
+    text: "text-orange-600 dark:text-orange-400",
+    border: "border-orange-500/30",
+    glow: "shadow-orange-500/10 hover:border-orange-500/60"
   },
   "metalloid": {
     label: "Metalloid",
-    bg: "bg-teal-50 text-teal-800 border-teal-100",
-    text: "text-teal-700",
-    border: "border-teal-200",
-    glow: "shadow-teal-100 hover:border-teal-350"
+    bg: "bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/30",
+    text: "text-teal-600 dark:text-teal-400",
+    border: "border-teal-500/30",
+    glow: "shadow-teal-500/10 hover:border-teal-500/60"
   },
   "post-transition": {
     label: "Post-Transition Metal",
-    bg: "bg-muted text-foreground border-slate-100",
-    text: "text-muted-foreground",
-    border: "border-border",
-    glow: "shadow-slate-100 hover:border-slate-350"
+    bg: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30",
+    text: "text-blue-600 dark:text-blue-400",
+    border: "border-blue-500/30",
+    glow: "shadow-blue-500/10 hover:border-blue-500/60"
   },
   "transition-metal": {
     label: "Transition Metal",
-    bg: "bg-indigo-50 text-indigo-800 border-indigo-100",
-    text: "text-indigo-755",
-    border: "border-indigo-200",
-    glow: "shadow-indigo-100 hover:border-indigo-350"
+    bg: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/30",
+    text: "text-indigo-600 dark:text-indigo-400",
+    border: "border-indigo-500/30",
+    glow: "shadow-indigo-500/10 hover:border-indigo-500/60"
   },
   "lanthanide": {
     label: "Lanthanide",
-    bg: "bg-pink-50 text-pink-800 border-pink-100",
-    text: "text-pink-700",
-    border: "border-pink-200",
-    glow: "shadow-pink-100 hover:border-pink-350"
+    bg: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30",
+    text: "text-amber-600 dark:text-amber-400",
+    border: "border-amber-500/30",
+    glow: "shadow-amber-500/10 hover:border-amber-500/60"
   },
   "actinide": {
     label: "Actinide",
-    bg: "bg-yellow-50 text-yellow-800 border-yellow-100",
-    text: "text-yellow-755",
-    border: "border-yellow-200",
-    glow: "shadow-yellow-100 hover:border-yellow-350"
+    bg: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/30",
+    text: "text-yellow-600 dark:text-yellow-400",
+    border: "border-yellow-500/30",
+    glow: "shadow-yellow-500/10 hover:border-yellow-500/60"
   },
   "halogen": {
     label: "Halogen",
-    bg: "bg-purple-50 text-purple-800 border-purple-100",
-    text: "text-purple-700",
-    border: "border-purple-200",
-    glow: "shadow-purple-100 hover:border-purple-350"
+    bg: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30",
+    text: "text-purple-600 dark:text-purple-400",
+    border: "border-purple-500/30",
+    glow: "shadow-purple-500/10 hover:border-purple-500/60"
   }
 };
 
@@ -210,14 +212,14 @@ export default function ElectronicConfigurationPage() {
 
   if (!element) {
     return (
-      <div className="min-h-screen bg-muted flex flex-col items-center justify-center p-6 text-center font-sans">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center font-sans">
         <div className="bg-card border border-border p-8 rounded-3xl shadow-xl max-w-sm">
           <FlaskConical className="h-12 w-12 text-rose-500 mx-auto mb-4 animate-bounce" />
           <h2 className="text-2xl font-black text-foreground mb-2">Element Not Found</h2>
           <p className="text-muted-foreground text-sm mb-6">
             The requested chemical element cannot be resolved in our quantum dataset.
           </p>
-          <Link href="/chemistry/periodictable" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-755 text-white font-bold py-3 px-6 rounded-xl transition shadow-md">
+          <Link href="/chemistry/periodictable" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl transition shadow-md">
             <ArrowLeft className="h-4 w-4" /> Return to Periodic Table
           </Link>
         </div>
@@ -227,40 +229,40 @@ export default function ElectronicConfigurationPage() {
 
   const categoryStyle = categoryMap[element.category] || {
     label: element.category,
-    bg: "bg-slate-100 text-foreground border-border",
+    bg: "bg-muted text-foreground border-border",
     text: "text-muted-foreground",
     border: "border-border",
-    glow: "shadow-slate-100 hover:border-slate-350"
+    glow: "shadow-sm hover:border-primary/50"
   };
 
   const shells = calculateConfiguration(Z);
   const exception = ELECTRON_EXCEPTIONS[Z];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 text-foreground p-4 md:p-8 font-sans relative overflow-hidden">
+    <div className="min-h-screen bg-background text-foreground p-4 md:p-8 font-sans relative overflow-hidden">
       {/* Decorative background glows */}
-      <div className="absolute top-0 right-1/4 h-[400px] w-[400px] rounded-full bg-indigo-500/5 blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-10 left-10 h-[300px] w-[300px] rounded-full bg-purple-500/5 blur-[80px] pointer-events-none" />
+      <div className="absolute top-0 right-1/4 h-[400px] w-[400px] rounded-full bg-indigo-500/10 dark:bg-indigo-500/5 blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-10 left-10 h-[300px] w-[300px] rounded-full bg-purple-500/10 dark:bg-purple-500/5 blur-[80px] pointer-events-none" />
 
       <div className="max-w-[1360px] mx-auto space-y-6 relative z-10">
         
         {/* Navigation & Breadcrumbs Hub */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <Link href="/chemistry/periodictable" className="hover:text-slate-950 transition font-medium flex items-center gap-1.5">
+            <Link href="/chemistry/periodictable" className="hover:text-foreground transition font-medium flex items-center gap-1.5">
               <ArrowLeft className="h-4 w-4" /> Back to Table
             </Link>
             <span>/</span>
-            <Link href={`/chemistry/periodictable/atom/${element.atomicNumber}`} className="hover:text-slate-950 transition font-medium">
+            <Link href={`/chemistry/periodictable/atom/${element.atomicNumber}`} className="hover:text-foreground transition font-medium">
               Monograph
             </Link>
             <span>/</span>
-            <span className="text-indigo-600 font-bold">Configuration Lab</span>
+            <span className="text-primary font-bold">Configuration Lab</span>
           </div>
 
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] text-emerald-700 font-extrabold uppercase tracking-wider bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/50">
+            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-extrabold uppercase tracking-wider bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/30">
               Orbital Simulator Online
             </span>
           </div>
@@ -269,7 +271,7 @@ export default function ElectronicConfigurationPage() {
         {/* Dynamic Title Header Block */}
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-150 text-[10px] font-black uppercase tracking-wider">
+            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-[10px] font-black uppercase tracking-wider">
               Z = {element.atomicNumber}
             </span>
             <span className={`px-3 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider ${categoryStyle.bg}`}>
@@ -277,7 +279,7 @@ export default function ElectronicConfigurationPage() {
             </span>
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-foreground tracking-tight leading-none">
-            {element.name} <span className="text-indigo-600">({element.symbol})</span> Electronic Config Lab
+            {element.name} <span className="text-indigo-600 dark:text-indigo-400">({element.symbol})</span> Electronic Config Lab
           </h1>
           <p className="text-muted-foreground text-sm md:text-base font-medium max-w-3xl">
             Configure, spin, and fill the energy subshells of {element.name}. Experiment with Hund's rule, the Pauli exclusion principle, and Aufbau orbital structures.
@@ -293,20 +295,20 @@ export default function ElectronicConfigurationPage() {
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
               
               {/* Interactive HUD Overlay header */}
-              <div className="flex justify-between items-center border-b border-slate-100 pb-3 mb-4 select-none">
+              <div className="flex justify-between items-center border-b border-border pb-3 mb-4 select-none">
                 <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-indigo-500 animate-ping" />
-                  <span className="text-[10px] text-slate-400 font-mono tracking-widest font-bold uppercase">
+                  <span className="text-[10px] text-muted-foreground font-mono tracking-widest font-bold uppercase">
                     VALENCE ORBITAL FILLING SYSTEM
                   </span>
                 </div>
-                <div className="flex items-center gap-4 text-[9px] font-mono text-slate-400 font-bold">
-                  <span className="bg-indigo-50 px-2 py-0.5 rounded text-indigo-700">Autosaved State</span>
+                <div className="flex items-center gap-4 text-[9px] font-mono text-muted-foreground font-bold">
+                  <span className="bg-primary/10 px-2 py-0.5 rounded text-primary">Autosaved State</span>
                 </div>
               </div>
 
               {/* Configurations Lab Interactive Panel */}
-              <div className="flex-1 rounded-2xl bg-muted border border-slate-200/60 p-4 relative flex flex-col justify-center min-h-[420px]">
+              <div className="flex-1 rounded-2xl bg-muted/40 border border-border p-4 relative flex flex-col justify-center min-h-[420px]">
                 <ElectronicConfiguration 
                   atomicNumber={atomicNumber} 
                   symbol={element.symbol} 
@@ -328,17 +330,17 @@ export default function ElectronicConfigurationPage() {
 
             {/* Dynamic Quantum Exception Alert Card */}
             {exception && (
-              <div className="border border-amber-200 bg-amber-50/50 p-5 rounded-3xl shadow-sm relative overflow-hidden flex gap-3.5">
-                <div className="absolute top-0 right-0 h-16 w-16 bg-amber-100/30 rounded-full blur-xl pointer-events-none" />
-                <div className="flex-shrink-0 p-2.5 bg-amber-100 rounded-xl text-amber-700 h-fit">
+              <div className="border border-amber-500/40 bg-amber-500/10 p-5 rounded-3xl shadow-sm relative overflow-hidden flex gap-3.5">
+                <div className="absolute top-0 right-0 h-16 w-16 bg-amber-500/10 rounded-full blur-xl pointer-events-none" />
+                <div className="flex-shrink-0 p-2.5 bg-amber-500/20 text-amber-600 dark:text-amber-400 rounded-xl h-fit">
                   <ShieldAlert className="h-5 w-5 animate-pulse" />
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-amber-850 text-[13px] tracking-tight mb-1">
+                  <h3 className="font-extrabold text-amber-700 dark:text-amber-300 text-[13px] tracking-tight mb-1">
                     Thermodynamic Exception Detected
                   </h3>
-                  <p className="text-[11px] text-amber-800 leading-relaxed font-medium">
-                    Instead of the predicted Aufbau filling order <code className="bg-amber-100/50 px-1 rounded font-bold font-mono">{exception.ideal}</code>, {element.name} promotes a valence electron to yield <strong className="bg-amber-100 px-1 rounded font-mono text-[11px] text-amber-900 border border-amber-200/50">{exception.active}</strong>. {exception.reason}
+                  <p className="text-[11px] text-muted-foreground leading-relaxed font-medium">
+                    Instead of the predicted Aufbau filling order <code className="bg-amber-500/20 text-amber-700 dark:text-amber-300 px-1 rounded font-bold font-mono">{exception.ideal}</code>, {element.name} promotes a valence electron to yield <strong className="bg-amber-500/30 text-amber-800 dark:text-amber-200 px-1 rounded font-mono text-[11px] border border-amber-500/40">{exception.active}</strong>. {exception.reason}
                   </p>
                 </div>
               </div>
@@ -346,54 +348,54 @@ export default function ElectronicConfigurationPage() {
 
             {/* Animated Bohr Model Visual Indicator Card */}
             <div className="bg-card border border-border rounded-3xl p-5 shadow-md flex flex-col items-center text-center">
-              <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-wider text-xs mb-3 w-full text-left">
+              <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-wider text-xs mb-3 w-full text-left">
                 <Compass className="h-4 w-4 animate-spin [animation-duration:10s]" /> Live Bohr Indicator
               </div>
-              <div className="h-44 w-full flex items-center justify-center relative rounded-2xl overflow-hidden bg-muted border border-slate-100/50 shadow-inner p-2 mb-2">
+              <div className="h-44 w-full flex items-center justify-center relative rounded-2xl overflow-hidden bg-slate-950/90 border border-border shadow-inner p-2 mb-2">
                 <BohrModelSVG symbol={element.symbol} shells={shells} />
               </div>
-              <div className="text-[10px] text-slate-400 font-mono">
+              <div className="text-[10px] text-muted-foreground font-mono">
                 Concentric Energy Rings rotate around the nucleus.
               </div>
             </div>
 
             {/* Instruction console card */}
             <div className="bg-card border border-border rounded-3xl p-6 shadow-md space-y-4">
-              <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-wider text-xs">
+              <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-wider text-xs">
                 <Gauge className="h-4 w-4" /> Lab Manual
               </div>
-              <h3 className="font-extrabold text-foreground text-lg tracking-tight border-b border-slate-100 pb-2">
+              <h3 className="font-extrabold text-foreground text-lg tracking-tight border-b border-border pb-2">
                 Orbital Filling Guide
               </h3>
               
               <ul className="space-y-3 text-xs text-muted-foreground font-medium">
                 <li className="flex items-start gap-2.5">
-                  <div className="flex-shrink-0 h-5 w-5 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-bold text-[10px] mt-0.5">1</div>
+                  <div className="flex-shrink-0 h-5 w-5 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold text-[10px] mt-0.5">1</div>
                   <span><strong>Aufbau Order</strong>: Add electrons to the lowest available energy orbital boxes (starting at 1s, then 2s, 2p, etc.).</span>
                 </li>
                 <li className="flex items-start gap-2.5">
-                  <div className="flex-shrink-0 h-5 w-5 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-bold text-[10px] mt-0.5">2</div>
+                  <div className="flex-shrink-0 h-5 w-5 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold text-[10px] mt-0.5">2</div>
                   <span><strong>Hund's Rule</strong>: Single-fill all orbitals of equivalent energy with spin-up arrows before pairing them up with spin-down arrows.</span>
                 </li>
                 <li className="flex items-start gap-2.5">
-                  <div className="flex-shrink-0 h-5 w-5 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-bold text-[10px] mt-0.5">3</div>
+                  <div className="flex-shrink-0 h-5 w-5 bg-primary/10 text-primary rounded-lg flex items-center justify-center font-bold text-[10px] mt-0.5">3</div>
                   <span><strong>Exception Ground-State</strong>: If Z={element.atomicNumber} is an exception, ensure the final configuration meets the half-filled or completely-filled orbital stability.</span>
                 </li>
               </ul>
             </div>
 
           </div>
-        </div>
 
+        </div>
       </div>
     </div>
   );
 }
 
-// Concentric Bohr shell builder SVG Component (Optimized for Light Theme contrast)
+// ─── Concentric Bohr Shell Builder SVG ───
 function BohrModelSVG({ symbol, shells }: { symbol: string; shells: Record<number, number> }) {
   const maxShell = Math.max(...Object.keys(shells).map(Number), 1);
-  const size = 100 + maxShell * 36;
+  const size = 120 + maxShell * 36;
   const center = size / 2;
 
   const shellCircles: React.ReactNode[] = [];
@@ -409,8 +411,9 @@ function BohrModelSVG({ symbol, shells }: { symbol: string; shells: Record<numbe
         cx={center}
         cy={center}
         r={r}
-        className="stroke-slate-200 fill-none stroke-[1.2px]"
+        className="stroke-slate-700 stroke-[1.2px]"
         strokeDasharray="3 3"
+        fill="none"
       />
     );
 
@@ -425,14 +428,13 @@ function BohrModelSVG({ symbol, shells }: { symbol: string; shells: Record<numbe
           key={`dot-${s}-${i}`}
           cx={ex}
           cy={ey}
-          r={4}
-          className="fill-indigo-600 stroke-white stroke-[1.2px] shadow-sm hover:scale-125 transition"
+          r={3.5}
+          className="fill-sky-400 stroke-slate-900 stroke-[1px]"
         />
       );
     }
 
-    // Dynamic rotation speeds & directions
-    const rotationSpeed = 10 + s * 5;
+    const rotationSpeed = 10 + s * 4;
     const rotationDirection = s % 2 === 0 ? "normal" : "reverse";
     const animationStyle = {
       transformOrigin: `${center}px ${center}px`,
@@ -449,19 +451,19 @@ function BohrModelSVG({ symbol, shells }: { symbol: string; shells: Record<numbe
   return (
     <svg width="100%" height="100%" viewBox={`0 0 ${size} ${size}`} className="max-w-[200px] mx-auto select-none">
       <defs>
-        <radialGradient id="nucleus-glow-config" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#6366f1" stopOpacity="0.25" />
+        <radialGradient id="nucleus-glow-ec" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#6366f1" stopOpacity="0.4" />
           <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
         </radialGradient>
       </defs>
       {shellCircles}
-      <circle cx={center} cy={center} r={28} fill="url(#nucleus-glow-config)" />
-      <circle cx={center} cy={center} r={16} className="fill-indigo-600 stroke-white stroke-[1.5px] shadow" />
+      <circle cx={center} cy={center} r={24} fill="url(#nucleus-glow-ec)" />
+      <circle cx={center} cy={center} r={16} className="fill-indigo-600 stroke-white stroke-[1.5px] shadow-sm" />
       <text
         x={center}
         y={center + 4}
         textAnchor="middle"
-        className="fill-white font-black text-[10px] tracking-tight"
+        className="fill-white font-bold text-xs tracking-tight"
       >
         {symbol}
       </text>

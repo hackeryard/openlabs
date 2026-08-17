@@ -1,5 +1,5 @@
 "use client";
-// src/components/ElementModal.jsx
+
 import React, { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
@@ -28,63 +28,63 @@ function getElementImageSrc(name) {
 const categoryStyles = {
   "alkali-metal": {
     label: "Alkali Metal",
-    badge: "bg-rose-50 text-rose-700 border-rose-200",
-    panel: "from-rose-50 to-white",
-    accent: "text-rose-600",
+    badge: "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30",
+    panel: "from-rose-500/10 via-card to-card",
+    accent: "text-rose-600 dark:text-rose-400",
   },
   "alkaline-earth": {
     label: "Alkaline Earth",
-    badge: "bg-orange-50 text-orange-700 border-orange-200",
-    panel: "from-orange-50 to-white",
-    accent: "text-orange-600",
+    badge: "bg-orange-500/15 text-orange-600 dark:text-orange-400 border-orange-500/30",
+    panel: "from-orange-500/10 via-card to-card",
+    accent: "text-orange-600 dark:text-orange-400",
   },
   lanthanide: {
     label: "Lanthanide",
-    badge: "bg-amber-50 text-amber-700 border-amber-200",
-    panel: "from-amber-50 to-white",
-    accent: "text-amber-600",
+    badge: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30",
+    panel: "from-amber-500/10 via-card to-card",
+    accent: "text-amber-600 dark:text-amber-400",
   },
   actinide: {
     label: "Actinide",
-    badge: "bg-yellow-50 text-yellow-700 border-yellow-200",
-    panel: "from-yellow-50 to-white",
-    accent: "text-yellow-700",
+    badge: "bg-yellow-500/15 text-yellow-600 dark:text-yellow-400 border-yellow-500/30",
+    panel: "from-yellow-500/10 via-card to-card",
+    accent: "text-yellow-600 dark:text-yellow-400",
   },
   "noble-gas": {
     label: "Noble Gas",
-    badge: "bg-sky-50 text-sky-700 border-sky-200",
-    panel: "from-sky-50 to-white",
-    accent: "text-sky-600",
+    badge: "bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/30",
+    panel: "from-sky-500/10 via-card to-card",
+    accent: "text-sky-600 dark:text-sky-400",
   },
   "transition-metal": {
     label: "Transition Metal",
-    badge: "bg-indigo-50 text-indigo-700 border-indigo-200",
-    panel: "from-indigo-50 to-white",
-    accent: "text-indigo-600",
+    badge: "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border-indigo-500/30",
+    panel: "from-indigo-500/10 via-card to-card",
+    accent: "text-indigo-600 dark:text-indigo-400",
   },
   "post-transition": {
     label: "Post-Transition Metal",
-    badge: "bg-slate-50 text-slate-700 border-slate-200",
-    panel: "from-slate-50 to-white",
-    accent: "text-slate-600",
+    badge: "bg-slate-500/15 text-slate-600 dark:text-slate-400 border-slate-500/30",
+    panel: "from-slate-500/10 via-card to-card",
+    accent: "text-slate-600 dark:text-slate-400",
   },
   metalloid: {
     label: "Metalloid",
-    badge: "bg-teal-50 text-teal-700 border-teal-200",
-    panel: "from-teal-50 to-white",
-    accent: "text-teal-600",
+    badge: "bg-teal-500/15 text-teal-600 dark:text-teal-400 border-teal-500/30",
+    panel: "from-teal-500/10 via-card to-card",
+    accent: "text-teal-600 dark:text-teal-400",
   },
   nonmetal: {
     label: "Nonmetal",
-    badge: "bg-emerald-50 text-emerald-700 border-emerald-200",
-    panel: "from-emerald-50 to-white",
-    accent: "text-emerald-600",
+    badge: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
+    panel: "from-emerald-500/10 via-card to-card",
+    accent: "text-emerald-600 dark:text-emerald-400",
   },
   halogen: {
     label: "Halogen",
-    badge: "bg-violet-50 text-violet-700 border-violet-200",
-    panel: "from-violet-50 to-white",
-    accent: "text-violet-600",
+    badge: "bg-violet-500/15 text-violet-600 dark:text-violet-400 border-violet-500/30",
+    panel: "from-violet-500/10 via-card to-card",
+    accent: "text-violet-600 dark:text-violet-400",
   },
 };
 
@@ -92,9 +92,9 @@ function getCategoryStyle(category) {
   return (
     categoryStyles[category] || {
       label: category?.replace(/-/g, " ") || "Element",
-      badge: "bg-slate-50 text-slate-700 border-slate-200",
-      panel: "from-slate-50 to-white",
-      accent: "text-indigo-600",
+      badge: "bg-muted text-muted-foreground border-border",
+      panel: "from-muted/20 via-card to-card",
+      accent: "text-indigo-500",
     }
   );
 }
@@ -103,7 +103,7 @@ function PropertyTile({ icon: Icon, label, value }) {
   return (
     <div className="rounded-xl border border-border bg-card p-2.5 shadow-sm">
       <div className="mb-1 flex items-center gap-1.5 text-[8px] font-black uppercase tracking-wider text-muted-foreground">
-        <Icon className="h-3 w-3 text-indigo-500" />
+        <Icon className="h-3 w-3 text-indigo-500 dark:text-indigo-400" />
         {label}
       </div>
       <div
@@ -116,12 +116,6 @@ function PropertyTile({ icon: Icon, label, value }) {
   );
 }
 
-/**
- * ElementModal
- * - Props:
- * - element: object | null
- * - onClose: () => void
- */
 export default function ElementModal({ element, onClose }) {
   const closeRef = useRef(null);
   const dialogRef = useRef(null);
@@ -131,7 +125,6 @@ export default function ElementModal({ element, onClose }) {
     function onKey(e) {
       if (e.key === "Escape") onClose();
 
-      // Simple focus trap (Tab / Shift+Tab)
       if (e.key === "Tab" && dialogRef.current) {
         const focusable = dialogRef.current.querySelectorAll(
           'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])',
@@ -189,7 +182,7 @@ export default function ElementModal({ element, onClose }) {
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-slate-950/45 backdrop-blur-sm"
+        className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -206,15 +199,15 @@ export default function ElementModal({ element, onClose }) {
         <button
           ref={closeRef}
           onClick={onClose}
-          className="absolute right-3 top-4 z-30 inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-card/90 text-muted-foreground shadow-sm transition hover:bg-accent hover:text-foreground focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="absolute right-3 top-4 z-30 inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-card/90 text-muted-foreground shadow-sm transition hover:bg-accent hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
           aria-label="Close element details"
         >
           <X className="h-4 w-4" />
         </button>
 
-        {/* Content Area - Scrollable on mobile, Grid on desktop */}
+        {/* Content Area */}
         <div className="flex flex-1 flex-col overflow-y-auto md:flex-row md:overflow-hidden">
-          {/* Identity panel (Left on Desktop, Top on Mobile) */}
+          {/* Identity panel */}
           <aside
             className={`relative flex shrink-0 flex-col overflow-hidden bg-gradient-to-b ${style.panel} p-5 md:w-[260px] md:overflow-y-auto`}
           >
@@ -291,12 +284,11 @@ export default function ElementModal({ element, onClose }) {
             </div>
           </aside>
 
-          {/* Detail panel (Right on Desktop, Bottom on Mobile) */}
+          {/* Detail panel */}
           <section className="relative flex flex-1 flex-col md:overflow-y-auto">
-            {/* Scrollable Data Area */}
             <div className="space-y-4 p-5 md:space-y-5 md:p-6">
               <div className="pr-10">
-                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-indigo-600">
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-indigo-500 dark:text-indigo-400">
                   <FlaskConical className="h-3.5 w-3.5" />
                   Element Monograph
                 </div>
@@ -304,8 +296,7 @@ export default function ElementModal({ element, onClose }) {
                   Atomic profile and laboratory notes
                 </h3>
                 <p className="mt-1 text-xs font-medium leading-relaxed text-muted-foreground">
-                  Review core periodic data, electron configuration, and
-                  chemical context before opening the full atom page.
+                  Review core periodic data, electron configuration, and chemical context before opening the full atom page.
                 </p>
               </div>
 
@@ -342,9 +333,9 @@ export default function ElementModal({ element, onClose }) {
                 />
               </div>
 
-              <div className="rounded-2xl border border-border bg-muted p-3 shadow-inner">
+              <div className="rounded-2xl border border-border bg-muted/40 p-3 shadow-inner">
                 <div className="mb-1.5 flex items-center gap-2 text-[9px] font-black uppercase tracking-wider text-muted-foreground">
-                  <Atom className="h-3.5 w-3.5 text-indigo-500" />
+                  <Atom className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" />
                   Electron Configuration
                 </div>
                 <div className="break-words rounded-xl border border-border bg-card px-3 py-2 font-mono text-xs font-black text-foreground">
@@ -369,13 +360,13 @@ export default function ElementModal({ element, onClose }) {
             <div className="sticky bottom-0 z-20 mt-auto border-t border-border bg-card/95 p-4 backdrop-blur sm:px-6">
               <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
                 <button
-                  className="rounded-xl border border-border bg-card px-4 py-2.5 text-xs font-black text-muted-foreground shadow-sm transition hover:bg-accent"
+                  className="rounded-xl border border-border bg-card px-4 py-2.5 text-xs font-black text-muted-foreground shadow-sm transition hover:bg-accent hover:text-foreground"
                   onClick={onClose}
                 >
                   Close
                 </button>
                 <button
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-black text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-700"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-black text-white shadow-lg shadow-indigo-950/20 transition hover:bg-indigo-700"
                   onClick={() => {
                     onClose();
                     router.push(

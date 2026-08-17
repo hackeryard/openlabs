@@ -20,7 +20,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.openlabs.org.in
 export const metadata: Metadata = {
   title: {
     default: 'OpenLabs - Virtual Lab Experience Platform for Science & Technology',
-    template: '%s | OpenLabs'
+    template: '%s'
   },
   description: 'OpenLabs is an interactive virtual lab experience platform where students can explore physics, chemistry, biology, and computer science experiments online.',
   keywords: [

@@ -26,17 +26,17 @@ const ORBITALS = [
 ];
 
 const ORBITAL_COLORS = {
-  s: "bg-blue-100 text-blue-800",
-  p: "bg-green-100 text-green-800",
-  d: "bg-orange-100 text-orange-800",
-  f: "bg-purple-100 text-purple-800",
+  s: "bg-sky-500/15 text-sky-600 dark:text-sky-400 border border-sky-500/30",
+  p: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30",
+  d: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30",
+  f: "bg-purple-500/15 text-purple-600 dark:text-purple-400 border border-purple-500/30",
 };
 
-const ORBITAL_BORDER = {
-  s: "border-blue-400",
-  p: "border-green-400",
-  d: "border-orange-400",
-  f: "border-purple-400",
+const ORBITAL_BOX = {
+  s: "border-sky-500/40 bg-sky-500/10 text-sky-600 dark:text-sky-300 shadow-sm",
+  p: "border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 shadow-sm",
+  d: "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-300 shadow-sm",
+  f: "border-purple-500/40 bg-purple-500/10 text-purple-600 dark:text-purple-300 shadow-sm",
 };
 
 const BLOCK_DESCRIPTION = {
@@ -147,10 +147,12 @@ function calculateConfiguration(Z) {
 /* ================= VISUAL ORBITAL DIAGRAM ================= */
 function OrbitalDiagram({ orbitals }) {
   return (
-    <div>
-      <h3 className="font-semibold mb-3">Orbital Energy Diagram</h3>
+    <div className="space-y-3">
+      <h3 className="font-extrabold text-foreground text-sm uppercase tracking-wider">
+        Orbital Energy Diagram
+      </h3>
 
-      <div className="space-y-2">
+      <div className="space-y-2 max-h-[320px] overflow-y-auto pr-2">
         {[...orbitals].reverse().map((o, idx) => {
           const count =
             o.type === "s" ? 1 : o.type === "p" ? 3 : o.type === "d" ? 5 : 7;
@@ -159,8 +161,8 @@ function OrbitalDiagram({ orbitals }) {
 
           return (
             <div key={idx} className="flex items-center gap-3">
-              <div className="w-10 font-semibold text-sm">{o.label}</div>
-              <div className="flex gap-1">
+              <div className="w-12 font-mono font-bold text-xs text-muted-foreground">{o.label}</div>
+              <div className="flex gap-1.5">
                 {Array.from({ length: count }).map((_, i) => {
                   let arrows = "";
                   if (remaining > 0) {
@@ -175,9 +177,9 @@ function OrbitalDiagram({ orbitals }) {
                   return (
                     <div
                       key={i}
-                      className={`w-10 h-8 flex items-center justify-center border ${ORBITAL_BORDER[o.type]}`}
+                      className={`w-9 h-8 rounded-lg flex items-center justify-center border font-bold text-sm font-mono transition-all ${ORBITAL_BOX[o.type]}`}
                     >
-                      {arrows}
+                      {arrows || <span className="opacity-20">&bull;</span>}
                     </div>
                   );
                 })}
@@ -212,35 +214,35 @@ export default function ElectronicConfiguration({
   } = calculateConfiguration(atomicNumber);
 
   return (
-    <div className="bg-card border border-border rounded-xl p-6 space-y-6 shadow-sm">
+    <div className="bg-card border border-border rounded-3xl p-6 space-y-6 shadow-sm">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold">Electronic Configuration</h2>
-        <p className="text-muted-foreground">
-          {name} ({symbol}) — Atomic Number {atomicNumber}
+        <h2 className="text-2xl font-black text-foreground tracking-tight">Electronic Configuration</h2>
+        <p className="text-muted-foreground text-sm font-medium mt-0.5">
+          {name} ({symbol}) &bull; Atomic Number {atomicNumber}
         </p>
       </div>
 
       {/* Exception */}
       {isException && (
-        <div className="border-l-4 border-amber-400 bg-amber-50 p-4 rounded-lg">
-          <div className="font-semibold text-amber-800">
+        <div className="border-l-4 border-amber-500 bg-amber-500/10 p-4 rounded-2xl">
+          <div className="font-extrabold text-amber-700 dark:text-amber-300 text-sm">
             Electron Configuration Exception
           </div>
-          <div className="text-sm text-amber-700 mt-1">
+          <div className="text-xs text-amber-800 dark:text-amber-200/90 mt-1 leading-relaxed">
             {exceptionReason}
           </div>
         </div>
       )}
 
-      {/* Orbital Filling (existing) */}
-      <div>
-        <h3 className="font-semibold mb-2">Orbital Filling</h3>
-        <div className="flex flex-wrap gap-2">
+      {/* Orbital Filling */}
+      <div className="space-y-2">
+        <h3 className="font-extrabold text-foreground text-sm uppercase tracking-wider">Orbital Filling Sequence</h3>
+        <div className="flex flex-wrap gap-1.5">
           {orbitals.map((o, idx) => (
             <span
               key={idx}
-              className={`px-3 py-1 rounded-full text-sm font-semibold ${ORBITAL_COLORS[o.type]}`}
+              className={`px-3 py-1 rounded-xl text-xs font-mono font-bold ${ORBITAL_COLORS[o.type]}`}
             >
               {o.label}
               <sup>{o.electrons}</sup>
@@ -249,45 +251,45 @@ export default function ElectronicConfiguration({
         </div>
       </div>
 
-      {/* NEW VISUAL */}
+      {/* Visual Orbital Energy Diagram */}
       <OrbitalDiagram orbitals={orbitals} />
 
-      {/* Legend (existing) */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+      {/* Legend */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs font-bold font-mono border-t border-border pt-4">
         {Object.entries(ORBITAL_COLORS).map(([key, color]) => (
           <div key={key} className="flex items-center gap-2">
-            <span className={`px-2 py-0.5 rounded ${color}`}>{key}</span>
-            <span className="text-muted-foreground">orbital</span>
+            <span className={`px-2.5 py-0.5 rounded-lg ${color}`}>{key}</span>
+            <span className="text-muted-foreground uppercase">{key}-orbital</span>
           </div>
         ))}
       </div>
 
-      {/* Shell distribution (existing) */}
-      <div>
-        <h3 className="font-semibold mb-2">Shell-wise Distribution</h3>
-        <div className="flex flex-wrap gap-3">
+      {/* Shell distribution */}
+      <div className="space-y-2">
+        <h3 className="font-extrabold text-foreground text-sm uppercase tracking-wider">Shell-wise Distribution</h3>
+        <div className="flex flex-wrap gap-2.5">
           {Object.entries(shells).map(([shell, count]) => (
-            <div key={shell} className="px-4 py-2 rounded-lg bg-muted">
-              <div className="text-xs text-muted-foreground">Shell {shell}</div>
-              <div className="font-bold text-lg">{count}</div>
+            <div key={shell} className="px-4 py-2 rounded-2xl bg-muted/60 border border-border">
+              <div className="text-[10px] font-black uppercase text-muted-foreground">Shell {shell}</div>
+              <div className="font-mono font-black text-lg text-foreground">{count}</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Summary (existing) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="border border-border rounded-lg p-4">
-          <div className="text-muted-foreground text-sm">Valence Electrons</div>
-          <div className="text-3xl font-bold text-blue-600">
+      {/* Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-border pt-4">
+        <div className="border border-border bg-muted/30 rounded-2xl p-4">
+          <div className="text-muted-foreground text-xs font-bold uppercase tracking-wider">Valence Electrons</div>
+          <div className="text-3xl font-black text-indigo-600 dark:text-indigo-400 font-mono mt-1">
             {valenceElectrons}
           </div>
         </div>
 
-        <div className="border border-border rounded-lg p-4">
-          <div className="text-muted-foreground text-sm">Periodic Table Block</div>
-          <div className="text-3xl font-bold uppercase">{block}</div>
-          <div className="text-sm text-muted-foreground mt-1">
+        <div className="border border-border bg-muted/30 rounded-2xl p-4">
+          <div className="text-muted-foreground text-xs font-bold uppercase tracking-wider">Periodic Table Block</div>
+          <div className="text-3xl font-black text-purple-600 dark:text-purple-400 uppercase font-mono mt-1">{block}</div>
+          <div className="text-xs text-muted-foreground mt-1">
             {BLOCK_DESCRIPTION[block]}
           </div>
         </div>

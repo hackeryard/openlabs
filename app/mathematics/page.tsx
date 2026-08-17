@@ -174,6 +174,15 @@ const cards = [
     icon: Binary,
     status: "Active",
   },
+  {
+    href: "/mathematics/differential-equations",
+    title: "Differential Equations & Dynamical Systems",
+    desc: "Explore 1st-order slope fields, RK4 integrators, 2D phase plane stability, predator-prey cycles, 3D Lorenz chaos, and SIR epidemic curves.",
+    badge: "Dynamical Systems",
+    color: "indigo",
+    icon: Compass,
+    status: "Active",
+  },
 ];
 
 const webpageSchema = {
