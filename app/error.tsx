@@ -160,11 +160,10 @@ export default function Error({
           </div>
           <div className="w-1 h-1 bg-slate-800 rounded-full" />
           <Link 
-            href="https://github.com/rahulra3621/openlabs/issues"
-            target="_blank"
+            href="/contact"
             className="hover:text-emerald-500 transition-colors decoration-emerald-500/30 underline underline-offset-4"
           >
-            Report Breach
+            Report Issue
           </Link>
         </div>
       </motion.div>

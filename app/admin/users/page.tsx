@@ -4,6 +4,10 @@ import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import {
   Users,
+  BookOpen,
+  Activity,
+  MessageSquare,
+  Inbox,
   Search,
   CheckCircle2,
   XCircle,
@@ -391,11 +395,51 @@ export default function AdminUsersDashboard() {
     <main className="min-h-screen text-foreground py-10 px-4 sm:px-6 lg:px-8 bg-background">
       <div className="max-w-7xl mx-auto space-y-8">
         
-        {/* Navigation Breadcrumb */}
-        <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-          <Link href="/admin/seo-dashboard" className="hover:text-foreground">Admin</Link>
-          <ChevronRight size={12} />
-          <span className="text-foreground">User Management & Telemetry</span>
+        {/* Navigation Breadcrumb & Tabs */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
+          <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+            <Link href="/admin/seo-dashboard" className="hover:text-foreground">Admin</Link>
+            <ChevronRight size={12} />
+            <span className="text-foreground">User Management & Telemetry</span>
+          </div>
+
+          <div className="flex items-center gap-2 text-xs font-bold flex-wrap">
+            <Link
+              href="/admin/users"
+              className="px-3 py-1.5 rounded-xl bg-primary text-primary-foreground font-bold shadow-sm flex items-center gap-1.5"
+            >
+              <Users size={13} />
+              <span>Users</span>
+            </Link>
+            <Link
+              href="/admin/blogs"
+              className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
+            >
+              <BookOpen size={13} />
+              <span>Blogs</span>
+            </Link>
+            <Link
+              href="/admin/seo-dashboard"
+              className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
+            >
+              <Activity size={13} />
+              <span>SEO</span>
+            </Link>
+            <Link
+              href="/admin/feedback"
+              className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
+            >
+              <MessageSquare size={13} />
+              <span>Feedback</span>
+            </Link>
+            <Link
+              href="/admin/contacts"
+              className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
+            >
+              <Inbox size={13} />
+              <span>Contacts</span>
+            </Link>
+          </div>
         </div>
 
         {/* Header Bar */}

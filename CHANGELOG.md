@@ -4,10 +4,15 @@ All notable changes to OpenLabs are documented in this file. Format loosely foll
 
 ## Unreleased
 
+- **Contact Form Database Persistence & Admin Inbox Dashboard (`/api/contact`, `/admin/contacts`, `app/models/Contact.js`)**:
+  - Added Mongoose `Contact` model with fields for `name`, `email`, `subject`, `message`, `userId` (optional association), `status` (`new`/`read`/`replied`/`archived`), `emailSent`, `emailError`, and client telemetry.
+  - Upgraded `POST /api/contact` to persist all inquiries in MongoDB before sending notification emails, ensuring submissions are never lost even if SMTP experiences network timeouts.
+  - Built dedicated Admin Inbox Dashboard at `/admin/contacts` with search, multi-status filtering, 1-click email replies, message text copying, deletion, and rich sender cards.
+
 - **Two-Tier Lab Feedback System & Admin Triage Dashboard (`/api/feedback`, `/admin/feedback`)**:
   - **Data Model & Schema (`app/models/Feedback.js`)**: Mongoose schema with `helpful` boolean pulse, `rating` (1–5 stars), `category` (bug, confusing, wrong-content, suggestion, praise), `comment`, `labStep`, and status lifecycle (`new` &rarr; `reviewed` &rarr; `fixed`).
   - **Public & Admin APIs (`/api/feedback`, `/api/feedback/[labId]`, `/api/admin/feedback`)**: Single endpoint supporting pulse and deep feedback with 24h rate-limiting/upserting, aggregation stats helper (`app/lib/feedback.ts`), and status patching.
-  - **Frontend UI Components (`FeedbackPulse.tsx`, `FeedbackForm.tsx`)**: Non-intrusive thumbs up/down pulse widget that auto-expands into structured deep feedback upon negative rating; modal deep form with floating trigger.
+  - **Frontend UI Components (`FeedbackPulse.tsx`, `FeedbackForm.tsx`, `FloatingLabFeedback.tsx`)**: Non-intrusive thumbs up/down pulse widget and globally mounted floating feedback trigger for 100% of labs in Physics, Chemistry, Biology, Math, and CS.
   - **Gamification & XP Tie-in**: Automatically awards `+10 XP` for first feedback on a lab and grants the `Contributor` badge upon 5+ submissions.
   - **Admin Triage Dashboard (`/admin/feedback`)**: Full sortable/filterable triage interface with global metrics, per-lab ratings and helpfulness %, rich user profile cards (avatar, full name, email, @username, level & XP badge, profile links), client device tags, dual Live Stream / Lab Summary view modes, and instant status updates.
 
