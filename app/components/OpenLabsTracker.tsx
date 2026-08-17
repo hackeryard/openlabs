@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { sendTelemetryBeacon, trackError } from "@/app/lib/tracker";
 
 // ── Client Environment Detectors ───────────────────────────────────────
@@ -58,7 +58,6 @@ export default function OpenLabsTracker() {
   }
 
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   // State refs for active pageview
   const startTimeRef = useRef<number>(Date.now());
@@ -141,9 +140,17 @@ export default function OpenLabsTracker() {
     const referrer = typeof document !== "undefined" ? document.referrer : "";
 
     // Parse UTM tags
-    const utmSource = searchParams?.get("utm_source") || null;
-    const utmMedium = searchParams?.get("utm_medium") || null;
-    const utmCampaign = searchParams?.get("utm_campaign") || null;
+    let utmSource = null;
+    let utmMedium = null;
+    let utmCampaign = null;
+    if (typeof window !== "undefined" && window.location.search) {
+      try {
+        const sp = new URLSearchParams(window.location.search);
+        utmSource = sp.get("utm_source") || null;
+        utmMedium = sp.get("utm_medium") || null;
+        utmCampaign = sp.get("utm_campaign") || null;
+      } catch {}
+    }
 
     let labId: string | null = null;
     if (pathname?.startsWith("/labs/")) {
@@ -195,7 +202,7 @@ export default function OpenLabsTracker() {
       window.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("pagehide", sendHeartbeatUpdate);
     };
-  }, [pathname, searchParams]);
+  }, [pathname]);
 
   return null;
 }
