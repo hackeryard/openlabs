@@ -118,6 +118,7 @@ const labCategories: LabCategory[] = [
     colorClass: "text-rose-500 dark:text-rose-400 group-hover/cat:text-rose-600 dark:group-hover/cat:text-rose-300",
     iconBgClass: "bg-rose-500/10 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 group-hover/cat:bg-rose-500 group-hover/cat:text-white",
     highlights: [
+      { name: "Genetics", path: "/biology/genetics" },
       { name: "Animal Cell", path: "/biology/cell/animal" },
       { name: "Plant Cell", path: "/biology/cell/plant" },
       { name: "Human Anatomy", path: "/biology/human" },
@@ -135,6 +136,7 @@ const labCategories: LabCategory[] = [
       { name: "JS Event Loop", path: "/labs/computer-science/code-lab/js" },
       { name: "Sorting", path: "/labs/computer-science/dsa/sorting/bubble-sort" },
       { name: "Graph Algorithms", path: "/computer-science/dsa/graph-algorithms" },
+      { name: "Cryptography", path: "/computer-science/cryptography" },
       { name: "Logic Gates", path: "/labs/computer-science/logic-gates/and-gate" },
       { name: "Git Simulator", path: "/labs/computer-science/git-simulator" },
     ],
@@ -148,17 +150,9 @@ const labCategories: LabCategory[] = [
     iconBgClass: "bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 group-hover/cat:bg-indigo-500 group-hover/cat:text-white",
     highlights: [
       { name: "Function Grapher", path: "/mathematics/functiongrapher" },
-      { name: "Trigonometry", path: "/mathematics/trigonometry" },
-      { name: "Polynomials", path: "/mathematics/polynomials" },
       { name: "Calculus", path: "/mathematics/calculus" },
       { name: "Linear Algebra", path: "/mathematics/linear-algebra" },
-      { name: "Statistics", path: "/mathematics/statistics" },
-      { name: "Complex Numbers", path: "/mathematics/complex-numbers" },
-      { name: "Set Theory & Logic", path: "/mathematics/set-theory" },
       { name: "Geometry Studio", path: "/mathematics/geometry" },
-      { name: "Vector Algebra", path: "/mathematics/vector-algebra" },
-      { name: "Combinatorics", path: "/mathematics/combinatorics" },
-      { name: "Number Theory", path: "/mathematics/number-theory" },
     ],
   },
 ];

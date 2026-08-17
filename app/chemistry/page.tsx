@@ -100,6 +100,38 @@ const cards = [
     color: "indigo",
     icon: FlaskConical,
   },
+  {
+    href: "/chemistry/flame-test",
+    title: "Flame Test & Emission Spectrometry",
+    desc: "Bunsen air collar combustion, metal cation electron excitation, photon emission, and discrete spectroscope lines.",
+    badge: "Spectroscopy",
+    color: "amber",
+    icon: FlaskConical,
+  },
+  {
+    href: "/chemistry/vsepr-geometry",
+    title: "3D Molecular Geometry & VSEPR",
+    desc: "Rotatable 3D electrostatic domain repulsions, orbital hybridization, bond angle distortion, and net dipole vectors.",
+    badge: "3D VSEPR",
+    color: "teal",
+    icon: Compass,
+  },
+  {
+    href: "/chemistry/electrochemistry",
+    title: "Electrochemical Galvanic & Electrolytic Cells",
+    desc: "Galvanic & electrolytic redox reactions, external electron flow, salt bridge migration, and Nernst equation.",
+    badge: "Electrochemistry",
+    color: "indigo",
+    icon: Activity,
+  },
+  {
+    href: "/chemistry/gas-laws",
+    title: "Gas Laws & Maxwell-Boltzmann Kinetics",
+    desc: "2D elastic particle collisions, draggable piston volume, thermal bath velocity, and live Maxwell-Boltzmann curves.",
+    badge: "Thermodynamics",
+    color: "sky",
+    icon: Atom,
+  },
 ];
 
 const webpageSchema = {

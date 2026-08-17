@@ -67,7 +67,7 @@ export async function GET(req: Request) {
               xpReward,
             }
           },
-          { upsert: true, new: true }
+          { upsert: true, returnDocument: "after" }
         );
 
         generated++;

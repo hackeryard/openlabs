@@ -15,6 +15,9 @@ import {
   Microscope,
   UserRound,
   Sun,
+  Activity,
+  Droplets,
+  Zap,
 } from "lucide-react";
 
 const container: Variants = {
@@ -88,6 +91,38 @@ const cards = [
     color: "violet",
     icon: Brain,
   },
+  {
+    href: "/biology/genetics",
+    title: "Genetics & Heredity",
+    desc: "Punnett squares with creature avatars, dihybrid assortment, DNA transcription & translation, and pedigree trees.",
+    badge: "Genetics Suite",
+    color: "purple",
+    icon: Dna,
+  },
+  {
+    href: "/biology/enzyme-kinetics",
+    title: "Enzyme Kinetics & Catalysis",
+    desc: "Active site induced fit, competitive/non-competitive inhibition, and live Michaelis-Menten & Lineweaver-Burk plots.",
+    badge: "Biochemistry",
+    color: "emerald",
+    icon: Activity,
+  },
+  {
+    href: "/biology/cellular-respiration",
+    title: "Cellular Respiration & ETC",
+    desc: "Glycolysis, Krebs cycle, inner mitochondrial membrane proton pumping, and rotary ATP Synthase.",
+    badge: "Metabolism",
+    color: "amber",
+    icon: Zap,
+  },
+  {
+    href: "/biology/osmosis-tonicity",
+    title: "Osmosis, Diffusion & Tonicity",
+    desc: "Semi-permeable membrane pore filtering, osmotic pressure gradients, RBC hemolysis, and plant turgor.",
+    badge: "Cellular Transport",
+    color: "sky",
+    icon: Droplets,
+  },
 ];
 
 export default function BiologyPage() {
@@ -147,17 +182,19 @@ export default function BiologyPage() {
         <motion.div
           layout
           variants={container}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-16"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-16"
         >
           {cards.map((card) => {
             const Icon = card.icon;
             const colorClasses =
-              card.color === "rose" ? "bg-rose-50 dark:bg-rose-950/40 text-rose-600 border-rose-100 dark:border-rose-900 group-hover:border-rose-400 group-hover:shadow-rose-100/50" :
-              card.color === "emerald" ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 border-emerald-100 dark:border-emerald-900 group-hover:border-emerald-400 group-hover:shadow-emerald-100/50" :
-              card.color === "green" ? "bg-green-50 dark:bg-green-950/40 text-green-600 border-green-100 dark:border-green-900 group-hover:border-green-400 group-hover:shadow-green-100/50" :
-              card.color === "red" ? "bg-red-50 dark:bg-red-950/40 text-red-600 border-red-100 dark:border-red-900 group-hover:border-red-400 group-hover:shadow-red-100/50" :
-              card.color === "amber" ? "bg-amber-50 dark:bg-amber-950/40 text-amber-600 border-amber-100 dark:border-amber-900 group-hover:border-amber-400 group-hover:shadow-amber-100/50" :
-              "bg-violet-50 dark:bg-violet-950/40 text-violet-600 border-violet-100 dark:border-violet-900 group-hover:border-violet-400 group-hover:shadow-violet-100/50";
+              card.color === "rose" ? "bg-rose-50 dark:bg-rose-950/40 text-rose-600 border-rose-100 dark:border-rose-900 group-hover:border-rose-400" :
+              card.color === "emerald" ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 border-emerald-100 dark:border-emerald-900 group-hover:border-emerald-400" :
+              card.color === "green" ? "bg-green-50 dark:bg-green-950/40 text-green-600 border-green-100 dark:border-green-900 group-hover:border-green-400" :
+              card.color === "red" ? "bg-red-50 dark:bg-red-950/40 text-red-600 border-red-100 dark:border-red-900 group-hover:border-red-400" :
+              card.color === "amber" ? "bg-amber-50 dark:bg-amber-950/40 text-amber-600 border-amber-100 dark:border-amber-900 group-hover:border-amber-400" :
+              card.color === "sky" ? "bg-sky-50 dark:bg-sky-950/40 text-sky-600 border-sky-100 dark:border-sky-900 group-hover:border-sky-400" :
+              card.color === "purple" ? "bg-purple-50 dark:bg-purple-950/40 text-purple-600 border-purple-100 dark:border-purple-900 group-hover:border-purple-400" :
+              "bg-violet-50 dark:bg-violet-950/40 text-violet-600 border-violet-100 dark:border-violet-900 group-hover:border-violet-400";
 
             return (
               <motion.div
@@ -175,10 +212,10 @@ export default function BiologyPage() {
                   href={card.href}
                   className="block h-full bg-card rounded-3xl border border-border p-6 shadow-md hover:shadow-xl transition-all duration-300 relative overflow-hidden flex flex-col justify-between"
                 >
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-muted group-hover:bg-emerald-500/20 transition-all" />
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-muted group-hover:bg-emerald-500/30 transition-all" />
 
                   <div>
-                    <div className="flex justify-between items-start gap-3 mb-6">
+                    <div className="flex justify-between items-start gap-3 mb-4">
                       <div className={`h-11 w-11 rounded-2xl border flex items-center justify-center transition shadow-sm ${colorClasses}`}>
                         <Icon className="h-5 w-5" />
                       </div>
@@ -187,7 +224,7 @@ export default function BiologyPage() {
                       </span>
                     </div>
 
-                    <h3 className="text-xl font-extrabold text-foreground group-hover:text-emerald-600 transition-colors mb-2.5 tracking-tight leading-snug">
+                    <h3 className="text-lg font-extrabold text-foreground group-hover:text-emerald-600 transition-colors mb-2 tracking-tight leading-snug">
                       {card.title}
                     </h3>
                     <p className="text-muted-foreground text-xs leading-relaxed font-medium">
@@ -195,7 +232,7 @@ export default function BiologyPage() {
                     </p>
                   </div>
 
-                  <div className="mt-6 pt-4 border-t border-border text-[10px] font-extrabold text-emerald-600 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  <div className="mt-6 pt-4 border-t border-border text-[11px] font-extrabold text-emerald-600 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                     Enter Laboratory <ArrowRight className="h-3.5 w-3.5" />
                   </div>
                 </Link>

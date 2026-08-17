@@ -114,6 +114,34 @@ export const LABS: Lab[] = [
     challengeEnabled: true,
     description: "Explore optical lens behavior and image formation",
   },
+  {
+    id: "physics/faradays-law",
+    name: "Electromagnetic Induction & Faraday's Law",
+    subject: "physics",
+    type: "simulation",
+    challengeParams: ["fluxChanged", "emfGenerated", "turnsExplored"],
+    challengeEnabled: true,
+    description: "Draggable bar magnet, vector field lines, multi-turn coils, and live galvanometer deflection",
+  },
+  {
+    id: "physics/photoelectric-effect",
+    name: "Photoelectric Effect & Quantum Photons",
+    subject: "physics",
+    type: "simulation",
+    challengeParams: ["photonsFired", "electronsEjected", "stoppingVoltageMeasured"],
+    challengeEnabled: true,
+    description: "Monochromatic photon frequency sweep, work functions, photoelectron ejection, and stopping potential",
+  },
+  {
+    id: "physics/thermodynamics",
+    name: "Thermodynamic Heat Engines & Carnot Cycle",
+    subject: "physics",
+    type: "simulation",
+    challengeParams: ["cyclesCompleted", "efficiencyMeasured", "workOutput"],
+    challengeEnabled: true,
+    description: "4-stroke Carnot cycle, isothermal/adiabatic expansion & compression, and live P-V indicator loops",
+  },
+
 
 
   // ─── CHEMISTRY ─────────────────────────────────────────
@@ -171,6 +199,43 @@ export const LABS: Lab[] = [
     challengeEnabled: true,
     description: "Virtual acid-base titration lab",
   },
+  {
+    id: "chemistry/flame-test",
+    name: "Flame Test & Atomic Emission Spectrometry",
+    subject: "chemistry",
+    type: "simulation",
+    challengeParams: ["saltsTested", "photonsEmitted", "spectraAnalyzed"],
+    challengeEnabled: true,
+    description: "Bunsen air collar combustion, metal cation electron excitation, photon emission, and discrete spectroscope lines",
+  },
+  {
+    id: "chemistry/vsepr-geometry",
+    name: "3D Molecular Geometry & VSEPR Studio",
+    subject: "chemistry",
+    type: "simulation",
+    challengeParams: ["geometriesBuilt", "anglesMeasured", "dipolesCalculated"],
+    challengeEnabled: true,
+    description: "Rotatable 3D electrostatic domain repulsions, orbital hybridization, bond angles, and net dipole vectors",
+  },
+  {
+    id: "chemistry/electrochemistry",
+    name: "Electrochemical Galvanic & Electrolytic Cells",
+    subject: "chemistry",
+    type: "simulation",
+    challengeParams: ["cellsBuilt", "voltageMeasured", "massTransferred"],
+    challengeEnabled: true,
+    description: "Galvanic & electrolytic redox reactions, electron wire flow, salt bridge migration, and Nernst equation",
+  },
+  {
+    id: "chemistry/gas-laws",
+    name: "Gas Laws & Maxwell-Boltzmann Kinetic Theory",
+    subject: "chemistry",
+    type: "simulation",
+    challengeParams: ["compressionsRun", "temperatureScaled", "distributionsTraced"],
+    challengeEnabled: true,
+    description: "2D elastic particle collisions, draggable piston volume, thermal bath velocity, and live Maxwell-Boltzmann curves",
+  },
+
 
   // ─── BIOLOGY ───────────────────────────────────────────
   {
@@ -227,6 +292,70 @@ export const LABS: Lab[] = [
     challengeEnabled: true,
     description: "Explore variables affecting photosynthesis",
   },
+  {
+    id: "biology/genetics/monohybrid",
+    name: "Monohybrid Punnett Square",
+    subject: "biology",
+    type: "simulation",
+    challengeParams: ["crossesCompleted", "batchBreedsRun"],
+    challengeEnabled: true,
+    description: "Single-trait inheritance with creature avatars and 100-offspring breeder",
+  },
+  {
+    id: "biology/genetics/dihybrid",
+    name: "Dihybrid Cross & Assortment",
+    subject: "biology",
+    type: "simulation",
+    challengeParams: ["crossesCompleted"],
+    challengeEnabled: true,
+    description: "16-cell dihybrid cross tracking 2 traits with 9:3:3:1 ratios",
+  },
+  {
+    id: "biology/genetics/transcription-translation",
+    name: "DNA Transcription & Translation",
+    subject: "biology",
+    type: "simulation",
+    challengeParams: ["proteinsSynthesized", "mutationsTested"],
+    challengeEnabled: true,
+    description: "Central Dogma mRNA synthesis and ribosomal tRNA codon translation",
+  },
+  {
+    id: "biology/genetics/pedigree",
+    name: "Pedigree Tree & Inheritance",
+    subject: "biology",
+    type: "exploration",
+    challengeParams: ["membersInspected", "modesExplored"],
+    challengeEnabled: true,
+    description: "3-generation family tree analyzer for Autosomal and X-Linked traits",
+  },
+  {
+    id: "biology/enzyme-kinetics",
+    name: "Enzyme Kinetics & Catalysis Studio",
+    subject: "biology",
+    type: "simulation",
+    challengeParams: ["reactionsCatalyzed", "vmaxCalculated", "inhibitorsTested"],
+    challengeEnabled: true,
+    description: "Active site induced fit, competitive/non-competitive inhibition, and live Michaelis-Menten & Lineweaver-Burk plots",
+  },
+  {
+    id: "biology/cellular-respiration",
+    name: "Cellular Respiration & Mitochondrial Electron Transport",
+    subject: "biology",
+    type: "simulation",
+    challengeParams: ["glucoseProcessed", "atpSynthesized", "gradientPumped"],
+    challengeEnabled: true,
+    description: "Glycolysis, Krebs cycle, inner mitochondrial membrane proton gradient pumping, and rotary ATP Synthase",
+  },
+  {
+    id: "biology/osmosis-tonicity",
+    name: "Osmosis, Diffusion & Cell Tonicity",
+    subject: "biology",
+    type: "simulation",
+    challengeParams: ["solutesEquilibrated", "rbcLysisTested", "turgorMeasured"],
+    challengeEnabled: true,
+    description: "Semi-permeable membrane pore filtering, osmotic pressure gradients, RBC hemolysis/crenation, and plant turgor",
+  },
+
 
   // ─── COMPUTER SCIENCE ──────────────────────────────────
   {
@@ -247,6 +376,25 @@ export const LABS: Lab[] = [
     challengeEnabled: true,
     description: "Interactive JavaScript event loop visualizer",
   },
+  {
+    id: "computer-science/cpu-architecture",
+    name: "CPU Micro-Architecture & 8-Bit Assembly",
+    subject: "computerScience",
+    type: "simulation",
+    challengeParams: ["programsExecuted", "cyclesStepped", "registersModified"],
+    challengeEnabled: true,
+    description: "8-bit assembly editor, 4-stage instruction cycle, datapath bus animation, and register file",
+  },
+  {
+    id: "computer-science/bitwise-operations",
+    name: "Binary & Bitwise Operations Studio",
+    subject: "computerScience",
+    type: "simulation",
+    challengeParams: ["bitsToggled", "operationsCalculated", "masksApplied"],
+    challengeEnabled: true,
+    description: "Interactive 8-bit register tiles, bitwise logic gates, shifts, rotations, Two's complement, and mask hacks",
+  },
+
   {
     id: "computer-science/dsa/sorting/bubble-sort",
     name: "Bubble Sort Visualizer",
@@ -499,6 +647,60 @@ export const LABS: Lab[] = [
     challengeEnabled: true,
     description: "Data science and ML experiments",
   },
+  {
+    id: "computer-science/cryptography",
+    name: "Classical & Modern Cryptography",
+    subject: "computerScience",
+    type: "exploration",
+    challengeParams: ["ciphersEncrypted", "keysAgreed", "hashesMined"],
+    challengeEnabled: true,
+    description: "Interactive Caesar cipher wheel, Vigenère table, WWII Enigma machine, Diffie-Hellman keys, and SHA-256 mining",
+  },
+  {
+    id: "computer-science/cryptography/caesar",
+    name: "Caesar Cipher Studio",
+    subject: "computerScience",
+    type: "exploration",
+    challengeParams: ["ciphersEncrypted"],
+    challengeEnabled: true,
+    description: "Interactive rotating Caesar cipher wheel and frequency cracker",
+  },
+  {
+    id: "computer-science/cryptography/vigenere",
+    name: "Vigenère Cipher Studio",
+    subject: "computerScience",
+    type: "exploration",
+    challengeParams: ["ciphersEncrypted"],
+    challengeEnabled: true,
+    description: "Polyalphabetic Vigenère 26x26 Tabula Recta matrix lookup",
+  },
+  {
+    id: "computer-science/cryptography/enigma",
+    name: "WWII Enigma Machine Simulator",
+    subject: "computerScience",
+    type: "exploration",
+    challengeParams: ["ciphersEncrypted"],
+    challengeEnabled: true,
+    description: "3-rotor Enigma machine with plugboard and glowing lampboards",
+  },
+  {
+    id: "computer-science/cryptography/diffie-hellman",
+    name: "Diffie-Hellman Key Exchange",
+    subject: "computerScience",
+    type: "exploration",
+    challengeParams: ["keysAgreed"],
+    challengeEnabled: true,
+    description: "Asymmetric paint color-mixing and modular math key exchange",
+  },
+  {
+    id: "computer-science/cryptography/sha256",
+    name: "SHA-256 & Bitcoin Mining",
+    subject: "computerScience",
+    type: "exploration",
+    challengeParams: ["hashesMined"],
+    challengeEnabled: true,
+    description: "256-bit Avalanche Effect and live Proof-of-Work Bitcoin mining",
+  },
 
   // ─── MATHEMATICS ───────────────────────────────────────
   {
@@ -609,8 +811,36 @@ export const LABS: Lab[] = [
     challengeEnabled: true,
     description: "Primes & sieves, Euclidean GCD tiling, modular arithmetic & CRT, Euler's totient, RSA cryptography, and Collatz orbits",
   },
+  {
+    id: "mathematics/differential-equations",
+    name: "Differential Equations & Dynamical Systems",
+    subject: "mathematics",
+    type: "simulation",
+    challengeParams: ["equationsIntegrated", "phaseSystemsExplored", "chaosTrajectoriesTested"],
+    challengeEnabled: true,
+    description: "Slope fields & RK4 integrators, 2D phase planes, Lotka-Volterra predator-prey dynamics, 3D Lorenz chaos, and SIR epidemic curves",
+  },
 ]
 
 export const getLabById = (id: string) => LABS.find(l => l.id === id)
 export const getLabsBySubject = (subject: string) => LABS.filter(l => l.subject === subject)
 export const getLabsByType = (type: LabType) => LABS.filter(l => l.type === type)
+
+export function resolveLabIdFromPath(pathname: string): string | null {
+  if (!pathname) return null;
+  const cleaned = pathname.replace(/^\/labs\//, "").replace(/^\//, "").replace(/\/$/, "");
+  
+  // Exact match
+  const exact = LABS.find((l) => l.id === cleaned);
+  if (exact) return exact.id;
+
+  // Prefix match (for sub-routes like chemistry/periodictable/atom/46 -> chemistry/periodictable)
+  const prefixMatch = LABS.find((l) => cleaned.startsWith(l.id));
+  if (prefixMatch) return prefixMatch.id;
+
+  // Partial match
+  const partialMatch = LABS.find((l) => l.id.startsWith(cleaned));
+  if (partialMatch) return partialMatch.id;
+
+  return null;
+}

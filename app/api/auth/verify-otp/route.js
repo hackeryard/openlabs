@@ -40,7 +40,7 @@ export async function POST(req) {
     const user = await User.findOneAndUpdate(
       { email },
       { emailVerified: true },
-      { new: true }
+      { returnDocument: "after" }
     )
 
     if (!user) {

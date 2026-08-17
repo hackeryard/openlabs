@@ -112,6 +112,33 @@ const experiments: PhysicsExperiment[] = [
     difficulty: "Advanced",
     duration: "18 min",
   },
+  {
+    href: "/physics/faradays-law",
+    title: "Electromagnetic Induction & Faraday's Law",
+    desc: "Draggable bar magnet, vector flux lines, multi-turn coils, and live galvanometer deflection.",
+    formula: "ε = -N(dΦ/dt)",
+    category: "Electromagnetism",
+    difficulty: "Intermediate",
+    duration: "15 min",
+  },
+  {
+    href: "/physics/photoelectric-effect",
+    title: "Photoelectric Effect & Quantum Photons",
+    desc: "Monochromatic photon frequency sweep, metal work functions, and stopping potential.",
+    formula: "K_max = hν - Φ",
+    category: "Quantum Physics",
+    difficulty: "Advanced",
+    duration: "20 min",
+  },
+  {
+    href: "/physics/thermodynamics",
+    title: "Thermodynamic Heat Engines & Carnot Cycle",
+    desc: "4-stroke Carnot cycle, isothermal/adiabatic expansion & compression, and live P-V indicator loops.",
+    formula: "η = 1 - (Tc/Th)",
+    category: "Thermodynamics",
+    difficulty: "Intermediate",
+    duration: "18 min",
+  },
 ];
 
 const faqs = [

@@ -38,7 +38,7 @@ export async function PUT(request: Request, { params }: { params: { slug: string
     const blog = await Blog.findOneAndUpdate(
       { slug: params.slug },
       body,
-      { new: true, runValidators: true }
+      { returnDocument: "after", runValidators: true }
     );
 
     if (!blog) {

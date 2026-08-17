@@ -4,6 +4,69 @@ All notable changes to OpenLabs are documented in this file. Format loosely foll
 
 ## Unreleased
 
+- **Two-Tier Lab Feedback System & Admin Triage Dashboard (`/api/feedback`, `/admin/feedback`)**:
+  - **Data Model & Schema (`app/models/Feedback.js`)**: Mongoose schema with `helpful` boolean pulse, `rating` (1–5 stars), `category` (bug, confusing, wrong-content, suggestion, praise), `comment`, `labStep`, and status lifecycle (`new` &rarr; `reviewed` &rarr; `fixed`).
+  - **Public & Admin APIs (`/api/feedback`, `/api/feedback/[labId]`, `/api/admin/feedback`)**: Single endpoint supporting pulse and deep feedback with 24h rate-limiting/upserting, aggregation stats helper (`app/lib/feedback.ts`), and status patching.
+  - **Frontend UI Components (`FeedbackPulse.tsx`, `FeedbackForm.tsx`)**: Non-intrusive thumbs up/down pulse widget that auto-expands into structured deep feedback upon negative rating; modal deep form with floating trigger.
+  - **Gamification & XP Tie-in**: Automatically awards `+10 XP` for first feedback on a lab and grants the `Contributor` badge upon 5+ submissions.
+  - **Admin Triage Dashboard (`/admin/feedback`)**: Full sortable/filterable triage interface with global metrics, per-lab ratings and helpfulness %, rich user profile cards (avatar, full name, email, @username, level & XP badge, profile links), client device tags, dual Live Stream / Lab Summary view modes, and instant status updates.
+
+
+- **Electrochemistry Lab Voltage & Resistance Dynamics (`/labs/chemistry/electrochemistry`)**:
+  - Integrated internal cell resistance ($r_{\text{int}} = 2.0\text{ }\Omega$) so terminal voltage $V_{\text{terminal}} = \mathcal{E}_{\text{cell}} \cdot \frac{R_{\text{load}}}{R_{\text{load}} + r_{\text{int}}}$ actively responds to the load resistance slider ($1\text{ }\Omega$ to $100\text{ }\Omega$).
+  - Added live telemetry matrix showing Terminal Voltage, Open-Circuit EMF, Current ($I$), Power ($P$), and Internal Voltage Drop ($I \cdot r_{\text{int}}$).
+  - Added dynamic glowing Lightbulb load on the circuit wire whose illumination scales with electric power.
+
+- **Monohybrid Punnett Square & Creature Breeder Redesign (`/labs/biology/genetics/monohybrid`)**:
+  - Redesigned the lab from scratch into an intuitive 4-step genetic breeding experience.
+  - **Step 1 Parents**: Maternal (Mom) & Paternal (Dad) creature avatar customizers with instant genotype selection (`BB`, `Bb`, `bb`) and gamete split displays.
+  - **Step 2 Punnett Matrix**: High-contrast 2×2 gamete fusion grid showing baby creature avatars and genotype/phenotype in each cell.
+  - **Step 3 Mendelian Ratios**: Real-time percentage bars for Genotypic Ratio ($1:2:1$) and Phenotypic Ratio ($3:1$).
+  - **Step 4 Creature Nursery**: Live population breeder allowing users to breed batches of 1, 10, 50, or 100 baby creatures to observe statistical convergence toward Mendelian ratios.
+  - **Inheritance Modes**: Complete Dominance, Incomplete Dominance (Pink blend), and Co-Dominance (Spots).
+
+
+- **Periodic Table & Atom Lab Dark Mode & 3D Centering Polish**:
+  - **Periodic Table Matrix (`/labs/chemistry/periodictable`)**: Full dark/light mode glassmorphic styling across all 118 element cards, family filters, and detailed monograph modal.
+  - **Atom Monograph Redesign (`/chemistry/periodictable/atom/[atomicNumber]`)**: Redesigned scientific profile while preserving the left atom card, featuring interactive Bohr Model SVG, previous/next element switcher, high-impact CTA launcher buttons, thermodynamic matrix, and structured FAQs.
+  - **3D Bohr Atom Model Lab (`/labs/chemistry/periodictable/atom/[atomicNumber]`)**: Removed hardcoded canvas background, enabled transparent WebGL viewport, locked camera orbit target to `(0, 0, 0)`, and aligned decoupled electron orbital planes for centered rendering in dark and light modes.
+  - **Electronic Configuration Simulator (`/labs/chemistry/electronic-configuration/[atomicNumber]`)**: Full light/dark mode theming for Aufbau subshell boxes, orbital diagrams, and exception alerts.
+
+
+- **SEO, AEO, & GEO Landing Page Optimization Across All 12 Labs**:
+  - Upgraded all 12 newly developed lab landing pages to full `EducationalLandingLayout` architecture with rich scientific theory, step-by-step mathematical foundations, industrial real-world applications, structured AEO/GEO FAQs, and JSON-LD schema markup.
+  - **Chemistry**: Flame Test & Atomic Emission (`/chemistry/flame-test`), 3D VSEPR Geometry (`/chemistry/vsepr-geometry`), Electrochemical Cells (`/chemistry/electrochemistry`), Gas Laws & Maxwell-Boltzmann (`/chemistry/gas-laws`).
+  - **Physics**: Faraday's Law & Induction (`/physics/faradays-law`), Photoelectric Effect (`/physics/photoelectric-effect`), Thermodynamic Heat Engines (`/physics/thermodynamics`).
+  - **Biology**: Enzyme Kinetics (`/biology/enzyme-kinetics`), Cellular Respiration & ETC (`/biology/cellular-respiration`), Osmosis & Tonicity (`/biology/osmosis-tonicity`).
+  - **Computer Science**: Intel 8085 & SAP-1 Architecture (`/computer-science/cpu-architecture`), Binary & Bitwise Operations (`/computer-science/bitwise-operations`).
+  - **Title Duplication Fix**: Fixed root layout metadata `title.template` in `app/layout.tsx` from `'%s | OpenLabs'` to `'%s'` so that pages with custom branding and keywords do not suffer from double `| OpenLabs` suffixes in search engine results.
+
+  - Added the **Genetics & Heredity Studio Suite** under Biology (`/biology/genetics` and `/labs/biology/genetics/*`):
+    - **Monohybrid Punnett Square & Creature Breeder** (`/biology/genetics/monohybrid`): Single-gene inheritance ($BB, Bb, bb$), live alien creature avatar rendering (purple vs orange fur), animated gamete meiosis and fertilization, theoretical $3:1$ and $1:2:1$ ratios, plus a **100-Offspring Population Breeder** demonstrating experimental statistical convergence.
+    - **Dihybrid Cross & Independent Assortment** (`/biology/genetics/dihybrid`): 16-cell interactive Punnett matrix tracking two unlinked traits simultaneously (Seed Shape $R/r$ and Color $Y/y$) with live animated fertilizations and classic Mendelian $9:3:3:1$ phenotype breakdowns.
+    - **DNA Transcription & Translation (Central Dogma)** (`/biology/genetics/transcription-translation`): Molecular biology simulator with DNA double-strand unzipping, complementary mRNA transcription ($A \to U, T \to A, C \to G, G \to C$), ribosomal tRNA codon reading, and growing peptide polypeptide chain, plus an interactive mutation sandbox (Silent, Missense, Nonsense, Frameshift).
+    - **Pedigree Tree & Inheritance Patterns** (`/biology/genetics/pedigree`): 3-generation interactive clinical pedigree family tree analyzing Autosomal Dominant (Huntington's), Autosomal Recessive (Cystic Fibrosis), and X-Linked Recessive (Color Blindness/Hemophilia) with individual health status inspection.
+    - **Dedicated Hub**: Hub page (`/biology/genetics`) displaying all 4 standalone lab cards with `ClientGrid`.
+
+- **Classical & Modern Cryptography Studio Lab**:
+  - Added the **Classical & Modern Cryptography Studio** lab (`/computer-science/cryptography` and `/labs/computer-science/cryptography`):
+    - **Caesar Cipher Wheel & Chi-Squared Cracker**: Interactive rotatable SVG double-ring cipher wheel, real-time message encoding/decoding, ciphertext letter frequency histogram, and 1-click Chi-squared ($\chi^2$) frequency attack auto-cracker.
+    - **Polyalphabetic Vigenère Tableau**: $26 \times 26$ Tabula Recta grid with live row/column coordinate intersection highlighting, keyword stream repeater, and Index of Coincidence (IoC) explanation.
+    - **WWII Enigma Machine Simulator**: 3 stepping rotors (I, II, III) with turnover notches, Reflector UKW-B (demonstrating why a letter never encrypts to itself), customizable Steckerbrett plugboard, glowing lampboard, and step-by-step electrical current trace.
+    - **Diffie-Hellman Key Exchange**: Paint color-mixing visualizer + discrete logarithm math sandbox ($g^{ab} \pmod p$) with Eve eavesdropper security inspector.
+    - **SHA-256 Avalanche Effect & Mining**: Bit-level 256-cell difference map demonstrating the avalanche effect and Bitcoin Proof-of-Work block mining mini-game.
+    - **Student Guided Missions & Concept Check Quizzes**: Interactive missions with completion badges and active recall quizzes.
+
+- **Differential Equations & Dynamical Systems Studio Lab**:
+  - Added the **Differential Equations & Dynamical Systems Studio** lab (`/mathematics/differential-equations` and `/labs/mathematics/differential-equations`):
+    - **1st-Order Slope Fields & Numerical Integrators**: Interactive direction field canvas with click-to-spawn solution curves, equation presets ($y' = x - y, y' = y(1-y), y' = \sin(x) - y, y' = x^2 - y^2$), and step size error comparison across **Euler's Method**, **Heun's 2nd-Order Method**, and classical **4th-Order Runge-Kutta (RK4)**.
+    - **2D Linear Systems & Phase Plane Portraits ($\dot{\mathbf{x}} = A\mathbf{x}$)**: Two-way editable matrix inputs, Trace-Determinant stability diagram ($\tau = \text{tr}(A), \Delta = \det(A)$) classifying Saddles, Spirals, Nodes, and Neutral Centers, with real-time eigenvalue computations and stream particle trajectories.
+    - **Lotka-Volterra Predator-Prey Dynamics**: Non-linear cyclic orbits in $(x, y)$ phase space surrounding interior coexistence equilibrium, with dual time-series population waveforms demonstrating ecological phase lags.
+    - **Damped & Driven Harmonic Oscillators ($m\ddot{x} + c\dot{x} + kx = F_0\cos(\omega t)$)**: Underdamped ($\zeta < 1$), critically damped ($\zeta = 1$), and overdamped ($\zeta > 1$) regimes, driving force frequency resonance response sweeps, and $(x, v)$ phase-space ellipses.
+    - **3D Lorenz Strange Attractor (Chaos Theory)**: 3D rotatable Strange Attractor (Butterfly attractor) with mouse rotation, Lyapunov exponent sensitive dependence, and dual-trajectory Butterfly Effect divergence simulator ($\Delta x_0 = 10^{-4}$).
+    - **Epidemiological SIR Dynamics**: Kermack-McKendrick infection transmission curves ($S, I, R$), basic reproduction number $R_0 = \beta / \gamma$, herd immunity thresholds, and social distancing "Flatten the Curve" slider.
+
+
 - **OpenRouter Multi-Key Automatic Fallback & Rotation**:
   - Implemented multi-key failover system in `app/lib/openrouter.ts`:
     - Reads single or multiple comma-separated keys from `CHATBOT_API_KEY`, `CHATBOT_API_KEYS`, `OPENROUTER_API_KEY`, `OPENROUTER_API_KEYS`, or enumerated env vars (`CHATBOT_API_KEY_1`, `CHATBOT_API_KEY_2`, etc.).

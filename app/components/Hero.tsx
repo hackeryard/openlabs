@@ -32,6 +32,7 @@ const labsData = {
     shadow: "shadow-rose-200/50",
     icon: <Dna className="w-6 h-6" aria-hidden="true" />,
     items: [
+      { name: "Genetics & Heredity", path: "/biology/genetics" },
       { name: "Animal Cell", path: "/biology/cell/animal" },
       { name: "Plant Cell", path: "/biology/cell/plant" },
       { name: "Human Anatomy", path: "/biology/human" },
@@ -45,6 +46,7 @@ const labsData = {
       { name: "HTML/CSS/JS Editor", path: "/computer-science/code-lab/html-css-js" },
       { name: "Logic Gates", path: "/computer-science/logic-gates" },
       { name: "Graph Algorithms", path: "/computer-science/dsa/graph-algorithms" },
+      { name: "Cryptography Studio", path: "/computer-science/cryptography" },
     ],
   },
   "Mathematics": {
@@ -64,6 +66,7 @@ const labsData = {
       { name: "Vector Algebra & 3D Space", path: "/mathematics/vector-algebra" },
       { name: "Combinatorics & Discrete Counting", path: "/mathematics/combinatorics" },
       { name: "Number Theory & Cryptography", path: "/mathematics/number-theory" },
+      { name: "Differential Equations", path: "/mathematics/differential-equations" },
     ],
   },
 };

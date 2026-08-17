@@ -1,15 +1,7 @@
 "use client";
-// src/components/SearchBar.jsx
+
 import React, { useState, useMemo } from "react";
 import { Search } from "lucide-react";
-
-/**
- * SearchBar
- * - live search on name | symbol | atomicNumber
- * - props:
- *   - elements: array
- *   - onSelect(element) => void
- */
 
 export default function SearchBar({ elements = [], onSelect }) {
   const [q, setQ] = useState("");
@@ -35,7 +27,7 @@ export default function SearchBar({ elements = [], onSelect }) {
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder="Search name, symbol, or atomic number"
-        className="w-full rounded-2xl border border-border bg-card py-3 pl-10 pr-4 text-sm font-semibold text-foreground shadow-sm outline-none transition placeholder:text-muted-foreground focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100"
+        className="w-full rounded-2xl border border-border bg-card py-3 pl-10 pr-4 text-sm font-semibold text-foreground shadow-sm outline-none transition placeholder:text-muted-foreground focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
         aria-label="Search elements"
       />
       {q && results.length > 0 && (
