@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import CircuitFlowRenderer, { CircuitPath } from "@/app/components/shared/CircuitFlowRenderer";
+import FeedbackPulse from "@/app/components/FeedbackPulse";
 import { useLab } from "@/app/hooks/useXP";
 import { useChat } from "@/app/components/ChatContext";
 import {
@@ -635,6 +636,9 @@ export default function ElectrochemistryLab() {
           })}
         </div>
       </div>
+
+      {/* Lab Feedback Widget */}
+      <FeedbackPulse labId="chemistry/electrochemistry" />
     </div>
   );
 }

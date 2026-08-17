@@ -825,3 +825,22 @@ export const LABS: Lab[] = [
 export const getLabById = (id: string) => LABS.find(l => l.id === id)
 export const getLabsBySubject = (subject: string) => LABS.filter(l => l.subject === subject)
 export const getLabsByType = (type: LabType) => LABS.filter(l => l.type === type)
+
+export function resolveLabIdFromPath(pathname: string): string | null {
+  if (!pathname) return null;
+  const cleaned = pathname.replace(/^\/labs\//, "").replace(/^\//, "").replace(/\/$/, "");
+  
+  // Exact match
+  const exact = LABS.find((l) => l.id === cleaned);
+  if (exact) return exact.id;
+
+  // Prefix match (for sub-routes like chemistry/periodictable/atom/46 -> chemistry/periodictable)
+  const prefixMatch = LABS.find((l) => cleaned.startsWith(l.id));
+  if (prefixMatch) return prefixMatch.id;
+
+  // Partial match
+  const partialMatch = LABS.find((l) => l.id.startsWith(cleaned));
+  if (partialMatch) return partialMatch.id;
+
+  return null;
+}

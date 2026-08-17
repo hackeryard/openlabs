@@ -5,6 +5,7 @@ import type { Metadata } from 'next'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import OpenLabsAILoader from './components/OpenLabsAILoader'
+import FloatingLabFeedback from './components/FloatingLabFeedback'
 import { ChatProvider } from './components/ChatContext'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from "@vercel/analytics/next"
@@ -113,6 +114,7 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
               <ChatProvider>
                 {children}
                 <OpenLabsAILoader />
+                <FloatingLabFeedback />
                 <ClarityProvider />
                 <ClarityTrackerObserver />
               </ChatProvider>

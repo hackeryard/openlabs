@@ -4,6 +4,14 @@ All notable changes to OpenLabs are documented in this file. Format loosely foll
 
 ## Unreleased
 
+- **Two-Tier Lab Feedback System & Admin Triage Dashboard (`/api/feedback`, `/admin/feedback`)**:
+  - **Data Model & Schema (`app/models/Feedback.js`)**: Mongoose schema with `helpful` boolean pulse, `rating` (1–5 stars), `category` (bug, confusing, wrong-content, suggestion, praise), `comment`, `labStep`, and status lifecycle (`new` &rarr; `reviewed` &rarr; `fixed`).
+  - **Public & Admin APIs (`/api/feedback`, `/api/feedback/[labId]`, `/api/admin/feedback`)**: Single endpoint supporting pulse and deep feedback with 24h rate-limiting/upserting, aggregation stats helper (`app/lib/feedback.ts`), and status patching.
+  - **Frontend UI Components (`FeedbackPulse.tsx`, `FeedbackForm.tsx`)**: Non-intrusive thumbs up/down pulse widget that auto-expands into structured deep feedback upon negative rating; modal deep form with floating trigger.
+  - **Gamification & XP Tie-in**: Automatically awards `+10 XP` for first feedback on a lab and grants the `Contributor` badge upon 5+ submissions.
+  - **Admin Triage Dashboard (`/admin/feedback`)**: Full sortable/filterable triage interface with global metrics, per-lab ratings and helpfulness %, rich user profile cards (avatar, full name, email, @username, level & XP badge, profile links), client device tags, dual Live Stream / Lab Summary view modes, and instant status updates.
+
+
 - **Electrochemistry Lab Voltage & Resistance Dynamics (`/labs/chemistry/electrochemistry`)**:
   - Integrated internal cell resistance ($r_{\text{int}} = 2.0\text{ }\Omega$) so terminal voltage $V_{\text{terminal}} = \mathcal{E}_{\text{cell}} \cdot \frac{R_{\text{load}}}{R_{\text{load}} + r_{\text{int}}}$ actively responds to the load resistance slider ($1\text{ }\Omega$ to $100\text{ }\Omega$).
   - Added live telemetry matrix showing Terminal Voltage, Open-Circuit EMF, Current ($I$), Power ($P$), and Internal Voltage Drop ($I \cdot r_{\text{int}}$).

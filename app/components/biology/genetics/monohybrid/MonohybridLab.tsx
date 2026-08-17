@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import { DominanceModel } from "../types";
+import FeedbackPulse from "@/app/components/FeedbackPulse";
 import { useLab } from "@/app/hooks/useXP";
 import { useChat } from "@/app/components/ChatContext";
 import {
@@ -938,6 +939,9 @@ export default function MonohybridLab() {
           })}
         </div>
       </div>
+
+      {/* Lab Feedback Widget */}
+      <FeedbackPulse labId="biology/genetics/monohybrid" />
     </div>
   );
 }

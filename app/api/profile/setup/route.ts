@@ -44,7 +44,7 @@ export async function POST(req: Request) {
             profileSetupComplete: true,
           },
         },
-        ({ new: true } as any)
+        ({ returnDocument: "after" } as any)
       ).select("-password");
 
       return Response.json({ success: true, user: updated });

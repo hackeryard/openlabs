@@ -23,7 +23,7 @@ export async function POST(req: Request) {
                 userId: user.id
             },
             { title, html, css, js, projectType },
-            { upsert: true, new: true }
+            { upsert: true, returnDocument: "after" }
         );
 
         return Response.json({ success: true, project });
