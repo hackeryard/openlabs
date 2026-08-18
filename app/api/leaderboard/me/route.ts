@@ -16,24 +16,21 @@ export async function GET(req: Request) {
 
     // Calculate Global Rank
     const globalRank = await (User as any).countDocuments({ 
-      profileSetupComplete: true,
-      email: { $ne: "rahulrajput3621@gmail.com" },
+      username: { $exists: true, $ne: "" },
       xp: { $gt: currentUser.xp } 
     }) + 1;
 
     // Calculate Subject Ranks
     const subjectRanks: Record<string, number> = {};
-    const subjects = ["physics", "chemistry", "biology", "computerScience"];
+    const subjects = ["physics", "chemistry", "biology", "mathematics", "computerScience"];
 
     for (const subject of subjects) {
       const userSubProg = currentUser.subjectProgress?.find((s: any) => s.subject === subject);
       const userSubXp = userSubProg?.xp || 0;
 
       // Count users who have more xp in this subject
-      // Mongoose query using dot notation in array of documents
       const count = await (User as any).countDocuments({
-        profileSetupComplete: true,
-        email: { $ne: "rahulrajput3621@gmail.com" },
+        username: { $exists: true, $ne: "" },
         subjectProgress: {
           $elemMatch: {
             subject: subject,

@@ -446,6 +446,7 @@ export default function Page() {
             {faqs.map((faq) => (
               <details
                 key={faq.question}
+                name="dataanalyzer-faq"
                 className="group overflow-hidden rounded-xl border border-border bg-background shadow-sm transition-all duration-300 open:border-indigo-200 open:bg-card open:shadow-md open:shadow-indigo-950/5"
               >
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-base font-bold text-foreground transition hover:text-indigo-700">

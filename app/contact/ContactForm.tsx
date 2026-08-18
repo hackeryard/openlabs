@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { CheckCircle, Send } from "lucide-react";
+import { CheckCircle2, Send, User, Mail, HelpCircle, MessageSquare, AlertCircle } from "lucide-react";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -14,7 +14,9 @@ export default function ContactForm() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError("");
   };
@@ -39,7 +41,9 @@ export default function ContactForm() {
 
       setSubmitted(true);
     } catch {
-      setError("Failed to send message. Please try again or email us directly at support@openlabs.org.in.");
+      setError(
+        "Failed to transmit message. Please try again or email us directly at support@openlabs.org.in."
+      );
     } finally {
       setSending(false);
     }
@@ -47,38 +51,56 @@ export default function ContactForm() {
 
   if (submitted) {
     return (
-      <div className="rounded-3xl border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/20 p-12 text-center" role="status" aria-live="polite">
-        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full border border-emerald-100 dark:border-emerald-900 bg-card shadow-sm">
-          <CheckCircle className="h-10 w-10 text-emerald-500" aria-hidden="true" />
+      <div
+        className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-8 sm:p-10 text-center space-y-4"
+        role="status"
+        aria-live="polite"
+      >
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-emerald-500/30 bg-emerald-500/10 shadow-sm">
+          <CheckCircle2 className="h-8 w-8 text-emerald-500" aria-hidden="true" />
         </div>
-        <h3 className="mb-3 text-2xl font-bold text-foreground">Transmission Successful</h3>
-        <p className="mb-8 text-muted-foreground">
-          Data packet received. Our systems are processing your request and we will respond within standard operational parameters.
-        </p>
-        <button
-          onClick={() => {
-            setSubmitted(false);
-            setFormData({ name: "", email: "", subject: "", message: "" });
-          }}
-          className="text-sm font-bold uppercase tracking-widest text-emerald-600 transition-colors hover:text-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
-        >
-          Initiate New Protocol
-        </button>
+        <div className="space-y-1.5">
+          <h3 className="text-xl font-bold text-foreground">Message Sent Successfully</h3>
+          <p className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
+            Thank you for reaching out. We have received your submission and our team will review and reply within 24 hours.
+          </p>
+        </div>
+        <div className="pt-2">
+          <button
+            onClick={() => {
+              setSubmitted(false);
+              setFormData({ name: "", email: "", subject: "", message: "" });
+            }}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground font-bold text-xs shadow-xs transition-all hover:scale-105"
+          >
+            <span>Send Another Message</span>
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
       {error ? (
-        <p className="rounded-xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/20 px-4 py-3 text-sm font-medium text-red-700 dark:text-red-300" role="alert">
-          {error}
-        </p>
+        <div
+          className="flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-xs text-red-600 dark:text-red-400"
+          role="alert"
+        >
+          <AlertCircle size={14} className="shrink-0" />
+          <span>{error}</span>
+        </div>
       ) : null}
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div className="space-y-2">
-          <label htmlFor="contact-name" className="block text-xs font-bold uppercase tracking-widest text-muted-foreground">Operator Name</label>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="space-y-1.5">
+          <label
+            htmlFor="contact-name"
+            className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground"
+          >
+            <User size={12} className="text-primary" />
+            <span>Your Name</span>
+          </label>
           <input
             id="contact-name"
             name="name"
@@ -86,13 +108,19 @@ export default function ContactForm() {
             onChange={handleChange}
             required
             autoComplete="name"
-            placeholder="John Doe"
-            className="w-full rounded-xl border border-border bg-card px-4 py-3.5 text-foreground shadow-sm transition-all placeholder:text-muted-foreground focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-primary/20"
+            placeholder="Ada Lovelace"
+            className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground shadow-xs transition-all placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </div>
 
-        <div className="space-y-2">
-          <label htmlFor="contact-email" className="block text-xs font-bold uppercase tracking-widest text-muted-foreground">Your Email</label>
+        <div className="space-y-1.5">
+          <label
+            htmlFor="contact-email"
+            className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground"
+          >
+            <Mail size={12} className="text-primary" />
+            <span>Email Address</span>
+          </label>
           <input
             id="contact-email"
             name="email"
@@ -101,58 +129,74 @@ export default function ContactForm() {
             onChange={handleChange}
             required
             autoComplete="email"
-            placeholder="john@domain.com"
-            className="w-full rounded-xl border border-border bg-card px-4 py-3.5 text-foreground shadow-sm transition-all placeholder:text-muted-foreground focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-primary/20"
+            placeholder="ada@openlabs.org.in"
+            className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground shadow-xs transition-all placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </div>
       </div>
 
-      <div className="space-y-2">
-        <label htmlFor="contact-subject" className="block text-xs font-bold uppercase tracking-widest text-muted-foreground">Signal Classification</label>
+      <div className="space-y-1.5">
+        <label
+          htmlFor="contact-subject"
+          className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground"
+        >
+          <HelpCircle size={12} className="text-primary" />
+          <span>Topic / Classification</span>
+        </label>
         <select
           id="contact-subject"
           name="subject"
           value={formData.subject}
           onChange={handleChange}
           required
-          className="w-full appearance-none rounded-xl border border-border bg-card px-4 py-3.5 text-foreground shadow-sm transition-all focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-primary/20"
+          className="w-full appearance-none rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground shadow-xs transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
         >
-          <option value="">Select Classification...</option>
-          <option value="general">General Inquiry</option>
-          <option value="bug">Bug / Anomaly Report</option>
-          <option value="feature">Feature Request</option>
-          <option value="partnership">Partnership</option>
+          <option value="">Select Topic...</option>
+          <option value="general">General Inquiry & Questions</option>
+          <option value="bug">Bug Report / Simulation Glitch</option>
+          <option value="feature">New Virtual Lab Idea / Feature Request</option>
+          <option value="partnership">School / Educator Partnership</option>
+          <option value="feedback">User Feedback & Testimonial</option>
         </select>
       </div>
 
-      <div className="space-y-2">
-        <label htmlFor="contact-message" className="block text-xs font-bold uppercase tracking-widest text-muted-foreground">Message</label>
+      <div className="space-y-1.5">
+        <label
+          htmlFor="contact-message"
+          className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground"
+        >
+          <MessageSquare size={12} className="text-primary" />
+          <span>Message</span>
+        </label>
         <textarea
           id="contact-message"
           name="message"
           value={formData.message}
           onChange={handleChange}
           required
-          rows={6}
-          placeholder="Enter transmission data..."
-          className="w-full resize-none rounded-xl border border-border bg-card px-4 py-3.5 text-foreground shadow-sm transition-all placeholder:text-muted-foreground focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-primary/20"
+          rows={5}
+          placeholder="Describe your inquiry, bug details, or feature idea..."
+          className="w-full resize-none rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm text-foreground shadow-xs transition-all placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 leading-relaxed"
         />
       </div>
 
       <button
         type="submit"
         disabled={sending}
-        className="flex w-full items-center justify-center gap-3 rounded-xl bg-indigo-600 px-8 py-4 font-bold text-white shadow-md transition-all hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:bg-indigo-400 sm:w-auto"
+        className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 font-bold text-xs sm:text-sm text-primary-foreground shadow-sm transition-all hover:bg-primary/90 hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:opacity-60"
       >
         {sending ? (
           <>
-            <span className="h-5 w-5 rounded-full border-2 border-indigo-200 border-t-white animate-spin" aria-hidden="true" />
-            Transmitting...
+            <span
+              className="h-4 w-4 rounded-full border-2 border-primary-foreground/30 border-t-primary-foreground animate-spin"
+              aria-hidden="true"
+            />
+            <span>Sending Message...</span>
           </>
         ) : (
           <>
-            Transmit Payload
-            <Send size={18} aria-hidden="true" />
+            <span>Send Message</span>
+            <Send size={15} aria-hidden="true" />
           </>
         )}
       </button>

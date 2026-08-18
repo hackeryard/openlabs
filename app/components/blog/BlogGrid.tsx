@@ -1,13 +1,38 @@
-import React from "react";
+"use client";
+
+import React, { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Calendar, Clock, ArrowRight, Microscope, CloudLightning,
-  Bot, Beaker, Gamepad, Laptop, BookOpen, Sparkles, FlaskConical, Cpu
+  Calendar,
+  Clock,
+  ArrowRight,
+  Microscope,
+  CloudLightning,
+  Bot,
+  Beaker,
+  Gamepad,
+  Laptop,
+  BookOpen,
+  Sparkles,
+  FlaskConical,
+  Cpu,
+  Search,
+  X,
+  Layers,
 } from "lucide-react";
 
 const ICON_MAP: Record<string, React.ElementType> = {
-  Microscope, CloudLightning, Bot, Beaker, Gamepad, Laptop, BookOpen, Sparkles, FlaskConical, Cpu
+  Microscope,
+  CloudLightning,
+  Bot,
+  Beaker,
+  Gamepad,
+  Laptop,
+  BookOpen,
+  Sparkles,
+  FlaskConical,
+  Cpu,
 };
 
 interface BlogPost {
@@ -25,113 +50,227 @@ interface BlogPost {
 }
 
 export default function BlogGrid({ posts }: { posts: BlogPost[] }) {
-  if (!posts || posts.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-24 text-center">
-        <div className="w-20 h-20 bg-primary/10 rounded-[2rem] flex items-center justify-center mb-6 shadow-inner border border-primary/20">
-          <BookOpen className="w-10 h-10 text-indigo-300" aria-hidden="true" />
-        </div>
-        <h3 className="text-3xl font-black text-foreground mb-3 tracking-tight">No transmissions yet</h3>
-        <p className="text-muted-foreground max-w-sm text-lg">Check back soon for new articles, research, and updates.</p>
-      </div>
-    );
-  }
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+
+  // Extract unique categories from posts
+  const categories = useMemo(() => {
+    const unique = new Set<string>();
+    posts?.forEach((p) => {
+      if (p.category) unique.add(p.category);
+    });
+    return ["all", ...Array.from(unique)];
+  }, [posts]);
+
+  // Filter posts by search query & selected category
+  const filteredPosts = useMemo(() => {
+    return (posts || []).filter((post) => {
+      const matchesCategory =
+        selectedCategory === "all" ||
+        post.category?.toLowerCase() === selectedCategory.toLowerCase();
+
+      const matchesSearch =
+        !searchQuery ||
+        post.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.excerpt?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.category?.toLowerCase().includes(searchQuery.toLowerCase());
+
+      return matchesCategory && matchesSearch;
+    });
+  }, [posts, searchQuery, selectedCategory]);
 
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
     } catch {
       return dateString;
     }
   };
 
+  if (!posts || posts.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 border border-primary/20">
+          <BookOpen className="w-8 h-8 text-primary" aria-hidden="true" />
+        </div>
+        <h3 className="text-2xl font-bold text-foreground mb-2 tracking-tight">No Articles Published Yet</h3>
+        <p className="text-muted-foreground max-w-sm text-sm">
+          Check back soon for new research dispatches, pedagogy guides, and simulation updates.
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-      {posts.map((post) => {
-        const IconComponent = post.icon && ICON_MAP[post.icon] ? ICON_MAP[post.icon] : BookOpen;
-        const displayDate = formatDate(post.date);
+    <div className="space-y-8">
+      {/* ─── SEARCH & FILTER CONTROLS ─── */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-border pb-6">
+        {/* Category Pills */}
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          {categories.map((cat) => {
+            const isActive = selectedCategory === cat;
+            return (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all capitalize ${
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-xs"
+                    : "border border-border bg-card hover:bg-accent text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {cat === "all" ? "All Articles" : cat}
+              </button>
+            );
+          })}
+        </div>
 
-        // Use the post's gradient if provided, otherwise fallback to a cinematic multi-color glow
-        const glowColor = post.gradient || "from-indigo-500/40 via-purple-500/40 to-cyan-500/40";
+        {/* Search Bar */}
+        <div className="relative w-full sm:w-72">
+          <Search
+            size={14}
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search articles..."
+            className="w-full pl-9 pr-8 py-2 rounded-xl border border-border bg-card text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <X size={13} />
+            </button>
+          )}
+        </div>
+      </div>
 
-        return (
-          <Link
-            key={post.slug}
-            href={`/blog/${post.slug}`}
-            className="group relative block outline-none focus-visible:ring-4 focus-visible:ring-primary/30 rounded-[2.5rem] z-10 hover:z-20"
+      {/* ─── ACTIVE FILTER STATS ─── */}
+      {(searchQuery || selectedCategory !== "all") && (
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <span>
+            Showing <strong className="text-foreground">{filteredPosts.length}</strong> of{" "}
+            <strong className="text-foreground">{posts.length}</strong> articles
+          </span>
+          <button
+            onClick={() => {
+              setSearchQuery("");
+              setSelectedCategory("all");
+            }}
+            className="text-primary hover:underline font-bold"
           >
-            {/* Cinematic Hover Glow (Behind the card) */}
-            <div className={`absolute -inset-3 rounded-[3.5rem] bg-gradient-to-br ${glowColor} opacity-0 group-hover:opacity-100 blur-2xl transition-all duration-700 ease-out -z-10`} />
+            Clear all filters
+          </button>
+        </div>
+      )}
 
-            <article className="relative flex flex-col h-full bg-card/80 backdrop-blur-xl border border-border shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] rounded-[2rem] p-3 transition-all duration-500 hover:-translate-y-2 overflow-hidden">
-              {/* Internal subtle border for glass effect */}
-              <div className="absolute inset-0 border border-border/50 rounded-[2rem] pointer-events-none" />
+      {/* ─── NO MATCHING RESULTS ─── */}
+      {filteredPosts.length === 0 ? (
+        <div className="rounded-2xl border border-border bg-card p-12 text-center space-y-3">
+          <div className="mx-auto w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+            <Search size={20} />
+          </div>
+          <h3 className="text-base font-bold text-foreground">No matching articles found</h3>
+          <p className="text-xs text-muted-foreground max-w-xs mx-auto">
+            Try adjusting your search keywords or switching category filters.
+          </p>
+          <button
+            onClick={() => {
+              setSearchQuery("");
+              setSelectedCategory("all");
+            }}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold shadow-xs hover:bg-primary/90"
+          >
+            Reset Filters
+          </button>
+        </div>
+      ) : (
+        /* ─── BLOG CARDS GRID ─── */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {filteredPosts.map((post) => {
+            const IconComponent =
+              post.icon && ICON_MAP[post.icon] ? ICON_MAP[post.icon] : BookOpen;
+            const displayDate = formatDate(post.date);
 
-              {/* Framed Image Container */}
-              <div className="relative w-full aspect-[4/3] rounded-[1.5rem] overflow-hidden mb-6 z-10 shadow-inner bg-muted">
-                {post.coverImage ? (
-                  <>
-                    <Image
-                      src={post.coverImage}
-                      alt={post.title}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-1000 ease-&lsqb;0.16,1,0.3,1&rsqb;"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                    {/* Dynamic Image Overlay */}
-                    <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors duration-500" />
-                  </>
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center bg-muted">
-                    <IconComponent className="w-16 h-16 text-muted-foreground" aria-hidden="true" />
-                  </div>
-                )}
+            return (
+              <Link
+                key={post.slug}
+                href={`/blog/${post.slug}`}
+                className="group relative flex flex-col h-full rounded-2xl border border-border bg-card p-3.5 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-primary/40 overflow-hidden"
+              >
+                {/* Framed Cover Image */}
+                <div className="relative w-full aspect-[16/10] rounded-xl overflow-hidden mb-4 bg-muted border border-border/50">
+                  {post.coverImage ? (
+                    <>
+                      <Image
+                        src={post.coverImage}
+                        alt={post.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                      <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors duration-300" />
+                    </>
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center bg-muted">
+                      <IconComponent className="w-12 h-12 text-muted-foreground/50" aria-hidden="true" />
+                    </div>
+                  )}
 
-                {/* Floating Glass Category Pill */}
-                <div className="absolute top-4 left-4 bg-card/90 backdrop-blur-md px-3.5 py-1.5 rounded-full flex items-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.1)] translate-y-0 group-hover:-translate-y-1 transition-transform duration-500 ease-out border border-border/50">
-                  <IconComponent className="w-4 h-4 text-indigo-600" aria-hidden="true" />
-                  <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-foreground mt-0.5">
-                    {post.category}
-                  </span>
-                </div>
-              </div>
-
-              {/* Content Box */}
-              <div className="px-3 pb-3 flex flex-col flex-1 relative z-10">
-                <h2 className="text-xl sm:text-2xl font-black text-foreground mb-3 leading-[1.25] group-hover:text-indigo-600 transition-colors duration-300 line-clamp-2">
-                  {post.title}
-                </h2>
-
-                <p className="text-muted-foreground text-[0.95rem] font-medium leading-relaxed mb-8 flex-1 line-clamp-3">
-                  {post.excerpt}
-                </p>
-
-                {/* Footer Metadata & Interactive Button */}
-                <div className="flex items-center justify-between mt-auto pt-5 border-t border-border/80">
-                  <div className="flex items-center gap-4 text-xs font-bold text-muted-foreground">
-                    <span className="flex items-center gap-1.5 group-hover:text-indigo-400 transition-colors duration-300">
-                      <Calendar className="w-4 h-4" aria-hidden="true" />
-                      <time dateTime={post.date}>{displayDate}</time>
+                  {/* Category Badge */}
+                  <div className="absolute top-3 left-3 bg-card/90 backdrop-blur-md px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-sm border border-border/60">
+                    <IconComponent className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
+                    <span className="text-[10px] font-black uppercase tracking-wider text-foreground">
+                      {post.category}
                     </span>
-                    {post.readTime && (
-                      <span className="flex items-center gap-1.5 group-hover:text-indigo-400 transition-colors duration-300 delay-75">
-                        <Clock className="w-4 h-4" aria-hidden="true" />
-                        {post.readTime}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Exploding Action Button */}
-                  <div className="w-10 h-10 rounded-full bg-muted border border-border flex items-center justify-center group-hover:bg-indigo-600 group-hover:border-indigo-600 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] transition-all duration-500 ease-out z-20">
-                    <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300" aria-hidden="true" />
                   </div>
                 </div>
-              </div>
-            </article>
-          </Link>
-        );
-      })}
+
+                {/* Content Section */}
+                <div className="px-1.5 pb-1.5 flex flex-col flex-1">
+                  <h2 className="text-base sm:text-lg font-bold text-foreground mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                    {post.title}
+                  </h2>
+
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed mb-4 flex-1 line-clamp-3">
+                    {post.excerpt}
+                  </p>
+
+                  {/* Metadata Footer */}
+                  <div className="flex items-center justify-between mt-auto pt-3 border-t border-border/60">
+                    <div className="flex items-center gap-3 text-[11px] font-semibold text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <Calendar size={12} />
+                        <time dateTime={post.date}>{displayDate}</time>
+                      </span>
+                      {post.readTime && (
+                        <span className="flex items-center gap-1">
+                          <Clock size={12} />
+                          <span>{post.readTime}</span>
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-1 text-xs font-bold text-primary group-hover:translate-x-0.5 transition-transform">
+                      <span>Read</span>
+                      <ArrowRight size={13} />
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

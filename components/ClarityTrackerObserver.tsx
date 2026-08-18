@@ -9,6 +9,10 @@ export default function ClarityTrackerObserver() {
 
   useEffect(() => {
     if (process.env.NODE_ENV !== "production") return;
+    if (typeof window !== "undefined") {
+      const host = window.location.hostname;
+      if (host === "localhost" || host === "127.0.0.1" || host.endsWith(".local")) return;
+    }
 
     const syncUserSession = async () => {
       try {

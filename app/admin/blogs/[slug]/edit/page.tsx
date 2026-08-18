@@ -162,7 +162,7 @@ export default function EditBlogPage({ params }: { params: { slug: string } }) {
 
   return (
     <main className="min-h-screen text-foreground py-24">
-      <div className="max-w-4xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Edit Blog Post</h1>
           <p className="text-muted-foreground">Update an existing article in the OpenLabs Journal.</p>

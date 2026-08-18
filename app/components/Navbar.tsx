@@ -8,14 +8,19 @@ import { motion, AnimatePresence, Variants } from "framer-motion";
 import {
   ChevronDown,
   Atom,
-  Beaker,
+  Flame,
   Dna,
-  Code,
-  Sigma,
+  Binary,
+  Calculator,
   ArrowRight,
   Sparkles,
   Trophy,
   Compass,
+  Menu,
+  X,
+  Beaker,
+  ShieldCheck,
+  User as UserIcon,
 } from "lucide-react";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import { useAuth } from "@/components/AuthProvider";
@@ -74,6 +79,7 @@ interface QuickLink {
 interface LabCategory {
   label: string;
   path: string;
+  count: string;
   description: string;
   icon: typeof Atom;
   colorClass: string;
@@ -85,74 +91,76 @@ const labCategories: LabCategory[] = [
   {
     label: "Physics",
     path: "/physics",
+    count: "14 Labs",
     description: "Mechanics, circuits, optics & waves",
     icon: Atom,
-    colorClass: "text-blue-500 dark:text-blue-400 group-hover/cat:text-blue-600 dark:group-hover/cat:text-blue-300",
-    iconBgClass: "bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 group-hover/cat:bg-blue-500 group-hover/cat:text-white",
+    colorClass: "text-blue-600 dark:text-blue-400 group-hover/cat:text-blue-700 dark:group-hover/cat:text-blue-300",
+    iconBgClass: "bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover/cat:bg-blue-500 group-hover/cat:text-white",
     highlights: [
       { name: "Free Fall", path: "/physics/freefall" },
       { name: "Ohm's Law", path: "/physics/ohmslaw" },
       { name: "Projectile", path: "/physics/projectilemotion" },
-      { name: "RC Circuit", path: "/physics/rclab" },
+      { name: "Wave Optics", path: "/physics/waveoptics" },
     ],
   },
   {
     label: "Chemistry",
     path: "/chemistry",
-    description: "Periodic table, bonds & reactions",
-    icon: Beaker,
-    colorClass: "text-emerald-500 dark:text-emerald-400 group-hover/cat:text-emerald-600 dark:group-hover/cat:text-emerald-300",
-    iconBgClass: "bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 group-hover/cat:bg-emerald-500 group-hover/cat:text-white",
+    count: "4 Labs",
+    description: "Periodic table, bonds & titration",
+    icon: Flame,
+    colorClass: "text-emerald-600 dark:text-emerald-400 group-hover/cat:text-emerald-700 dark:group-hover/cat:text-emerald-300",
+    iconBgClass: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover/cat:bg-emerald-500 group-hover/cat:text-white",
     highlights: [
       { name: "Periodic Table", path: "/chemistry/periodictable" },
-      { name: "Reactions", path: "/chemistry/reaction-simulation" },
-      { name: "Titration", path: "/chemistry/titration" },
-      { name: "Bonds", path: "/chemistry/chemicalbonds" },
+      { name: "Chemical Bonds", path: "/chemistry/chemicalbonds" },
+      { name: "Reaction Simulator", path: "/chemistry/reaction-simulation" },
+      { name: "Titration Lab", path: "/chemistry/titration" },
     ],
   },
   {
     label: "Biology",
     path: "/biology",
-    description: "Cell biology, 3D anatomy & neurons",
+    count: "3 Labs",
+    description: "Cell biology, 3D anatomy & genetics",
     icon: Dna,
-    colorClass: "text-rose-500 dark:text-rose-400 group-hover/cat:text-rose-600 dark:group-hover/cat:text-rose-300",
-    iconBgClass: "bg-rose-500/10 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 group-hover/cat:bg-rose-500 group-hover/cat:text-white",
+    colorClass: "text-rose-600 dark:text-rose-400 group-hover/cat:text-rose-700 dark:group-hover/cat:text-rose-300",
+    iconBgClass: "bg-rose-500/10 text-rose-600 dark:text-rose-400 group-hover/cat:bg-rose-500 group-hover/cat:text-white",
     highlights: [
-      { name: "Genetics", path: "/biology/genetics" },
+      { name: "Genetics Lab", path: "/biology/genetics" },
       { name: "Animal Cell", path: "/biology/cell/animal" },
       { name: "Plant Cell", path: "/biology/cell/plant" },
       { name: "Human Anatomy", path: "/biology/human" },
-      { name: "Photosynthesis", path: "/biology/photosynthesis" },
-    ],
-  },
-  {
-    label: "Computer Science",
-    path: "/computer-science",
-    description: "Algorithms, logic gates & code",
-    icon: Code,
-    colorClass: "text-violet-500 dark:text-violet-400 group-hover/cat:text-violet-600 dark:group-hover/cat:text-violet-300",
-    iconBgClass: "bg-violet-500/10 dark:bg-violet-500/20 text-violet-600 dark:text-violet-400 group-hover/cat:bg-violet-500 group-hover/cat:text-white",
-    highlights: [
-      { name: "JS Event Loop", path: "/labs/computer-science/code-lab/js" },
-      { name: "Sorting", path: "/labs/computer-science/dsa/sorting/bubble-sort" },
-      { name: "Graph Algorithms", path: "/computer-science/dsa/graph-algorithms" },
-      { name: "Cryptography", path: "/computer-science/cryptography" },
-      { name: "Logic Gates", path: "/labs/computer-science/logic-gates/and-gate" },
-      { name: "Git Simulator", path: "/labs/computer-science/git-simulator" },
     ],
   },
   {
     label: "Mathematics",
     path: "/mathematics",
-    description: "Interactive curve plotting & analysis",
-    icon: Sigma,
-    colorClass: "text-indigo-500 dark:text-indigo-400 group-hover/cat:text-indigo-600 dark:group-hover/cat:text-indigo-300",
-    iconBgClass: "bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 group-hover/cat:bg-indigo-500 group-hover/cat:text-white",
+    count: "12 Labs",
+    description: "Calculus, graphing & linear algebra",
+    icon: Calculator,
+    colorClass: "text-amber-600 dark:text-amber-400 group-hover/cat:text-amber-700 dark:group-hover/cat:text-amber-300",
+    iconBgClass: "bg-amber-500/10 text-amber-600 dark:text-amber-400 group-hover/cat:bg-amber-500 group-hover/cat:text-white",
     highlights: [
       { name: "Function Grapher", path: "/mathematics/functiongrapher" },
-      { name: "Calculus", path: "/mathematics/calculus" },
+      { name: "Calculus Sandbox", path: "/mathematics/calculus" },
       { name: "Linear Algebra", path: "/mathematics/linear-algebra" },
-      { name: "Geometry Studio", path: "/mathematics/geometry" },
+      { name: "Trigonometry", path: "/mathematics/trigonometry" },
+    ],
+  },
+  {
+    label: "Computer Science",
+    path: "/computer-science",
+    count: "19+ Labs",
+    description: "Algorithms, logic gates & code",
+    icon: Binary,
+    colorClass: "text-purple-600 dark:text-purple-400 group-hover/cat:text-purple-700 dark:group-hover/cat:text-purple-300",
+    iconBgClass: "bg-purple-500/10 text-purple-600 dark:text-purple-400 group-hover/cat:bg-purple-500 group-hover/cat:text-white",
+    highlights: [
+      { name: "HTML/CSS/JS Lab", path: "/computer-science/code-lab/html-css-js" },
+      { name: "Logic Gates", path: "/computer-science/logic-gates" },
+      { name: "Sorting Visualizer", path: "/computer-science/dsa/sorting-algorithms" },
+      { name: "Networking Studio", path: "/computer-science/networking" },
     ],
   },
 ];
@@ -170,6 +178,7 @@ export default function Navbar() {
   /* ---------------- Top-level nav links ---------------- */
 
   const topLinks = [
+    { label: "Leaderboard", path: "/leaderboard" },
     { label: "Blog", path: "/blog" },
     { label: "About", path: "/about" },
     { label: "Contact", path: "/contact" },
@@ -237,111 +246,58 @@ export default function Navbar() {
         data-site-navbar
         className="
           fixed top-0 left-0 w-full
-          bg-gradient-to-r from-indigo-600 via-blue-600 to-sky-500
-          text-white
-          py-3
+          bg-background/85 backdrop-blur-xl
+          text-foreground
+          border-b border-border/80
+          py-2.5
           z-50
-          shadow-lg
-          backdrop-blur-md
+          shadow-xs
+          transition-colors duration-200
         "
       >
-        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           {/* ---------------- Logo ---------------- */}
 
-          <Link href="/">
-            <motion.div
-              layout
-              className="flex items-center gap-3 cursor-pointer"
-            >
-              <Image
-                src="/images/logo.png"
-                alt="OpenLabs logo"
-                width={40}
-                height={40}
-                className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center font-bold"
-              />
-              <div className="text-xl font-extrabold tracking-tight">
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <Image
+              src="/images/logo.png"
+              alt="OpenLabs logo"
+              width={34}
+              height={34}
+              className="w-8 h-8 rounded-xl object-contain shadow-xs group-hover:scale-105 transition-transform"
+            />
+            <div className="flex items-center gap-1.5">
+              <span className="text-lg font-black tracking-tight text-foreground">
                 OpenLabs
-              </div>
-            </motion.div>
+              </span>
+            </div>
           </Link>
 
-          {/* ---------------- Mobile Toggle ---------------- */}
-
-          <div className="flex items-center gap-2 lg:hidden">
-            <ThemeToggle />
-            <motion.button
-              aria-label="Toggle menu"
-              aria-expanded={mobileOpen}
-              aria-controls="mobile-navigation"
-              onClick={() => setMobileOpen((v) => !v)}
-              whileTap={{ scale: 0.95 }}
-              className="
-                p-2
-                rounded-md
-                bg-white/10
-                hover:bg-white/20
-                transition
-              "
-            >
-              <motion.svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                animate={{ rotate: mobileOpen ? 90 : 0 }}
-                transition={{
-                  duration: 0.3,
-                  ease: [0.4, 0, 0.2, 1],
-                }}
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M4 6H20"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M4 12H20"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M4 18H20"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </motion.svg>
-            </motion.button>
-          </div>
-
-          {/* ---------------- Desktop Menu ---------------- */}
+          {/* ---------------- Desktop Navigation ---------------- */}
 
           <ul className="hidden lg:flex items-center gap-1">
             {/* Home */}
-            <li>
+            <li className="flex items-center">
               <Link
                 href="/"
                 className={`
-                  px-3 py-2 rounded-md transition text-sm font-medium
-                  ${pathname === "/" ? "bg-white/20 font-semibold" : "hover:bg-white/10"}
+                  h-8 inline-flex items-center justify-center px-3 rounded-lg transition-colors text-xs font-semibold leading-none
+                  ${pathname === "/" ? "bg-primary/10 text-primary font-bold" : "text-muted-foreground hover:text-foreground hover:bg-accent/60"}
                 `}
               >
                 Home
               </Link>
             </li>
 
-            {/* Labs Mega Dropdown with Hover Support */}
+            {/* Labs Mega Dropdown */}
             <li
               ref={labsRef}
-              className="relative"
+              className="relative flex items-center"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
               <button
+                type="button"
                 onClick={() => setLabsOpen((v) => !v)}
                 onKeyDown={(e) => {
                   if (e.key === "Escape") setLabsOpen(false);
@@ -349,14 +305,14 @@ export default function Navbar() {
                 aria-expanded={labsOpen}
                 aria-haspopup="menu"
                 className={`
-                  flex items-center gap-1.5 px-3 py-2 rounded-md transition text-sm font-medium
-                  ${isLabsActive ? "bg-white/20 font-semibold" : "hover:bg-white/10"}
+                  h-8 inline-flex items-center justify-center gap-1.5 px-3 rounded-lg transition-colors text-xs font-semibold leading-none
+                  ${isLabsActive ? "bg-primary/10 text-primary font-bold" : "text-muted-foreground hover:text-foreground hover:bg-accent/60"}
                 `}
               >
-                <span>Labs</span>
+                <span>Virtual Labs</span>
                 <ChevronDown
-                  size={14}
-                  className={`transition-transform duration-200 ${labsOpen ? "rotate-180" : ""}`}
+                  size={13}
+                  className={`transition-transform duration-200 ${labsOpen ? "rotate-180 text-primary" : ""}`}
                 />
               </button>
 
@@ -369,9 +325,9 @@ export default function Navbar() {
                     animate="visible"
                     exit="exit"
                     className="
-                      absolute top-full -left-52 lg:-left-60 mt-2
-                      w-[640px] max-w-[calc(100vw-2.5rem)]
-                      bg-card/95 backdrop-blur-xl text-foreground
+                      absolute top-full -left-52 lg:-left-56 mt-2
+                      w-[680px] max-w-[calc(100vw-2.5rem)]
+                      bg-card/95 backdrop-blur-2xl text-foreground
                       rounded-2xl
                       shadow-2xl
                       border border-border
@@ -384,17 +340,17 @@ export default function Navbar() {
                     <div className="px-4 py-2.5 bg-muted/40 border-b border-border flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Compass className="w-4 h-4 text-primary" />
-                        <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                          Explore Virtual Laboratories
+                        <span className="text-xs font-black uppercase tracking-wider text-muted-foreground">
+                          Explore Interactive STEM Suites
                         </span>
                       </div>
-                      <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                         50+ Simulations
                       </span>
                     </div>
 
-                    {/* 2-Column Grid */}
-                    <div className="p-3 grid grid-cols-2 gap-2.5">
+                    {/* 5 Disciplines Grid + Quests Card */}
+                    <div className="p-3.5 grid grid-cols-2 gap-2.5">
                       {labCategories.map((cat) => {
                         const Icon = cat.icon;
                         const isCatActive = pathname.startsWith(cat.path);
@@ -404,10 +360,9 @@ export default function Navbar() {
                             key={cat.path}
                             className={`
                               group/cat p-2.5 rounded-xl border transition-all duration-200
-                              ${
-                                isCatActive
-                                  ? "bg-accent/80 border-primary/40 shadow-sm"
-                                  : "bg-background/40 hover:bg-accent/60 border-border hover:border-border/80"
+                              ${isCatActive
+                                ? "bg-accent/80 border-primary/40 shadow-xs"
+                                : "bg-background/40 hover:bg-accent/60 border-border hover:border-border/80"
                               }
                             `}
                           >
@@ -430,15 +385,16 @@ export default function Navbar() {
                                 <div className="flex items-center justify-between">
                                   <h4
                                     className={`
-                                      text-sm font-semibold tracking-tight transition-colors duration-150
+                                      text-xs font-bold tracking-tight transition-colors duration-150 flex items-center gap-1.5
                                       ${cat.colorClass}
                                     `}
                                   >
-                                    {cat.label}
+                                    <span>{cat.label}</span>
+                                    <span className="text-[10px] font-normal text-muted-foreground">({cat.count})</span>
                                   </h4>
-                                  <ArrowRight className="w-3.5 h-3.5 text-muted-foreground opacity-0 -translate-x-1 group-hover/cat:opacity-100 group-hover/cat:translate-x-0 transition-all duration-200" />
+                                  <ArrowRight className="w-3 h-3 text-muted-foreground opacity-0 -translate-x-1 group-hover/cat:opacity-100 group-hover/cat:translate-x-0 transition-all duration-200" />
                                 </div>
-                                <p className="text-[11px] text-muted-foreground line-clamp-1 mt-0.5">
+                                <p className="text-[10px] text-muted-foreground line-clamp-1 mt-0.5">
                                   {cat.description}
                                 </p>
                               </div>
@@ -465,7 +421,7 @@ export default function Navbar() {
                         );
                       })}
 
-                      {/* 6th Slot: Daily Challenges & XP Hub Card */}
+                      {/* 6th Slot: Quests & Leaderboard */}
                       <div className="p-2.5 rounded-xl border border-border bg-gradient-to-br from-indigo-500/10 via-sky-500/5 to-transparent flex flex-col justify-between">
                         <div>
                           <div className="flex items-center gap-2 mb-1">
@@ -473,11 +429,11 @@ export default function Navbar() {
                               <Trophy className="w-3.5 h-3.5" />
                             </div>
                             <h4 className="text-xs font-bold text-foreground">
-                              Quests & Leaderboard
+                              Quests & XP Hub
                             </h4>
                           </div>
-                          <p className="text-[11px] text-muted-foreground leading-relaxed">
-                            Complete challenges, earn XP & climb rankings.
+                          <p className="text-[10px] text-muted-foreground leading-relaxed">
+                            Solve daily challenges, earn experiment badges & level up.
                           </p>
                         </div>
                         <div className="mt-2 flex items-center gap-2">
@@ -486,7 +442,7 @@ export default function Navbar() {
                             onClick={() => setLabsOpen(false)}
                             className="
                               inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg
-                              bg-primary text-primary-foreground hover:opacity-90 shadow-sm transition
+                              bg-primary text-primary-foreground hover:bg-primary/90 shadow-xs transition
                             "
                           >
                             <Sparkles className="w-3 h-3" />
@@ -500,14 +456,14 @@ export default function Navbar() {
                     <div className="px-4 py-2 bg-muted/60 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground">
                       <span className="flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        In-browser simulations • Zero install
+                        In-browser simulations &bull; Zero install
                       </span>
                       <Link
-                        href="/physics"
+                        href="/#labs"
                         onClick={() => setLabsOpen(false)}
-                        className="font-medium text-primary hover:underline flex items-center gap-1"
+                        className="font-bold text-primary hover:underline flex items-center gap-1"
                       >
-                        <span>Explore All</span>
+                        <span>Explore All 50+ Labs</span>
                         <ArrowRight className="w-3 h-3" />
                       </Link>
                     </div>
@@ -516,82 +472,86 @@ export default function Navbar() {
               </AnimatePresence>
             </li>
 
-            {/* Top links: Blog, About, Contact */}
+            {/* Top Links: Leaderboard, Blog, About, Contact */}
             {topLinks.map((link) => (
-              <li key={link.label}>
+              <li key={link.label} className="flex items-center">
                 <Link
                   href={link.path}
                   className={`
-                    px-3 py-2 rounded-md transition text-sm font-medium
-                    ${pathname === link.path ? "bg-white/20 font-semibold" : "hover:bg-white/10"}
+                    h-8 inline-flex items-center justify-center px-3 rounded-lg transition-colors text-xs font-semibold leading-none
+                    ${pathname === link.path ? "bg-primary/10 text-primary font-bold" : "text-muted-foreground hover:text-foreground hover:bg-accent/60"}
                   `}
                 >
                   {link.label}
                 </Link>
               </li>
             ))}
+          </ul>
 
-            {/* Leaderboard */}
-            {user && (
-              <li>
-                <Link
-                  href="/leaderboard"
-                  className={`
-                    px-3 py-2 rounded-md transition text-sm font-medium
-                    ${pathname === "/leaderboard" ? "bg-white/20 font-semibold text-white" : "hover:bg-white/10 text-white"}
-                  `}
-                >
-                  Leaderboard
-                </Link>
-              </li>
-            )}
+          {/* ---------------- Right Action Suite (Auth + Theme Toggle) ---------------- */}
 
-            {/* Auth / Avatar */}
+          <div className="flex items-center gap-2">
+            {/* Theme Toggle */}
+            <ThemeToggle className="bg-muted hover:bg-accent border border-border/70 text-foreground" />
+
+            {/* Auth Buttons */}
             {!user ? (
-              <li className="ml-2">
+              <div className="hidden sm:flex items-center gap-1.5 pl-1">
                 <Link
                   href="/login"
                   className="
-                    px-4 py-2 rounded-md
-                    bg-white text-indigo-700
-                    font-semibold text-sm
-                    shadow-sm
-                    hover:bg-slate-100
-                    hover:shadow-md
-                    transition
+                    px-3.5 py-1.5 rounded-xl
+                    bg-primary text-primary-foreground
+                    font-bold text-xs
+                    shadow-xs
+                    hover:bg-primary/90
+                    transition-all hover:scale-[1.02] active:scale-95
                   "
                 >
                   Log In
                 </Link>
-              </li>
+              </div>
             ) : (
-              <li className="ml-2">
+              <div className="hidden sm:flex items-center gap-2 pl-1">
                 <Link
                   href="/profile"
                   className="
                     flex items-center gap-2
                     p-1 rounded-full
-                    hover:bg-white/10
+                    hover:bg-accent
                     transition
                   "
+                  title="My Profile"
                 >
                   <Image
                     src={user.avatar || "/images/avatars/avatar-01.png"}
                     alt="User profile"
-                    width={36}
-                    height={36}
-                    className="rounded-full object-cover"
+                    width={32}
+                    height={32}
+                    className="rounded-full object-cover border border-border"
                   />
                 </Link>
-              </li>
+              </div>
             )}
-            <li>
-              <ThemeToggle />
-            </li>
-          </ul>
+
+            {/* Mobile Hamburger Toggle Button */}
+            <button
+              aria-label="Toggle menu"
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-navigation"
+              onClick={() => setMobileOpen((v) => !v)}
+              className="
+                lg:hidden p-2 rounded-xl
+                bg-muted border border-border/70 text-foreground
+                hover:bg-accent transition
+              "
+            >
+              {mobileOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
+          </div>
         </div>
 
-        {/* ---------------- Mobile Menu ---------------- */}
+        {/* ---------------- Mobile Dropdown Navigation ---------------- */}
 
         <AnimatePresence>
           {mobileOpen && (
@@ -602,27 +562,27 @@ export default function Navbar() {
               exit="exit"
               className="
                 lg:hidden
-                absolute top-[72px] right-4 left-4
-                bg-card text-foreground
+                absolute top-[58px] right-4 left-4
+                bg-card/95 backdrop-blur-2xl text-foreground
                 rounded-2xl
                 shadow-2xl
                 border border-border
                 overflow-hidden
                 z-50
-                max-h-[calc(100vh-90px)]
+                max-h-[calc(100vh-80px)]
                 overflow-y-auto
                 thin-scrollbar
               "
             >
-              <ul id="mobile-navigation" className="p-3 space-y-1">
+              <ul id="mobile-navigation" className="p-3 space-y-1 text-xs font-semibold">
                 {/* Home */}
                 <li>
                   <Link
                     href="/"
                     onClick={() => setMobileOpen(false)}
                     className={`
-                      block px-3.5 py-2.5 rounded-xl transition text-sm font-medium
-                      ${pathname === "/" ? "bg-primary/10 text-primary font-semibold" : "hover:bg-accent"}
+                      block px-3.5 py-2.5 rounded-xl transition
+                      ${pathname === "/" ? "bg-primary/10 text-primary font-bold" : "hover:bg-accent"}
                     `}
                   >
                     Home
@@ -636,17 +596,17 @@ export default function Navbar() {
                     aria-expanded={mobileLabsOpen}
                     aria-controls="mobile-labs-menu"
                     className={`
-                      w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition text-sm font-medium
-                      ${isLabsActive ? "bg-primary/10 text-primary font-semibold" : "hover:bg-accent"}
+                      w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition
+                      ${isLabsActive ? "bg-primary/10 text-primary font-bold" : "hover:bg-accent"}
                     `}
                   >
                     <span className="flex items-center gap-2">
                       <Compass className="w-4 h-4 text-primary" />
-                      <span>Labs & Simulations</span>
+                      <span>Virtual Labs & Simulations</span>
                     </span>
                     <ChevronDown
-                      size={16}
-                      className={`transition-transform duration-200 ${mobileLabsOpen ? "rotate-180" : ""}`}
+                      size={15}
+                      className={`transition-transform duration-200 ${mobileLabsOpen ? "rotate-180 text-primary" : ""}`}
                     />
                   </button>
 
@@ -666,32 +626,32 @@ export default function Navbar() {
                             return (
                               <div
                                 key={cat.path}
-                                className="p-2 rounded-lg bg-muted/40 border border-border/60"
+                                className="p-2 rounded-xl bg-muted/40 border border-border/60"
                               >
                                 <Link
                                   href={cat.path}
                                   onClick={() => setMobileOpen(false)}
                                   className="flex items-center justify-between"
                                 >
-                                  <div className="flex items-center gap-2.5">
-                                    <div className={`p-1.5 rounded-md ${cat.iconBgClass}`}>
-                                      <Icon className="w-4 h-4" />
+                                  <div className="flex items-center gap-2">
+                                    <div className={`p-1.5 rounded-lg ${cat.iconBgClass}`}>
+                                      <Icon className="w-3.5 h-3.5" />
                                     </div>
-                                    <span className="text-sm font-semibold text-foreground">
+                                    <span className="text-xs font-bold text-foreground">
                                       {cat.label}
                                     </span>
                                   </div>
-                                  <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />
+                                  <ArrowRight className="w-3 h-3 text-muted-foreground" />
                                 </Link>
 
-                                <div className="mt-2 flex flex-wrap gap-1 pl-8">
+                                <div className="mt-2 flex flex-wrap gap-1 pl-7">
                                   {cat.highlights.map((item) => (
                                     <Link
                                       key={item.path}
                                       href={item.path}
                                       onClick={() => setMobileOpen(false)}
                                       className="
-                                        text-[11px] px-2 py-0.5 rounded-md
+                                        text-[10px] px-2 py-0.5 rounded-md
                                         bg-card text-muted-foreground hover:text-primary
                                         border border-border/40
                                       "
@@ -716,8 +676,8 @@ export default function Navbar() {
                       href={link.path}
                       onClick={() => setMobileOpen(false)}
                       className={`
-                        block px-3.5 py-2.5 rounded-xl transition text-sm font-medium
-                        ${pathname === link.path ? "bg-primary/10 text-primary font-semibold" : "hover:bg-accent"}
+                        block px-3.5 py-2.5 rounded-xl transition
+                        ${pathname === link.path ? "bg-primary/10 text-primary font-bold" : "hover:bg-accent"}
                       `}
                     >
                       {link.label}
@@ -725,41 +685,26 @@ export default function Navbar() {
                   </li>
                 ))}
 
-                {/* Leaderboard */}
-                {user && (
-                  <li>
-                    <Link
-                      href="/leaderboard"
-                      onClick={() => setMobileOpen(false)}
-                      className={`
-                        block px-3.5 py-2.5 rounded-xl transition text-sm font-medium
-                        ${pathname === "/leaderboard" ? "bg-primary/10 text-primary font-semibold" : "hover:bg-accent text-foreground"}
-                      `}
-                    >
-                      Leaderboard
-                    </Link>
-                  </li>
-                )}
-
                 {/* Divider */}
                 <li><hr className="my-1 border-border" /></li>
 
                 {/* Auth */}
                 {!user ? (
-                  <li>
+                  <li className="pt-1">
                     <Link
                       href="/login"
                       onClick={() => setMobileOpen(false)}
                       className="
                         block text-center
                         px-4 py-2.5 rounded-xl
-                        bg-indigo-600 text-white
-                        font-semibold text-sm
-                        hover:bg-indigo-700
-                        transition shadow-sm
+                        bg-primary text-primary-foreground
+                        font-bold text-xs
+                        shadow-xs
+                        hover:bg-primary/90
+                        transition
                       "
                     >
-                      Log In
+                      Log In / Sign Up
                     </Link>
                   </li>
                 ) : (
@@ -772,11 +717,11 @@ export default function Navbar() {
                       <Image
                         src={user.avatar || "/images/avatars/avatar-01.png"}
                         alt=""
-                        width={32}
-                        height={32}
-                        className="rounded-full object-cover"
+                        width={28}
+                        height={28}
+                        className="rounded-full object-cover border border-border"
                       />
-                      <span className="text-sm font-medium text-foreground">My Profile</span>
+                      <span className="text-xs font-bold text-foreground">My Profile</span>
                     </Link>
                   </li>
                 )}

@@ -52,9 +52,15 @@ function getClientTech() {
 }
 
 export default function OpenLabsTracker() {
-  // Do not track analytics or errors in development mode
+  // Do not track analytics or errors in development mode or localhost
   if (process.env.NODE_ENV !== "production") {
     return null;
+  }
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname;
+    if (host === "localhost" || host === "127.0.0.1" || host.endsWith(".local")) {
+      return null;
+    }
   }
 
   const pathname = usePathname();

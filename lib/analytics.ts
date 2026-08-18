@@ -4,8 +4,30 @@ import { ClarityEventName, ClarityUserTags } from "@/types/analytics";
 class AnalyticsService {
   private memoryFiredEvents = new Set<string>();
 
-  constructor() {
+  private isLocalDev(): boolean {
+    if (process.env.NODE_ENV !== "production") return true;
     if (typeof window !== "undefined") {
+      const h = window.location.hostname;
+      const port = window.location.port;
+      if (
+        h === "localhost" ||
+        h === "127.0.0.1" ||
+        h === "0.0.0.0" ||
+        h.endsWith(".local") ||
+        h === "[::1]" ||
+        h.includes("localhost") ||
+        port === "3000" ||
+        port === "5000" ||
+        port !== ""
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  constructor() {
+    if (typeof window !== "undefined" && !this.isLocalDev()) {
       try {
         const stored = sessionStorage.getItem("openlabs_clarity_events");
         if (stored) {
@@ -21,6 +43,7 @@ class AnalyticsService {
   }
 
   private persistFiredEvent(eventName: string) {
+    if (this.isLocalDev()) return;
     this.memoryFiredEvents.add(eventName);
     if (typeof window !== "undefined") {
       try {
@@ -38,7 +61,7 @@ class AnalyticsService {
    * Identifies the user in Microsoft Clarity.
    */
   identify(userId: string, username?: string) {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || this.isLocalDev()) return;
 
     const identifyKey = `identify:${userId}:${username || ""}`;
     if (this.memoryFiredEvents.has(identifyKey)) return;
@@ -55,7 +78,7 @@ class AnalyticsService {
    * Sets a custom session tag.
    */
   setTag(key: string, value: string) {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || this.isLocalDev()) return;
 
     const tagKey = `tag:${key}:${value}`;
     if (this.memoryFiredEvents.has(tagKey)) return;
@@ -72,6 +95,7 @@ class AnalyticsService {
    * Sets multiple user tags at once.
    */
   setUserTags(tags: ClarityUserTags) {
+    if (this.isLocalDev()) return;
     Object.entries(tags).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         this.setTag(key, String(value));
@@ -83,7 +107,7 @@ class AnalyticsService {
    * Dispatches a custom business event.
    */
   event(eventName: ClarityEventName) {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || this.isLocalDev()) return;
 
     if (this.memoryFiredEvents.has(eventName)) {
       return;

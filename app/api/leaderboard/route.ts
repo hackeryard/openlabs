@@ -11,10 +11,9 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "50", 10);
     
     let sortQuery: any = {};
-    let query: any = { 
-      profileSetupComplete: true, 
-      email: { $ne: "rahulrajput3621@gmail.com" } 
-    }; // Only show fully setup profiles, excluding main admin account
+    let query: any = {
+      username: { $exists: true, $ne: "" },
+    };
 
     if (subject === "all") {
       sortQuery = { xp: -1 };

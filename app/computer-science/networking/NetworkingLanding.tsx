@@ -394,7 +394,7 @@ export default function NetworkingLanding({ content }: Props) {
           <h2 className="text-3xl font-black tracking-tight text-foreground">{content.shortName} FAQs</h2>
           <div className="mt-8 grid grid-cols-1 gap-4">
             {content.faqs.map((faq) => (
-              <details key={faq.question} className="group overflow-hidden rounded-xl border border-border bg-background shadow-sm transition-all duration-300 open:border-indigo-200 open:bg-card open:shadow-md open:shadow-indigo-950/5">
+              <details key={faq.question} name="networking-faq" className="group overflow-hidden rounded-xl border border-border bg-background shadow-sm transition-all duration-300 open:border-indigo-200 open:bg-card open:shadow-md open:shadow-indigo-950/5">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-base font-bold text-foreground transition hover:text-indigo-700">
                   <span>{faq.question}</span>
                   <span className="flex h-8 w-8 flex-none items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition group-open:border-indigo-100 group-open:bg-indigo-50 group-open:text-indigo-600">

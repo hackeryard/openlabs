@@ -10,6 +10,12 @@ const publicPaths = [
   '/verify-email',
   '/about',
   '/contact',
+  '/500',
+  '/404',
+  '/sitemap.xml',
+  '/robots.txt',
+  '/llms.txt',
+  '/llms-full.txt',
 ];
 
 const publicPrefixes = [

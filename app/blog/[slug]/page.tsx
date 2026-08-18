@@ -1,17 +1,12 @@
-import React from 'react';
-import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
-import { ArrowLeft, Calendar, Clock, User, ChevronDown } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import { Metadata } from 'next';
-import { connectDB } from '@/app/lib/mongodb';
-import Blog from '@/app/models/Blog';
+import React from "react";
+import { notFound } from "next/navigation";
+import { Metadata } from "next";
+import { connectDB } from "@/app/lib/mongodb";
+import Blog from "@/app/models/Blog";
+import BlogPostInteractive from "@/app/components/blog/BlogPostInteractive";
 
 export const revalidate = 3600;
 
-// TypeScript Types for better safety
 interface FAQ {
   question: string;
   answer: string;
@@ -32,14 +27,23 @@ interface BlogPost {
   faqs?: FAQ[];
 }
 
+interface RelatedPost {
+  slug: string;
+  title: string;
+  excerpt?: string;
+  category: string;
+  date: string;
+  readTime?: string;
+  coverImage?: string;
+}
+
 async function getBlogPost(slug: string): Promise<BlogPost | null> {
   try {
     await connectDB();
     const blog = await Blog.findOne({ slug, published: true }).lean();
-    
+
     if (!blog) return null;
-    
-    // Serialize Mongoose object to plain JS object for Next.js Server Components
+
     return JSON.parse(JSON.stringify(blog));
   } catch (error) {
     console.error("Failed to fetch blog post directly:", error);
@@ -47,12 +51,49 @@ async function getBlogPost(slug: string): Promise<BlogPost | null> {
   }
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+async function getRelatedPosts(currentSlug: string, category: string): Promise<RelatedPost[]> {
+  try {
+    await connectDB();
+    let related = await Blog.find({
+      slug: { $ne: currentSlug },
+      category: category,
+      published: true,
+    })
+      .sort({ date: -1 })
+      .limit(3)
+      .select("slug title excerpt category date readTime coverImage -_id")
+      .lean();
+
+    if (!related || related.length < 3) {
+      const additional = await Blog.find({
+        slug: { $nin: [currentSlug, ...related.map((r) => r.slug)] },
+        published: true,
+      })
+        .sort({ date: -1 })
+        .limit(3 - (related?.length || 0))
+        .select("slug title excerpt category date readTime coverImage -_id")
+        .lean();
+
+      related = [...(related || []), ...(additional || [])];
+    }
+
+    return JSON.parse(JSON.stringify(related)) || [];
+  } catch (error) {
+    console.error("Failed to fetch related posts:", error);
+    return [];
+  }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
   const post = await getBlogPost(params.slug);
 
   if (!post) {
     return {
-      title: 'Post Not Found | OpenLabs',
+      title: "Post Not Found | OpenLabs",
       robots: {
         index: false,
         follow: false,
@@ -61,13 +102,25 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 
   const title = post.metaTitle || `${post.title} | OpenLabs Blog`;
-  const description = post.metaDescription || post.excerpt || `Read ${post.title} on the OpenLabs Blog.`;
+  const description =
+    post.metaDescription || post.excerpt || `Read ${post.title} on the OpenLabs Blog.`;
   const canonical = `/blog/${post.slug}`;
   const image = post.coverImage || "/images/og-image.svg";
 
   return {
     title,
     description,
+    keywords: [
+      post.category,
+      `${post.category} Virtual Labs`,
+      "STEM Simulation",
+      "Interactive Science Lab",
+      post.title,
+      "OpenLabs Education",
+    ],
+    authors: [{ name: post.author || "OpenLabs Team", url: "https://www.openlabs.org.in/about" }],
+    creator: post.author || "OpenLabs Team",
+    publisher: "OpenLabs",
     alternates: {
       canonical,
     },
@@ -75,9 +128,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       title,
       description,
       url: canonical,
+      siteName: "OpenLabs",
       type: "article",
       publishedTime: post.date ? new Date(post.date).toISOString() : undefined,
+      modifiedTime: post.date ? new Date(post.date).toISOString() : undefined,
       authors: [post.author || "OpenLabs Team"],
+      section: post.category,
+      tags: [post.category, "STEM", "Virtual Labs", "Science", "Education"],
       images: [
         {
           url: image,
@@ -92,10 +149,24 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       title,
       description,
       images: [image],
+      creator: "@openlabs_org",
     },
     robots: {
       index: true,
       follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
+    other: {
+      "geo.region": "IN",
+      "geo.placename": "India",
+      "educational-level": "High School, Undergraduate, K-12",
+      "learning-resource-type": "Interactive Simulation & Article",
     },
   };
 }
@@ -107,24 +178,23 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     notFound();
   }
 
-  const displayDate = new Date(post.date).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  });
+  const relatedPosts = await getRelatedPosts(post.slug, post.category);
 
-  const faqSchema = post.faqs && post.faqs.length > 0 ? {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": post.faqs.map((faq) => ({
-      "@type": "Question",
-      "name": faq.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": faq.answer
-      }
-    }))
-  } : null;
+  const faqSchema =
+    post.faqs && post.faqs.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: post.faqs.map((faq) => ({
+            "@type": "Question",
+            name: faq.question,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: faq.answer,
+            },
+          })),
+        }
+      : null;
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -135,9 +205,19 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     description: post.metaDescription || post.excerpt || post.title,
     image: post.coverImage ? [post.coverImage] : ["https://www.openlabs.org.in/images/og-image.svg"],
     datePublished: post.date ? new Date(post.date).toISOString() : undefined,
+    dateModified: post.date ? new Date(post.date).toISOString() : undefined,
+    inLanguage: "en-US",
+    isAccessibleForFree: true,
+    educationalUse: ["Interactive Learning", "STEM Simulation Guide", "Self-Study"],
+    keywords: [post.category, "STEM Education", "Virtual Labs", "Science Simulations"],
     author: {
       "@type": "Person",
       name: post.author || "OpenLabs Team",
+      worksFor: {
+        "@type": "EducationalOrganization",
+        name: "OpenLabs",
+        url: "https://www.openlabs.org.in",
+      },
     },
     publisher: {
       "@type": "EducationalOrganization",
@@ -173,6 +253,12 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       {
         "@type": "ListItem",
         position: 3,
+        name: post.category,
+        item: `https://www.openlabs.org.in/blog?category=${encodeURIComponent(post.category)}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 4,
         name: post.title,
         item: `https://www.openlabs.org.in/blog/${post.slug}`,
       },
@@ -180,7 +266,8 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   };
 
   return (
-    <main className="min-h-screen text-foreground selection:bg-indigo-100 selection:text-indigo-900 antialiased pt-20 pb-32">
+    <main className="min-h-screen bg-background text-foreground selection:bg-primary/20 selection:text-primary antialiased pt-6 sm:pt-10 pb-16 sm:pb-24">
+      {/* Schema.org Structured Data for SEO, AEO & Rich Results */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
@@ -196,118 +283,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         />
       )}
 
-      {/* Changed to max-w-3xl for optimal reading line length */}
-      <article className="max-w-5xl mx-auto px-5 sm:px-8">
-
-        {/* Navigation & Context Action */}
-        <div className="mb-10">
-          <Link
-            href="/blog"
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-indigo-600 font-medium group transition-colors duration-200"
-          >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200" aria-hidden="true" />
-            Back to publications
-          </Link>
-        </div>
-
-        {/* Editorial Header */}
-        <header className="mb-12">
-          <div className="flex items-center gap-3 mb-5">
-            <span className="px-2.5 py-1 text-xs font-semibold tracking-wider uppercase text-primary bg-primary/10 rounded-md border border-primary/20">
-              {post.category}
-            </span>
-          </div>
-
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-foreground mb-6 leading-[1.15]">
-            {post.title}
-          </h1>
-
-          {/* Author Matrix Meta */}
-          <div className="flex flex-wrap items-center gap-y-3 gap-x-6 text-sm text-muted-foreground pt-4 border-t border-border/60">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center">
-                <User className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
-              </div>
-              <span className="font-semibold text-foreground">{post.author || 'OpenLabs Team'}</span>
-            </div>
-
-            <div className="flex items-center gap-1.5 text-muted-foreground">
-              <Calendar className="w-4 h-4" aria-hidden="true" />
-              <time dateTime={post.date}>{displayDate}</time>
-            </div>
-
-            {post.readTime && (
-              <div className="flex items-center gap-1.5 text-muted-foreground">
-                <Clock className="w-4 h-4" aria-hidden="true" />
-                <span>{post.readTime}</span>
-              </div>
-            )}
-          </div>
-        </header>
-
-        {/* Editorial Hero Asset */}
-        {post.coverImage && (
-          <div className="mb-14 relative w-full aspect-[16/9] md:aspect-[21/9] rounded-2xl overflow-hidden shadow-sm border border-border/50 bg-muted">
-            <Image
-              src={post.coverImage}
-              alt={post.title}
-              fill
-              priority
-              className="object-cover object-center transform hover:scale-[1.02] transition-transform duration-700"
-              sizes="(max-width: 768px) 100vw, 960px"
-            />
-          </div>
-        )}
-
-        {/* Clean, Publication-Grade Typography Canvas */}
-        <div className="prose prose-slate dark:prose-invert md:prose-lg max-w-none
-          prose-p:text-foreground prose-p:leading-relaxed
-          prose-headings:text-foreground prose-headings:font-bold prose-headings:tracking-tight
-          prose-h2:mt-12 prose-h2:mb-6
-          prose-h3:mt-8 prose-h3:mb-4
-          prose-a:text-indigo-600 prose-a:font-medium prose-a:underline-offset-4 prose-a:decoration-indigo-200 hover:prose-a:decoration-indigo-600 prose-a:transition-colors
-          prose-blockquote:border-l-4 prose-blockquote:border-indigo-500 prose-blockquote:bg-indigo-50/50 dark:prose-blockquote:bg-indigo-950/30 prose-blockquote:px-6 prose-blockquote:py-2 prose-blockquote:rounded-r-xl prose-blockquote:not-italic prose-blockquote:text-foreground
-          prose-strong:text-foreground prose-strong:font-semibold
-          prose-img:rounded-2xl prose-img:border prose-img:border-border/60 prose-img:shadow-sm
-          prose-code:text-indigo-600 prose-code:bg-indigo-50/60 dark:prose-code:bg-indigo-950/30 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
-          prose-pre:bg-slate-900 prose-pre:border prose-pre:border-slate-800/80 prose-pre:rounded-xl prose-pre:shadow-sm"
-        >
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {post.content}
-          </ReactMarkdown>
-        </div>
-
-        {/* Elegant Minimalist FAQ Section */}
-        {post.faqs && post.faqs.length > 0 && (
-          <div className="mt-20 pt-14 border-t border-border/80">
-            <div className="mb-10">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight mb-3">Frequently Asked Questions</h2>
-              <p className="text-muted-foreground">Quick answers to common questions about this topic.</p>
-            </div>
-
-            <div className="space-y-4">
-              {post.faqs.map((faq, index) => (
-                <details
-                  key={index}
-                  className="group rounded-xl border border-border/80 bg-card transition-all duration-200 ease-out open:border-primary/40 open:shadow-sm"
-                >
-                  <summary className="flex items-center justify-between px-6 py-5 cursor-pointer font-medium text-foreground list-none select-none">
-                    <span className="pr-6 text-base md:text-lg group-hover:text-indigo-600 transition-colors duration-200">
-                      {faq.question}
-                    </span>
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-muted text-muted-foreground group-hover:text-indigo-600 group-hover:bg-primary/10 flex items-center justify-center transition-colors">
-                      <ChevronDown className="w-4 h-4 transform group-open:rotate-180 transition-transform duration-300 ease-in-out" aria-hidden="true" />
-                    </span>
-                  </summary>
-                  <div className="px-6 pb-6 text-muted-foreground leading-relaxed border-t border-border mt-2 pt-4">
-                    {faq.answer}
-                  </div>
-                </details>
-              ))}
-            </div>
-          </div>
-        )}
-      </article>
+      <BlogPostInteractive post={post} relatedPosts={relatedPosts} />
     </main>
   );
 }

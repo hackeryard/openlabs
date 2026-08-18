@@ -24,14 +24,36 @@ export function getOrCreateSessionId(): string {
 }
 
 // ── Telemetry Ingestion Dispatcher ─────────────────────────────────────
+export function isLocalDevelopment(): boolean {
+  if (process.env.NODE_ENV !== "production") return true;
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname;
+    const port = window.location.port;
+    if (
+      host === "localhost" ||
+      host === "127.0.0.1" ||
+      host === "0.0.0.0" ||
+      host.endsWith(".local") ||
+      host === "[::1]" ||
+      host.includes("localhost") ||
+      port === "3000" ||
+      port === "5000" ||
+      port !== ""
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export function isProduction(): boolean {
-  return process.env.NODE_ENV === "production";
+  return !isLocalDevelopment();
 }
 
 export function sendTelemetryBeacon(url: string, data: Record<string, any>) {
   if (typeof window === "undefined") return;
-  // Only track telemetry in production
-  if (process.env.NODE_ENV !== "production") return;
+  // Never track analytics or telemetry in local development
+  if (isLocalDevelopment()) return;
 
   const payload = JSON.stringify({
     ...data,
