@@ -32,8 +32,14 @@ function extractDomain(ref?: string): string {
 
 export async function POST(req: Request) {
   try {
-    // Only ingest telemetry in production
-    if (process.env.NODE_ENV !== "production") {
+    const host = req.headers.get("host") || "";
+    // Only ingest telemetry in real production deployments (never local dev or localhost)
+    if (
+      process.env.NODE_ENV !== "production" ||
+      host.includes("localhost") ||
+      host.includes("127.0.0.1") ||
+      host.endsWith(".local")
+    ) {
       return NextResponse.json({ ok: true, devMode: true });
     }
 

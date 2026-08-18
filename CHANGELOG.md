@@ -4,6 +4,11 @@ All notable changes to OpenLabs are documented in this file. Format loosely foll
 
 ## Unreleased
 
+- **Disabled Analytics & Error Telemetry in Local & Preview Environments (`yarn dev`, `yarn start`, `localhost`)**:
+  - Created centralized [`AppAnalytics.tsx`](file:///d:/openlabs/app/components/AppAnalytics.tsx) client controller to strictly isolate all tracking services: Google Analytics 4, Microsoft Clarity, Vercel Analytics, Vercel Speed Insights, and OpenLabs first-party telemetry observer.
+  - Added multi-point hostname & port guards (`localhost`, `127.0.0.1`, `0.0.0.0`, `*.local`, `port: 3000`, `port: 5000`) across [`app/layout.tsx`](file:///d:/openlabs/app/layout.tsx), [`app/components/AppAnalytics.tsx`](file:///d:/openlabs/app/components/AppAnalytics.tsx), [`app/lib/tracker.ts`](file:///d:/openlabs/app/lib/tracker.ts), [`lib/analytics.ts`](file:///d:/openlabs/lib/analytics.ts), [`components/ClarityProvider.tsx`](file:///d:/openlabs/components/ClarityProvider.tsx), and [`components/ClarityTrackerObserver.tsx`](file:///d:/openlabs/components/ClarityTrackerObserver.tsx) so analytics never load or fire during `yarn start` or local testing.
+  - Added request `host` header inspection to backend ingestion endpoints ([`/api/analytics/collect`](file:///d:/openlabs/app/api/analytics/collect/route.ts), [`/api/analytics/error`](file:///d:/openlabs/app/api/analytics/error/route.ts)) to completely bypass telemetry database writes for local/preview traffic.
+
 - **Fixed Next.js App Router Static Export Error (`app/500`)**:
   - Removed obsolete `app/500/page.tsx` route which caused Next.js Pages-Router internal error export collisions (`ENOENT: rename 500.html`). Standardized full 500 error handling inside Next.js App Router boundaries `app/error.tsx` and `app/global-error.tsx`.
   - Verified production build completes cleanly across all 253 static routes.

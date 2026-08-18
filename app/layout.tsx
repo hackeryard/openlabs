@@ -7,12 +7,7 @@ import Footer from './components/Footer'
 import OpenLabsAILoader from './components/OpenLabsAILoader'
 import FloatingLabFeedback from './components/FloatingLabFeedback'
 import { ChatProvider } from './components/ChatContext'
-import { SpeedInsights } from '@vercel/speed-insights/next'
-import { Analytics } from "@vercel/analytics/next"
-import Script from 'next/script'
-import ClarityProvider from '@/components/ClarityProvider'
-import ClarityTrackerObserver from '@/components/ClarityTrackerObserver'
-import OpenLabsTracker from './components/OpenLabsTracker'
+import AppAnalytics from './components/AppAnalytics'
 import ThemeProvider from '@/components/ThemeProvider'
 import AmbientBackground from '@/components/ui/AmbientBackground'
 import StructuredData from './components/seo/StructuredData'
@@ -24,55 +19,69 @@ export const metadata: Metadata = {
     default: 'OpenLabs - Virtual Lab Experience Platform for Science & Technology',
     template: '%s'
   },
-  description: 'OpenLabs is an interactive virtual lab experience platform where students can explore physics, chemistry, biology, and computer science experiments online.',
+  description: 'Experience interactive virtual laboratories for Physics, Chemistry, Biology, Computer Science, and Mathematics. Master concepts through simulation-based learning.',
   keywords: [
-    'interactive labs', 'physics experiments', 'chemistry simulations', 'biology education',
-    'computer science learning', 'virtual labs', 'science education',
-    'STEM learning', 'online experiments', 'educational technology', 'simulation software'
+    "virtual labs",
+    "science simulations",
+    "physics experiments online",
+    "chemistry lab simulation",
+    "interactive science education",
+    "STEM learning platform",
+    "STEM education",
+    "CBSE science practicals",
+    "NCERT virtual experiments",
+    "AP physics simulations",
+    "IB science labs",
+    "computer science visualizer",
+    "biology interactive models",
+    "mathematics dynamic grapher",
+    "Ohm's law simulation",
+    "periodic table 3D",
+    "DNA replication model",
+    "sorting algorithm visualizer",
+    "free STEM education"
   ],
-  authors: [{ name: 'OpenLabs Team' }],
-  creator: 'OpenLabs',
-  publisher: 'OpenLabs',
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
+  authors: [{ name: "OpenLabs Team", url: siteUrl }],
+  creator: "OpenLabs",
+  publisher: "OpenLabs",
   metadataBase: new URL(siteUrl),
   alternates: {
-    canonical: '/',
+    canonical: 'https://www.openlabs.org.in/',
+  },
+  icons: {
+    icon: '/logo.svg',
+    shortcut: '/logo.svg',
+    apple: '/logo.svg',
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: '/',
-    title: 'OpenLabs - Virtual Lab Experience Platform for Science & Technology',
-    description: 'OpenLabs is an interactive virtual lab experience platform where students can explore physics, chemistry, biology, and computer science experiments online.',
+    url: 'https://www.openlabs.org.in/',
     siteName: 'OpenLabs',
+    title: 'OpenLabs - Virtual Lab Experience Platform for Science & Technology',
+    description: 'Experience interactive virtual laboratories for Physics, Chemistry, Biology, Computer Science, and Mathematics. Master concepts through simulation-based learning.',
     images: [
       {
-        url: '/images/og-image.jpg', // Add this image to public/images/
+        url: '/logo.svg',
         width: 1200,
         height: 630,
-        alt: 'OpenLabs - Interactive Learning Platform',
+        alt: 'OpenLabs - Virtual Science Laboratories',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    images: ['/images/twitter-image.svg'],
     title: 'OpenLabs - Virtual Lab Experience Platform for Science & Technology',
-    description: 'Explore interactive physics, chemistry, biology, and computer science experiments.',
-    creator: '@openlabs', // Replace with actual Twitter handle
+    description: 'Experience interactive virtual laboratories for Physics, Chemistry, Biology, Computer Science, and Mathematics. Master concepts through simulation-based learning.',
+    images: ['/logo.svg'],
+    creator: '@openlabs',
   },
   robots: {
     index: true,
     follow: true,
-    nocache: true,
     googleBot: {
       index: true,
       follow: true,
-      noimageindex: false,
       'max-video-preview': -1,
       'max-image-preview': 'large',
       'max-snippet': -1,
@@ -91,24 +100,10 @@ import { AuthProvider } from '@/components/AuthProvider'
 export default function RootLayout({ children, }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        {/* Google tag (gtag.js) */}
-        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-7XW8JGG3BD" strategy="afterInteractive" />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-
-            gtag('config', 'G-7XW8JGG3BD');
-          `}
-        </Script>
-      </head>
       <body className="bg-background text-foreground">
         <AuthProvider>
           <ThemeProvider>
           <AmbientBackground />
-          <Analytics />
           <Navbar />
           <div className="mx-auto">
             <div data-ol-page-root>
@@ -116,14 +111,12 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
                 {children}
                 <OpenLabsAILoader />
                 <FloatingLabFeedback />
-                <OpenLabsTracker />
-                <ClarityProvider />
-                <ClarityTrackerObserver />
+                {/* Analytics conditionally initialized only on live production domain (never localhost or yarn start) */}
+                <AppAnalytics />
               </ChatProvider>
             </div>
           </div>
           <Footer />
-          <SpeedInsights />
           </ThemeProvider>
         </AuthProvider>
 

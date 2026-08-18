@@ -5,8 +5,14 @@ import { getUserFromToken } from "@/app/lib/getUserFromToken";
 
 export async function POST(req: Request) {
   try {
-    // Only record error diagnostics in production
-    if (process.env.NODE_ENV !== "production") {
+    const host = req.headers.get("host") || "";
+    // Only record error diagnostics in real production deployments (never local dev or localhost)
+    if (
+      process.env.NODE_ENV !== "production" ||
+      host.includes("localhost") ||
+      host.includes("127.0.0.1") ||
+      host.endsWith(".local")
+    ) {
       return NextResponse.json({ ok: true, devMode: true });
     }
 
