@@ -59,6 +59,18 @@ Every subject/lab has **two separate route trees that both must exist**, plus a 
 5. **Navigation** — `app/components/Navbar.tsx` (`labCategories`, hardcoded, does **not** read `labs.ts`) and `app/components/Hero.tsx` (`labsData`, also hardcoded, homepage's curated subset) both need manual updates; neither derives from the registry.
 6. Nothing else needs manual registration — `lib/llms.ts` (root) walks `app/` at request time to build `/llms.txt` and `/llms-full.txt`, so new pages show up there automatically; `app/sitemap.ts` needs a manual entry to appear in the XML sitemap, though.
 
+### Subject & Subtopic Landing Pages Architecture
+
+1. **Discipline Hub Pages** (`app/<subject>/page.tsx` for `physics`, `chemistry`, `biology`, `mathematics`, `computer-science`):
+   - Server Component that renders metadata, full Schema.org JSON-LD (`CollectionPage`, `ItemList`, `HowTo`, `FAQPage`, `BreadcrumbList`), radial dot grid background, themed hero, dynamic statistics pills, and feature value cards.
+   - Client Component (`<Subject>ExperimentExplorer.tsx`, e.g. `PhysicsExperimentExplorer.tsx`, `BiologyExperimentExplorer.tsx`) handles live search query filtering, category tag chips, difficulty badges, and responsive experiment cards.
+   - SEO/GEO/AEO sections: 4-step practical investigation protocols, computational foundations & governing laws matrix tables with theoretical equations and active numerical solvers, academic standards alignment (NCERT/CBSE, AP, IB, Cambridge), and single-open FAQ accordions (`name="<subject>-faq"`).
+
+2. **Subtopic Hub Pages** (`app/<subject>/<subtopic>/page.tsx`, e.g. `app/computer-science/networking/page.tsx`, `app/biology/genetics/page.tsx`):
+   - Uses `app/components/SubtopicHubLayout.tsx` (Server Component) to render SEO/GEO/AEO schemas, headers, investigation protocols, and computational matrices.
+   - Uses `app/components/SubtopicCardExplorer.tsx` (`"use client"`) to render the interactive search, category filter tags, and subtopic experiment card grid.
+   - Note on RSC boundaries: `SubtopicHubLayout.tsx` is kept as a Server Component so that Lucide icon components can be passed without serialization errors. Only plain JSON serializable array data (`cards`) is passed down to `SubtopicCardExplorer.tsx`.
+
 **Concrete step-by-step for adding a new lab** — see the `new-lab` skill (`.claude/skills/new-lab/SKILL.md`) for the full checklist; short version:
 1. Build the interactive component under `app/components/<subject>/`, following the sibling pattern for that subject (canvas for physics, React Three Fiber for 3D chemistry/biology, whatever fits for CS).
 2. Wire it into `app/labs/<subject>/<slug>/page.tsx` via `dynamic(..., {ssr:false, loading: () => <UniversalLoader .../>})`.

@@ -49,15 +49,15 @@ export default function RCLab({
   const [_simTime, setSimTime] = useState(0);
 
   // Chatbot 
-      const { setExperimentData } = useChat();
-    
-    useEffect(() => {
-      setExperimentData({
-        title: "RC Lab",
-        theory: "Interactive RC charging/discharging lab will be added here. For now, this is a placeholder page.",
-        extraContext: ``,
-      });
-    }, []);
+  const { setExperimentData } = useChat();
+
+  useEffect(() => {
+    setExperimentData({
+      title: "RC Lab",
+      theory: "Interactive RC charging/discharging lab will be added here. For now, this is a placeholder page.",
+      extraContext: ``,
+    });
+  }, []);
   // integrate
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -134,7 +134,7 @@ export default function RCLab({
   // update tau measurement whenever data updates
   useEffect(() => {
     const id = setInterval(() => {
-      const t = exponentialFitTau(dataRef.current.filter(d=>d.v >= 0));
+      const t = exponentialFitTau(dataRef.current.filter(d => d.v >= 0));
       if (t && !tauMeasured) completeExperiment();
       setTauMeasured(t);
     }, 300);
@@ -156,7 +156,7 @@ export default function RCLab({
     const pts = dataRef.current;
     const maxT = Math.max(1, pts.length ? pts[pts.length - 1].t : 1);
     const maxV = Math.max(Vsource, 1);
-    const maxI = Math.max(...(pts.map(p=>Math.abs(p.i)||0)), Vsource / Math.max(R,1e-9), 1);
+    const maxI = Math.max(...(pts.map(p => Math.abs(p.i) || 0)), Vsource / Math.max(R, 1e-9), 1);
 
     // draw Vc(t)
     ctx.beginPath(); ctx.strokeStyle = "#2563eb"; ctx.lineWidth = 2;
@@ -202,7 +202,7 @@ export default function RCLab({
     tRef.current = 0;
     dataRef.current = [];
     setMode("charge");
-    setTimeout(()=>setRunning(true), 10);
+    setTimeout(() => setRunning(true), 10);
   }
   function startDischarge() {
     // assume capacitor charged to Vsource before discharge
@@ -210,7 +210,7 @@ export default function RCLab({
     tRef.current = 0;
     dataRef.current = [];
     setMode("discharge");
-    setTimeout(()=>setRunning(true), 10);
+    setTimeout(() => setRunning(true), 10);
   }
   function stop() {
     setMode("idle");
@@ -226,7 +226,7 @@ export default function RCLab({
 
   // export CSV
   function exportCSV() {
-    const rows = [["t_s","Vc_V","I_A"], ...dataRef.current.map(p => [p.t.toFixed(6), p.v.toFixed(6), p.i.toFixed(6)])];
+    const rows = [["t_s", "Vc_V", "I_A"], ...dataRef.current.map(p => [p.t.toFixed(6), p.v.toFixed(6), p.i.toFixed(6)])];
     const csv = rows.map(r => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -234,22 +234,22 @@ export default function RCLab({
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-4 p-4 bg-card rounded shadow">
+    <div className="max-w-7xl mx-auto space-y-4 p-4 bg-card rounded shadow">
       <h3 className="text-xl font-semibold">RC Circuit — Charge & Discharge Lab</h3>
       <DailyChallengeCard labId="physics/rclab" currentParams={{ timeConstant: tauMeasured, voltage: Vsource }} />
       <div className="grid md:grid-cols-3 gap-4">
         <div className="space-y-3">
           <label className="block text-sm">Resistance R (Ω)</label>
           <input type="range" min={10} max={1e6} step={10} value={R} onChange={(e) => setR(Number(e.target.value))} />
-          <input type="number" value={R} onChange={(e)=>setR(Number(e.target.value))} className="w-full mt-1 border rounded px-2 py-1" />
+          <input type="number" value={R} onChange={(e) => setR(Number(e.target.value))} className="w-full mt-1 border rounded px-2 py-1" />
 
           <label className="block text-sm">Capacitance C (F)</label>
-          <input type="range" min={1e-9} max={1e-3} step={1e-9} value={C} onChange={(e)=>setC(Number(e.target.value))} />
-          <input type="number" value={C} onChange={(e)=>setC(Number(e.target.value))} className="w-full mt-1 border rounded px-2 py-1" />
+          <input type="range" min={1e-9} max={1e-3} step={1e-9} value={C} onChange={(e) => setC(Number(e.target.value))} />
+          <input type="number" value={C} onChange={(e) => setC(Number(e.target.value))} className="w-full mt-1 border rounded px-2 py-1" />
 
           <label className="block text-sm">Source V (V)</label>
-          <input type="range" min={0} max={20} step={0.1} value={Vsource} onChange={(e)=>setVsource(Number(e.target.value))} />
-          <input type="number" value={Vsource} onChange={(e)=>setVsource(Number(e.target.value))} className="w-full mt-1 border rounded px-2 py-1" />
+          <input type="range" min={0} max={20} step={0.1} value={Vsource} onChange={(e) => setVsource(Number(e.target.value))} />
+          <input type="number" value={Vsource} onChange={(e) => setVsource(Number(e.target.value))} className="w-full mt-1 border rounded px-2 py-1" />
 
           <div className="flex gap-2">
             <button onClick={startCharge} className="flex-1 py-2 rounded bg-blue-600 text-white">Charge</button>
@@ -271,7 +271,7 @@ export default function RCLab({
         </div>
 
         <div className="md:col-span-2">
-          <canvas ref={canvasRef} className="w-full border rounded" style={{height:300}} />
+          <canvas ref={canvasRef} className="w-full border rounded" style={{ height: 300 }} />
         </div>
       </div>
     </div>

@@ -136,6 +136,14 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
               name: "OpenLabs",
               alternateName: "OpenLabs Virtual Labs",
               url: siteUrl,
+              potentialAction: {
+                "@type": "SearchAction",
+                target: {
+                  "@type": "EntryPoint",
+                  urlTemplate: `${siteUrl}/?q={search_term_string}`
+                },
+                "query-input": "required name=search_term_string"
+              }
             },
             {
               "@context": "https://schema.org",
@@ -178,6 +186,15 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
                 },
                 {
                   "@type": "Course",
+                  name: "Mathematics Simulations",
+                  description: "Interactive mathematics simulations and function graphers",
+                  provider: {
+                    "@type": "Organization",
+                    name: "OpenLabs"
+                  }
+                },
+                {
+                  "@type": "Course",
                   name: "Computer Science Tools",
                   description: "Interactive computer science tools and simulations",
                   provider: {
@@ -187,7 +204,7 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
                 }
               ],
               educationalCredentialAwarded: "Certificate of Completion",
-              teaches: ["Physics", "Chemistry", "Biology", "Computer Science"],
+              teaches: ["Physics", "Chemistry", "Biology", "Mathematics", "Computer Science"],
               hasEducationalUse: "Interactive Learning",
               learningResourceType: "Interactive Simulation"
             }

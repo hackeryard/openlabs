@@ -1,19 +1,30 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence, Variants } from "framer-motion";
+import Link from "next/link";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Award,
+  Beaker,
   Zap,
-  Target,
+  Calendar,
   Flame,
   Trophy,
   Sparkles,
   BookOpen,
   Compass,
-  Microscope
+  Microscope,
+  Share2,
+  Check,
+  Atom,
+  Dna,
+  Binary,
+  Calculator,
+  ShieldCheck,
+  ArrowRight,
+  Lock,
 } from "lucide-react";
-import UniversalLoader from "@/app/components/UniversalLoader";
 
 const AVATARS = [
   "/images/avatars/avatar-01.png",
@@ -30,381 +41,489 @@ const AVATARS = [
   "/images/avatars/avatar-12.png",
 ];
 
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.2 }
+const ALL_ACHIEVEMENTS = [
+  {
+    id: "first_challenge",
+    name: "First Challenge",
+    desc: "Complete your first lab simulation challenge",
+    icon: Sparkles,
+    gradient: "from-amber-400 to-orange-500",
+  },
+  {
+    id: "streak_3",
+    name: "3 Day Streak",
+    desc: "Perform science experiments 3 days in a row",
+    icon: Flame,
+    gradient: "from-orange-400 to-rose-500",
+  },
+  {
+    id: "streak_7",
+    name: "7 Day Streak",
+    desc: "Maintain an active lab streak for a full week",
+    icon: Trophy,
+    gradient: "from-purple-500 to-indigo-600",
+  },
+  {
+    id: "physics_master",
+    name: "Quantum Explorer",
+    desc: "Complete 5 distinct Physics simulations",
+    icon: Atom,
+    gradient: "from-blue-400 to-cyan-500",
+  },
+  {
+    id: "chem_master",
+    name: "Alchemist",
+    desc: "Perform 4 Chemistry simulations and titrations",
+    icon: Flame,
+    gradient: "from-emerald-400 to-teal-500",
+  },
+  {
+    id: "math_master",
+    name: "Calculus Virtuoso",
+    desc: "Solve 5 Mathematics curve explorations",
+    icon: Calculator,
+    gradient: "from-indigo-400 to-violet-500",
+  },
+];
+
+const SUBJECT_THEMES: Record<
+  string,
+  {
+    icon: React.ElementType;
+    color: string;
+    bg: string;
+    border: string;
+    stroke: string;
+    label: string;
+    path: string;
   }
-};
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { type: "spring", stiffness: 300, damping: 24 }
-  }
-};
-
-function XPBar({ xp, level, color = "from-indigo-500 via-blue-500 to-cyan-400" }: { xp: number; level: number; color?: string }) {
-  const next = level * 100;
-  const pct = Math.min(100, Math.round((xp / next) * 100));
-  return (
-    <div className="space-y-2 w-full">
-      <div className="relative w-full bg-slate-900/5 rounded-full h-3.5 p-[2px] shadow-inner overflow-hidden backdrop-blur-sm">
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: `${pct}%` }}
-          transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 }}
-          className={`bg-gradient-to-r ${color} h-full rounded-full relative shadow-[0_0_10px_rgba(99,102,241,0.4)]`}
-        >
-          <div className="absolute top-0 right-0 bottom-0 w-12 bg-gradient-to-r from-transparent to-white/40 rounded-full animate-[pulse_2s_infinite]" />
-        </motion.div>
-      </div>
-      <div className="flex justify-between items-center text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
-        <span>{xp} XP Earned</span>
-        <span>{next - xp} XP to Level {level + 1}</span>
-      </div>
-    </div>
-  );
-}
-
-function SubjectMasteryCircle({ subject, xp, level }: { subject: string; xp: number; level: number }) {
-  const next = level * 100;
-  const pct = Math.min(100, Math.round((xp / next) * 100));
-  const radius = 32;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (pct / 100) * circumference;
-
-  const colorMap: Record<string, { stroke: string; border: string; shadow: string; text: string; bg: string }> = {
-    physics: { stroke: "stroke-indigo-500", border: "hover:border-indigo-500/50", shadow: "hover:shadow-indigo-500/20", text: "text-indigo-500", bg: "bg-indigo-500/10" },
-    chemistry: { stroke: "stroke-amber-500", border: "hover:border-amber-500/50", shadow: "hover:shadow-amber-500/20", text: "text-amber-500", bg: "bg-amber-500/10" },
-    biology: { stroke: "stroke-emerald-500", border: "hover:border-emerald-500/50", shadow: "hover:shadow-emerald-500/20", text: "text-emerald-500", bg: "bg-emerald-500/10" },
-    computerScience: { stroke: "stroke-purple-500", border: "hover:border-purple-500/50", shadow: "hover:shadow-purple-500/20", text: "text-purple-500", bg: "bg-purple-500/10" },
-    mathematics: { stroke: "stroke-indigo-600", border: "hover:border-indigo-600/50", shadow: "hover:shadow-indigo-600/20", text: "text-indigo-600", bg: "bg-indigo-600/10" },
-  };
-
-  const theme = colorMap[subject] || colorMap.physics;
-  const displayName = subject === "computerScience" ? "Comp Sci" : subject === "mathematics" ? "Math" : subject;
-
-  return (
-    <motion.div
-      variants={itemVariants}
-      whileHover={{ y: -5, scale: 1.02 }}
-      className={`bg-card border border-border rounded-3xl p-5 flex flex-col items-center justify-center text-center transition-all duration-300 relative overflow-hidden group shadow-[0_8px_30px_rgb(0,0,0,0.04)] ${theme.border} ${theme.shadow}`}
-    >
-      <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-b from-transparent to-${theme.bg.split('-')[1]}`} />
-
-      <div className="relative w-20 h-20 flex items-center justify-center mb-2">
-        <svg className="w-full h-full -rotate-90 drop-shadow-sm">
-          <circle cx="40" cy="40" r={radius} className="stroke-muted" strokeWidth="6" fill="transparent" />
-          <motion.circle
-            initial={{ strokeDashoffset: circumference }}
-            animate={{ strokeDashoffset }}
-            transition={{ duration: 1.5, delay: 0.2, ease: "easeOut" }}
-            cx="40" cy="40" r={radius}
-            className={theme.stroke}
-            strokeWidth="6"
-            fill="transparent"
-            strokeDasharray={circumference}
-            strokeLinecap="round"
-          />
-        </svg>
-        <span className="absolute text-sm font-black text-foreground">
-          {pct}%
-        </span>
-      </div>
-
-      <h4 className="text-[11px] font-black text-foreground uppercase tracking-widest mt-2 truncate w-full px-1 relative z-10">
-        {displayName}
-      </h4>
-      <span className="text-[10px] font-bold text-muted-foreground mt-1 relative z-10">
-        LVL {level} <span className="opacity-40 px-1">•</span> {xp} XP
-      </span>
-    </motion.div>
-  );
-}
-
-
-
-const BADGE_THEMES: Record<string, { gradient: string; text: string; bg: string; iconColor: string }> = {
-  "First Challenge": { gradient: "from-amber-300 via-yellow-400 to-amber-500", text: "text-amber-500", bg: "bg-amber-500/10", iconColor: "text-amber-500" },
-  "3 Day Streak": { gradient: "from-orange-400 via-red-500 to-rose-600", text: "text-orange-500", bg: "bg-orange-500/10", iconColor: "text-orange-500" },
-  "7 Day Streak": { gradient: "from-fuchsia-500 via-purple-500 to-indigo-600", text: "text-purple-500", bg: "bg-purple-500/10", iconColor: "text-purple-500" },
-  "default": { gradient: "from-indigo-400 via-blue-500 to-cyan-500", text: "text-indigo-500", bg: "bg-indigo-500/10", iconColor: "text-indigo-500" }
+> = {
+  physics: {
+    icon: Atom,
+    color: "text-blue-500",
+    bg: "bg-blue-500/10",
+    border: "hover:border-blue-500/40",
+    stroke: "stroke-blue-500",
+    label: "Physics",
+    path: "/physics",
+  },
+  chemistry: {
+    icon: Flame,
+    color: "text-emerald-500",
+    bg: "bg-emerald-500/10",
+    border: "hover:border-emerald-500/40",
+    stroke: "stroke-emerald-500",
+    label: "Chemistry",
+    path: "/chemistry",
+  },
+  biology: {
+    icon: Dna,
+    color: "text-rose-500",
+    bg: "bg-rose-500/10",
+    border: "hover:border-rose-500/40",
+    stroke: "stroke-rose-500",
+    label: "Biology",
+    path: "/biology",
+  },
+  mathematics: {
+    icon: Calculator,
+    color: "text-amber-500",
+    bg: "bg-amber-500/10",
+    border: "hover:border-amber-500/40",
+    stroke: "stroke-amber-500",
+    label: "Mathematics",
+    path: "/mathematics",
+  },
+  computerScience: {
+    icon: Binary,
+    color: "text-purple-500",
+    bg: "bg-purple-500/10",
+    border: "hover:border-purple-500/40",
+    stroke: "stroke-purple-500",
+    label: "Computer Science",
+    path: "/computer-science",
+  },
 };
 
 export default function ProfilePublicClient({ username }: { username: string }) {
   const [user, setUser] = useState<any>(null);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     async function load() {
       try {
         const res = await fetch(`/api/profile/${encodeURIComponent(username)}`);
-        if (!res.ok) return;
+        if (!res.ok) {
+          setNotFound(true);
+          return;
+        }
         const data = await res.json();
         setUser(data.user);
-      } catch (e) { }
+      } catch (e) {
+        setNotFound(true);
+      }
     }
     load();
   }, [username]);
 
-  if (!user) {
+  const handleCopyShareLink = () => {
+    if (typeof window !== "undefined") {
+      navigator.clipboard.writeText(window.location.href);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2500);
+    }
+  };
+
+  if (notFound) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <div className="relative w-16 h-16">
-          <div className="absolute inset-0 rounded-full border-t-2 border-indigo-500 animate-spin"></div>
-          <div className="absolute inset-2 rounded-full border-r-2 border-purple-500 animate-spin animate-reverse"></div>
-          <Microscope className="absolute inset-0 m-auto text-indigo-400 opacity-50" size={24} />
+      <div className="max-w-xl mx-auto py-20 px-4 text-center space-y-4">
+        <div className="w-16 h-16 rounded-2xl bg-muted text-muted-foreground flex items-center justify-center mx-auto">
+          <Microscope size={28} />
         </div>
-        <p className="text-sm font-bold text-muted-foreground animate-pulse tracking-widest uppercase">Initializing Workspace...</p>
+        <h1 className="text-2xl font-black text-foreground">Researcher Not Found</h1>
+        <p className="text-sm text-muted-foreground">
+          The public profile for <span className="font-bold text-primary">@{username}</span> does not exist or has not set up their profile yet.
+        </p>
+        <div className="pt-2">
+          <Link
+            href="/#labs"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-xs shadow-xs hover:bg-primary/90 transition-all"
+          >
+            <span>Explore Virtual Labs</span>
+            <ArrowRight size={14} />
+          </Link>
+        </div>
       </div>
     );
   }
 
+  if (!user) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[65vh] gap-3">
+        <div className="relative w-12 h-12">
+          <div className="absolute inset-0 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+          <Microscope className="absolute inset-0 m-auto text-primary opacity-60" size={20} />
+        </div>
+        <p className="text-xs font-bold text-muted-foreground animate-pulse uppercase tracking-wider">
+          Loading researcher profile...
+        </p>
+      </div>
+    );
+  }
+
+  const joinDate = user.createdAt
+    ? new Date(user.createdAt).toLocaleDateString("en-US", {
+        month: "short",
+        year: "numeric",
+      })
+    : "Recently";
+
+  const totalCompleted = user.completedExperiments?.length || 0;
+  const totalXP = user.xp || 0;
+  const level = user.level || 1;
+  const nextLevelXP = level * 100;
+  const progressPct = Math.min(100, Math.round((totalXP / nextLevelXP) * 100));
 
   const getRankTitle = (xp: number) => {
     if (xp < 500) return "Junior Apprentice";
     if (xp < 1500) return "Research Assistant";
     if (xp < 3000) return "Lab Fellow";
     if (xp < 6000) return "Senior Investigator";
-    return "Chief Laboratory Officer";
+    return "Chief Scientist";
   };
-  const rank = getRankTitle(user.xp || 0);
+  const rank = getRankTitle(totalXP);
+
+  // Subject Progress Normalization
+  const userSubjects = user.subjectProgress || [];
+  const allDisciplines = ["physics", "chemistry", "biology", "mathematics", "computerScience"].map((key) => {
+    const existing = userSubjects.find((s: any) => s.subject === key);
+    return {
+      key,
+      theme: SUBJECT_THEMES[key] || SUBJECT_THEMES.physics,
+      xp: existing ? existing.xp : 0,
+      level: existing ? existing.level : 1,
+    };
+  });
 
   return (
-    <div className="min-h-screen font-sans relative overflow-hidden selection:bg-indigo-100 selection:text-indigo-900">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/20 selection:text-primary pb-20 pt-4 sm:pt-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
+        {/* ─── PUBLIC PROFILE HEADER ─── */}
+        <header className="rounded-3xl border border-border bg-card p-5 sm:p-7 shadow-xs relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-36 bg-gradient-to-l from-primary/10 via-primary/5 to-transparent pointer-events-none" />
 
-      {/* Background Animated Orbs */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-indigo-500/10 blur-[100px] mix-blend-multiply pointer-events-none animate-[pulse_8s_infinite]" />
-      <div className="absolute bottom-20 right-1/4 w-[30rem] h-[30rem] rounded-full bg-purple-500/10 blur-[120px] mix-blend-multiply pointer-events-none animate-[pulse_10s_infinite_reverse]" />
-
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-        className="max-w-6xl mx-auto pb-24 px-4 sm:px-6 lg:px-8 pt-8 lg:pt-12 relative z-10"
-      >
-
-        {/* --- Profile Header Glass Card --- */}
-        <motion.div variants={itemVariants} className="relative bg-card rounded-[2rem] border border-border shadow-[0_8px_40px_rgb(0,0,0,0.03)] overflow-hidden mb-8 group/card">
-
-          {/* Abstract Lab Banner Area */}
-          <div className="h-48 sm:h-56 bg-slate-900 relative overflow-hidden flex items-center justify-center">
-            {/* Dark mesh gradient background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-slate-900 to-purple-900" />
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:32px_32px] opacity-40" />
-
-            {/* Subtle OpenLabs watermark concept */}
-            <h1 className="absolute text-[8rem] font-black text-white/[0.02] tracking-tighter select-none pointer-events-none whitespace-nowrap">
-              OPENLABS
-            </h1>
-
-            <motion.div
-              className="absolute top-1/4 right-1/4 w-48 h-48 bg-indigo-500/30 rounded-full blur-[60px]"
-              animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
-              transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
-            />
-          </div>
-
-          <div className="px-6 sm:px-12 pb-10 relative z-10">
-            <div className="relative flex flex-col md:flex-row items-center md:items-end gap-6 sm:gap-8 -mt-20 mb-6 text-center md:text-left">
-
-              {/* Dynamic Avatar */}
-              <div className="relative group">
-                <div className="absolute -inset-1.5 bg-gradient-to-tr from-indigo-500 via-purple-500 to-cyan-400 rounded-[2.5rem] blur-md opacity-40 group-hover:opacity-75 transition-opacity duration-500" />
-                <div className="w-36 h-36 rounded-[2rem] border-4 border-card/90 shadow-2xl bg-card overflow-hidden relative mx-auto md:mx-0 backdrop-blur-sm transform group-hover:scale-[1.02] transition-transform duration-300">
-                  <img
-                    key={user.avatar}
+          <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6 relative z-10">
+            {/* Identity Info */}
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 text-center sm:text-left">
+              {/* Avatar */}
+              <div className="relative shrink-0">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-2 border-border overflow-hidden bg-muted relative shadow-sm">
+                  <Image
                     src={user.avatar || AVATARS[0]}
-                    alt="Profile Avatar"
-                    className="w-full h-full object-cover"
+                    alt={`${user.name}'s Avatar`}
+                    fill
+                    className="object-cover"
                   />
                 </div>
+                <span className="absolute -bottom-1 -right-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-primary text-primary-foreground shadow-xs border border-card">
+                  Lvl {level}
+                </span>
               </div>
 
-              <div className="flex-1 pb-3 w-full space-y-2">
-                <div className="flex flex-col md:flex-row md:items-center gap-3 justify-center md:justify-start">
-                  <h2 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">
+              {/* Names & Metadata */}
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                  <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-foreground tracking-tight">
                     {user.name}
-                  </h2>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md shadow-indigo-500/20 self-center md:self-auto">
-                    <Sparkles size={12} className="text-indigo-100 animate-pulse" />
-                    Scientist Lvl {user.level || 1}
+                  </h1>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary border border-primary/20">
+                    <ShieldCheck size={11} />
+                    <span>{rank}</span>
                   </span>
                 </div>
-                {user.username && <p className="text-indigo-500 font-bold text-sm tracking-wide">@{user.username}</p>}
-              </div>
 
+                <p className="text-xs sm:text-sm font-semibold text-muted-foreground">
+                  <span className="text-primary font-bold">@{user.username || username}</span>
+                  <span className="mx-1.5 opacity-40">&bull;</span>
+                  <span>Joined {joinDate}</span>
+                </p>
+
+                <p className="text-xs text-muted-foreground max-w-xl line-clamp-2 pt-1 font-normal">
+                  {user.bio || "Active STEM student exploring interactive laboratory simulations on OpenLabs."}
+                </p>
+              </div>
             </div>
 
-            <AnimatePresence mode="wait">
-              <motion.div
-                key="bio"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="border-t border-border pt-6 mt-4 flex flex-col lg:flex-row lg:items-center justify-between gap-6"
+            {/* Share Profile CTA */}
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={handleCopyShareLink}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-border bg-muted/50 hover:bg-accent text-foreground text-xs font-bold transition-all shadow-xs"
               >
-                <div className="flex-1">
-                  <p className="text-muted-foreground max-w-3xl text-sm leading-relaxed font-medium text-center md:text-left bg-muted p-4 rounded-2xl border border-border">
-                    {user.bio || "No bio provided."}
-                  </p>
-                </div>
-
-                {/* Rank Status Badge */}
-                <div className="bg-primary/10 border border-primary/20 rounded-2xl px-5 py-3.5 flex items-center gap-4 shrink-0 self-center lg:self-auto shadow-sm">
-                  <div className="w-10 h-10 rounded-xl bg-card border border-border shadow-sm flex items-center justify-center text-primary">
-                    <Microscope size={20} />
-                  </div>
-                  <div>
-                    <span className="text-[9px] uppercase tracking-[0.2em] text-primary font-black block mb-0.5">Current Rank</span>
-                    <span className="text-sm font-black text-foreground tracking-tight">{rank}</span>
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </motion.div>
-
-        {/* --- Main Dashboard Grid --- */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
-
-          {/* LEFT COLUMN (2/3 width) */}
-          <div className="lg:col-span-2 space-y-6 lg:space-y-8 flex flex-col">
-
-            {/* Top Level KPIs */}
-            <motion.div variants={containerVariants} className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-5">
-
-              <motion.div variants={itemVariants} className="bg-card border border-border rounded-3xl p-5 flex flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(99,102,241,0.12)] group">
-                <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <Zap size={22} className="animate-pulse" />
-                </div>
-                <div>
-                  <h4 className="text-3xl font-black text-foreground tracking-tighter">{user.level || 1}</h4>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">Current Level</p>
-                </div>
-              </motion.div>
-
-              <motion.div variants={itemVariants} className="bg-card border border-border rounded-3xl p-5 flex flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(249,115,22,0.12)] group">
-                <div className="w-12 h-12 rounded-2xl bg-orange-500/10 text-orange-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <Flame size={22} />
-                </div>
-                <div>
-                  <h4 className="text-3xl font-black text-foreground tracking-tighter">
-                    {user.streak || 0} <span className="text-sm text-muted-foreground font-bold tracking-normal">day</span>
-                  </h4>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">Lab Streak</p>
-                </div>
-              </motion.div>
-
-              <motion.div variants={itemVariants} className="bg-card border border-border rounded-3xl p-5 flex flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(59,130,246,0.12)] group">
-                <div className="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <Trophy size={22} />
-                </div>
-                <div>
-                  <h4 className="text-3xl font-black text-foreground tracking-tighter">{user.xp || 0}</h4>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">Total XP</p>
-                </div>
-              </motion.div>
-
-            </motion.div>
-
-            {/* Subject Mastery Panel */}
-            <motion.div variants={itemVariants} className="bg-card p-6 sm:p-8 rounded-[2rem] border border-border shadow-[0_8px_30px_rgb(0,0,0,0.03)] space-y-8 flex-grow">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-black text-foreground tracking-tight flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-500">
-                    <Compass size={20} />
-                  </div>
-                  Core Mastery
-                </h3>
-              </div>
-
-              {(!user.subjectProgress || user.subjectProgress.length === 0) ? (
-                <div className="flex flex-col items-center justify-center py-16 text-muted-foreground bg-muted rounded-3xl border border-border border-dashed text-sm font-semibold">
-                  <BookOpen className="mb-3 opacity-20" size={32} />
-                  No labs initialized yet.
-                </div>
-              ) : (
-                <motion.div variants={containerVariants} className="grid grid-cols-2 sm:grid-cols-4 gap-5">
-                  {user.subjectProgress.map((s: any) => (
-                    <SubjectMasteryCircle key={s.subject} subject={s.subject} xp={s.xp} level={s.level} />
-                  ))}
-                </motion.div>
-              )}
-            </motion.div>
-
-          </div>
-
-          {/* RIGHT COLUMN (1/3 width) */}
-          <div className="space-y-6 lg:space-y-8 flex flex-col">
-
-            {/* Achievements */}
-            <motion.div variants={itemVariants} className="bg-card p-6 sm:p-8 rounded-[2rem] border border-border shadow-[0_8px_30px_rgb(0,0,0,0.03)] relative overflow-hidden flex flex-col min-h-[420px]">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/10 rounded-full blur-[40px] pointer-events-none" />
-
-              <div className="relative z-10 flex flex-col h-full space-y-6">
-                <h3 className="text-lg font-black text-foreground tracking-tight flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-amber-500/10 text-amber-500">
-                    <Award size={20} />
-                  </div>
-                  Badges
-                </h3>
-
-                {(!user.badges || user.badges.length === 0) ? (
-                  <div className="flex-grow flex flex-col items-center justify-center text-center py-10 space-y-4">
-                    <div className="w-16 h-16 rounded-[1.25rem] bg-muted border border-border flex items-center justify-center text-muted-foreground">
-                      <Award size={28} />
-                    </div>
-                    <div className="space-y-1.5">
-                      <p className="text-sm font-bold text-foreground">No Badges Yet</p>
-                      <p className="text-[11px] font-medium text-muted-foreground max-w-[200px] leading-relaxed mx-auto">
-                        This user hasn't earned any badges.
-                      </p>
-                    </div>
-                  </div>
+                {copiedLink ? (
+                  <>
+                    <Check size={13} className="text-emerald-500" />
+                    <span className="text-emerald-600 dark:text-emerald-400">Link Copied!</span>
+                  </>
                 ) : (
-                  <motion.div variants={containerVariants} className="grid grid-cols-2 gap-4 flex-grow content-start">
-                    {user.badges.map((b: any) => {
-                      const badgeTheme = BADGE_THEMES[b.name] || BADGE_THEMES.default;
-                      return (
-                        <motion.div
-                          variants={itemVariants}
-                          key={b.id}
-                          className="p-5 rounded-[1.25rem] bg-card border border-border hover:border-muted-foreground/40 hover:shadow-lg transition-all flex flex-col items-center justify-center text-center group cursor-crosshair relative overflow-hidden"
-                        >
-                          {/* 3D Spin Medal */}
-                          <div
-                            className={`w-14 h-14 rounded-full mb-3.5 flex items-center justify-center bg-gradient-to-tr ${badgeTheme.gradient} shadow-md`}
-                            style={{ transformStyle: "preserve-3d", transition: "transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275)" }}
-                            onMouseEnter={(e) => e.currentTarget.style.transform = "rotateY(180deg) scale(1.1)"}
-                            onMouseLeave={(e) => e.currentTarget.style.transform = "rotateY(0deg) scale(1)"}
-                          >
-                            <div className="absolute inset-0 bg-white/20 rounded-full" style={{ transform: "translateZ(-1px)" }} />
-                            <Trophy size={24} className="text-white drop-shadow-md relative z-10" />
-                          </div>
-                          <span className="text-[11px] font-black text-foreground uppercase tracking-wide leading-snug">
-                            {b.name}
-                          </span>
-                          {b.earnedAt && (
-                            <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest mt-1.5">
-                              {new Date(b.earnedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                            </span>
-                          )}
-                        </motion.div>
-                      );
-                    })}
-                  </motion.div>
+                  <>
+                    <Share2 size={13} />
+                    <span>Share Profile</span>
+                  </>
                 )}
-              </div>
-            </motion.div>
-
-
+              </button>
+            </div>
           </div>
-        </div>
-      </motion.div>
+        </header>
+
+        {/* ─── 4 TOP KPI METRICS ─── */}
+        <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-xs space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                Level & Progress
+              </span>
+              <div className="w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-500 flex items-center justify-center">
+                <Zap size={14} className="animate-pulse" />
+              </div>
+            </div>
+            <div className="text-2xl sm:text-3xl font-black text-foreground">
+              Level {level}
+            </div>
+            <div className="space-y-1">
+              <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden">
+                <div
+                  className="bg-gradient-to-r from-indigo-500 to-cyan-400 h-full rounded-full"
+                  style={{ width: `${progressPct}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-[10px] text-muted-foreground font-semibold">
+                <span>{totalXP} XP</span>
+                <span>{nextLevelXP} XP</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-xs space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                Active Streak
+              </span>
+              <div className="w-7 h-7 rounded-lg bg-orange-500/10 text-orange-500 flex items-center justify-center">
+                <Flame size={14} />
+              </div>
+            </div>
+            <div className="text-2xl sm:text-3xl font-black text-foreground">
+              {user.streak || 0}{" "}
+              <span className="text-xs text-muted-foreground font-normal">Days</span>
+            </div>
+            <p className="text-[11px] text-muted-foreground">Daily consecutive simulation streak.</p>
+          </div>
+
+          <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-xs space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                Simulations Completed
+              </span>
+              <div className="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                <Beaker size={14} />
+              </div>
+            </div>
+            <div className="text-2xl sm:text-3xl font-black text-foreground">
+              {totalCompleted}
+            </div>
+            <p className="text-[11px] text-muted-foreground">Experiments successfully completed.</p>
+          </div>
+
+          <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-xs space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                Trophies Unlocked
+              </span>
+              <div className="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center">
+                <Trophy size={14} />
+              </div>
+            </div>
+            <div className="text-2xl sm:text-3xl font-black text-foreground">
+              {user.badges?.length || 0}{" "}
+              <span className="text-xs text-muted-foreground font-normal">/ {ALL_ACHIEVEMENTS.length}</span>
+            </div>
+            <p className="text-[11px] text-muted-foreground">Milestone badges earned.</p>
+          </div>
+        </section>
+
+        {/* ─── 5-DISCIPLINE STEM MASTERY ─── */}
+        <section className="rounded-3xl border border-border bg-card p-5 sm:p-6 shadow-xs space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <div className="inline-flex items-center gap-1 text-[11px] font-black uppercase tracking-widest text-primary">
+                <Compass size={12} />
+                <span>Curriculum Competency</span>
+              </div>
+              <h2 className="text-base sm:text-lg font-black text-foreground tracking-tight">
+                STEM Subject Mastery
+              </h2>
+            </div>
+            <Link
+              href="/#labs"
+              className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
+            >
+              <span>Explore Labs</span>
+              <ArrowRight size={12} />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+            {allDisciplines.map((disc) => {
+              const Icon = disc.theme.icon;
+              const nextXp = Math.max(100, disc.level * 100);
+              const pct = Math.min(100, Math.round((disc.xp / nextXp) * 100));
+
+              return (
+                <Link
+                  key={disc.key}
+                  href={disc.theme.path}
+                  className="group flex flex-col p-4 rounded-2xl bg-muted/40 border border-border hover:border-primary/40 hover:bg-accent/40 transition-all shadow-xs"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className={`w-8 h-8 rounded-xl ${disc.theme.bg} ${disc.theme.color} flex items-center justify-center`}>
+                      <Icon size={16} />
+                    </div>
+                    <span className="text-[10px] font-black uppercase bg-card px-2 py-0.5 rounded-md border border-border/80">
+                      Lvl {disc.level}
+                    </span>
+                  </div>
+
+                  <span className="text-xs font-black text-foreground group-hover:text-primary transition-colors">
+                    {disc.theme.label}
+                  </span>
+
+                  <div className="mt-3 space-y-1">
+                    <div className="w-full bg-card h-1.5 rounded-full overflow-hidden border border-border/60">
+                      <div
+                        className="bg-primary h-full rounded-full transition-all"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                    <div className="flex justify-between text-[10px] text-muted-foreground font-semibold">
+                      <span>{disc.xp} XP</span>
+                      <span>{pct}%</span>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ─── TROPHY CASE & BADGES ─── */}
+        <section className="rounded-3xl border border-border bg-card p-5 sm:p-7 shadow-xs space-y-6">
+          <div className="border-b border-border pb-4 flex items-center justify-between">
+            <div>
+              <h2 className="text-base sm:text-lg font-black text-foreground tracking-tight flex items-center gap-2">
+                <Trophy size={18} className="text-amber-500" />
+                <span>Trophy Case & Badges</span>
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                Verified achievements unlocked by @{user.username || username}.
+              </p>
+            </div>
+            <span className="px-3 py-1 rounded-full text-xs font-bold bg-muted text-muted-foreground">
+              {user.badges?.length || 0} Earned
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {ALL_ACHIEVEMENTS.map((badge) => {
+              const isEarned = user.badges?.some((b: any) => b.name === badge.name || b.id === badge.id);
+              const Icon = badge.icon;
+
+              return (
+                <div
+                  key={badge.id}
+                  className={`
+                    p-5 rounded-2xl border transition-all flex flex-col justify-between space-y-3
+                    ${
+                      isEarned
+                        ? "bg-card border-primary/30 shadow-xs hover:border-primary/60"
+                        : "bg-muted/30 border-border/60 opacity-60"
+                    }
+                  `}
+                >
+                  <div className="flex items-start justify-between">
+                    <div
+                      className={`
+                        w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-xs
+                        ${isEarned ? `bg-gradient-to-tr ${badge.gradient}` : "bg-muted text-muted-foreground"}
+                      `}
+                    >
+                      {isEarned ? <Icon size={20} /> : <Lock size={18} />}
+                    </div>
+                    <span
+                      className={`
+                        px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider
+                        ${isEarned ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20" : "bg-muted text-muted-foreground"}
+                      `}
+                    >
+                      {isEarned ? "Unlocked" : "Locked"}
+                    </span>
+                  </div>
+
+                  <div>
+                    <h3 className="text-xs sm:text-sm font-black text-foreground">
+                      {badge.name}
+                    </h3>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed mt-0.5">
+                      {badge.desc}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

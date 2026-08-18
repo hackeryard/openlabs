@@ -7,7 +7,7 @@
 [![React](https://img.shields.io/badge/react-18.2.0-61dafb?style=flat&logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/typescript-5.4.0-3178c6?style=flat&logo=typescript)](https://www.typescriptlang.org/)
 
-**OpenLabs** is a comprehensive, interactive platform providing in-browser science labs and visualizations across **Chemistry**, **Physics**, **Biology**, and **Computer Science**. Built with modern web technologies, it enables students, educators, and enthusiasts to conduct hands-on experiments and explore scientific concepts without requiring physical lab equipment.
+**OpenLabs** is a comprehensive, interactive platform providing in-browser science labs and visualizations across **Physics**, **Chemistry**, **Biology**, **Computer Science**, and **Mathematics**. Built with modern web technologies, it enables students, educators, and enthusiasts to conduct hands-on experiments and explore scientific concepts without requiring physical lab equipment.
 
 > Related docs: [CLAUDE.md](CLAUDE.md) (architecture notes for Claude Code), [AGENTS.md](AGENTS.md) (tool-agnostic agent instructions), [REQUIREMENTS.md](REQUIREMENTS.md) (functional/non-functional requirements), [CHANGELOG.md](CHANGELOG.md) (release history).
 

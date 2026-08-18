@@ -58,11 +58,10 @@ export async function getAnalyticsDashboardData(timeRange = "7d") {
       },
     },
     { $sort: { totalActive: -1 } },
-    { $limit: 10 },
+    { $limit: 15 },
   ]);
 
   // 3. Time Series Graph
-  // If 24h/today: group by hour, else group by day
   const isHourly = timeRange === "today" || timeRange === "24h";
   const dateFormat = isHourly ? "%Y-%m-%d %H:00" : "%Y-%m-%d";
 
@@ -93,7 +92,7 @@ export async function getAnalyticsDashboardData(timeRange = "7d") {
       },
     },
     { $sort: { views: -1 } },
-    { $limit: 20 },
+    { $limit: 25 },
   ]);
 
   // 5. Referrers & Acquisition
@@ -106,10 +105,37 @@ export async function getAnalyticsDashboardData(timeRange = "7d") {
       },
     },
     { $sort: { count: -1 } },
+    { $limit: 20 },
+  ]);
+
+  // 6. UTM Campaigns
+  const utmCampaignsPromise = (PageView as any).aggregate([
+    {
+      $match: {
+        ...matchStage,
+        $or: [
+          { utmSource: { $ne: null } },
+          { utmCampaign: { $ne: null } },
+        ],
+      },
+    },
+    {
+      $group: {
+        _id: {
+          source: { $ifNull: ["$utmSource", "direct"] },
+          medium: { $ifNull: ["$utmMedium", "none"] },
+          campaign: { $ifNull: ["$utmCampaign", "none"] },
+        },
+        views: { $sum: 1 },
+        visitors: { $addToSet: "$visitorId" },
+        avgDuration: { $avg: "$duration" },
+      },
+    },
+    { $sort: { views: -1 } },
     { $limit: 15 },
   ]);
 
-  // 6. Devices, OS & Browsers
+  // 7. Devices, OS, Browsers & Screen Sizes
   const devicesPromise = (PageView as any).aggregate([
     { $match: matchStage },
     {
@@ -129,7 +155,7 @@ export async function getAnalyticsDashboardData(timeRange = "7d") {
       },
     },
     { $sort: { count: -1 } },
-    { $limit: 8 },
+    { $limit: 10 },
   ]);
 
   const osPromise = (PageView as any).aggregate([
@@ -141,10 +167,22 @@ export async function getAnalyticsDashboardData(timeRange = "7d") {
       },
     },
     { $sort: { count: -1 } },
-    { $limit: 8 },
+    { $limit: 10 },
   ]);
 
-  // 7. Countries
+  const screensPromise = (PageView as any).aggregate([
+    { $match: { ...matchStage, screen: { $ne: "" } } },
+    {
+      $group: {
+        _id: "$screen",
+        count: { $sum: 1 },
+      },
+    },
+    { $sort: { count: -1 } },
+    { $limit: 10 },
+  ]);
+
+  // 8. Countries
   const countriesPromise = (PageView as any).aggregate([
     { $match: matchStage },
     {
@@ -154,27 +192,67 @@ export async function getAnalyticsDashboardData(timeRange = "7d") {
       },
     },
     { $sort: { count: -1 } },
-    { $limit: 15 },
+    { $limit: 20 },
   ]);
 
-  // 8. Custom Learning / Lab Events
+  // 9. Duration Engagement Distribution
+  const durationDistributionPromise = (PageView as any).aggregate([
+    { $match: matchStage },
+    {
+      $group: {
+        _id: null,
+        under10s: { $sum: { $cond: [{ $lt: ["$duration", 10] }, 1, 0] } },
+        under30s: { $sum: { $cond: [{ $and: [{ $gte: ["$duration", 10] }, { $lt: ["$duration", 30] }] }, 1, 0] } },
+        under1m: { $sum: { $cond: [{ $and: [{ $gte: ["$duration", 30] }, { $lt: ["$duration", 60] }] }, 1, 0] } },
+        under3m: { $sum: { $cond: [{ $and: [{ $gte: ["$duration", 60] }, { $lt: ["$duration", 180] }] }, 1, 0] } },
+        under10m: { $sum: { $cond: [{ $and: [{ $gte: ["$duration", 180] }, { $lt: ["$duration", 600] }] }, 1, 0] } },
+        over10m: { $sum: { $cond: [{ $gte: ["$duration", 600] }, 1, 0] } },
+      },
+    },
+  ]);
+
+  // 10. Scroll Depth Distribution
+  const scrollDistributionPromise = (PageView as any).aggregate([
+    { $match: matchStage },
+    {
+      $group: {
+        _id: null,
+        depth25: { $sum: { $cond: [{ $lt: ["$scrollDepth", 25] }, 1, 0] } },
+        depth50: { $sum: { $cond: [{ $and: [{ $gte: ["$scrollDepth", 25] }, { $lt: ["$scrollDepth", 50] }] }, 1, 0] } },
+        depth75: { $sum: { $cond: [{ $and: [{ $gte: ["$scrollDepth", 50] }, { $lt: ["$scrollDepth", 75] }] }, 1, 0] } },
+        depth100: { $sum: { $cond: [{ $gte: ["$scrollDepth", 75] }, 1, 0] } },
+      },
+    },
+  ]);
+
+  // 11. Recent Live Pageviews Feed (Detailed Log)
+  const recentPageViewsPromise = (PageView as any).find(matchStage)
+    .populate({
+      path: "userId",
+      select: "name email username avatar level xp",
+    })
+    .sort({ createdAt: -1 })
+    .limit(60)
+    .lean();
+
+  // 12. Custom Learning / Lab Events (Detailed Stream)
   const eventsPromise = (AnalyticsEvent as any).find(matchStage)
     .populate({
       path: "userId",
       select: "name email username avatar level xp",
     })
     .sort({ createdAt: -1 })
-    .limit(30)
+    .limit(60)
     .lean();
 
-  // 9. Error Logs in Timeframe
+  // 13. Error Logs in Timeframe
   const errorsPromise = (ErrorLog as any).find(matchStage)
     .populate({
       path: "userId",
       select: "name email username avatar",
     })
     .sort({ lastOccurredAt: -1 })
-    .limit(30)
+    .limit(60)
     .lean();
 
   const errorStatsPromise = (ErrorLog as any).aggregate([
@@ -198,10 +276,15 @@ export async function getAnalyticsDashboardData(timeRange = "7d") {
     timeseriesRaw,
     topPagesRaw,
     topReferrersRaw,
+    utmCampaignsRaw,
     devicesRaw,
     browsersRaw,
     osRaw,
+    screensRaw,
     countriesRaw,
+    durationDistRaw,
+    scrollDistRaw,
+    recentPageViews,
     recentEvents,
     recentErrors,
     errorStatsRaw,
@@ -211,10 +294,15 @@ export async function getAnalyticsDashboardData(timeRange = "7d") {
     timeseriesPromise,
     topPagesPromise,
     topReferrersPromise,
+    utmCampaignsPromise,
     devicesPromise,
     browsersPromise,
     osPromise,
+    screensPromise,
     countriesPromise,
+    durationDistributionPromise,
+    scrollDistributionPromise,
+    recentPageViewsPromise,
     eventsPromise,
     errorsPromise,
     errorStatsPromise,
@@ -264,6 +352,16 @@ export async function getAnalyticsDashboardData(timeRange = "7d") {
     percentage: totalViews > 0 ? parseFloat(((ref.count / totalViews) * 100).toFixed(1)) : 0,
   }));
 
+  // UTM Campaigns
+  const utmCampaigns = utmCampaignsRaw.map((u: any) => ({
+    source: u._id.source,
+    medium: u._id.medium,
+    campaign: u._id.campaign,
+    views: u.views,
+    visitors: u.visitors?.length || 0,
+    avgDuration: u.avgDuration ? Math.round(u.avgDuration) : 0,
+  }));
+
   // Device Breakdown
   const devices = devicesRaw.map((d: any) => ({
     device: d._id || "desktop",
@@ -275,12 +373,21 @@ export async function getAnalyticsDashboardData(timeRange = "7d") {
   const browsers = browsersRaw.map((b: any) => ({
     browser: b._id || "Unknown",
     count: b.count,
+    percentage: totalViews > 0 ? parseFloat(((b.count / totalViews) * 100).toFixed(1)) : 0,
   }));
 
   // OS
   const operatingSystems = osRaw.map((o: any) => ({
     os: o._id || "Unknown",
     count: o.count,
+    percentage: totalViews > 0 ? parseFloat(((o.count / totalViews) * 100).toFixed(1)) : 0,
+  }));
+
+  // Screens
+  const screenResolutions = screensRaw.map((s: any) => ({
+    screen: s._id || "Unknown",
+    count: s.count,
+    percentage: totalViews > 0 ? parseFloat(((s.count / totalViews) * 100).toFixed(1)) : 0,
   }));
 
   // Countries
@@ -289,6 +396,26 @@ export async function getAnalyticsDashboardData(timeRange = "7d") {
     count: c.count,
     percentage: totalViews > 0 ? parseFloat(((c.count / totalViews) * 100).toFixed(1)) : 0,
   }));
+
+  // Duration Distribution
+  const rawDur = durationDistRaw[0] || {};
+  const durationDistribution = [
+    { label: "< 10s", count: rawDur.under10s || 0 },
+    { label: "10s – 30s", count: rawDur.under30s || 0 },
+    { label: "30s – 1m", count: rawDur.under1m || 0 },
+    { label: "1m – 3m", count: rawDur.under3m || 0 },
+    { label: "3m – 10m", count: rawDur.under10m || 0 },
+    { label: "> 10m", count: rawDur.over10m || 0 },
+  ];
+
+  // Scroll Depth Distribution
+  const rawScroll = scrollDistRaw[0] || {};
+  const scrollDistribution = [
+    { label: "0% – 25%", count: rawScroll.depth25 || 0 },
+    { label: "25% – 50%", count: rawScroll.depth50 || 0 },
+    { label: "50% – 75%", count: rawScroll.depth75 || 0 },
+    { label: "75% – 100%", count: rawScroll.depth100 || 0 },
+  ];
 
   // Error Stats
   const rawErr = errorStatsRaw[0] || {};
@@ -316,10 +443,15 @@ export async function getAnalyticsDashboardData(timeRange = "7d") {
     timeseries,
     topPages,
     topReferrers,
+    utmCampaigns,
     devices,
     browsers,
     operatingSystems,
+    screenResolutions,
     countries,
+    durationDistribution,
+    scrollDistribution,
+    recentPageViews,
     recentEvents,
     recentErrors,
     errorStats,

@@ -1,184 +1,251 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Beaker, Atom, Dna, Code, Sigma, ArrowRight } from "lucide-react";
+import {
+  Beaker,
+  Atom,
+  Dna,
+  Binary,
+  Calculator,
+  ArrowRight,
+  Sparkles,
+  Award,
+  Globe,
+  Zap,
+  Flame,
+  CheckCircle2,
+} from "lucide-react";
 import AnimatedCard from "@/components/ui/AnimatedCard";
 
 const labsData = {
-  "Physics": {
+  Physics: {
+    count: "14 Labs",
     color: "from-blue-600 to-cyan-500",
-    shadow: "shadow-blue-200/50",
-    icon: <Atom className="w-6 h-6" aria-hidden="true" />,
+    badge: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
+    icon: <Atom className="w-5 h-5" aria-hidden="true" />,
+    path: "/physics",
     items: [
-      { name: "Free Fall", path: "/physics/freefall" },
+      { name: "Free Fall Motion", path: "/physics/freefall" },
       { name: "Projectile Motion", path: "/physics/projectilemotion" },
-      { name: "Ohm's Law", path: "/physics/ohmslaw" },
-      { name: "Wave Optics", path: "/physics/waveoptics" },
+      { name: "Ohm's Law & Circuit", path: "/physics/ohmslaw" },
+      { name: "Wave Optics & Slits", path: "/physics/waveoptics" },
     ],
   },
-  "Chemistry": {
+  Chemistry: {
+    count: "4 Labs",
     color: "from-emerald-600 to-teal-400",
-    shadow: "shadow-emerald-200/50",
-    icon: <Beaker className="w-6 h-6" aria-hidden="true" />,
+    badge: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+    icon: <Flame className="w-5 h-5" aria-hidden="true" />,
+    path: "/chemistry",
     items: [
-      { name: "Periodic Table", path: "/chemistry/periodictable" },
-      { name: "Chemical Bonds", path: "/chemistry/chemicalbonds" },
-      { name: "Reaction Simulator", path: "/chemistry/reaction-simulation" },
-      { name: "Titration Lab", path: "/chemistry/titration" },
+      { name: "Interactive Periodic Table", path: "/chemistry/periodictable" },
+      { name: "Chemical Bonds Studio", path: "/chemistry/chemicalbonds" },
+      { name: "Reaction Kinetics", path: "/chemistry/reaction-simulation" },
+      { name: "Acid-Base Titration", path: "/chemistry/titration" },
     ],
   },
-  "Biology": {
+  Biology: {
+    count: "3 Labs",
     color: "from-rose-600 to-pink-500",
-    shadow: "shadow-rose-200/50",
-    icon: <Dna className="w-6 h-6" aria-hidden="true" />,
+    badge: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20",
+    icon: <Dna className="w-5 h-5" aria-hidden="true" />,
+    path: "/biology",
     items: [
-      { name: "Genetics & Heredity", path: "/biology/genetics" },
-      { name: "Animal Cell", path: "/biology/cell/animal" },
-      { name: "Plant Cell", path: "/biology/cell/plant" },
-      { name: "Human Anatomy", path: "/biology/human" },
+      { name: "Genetics & Inheritance", path: "/biology/genetics" },
+      { name: "3D Animal Cell", path: "/biology/cell/animal" },
+      { name: "3D Plant Cell", path: "/biology/cell/plant" },
+      { name: "Human Anatomy Lab", path: "/biology/human" },
+    ],
+  },
+  Mathematics: {
+    count: "12 Labs",
+    color: "from-amber-600 to-orange-500",
+    badge: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+    icon: <Calculator className="w-5 h-5" aria-hidden="true" />,
+    path: "/mathematics",
+    items: [
+      { name: "Function Grapher", path: "/mathematics/functiongrapher" },
+      { name: "Calculus Sandbox", path: "/mathematics/calculus" },
+      { name: "Linear Algebra & Matrices", path: "/mathematics/linear-algebra" },
+      { name: "Trigonometry Explorer", path: "/mathematics/trigonometry" },
     ],
   },
   "Computer Science": {
-    color: "from-violet-600 to-purple-500",
-    shadow: "shadow-purple-200/50",
-    icon: <Code className="w-6 h-6" aria-hidden="true" />,
+    count: "19+ Labs",
+    color: "from-purple-600 to-indigo-500",
+    badge: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20",
+    icon: <Binary className="w-5 h-5" aria-hidden="true" />,
+    path: "/computer-science",
     items: [
-      { name: "HTML/CSS/JS Editor", path: "/computer-science/code-lab/html-css-js" },
-      { name: "Logic Gates", path: "/computer-science/logic-gates" },
-      { name: "Graph Algorithms", path: "/computer-science/dsa/graph-algorithms" },
-      { name: "Cryptography Studio", path: "/computer-science/cryptography" },
-    ],
-  },
-  "Mathematics": {
-    color: "from-indigo-600 to-violet-500",
-    shadow: "shadow-indigo-200/50",
-    icon: <Sigma className="w-6 h-6" aria-hidden="true" />,
-    items: [
-      { name: "Function Grapher", path: "/mathematics/functiongrapher" },
-      { name: "Trigonometry Visualizer", path: "/mathematics/trigonometry" },
-      { name: "Polynomial Explorer", path: "/mathematics/polynomials" },
-      { name: "Calculus Sandbox", path: "/mathematics/calculus" },
-      { name: "Linear Algebra", path: "/mathematics/linear-algebra" },
-      { name: "Statistics Sandbox", path: "/mathematics/statistics" },
-      { name: "Fractals & Complex Plane", path: "/mathematics/complex-numbers" },
-      { name: "Set Theory & Venn Diagrams", path: "/mathematics/set-theory" },
-      { name: "Interactive Geometry Studio", path: "/mathematics/geometry" },
-      { name: "Vector Algebra & 3D Space", path: "/mathematics/vector-algebra" },
-      { name: "Combinatorics & Discrete Counting", path: "/mathematics/combinatorics" },
-      { name: "Number Theory & Cryptography", path: "/mathematics/number-theory" },
-      { name: "Differential Equations", path: "/mathematics/differential-equations" },
+      { name: "HTML/CSS/JS Sandbox", path: "/computer-science/code-lab/html-css-js" },
+      { name: "Logic Gates Studio", path: "/computer-science/logic-gates" },
+      { name: "Sorting Visualizer", path: "/computer-science/dsa/sorting-algorithms" },
+      { name: "Network Topologies", path: "/computer-science/networking" },
     ],
   },
 };
 
-const mainButtons = [
-  { label: "Physics", path: "/physics", bg: "bg-blue-700" },      // Changed from 600
-  { label: "Chemistry", path: "/chemistry", bg: "bg-emerald-700" }, // Changed from 600
-  { label: "Biology", path: "/biology", bg: "bg-rose-700" },      // Changed from 600
-  { label: "CS", path: "/computer-science", bg: "bg-violet-700" }, // Changed from 600
-  { label: "Math", path: "/mathematics", bg: "bg-indigo-700" },
+const quickSubjects = [
+  { label: "Physics (14)", path: "/physics", bg: "bg-blue-600 hover:bg-blue-500" },
+  { label: "Chemistry (4)", path: "/chemistry", bg: "bg-emerald-600 hover:bg-emerald-500" },
+  { label: "Biology (3)", path: "/biology", bg: "bg-rose-600 hover:bg-rose-500" },
+  { label: "Mathematics (12)", path: "/mathematics", bg: "bg-amber-600 hover:bg-amber-500" },
+  { label: "Computer Science (19+)", path: "/computer-science", bg: "bg-purple-600 hover:bg-purple-500" },
 ];
 
 export default function Hero() {
   return (
-    <div className="min-h-screen">
+    <div className="w-full">
       {/* -------- Hero Section -------- */}
       <section
-        className="relative px-4 sm:px-6 lg:px-8 py-12 md:py-24 lg:py-32 flex items-center justify-center overflow-hidden"
+        className="relative px-4 sm:px-6 lg:px-8 pt-8 pb-16 md:pt-14 md:pb-20 overflow-hidden border-b border-border bg-gradient-to-b from-card via-background to-background"
         aria-labelledby="hero-heading"
       >
-        {/* Optimized Background Gradient (Static for Performance) */}
-        <div className="absolute inset-0 pointer-events-none -z-10">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[500px] bg-indigo-100/30 blur-[120px] rounded-full" />
-        </div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-primary/15 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute left-1/2 top-1/4 h-[400px] w-[800px] -translate-x-1/2 rounded-[100%] bg-primary/10 blur-[130px] pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Left Content */}
-          <div className="text-center lg:text-left order-2 lg:order-1">
-            <span className="inline-block px-4 py-1.5 mb-6 text-sm font-bold tracking-wider text-primary uppercase bg-primary/10 rounded-full">
-              The Future of Learning
-            </span>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center relative z-10">
+          {/* Left Content (7 Cols) */}
+          <div className="text-center lg:text-left order-2 lg:order-1 lg:col-span-7 space-y-6">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-black uppercase tracking-widest shadow-xs">
+              <Sparkles size={13} className="text-primary" />
+              <span>50+ Interactive Science Simulations</span>
+            </div>
 
-            <h1 id="hero-heading" className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tight text-foreground leading-[1.1]">
+            <h1
+              id="hero-heading"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-foreground leading-[1.12]"
+            >
               Experience Science <br />
-              <span className="text-indigo-600">Anywhere, Anytime.</span>
+              <span className="bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-400 bg-clip-text text-transparent">
+                Anywhere, Anytime.
+              </span>
             </h1>
 
-            <p className="mt-6 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              Ditch the static textbooks. Dive into a high-fidelity virtual laboratory designed for the next generation of scientists.
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal">
+              Ditch the static textbooks. Explore high-fidelity, in-browser STEM virtual labs across Physics, Chemistry, Biology, Mathematics, and Computer Science — 100% free with zero installation.
             </p>
 
-            <nav className="mt-10 flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-4" aria-label="Quick Access Labs">
-              {mainButtons.map((btn) => (
-                <Link
-                  key={btn.label}
-                  href={btn.path}
-                  className={`${btn.bg} text-white px-6 py-3 sm:px-8 sm:py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all active:scale-95 text-sm sm:text-base`}
-                >
-                  {btn.label}
-                </Link>
-              ))}
-            </nav>
+            {/* Quick Access Subject Buttons */}
+            <div className="pt-2 space-y-3">
+              <div className="text-xs font-black uppercase tracking-wider text-muted-foreground">
+                Quick Jump by Discipline:
+              </div>
+              <nav
+                className="flex flex-wrap justify-center lg:justify-start gap-2 sm:gap-2.5"
+                aria-label="Quick Access Labs"
+              >
+                {quickSubjects.map((btn) => (
+                  <Link
+                    key={btn.label}
+                    href={btn.path}
+                    className={`${btn.bg} text-white px-4 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-sm transition-all hover:scale-105 active:scale-95`}
+                  >
+                    {btn.label}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+
+            {/* Secondary Action CTAs */}
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2">
+              <Link
+                href="/#labs"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-bold text-xs sm:text-sm shadow-md hover:bg-primary/90 transition-all hover:scale-[1.02]"
+              >
+                <Beaker size={16} />
+                <span>Explore All 50+ Labs</span>
+              </Link>
+              <Link
+                href="/leaderboard"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-border bg-card hover:bg-accent text-foreground font-bold text-xs sm:text-sm transition-all hover:scale-[1.02]"
+              >
+                <Award size={16} className="text-amber-500" />
+                <span>Global XP Leaderboard</span>
+              </Link>
+            </div>
           </div>
 
-          {/* Right Image/Illustration */}
-          <div className="order-1 lg:order-2 flex justify-center items-center relative">
-            {/* Ambient Light Effect */}
-            <div className="absolute w-64 h-64 bg-indigo-400/20 blur-3xl rounded-full" />
+          {/* Right Hero Illustration (5 Cols) */}
+          <div className="order-1 lg:order-2 lg:col-span-5 flex justify-center items-center relative">
+            <div className="absolute w-72 h-72 bg-primary/20 blur-3xl rounded-full pointer-events-none" />
 
-            <div className="relative z-10 w-full max-w-[300px] sm:max-w-[450px] lg:max-w-full">
+            <div className="relative z-10 w-full max-w-[280px] sm:max-w-[380px] lg:max-w-full">
               <Image
                 src="/images/scientist.png"
-                width={600}
-                height={600}
-                alt="3D Illustration of a scientist with floating chemicals"
-                className="w-full h-auto drop-shadow-2xl"
+                width={550}
+                height={550}
+                alt="3D Illustration of a scientist interacting with virtual laboratory instruments"
+                className="w-full h-auto drop-shadow-2xl animate-in fade-in zoom-in duration-700"
                 priority
-                sizes="(max-width: 640px) 300px, (max-width: 1024px) 450px, 50vw"
+                sizes="(max-width: 640px) 280px, (max-width: 1024px) 380px, 50vw"
               />
             </div>
           </div>
         </div>
       </section>
 
-      {/* -------- Lab Grid Section -------- */}
-      <section className="px-4 sm:px-6 lg:px-8 py-20 bg-background" aria-labelledby="labs-heading">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 id="labs-heading" className="text-3xl sm:text-5xl font-extrabold text-foreground mb-4">
-              Explore Virtual Labs
+      {/* -------- Lab Grid Section (5 Disciplines) -------- */}
+      <section id="labs" className="scroll-mt-16 px-4 sm:px-6 lg:px-8 py-12 sm:py-16 bg-background" aria-labelledby="labs-heading">
+        <div className="max-w-7xl mx-auto space-y-8 sm:space-y-10">
+          <div className="text-center space-y-2 max-w-2xl mx-auto">
+            <div className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-primary">
+              <Beaker size={13} />
+              <span>Interactive Learning Suites</span>
+            </div>
+            <h2 id="labs-heading" className="text-2xl sm:text-4xl font-black text-foreground tracking-tight">
+              Explore Virtual Labs by Subject
             </h2>
-            <div className="h-1.5 w-20 bg-indigo-600 mx-auto rounded-full" />
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Select a discipline to begin hands-on simulations with real-time numeric calculations.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          {/* 5-Column Responsive Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5">
             {Object.entries(labsData).map(([category, data], catIndex) => (
               <AnimatedCard
                 key={category}
-                delay={catIndex * 0.1}
-                className="flex flex-col overflow-hidden rounded-3xl shadow-xl group"
+                delay={catIndex * 0.06}
+                className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-xs group hover:border-primary/40 hover:shadow-md transition-all duration-200"
               >
-                <div className={`bg-gradient-to-r ${data.color} p-6 text-white`}>
-                  <div className="bg-white/20 w-12 h-12 rounded-xl flex items-center justify-center backdrop-blur-md mb-4 group-hover:scale-110 transition-transform">
-                    {data.icon}
+                {/* Header Banner */}
+                <div className={`bg-gradient-to-r ${data.color} p-4 text-white space-y-3`}>
+                  <div className="flex items-center justify-between">
+                    <div className="bg-white/20 w-9 h-9 rounded-xl flex items-center justify-center backdrop-blur-md group-hover:scale-110 transition-transform">
+                      {data.icon}
+                    </div>
+                    <span className="text-[11px] font-mono font-bold bg-black/20 px-2 py-0.5 rounded-md">
+                      {data.count}
+                    </span>
                   </div>
-                  <h3 className="text-xl font-bold uppercase tracking-wider">{category}</h3>
+                  <h3 className="text-base font-black uppercase tracking-wider">{category}</h3>
                 </div>
 
-                <div className="p-4 sm:p-6 flex-grow space-y-2">
-                  {data.items.map((lab) => (
+                {/* Lab Links List */}
+                <div className="p-3.5 flex-grow flex flex-col justify-between space-y-1.5">
+                  <div className="space-y-1">
+                    {data.items.map((lab) => (
+                      <Link
+                        key={lab.path}
+                        href={lab.path}
+                        className="flex items-center justify-between p-2 rounded-lg hover:bg-accent transition-colors group/link text-xs font-medium text-foreground hover:text-primary"
+                        aria-label={`Open ${lab.name} experiment`}
+                      >
+                        <span className="truncate pr-2">{lab.name}</span>
+                        <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover/link:text-primary group-hover/link:translate-x-0.5 transition-all shrink-0" />
+                      </Link>
+                    ))}
+                  </div>
+
+                  <div className="pt-2 border-t border-border/60">
                     <Link
-                      key={lab.path}
-                      href={lab.path}
-                      className="flex items-center justify-between p-3 rounded-xl hover:bg-accent transition-colors group/link"
-                      aria-label={`Open ${lab.name} experiment`}
+                      href={data.path}
+                      className="block text-center text-xs font-bold text-primary hover:underline py-1"
                     >
-                      <span className="text-foreground font-semibold group-hover/link:text-indigo-600">
-                        {lab.name}
-                      </span>
-                      <ArrowRight className="w-4 h-4 text-muted-foreground group-hover/link:text-indigo-600 group-hover/link:translate-x-1 transition-all" />
+                      View All {category} Labs &rarr;
                     </Link>
-                  ))}
+                  </div>
                 </div>
               </AnimatedCard>
             ))}

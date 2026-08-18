@@ -4,6 +4,107 @@ All notable changes to OpenLabs are documented in this file. Format loosely foll
 
 ## Unreleased
 
+- **Fixed Next.js App Router Static Export Error (`app/500`)**:
+  - Removed obsolete `app/500/page.tsx` route which caused Next.js Pages-Router internal error export collisions (`ENOENT: rename 500.html`). Standardized full 500 error handling inside Next.js App Router boundaries `app/error.tsx` and `app/global-error.tsx`.
+  - Verified production build completes cleanly across all 253 static routes.
+
+- **Fixed Light/Dark Mode Theming in Blog CTA Banner (`app/components/blog/BlogPostInteractive.tsx`)**:
+  - Replaced hardcoded dark indigo/purple gradients, `text-white`, and `text-slate-300` with semantic tokens (`bg-card`, `border-primary/20`, `text-foreground`, `text-muted-foreground`, and radial dot matrix styling) for proper contrast in both light and dark modes.
+
+- **Refactored Biology Subject Hub Hierarchy (`app/biology/page.tsx`)**:
+  - Replaced fragmented child experiment cards (`/biology/cell/animal`, `/biology/cell/plant`, `/biology/genetics/monohybrid`, `/biology/genetics/dihybrid`, `/biology/genetics/dna-transcription`, `/biology/genetics/pedigree`) on the main `/biology` landing page with their dedicated parent subtopic hub suites:
+    - **Cell Structure & Cytology Suite** ([`/biology/cell`](file:///d:/openlabs/app/biology/cell/page.tsx))
+    - **Genetics & Heredity Studio** ([`/biology/genetics`](file:///d:/openlabs/app/biology/genetics/page.tsx))
+  - Linked standalone full biology labs: Cellular Respiration & Mitochondrial ETC ([`/biology/cellular-respiration`](file:///d:/openlabs/app/biology/cellular-respiration/page.tsx)), Enzyme Kinetics & Catalysis ([`/biology/enzyme-kinetics`](file:///d:/openlabs/app/biology/enzyme-kinetics/page.tsx)), and Osmosis & Cell Tonicity ([`/biology/osmosis-tonicity`](file:///d:/openlabs/app/biology/osmosis-tonicity/page.tsx)).
+
+- **Standardized All Sub-Topic Hub Pages with `/physics` Design & Rich SEO/GEO/AEO (`app/components/SubtopicHubLayout.tsx`)**:
+  - Replaced basic card grids across all 9 subtopic hub pages with the comprehensive laboratory design system:
+    - **Computer Science**: Networking ([`/computer-science/networking`](file:///d:/openlabs/app/computer-science/networking/page.tsx)), Logic Gates ([`/computer-science/logic-gates`](file:///d:/openlabs/app/computer-science/logic-gates/page.tsx)), Data Structures & Algorithms ([`/computer-science/dsa`](file:///d:/openlabs/app/computer-science/dsa/page.tsx)), Sorting Algorithms ([`/computer-science/dsa/sorting`](file:///d:/openlabs/app/computer-science/dsa/sorting/page.tsx)), Cryptography ([`/computer-science/cryptography`](file:///d:/openlabs/app/computer-science/cryptography/page.tsx)), Code Lab ([`/computer-science/code-lab`](file:///d:/openlabs/app/computer-science/code-lab/page.tsx)), and AI Problems ([`/computer-science/ai-problem`](file:///d:/openlabs/app/computer-science/ai-problem/page.tsx)).
+    - **Biology**: Genetics & Heredity ([`/biology/genetics`](file:///d:/openlabs/app/biology/genetics/page.tsx)) and Cell Structure & Cytology ([`/biology/cell`](file:///d:/openlabs/app/biology/cell/page.tsx)).
+  - Injected complete SEO/GEO/AEO content: 4-step practical investigation protocols, computational & mathematical foundation matrices, academic curriculum alignment (CBSE, AP, IB, Cambridge), single-open FAQs, and complete Schema.org JSON-LD (`CollectionPage`, `ItemList`, `HowTo`, `FAQPage`, `BreadcrumbList`).
+
+- **Enriched SEO, GEO & AEO Architecture on All Subject Landing Pages (`/physics`, `/chemistry`, `/biology`, `/mathematics`, `/computer-science`)**:
+  - **AEO & Featured Snippets**: Added step-by-step practical laboratory methodology guides (*"How to Conduct Virtual Experiments Online"*) with 4 structured procedural steps and Schema.org `HowTo` structured data.
+  - **GEO (Generative Engine Optimization)**: Added comprehensive computational foundations and governing laws matrices detailing theoretical principles, equations, and exact numerical solvers (e.g. RK4 ODE, Henderson-Hasselbalch, Hodgkin-Huxley, Durand-Kerner polynomial roots, Master Theorem).
+  - **Global Schema & Knowledge Graph**: Added Google Sitelinks `SearchAction` and included Mathematics in the root `EducationalOrganization` course catalog (`app/layout.tsx`).
+  - **Curriculum Cross-Referencing**: Aligned each discipline's experiments against NCERT Class 11/12, AP, IB DP, and Cambridge A-Levels.
+
+- **Unified Subject Landing Pages Design System (`/chemistry`, `/biology`, `/mathematics`, `/computer-science`)**:
+  - Harmonized all 4 STEM discipline landing pages to match the layout and design standard established in `/physics`.
+  - Built dedicated live search & category filter explorers (`ChemistryExperimentExplorer`, `BiologyExperimentExplorer`, `MathematicsExperimentExplorer`, `ComputerScienceExperimentExplorer`) with dynamic metadata pills, difficulty tags, and equations.
+  - Added ambient radial dot grids, themed gradient hero titles, 3-metric statistics pills, feature value cards, academic curriculum alignment sections, and single-open FAQ accordions across all subjects.
+
+- **Redesigned Global Scientific Leaderboard (`app/leaderboard/LeaderboardClient.tsx`)**:
+  - Added interactive Top 3 Champions Podium with Gold, Silver, and Bronze pedestals, animated crowns, and direct profile links.
+  - Added real-time user standing card showcasing personal rank, current scientist title, and lifetime XP score.
+  - Added 6-discipline filter matrix (All Disciplines, Physics, Chemistry, Biology, Mathematics, Computer Science).
+  - Enhanced ranked roster list with level pills, researcher handles, and smooth click-throughs to public researcher profiles.
+
+- **Upgraded OpenLabs AI Science Tutor (`app/components/OpenLabsAI.tsx`)**:
+  - Redesigned floating AI trigger pill with real-time remaining query quota badge (`X/10 left`) and pulsing scientific aura.
+  - Added live context detection automatically identifying current active STEM suite (Physics, Chemistry, Biology, Mathematics, Computer Science).
+  - Added smart starter quick prompts ("Explain theory & formulas", "How to use controls", "Quick concept check quiz").
+  - Enhanced markdown responses with 1-click **Copy Answer** button, formatted formula codes, clear conversation action, and smooth streaming typewriter animation.
+
+- **Redesigned Public Researcher Profile (`app/profile/[username]/page.tsx`, `ProfilePublicClient.tsx`)**:
+  - Upgraded public researcher page with wide responsive container, sleek hero card, scientist rank verification badge, and 1-click share trigger.
+  - Added 4-card KPI summary (Level & Progress, Active Streak, Simulations Completed, Trophies Unlocked).
+  - Added full 5-discipline STEM Subject Mastery matrix and interactive trophy case with unlocked and locked achievements.
+
+- **Refreshed User Profile Workspace (`app/profile/ProfileViewClient.tsx`)**:
+  - Full redesign with glassmorphic hero card, avatar selector (12 avatars), real-time username & bio editing, and 1-click **Share Public Profile** clipboard copy.
+  - Added 4-card KPI metric summary (Scientist Level, Active Streak, Total Completed Simulations, Lifetime XP).
+  - Upgraded **STEM Subject Mastery** matrix covering all 5 disciplines (Physics, Chemistry, Biology, Mathematics, Computer Science) with animated progress rings.
+  - Interactive **Scientific Badges & Achievements** showcase, daily quest progress bar, weekly throughput SVG curve, and recent simulation execution history log.
+
+- **Modernized Global Navbar (`app/components/Navbar.tsx`)**:
+  - Full redesign with translucent glassmorphic background (`bg-background/85 backdrop-blur-xl border-b border-border/80 text-foreground`) replacing solid saturated gradients for seamless dark and light mode harmony.
+  - Upgraded Virtual Labs mega dropdown featuring all 5 STEM disciplines (Physics, Chemistry, Biology, Mathematics, Computer Science) with lab counts, quick links, and Quests & Leaderboard hub card.
+  - Refined mobile navigation drawer with expandable lab suites accordion, direct auth actions, and smooth animation transitions.
+
+- **Redesigned Global Footer (`app/components/Footer.tsx`)**:
+  - Full modern redesign replacing outdated hardcoded gradients with semantic dark/light tokens (`bg-card/95`, `border-border`, `text-foreground`).
+  - Added comprehensive directory links for all 5 STEM disciplines (Physics, Chemistry, Biology, Mathematics, Computer Science) with lab counts and category icons.
+  - Added live simulation cloud status badge (`Simulation Cloud Active`), open-access badge, direct support email trigger, and clean legal/navigation links.
+
+- **Exclusive Single-Open FAQ Accordions (Site-Wide)**:
+  - Enabled native grouped accordion behavior across all pages (`app/page.tsx`, `app/blog/[slug]/page.tsx`, `app/physics/page.tsx`, `app/chemistry/periodictable/page.tsx`, and Computer Science simulation landing pages) using the standard `name` attribute on `<details>`.
+  - Opening any FAQ question automatically collapses any currently opened question, ensuring only one accordion item remains open at a time.
+
+- **Refreshed Home Page (`app/page.tsx`, `app/components/Hero.tsx`)**:
+  - Upgraded home page and hero section with symmetrical 5-discipline simulation suites across Physics (14), Chemistry (4), Biology (3), Mathematics (12), and Computer Science (19+).
+  - Added **Latest Articles & Research Insights** section dynamically fetching the 3 most recent published articles from MongoDB with responsive cards, category badges, reading times, and cover images.
+  - Added live platform statistics matrix (50+ Virtual Labs, 5 STEM Disciplines, 100% Free Access, 24/7 Browser Execution).
+  - Streamlined vertical spacing, improved dark/light mode token compatibility, and expanded FAQ accordions with structured Schema.org JSON-LD data (`WebSite`, `WebPage`, `FAQPage`, `BreadcrumbList`).
+
+- **Dedicated 500 Error Page (`app/500/page.tsx`)**:
+  - Built dedicated interactive 500 Server Error page with terminal diagnostics scanner, animated fault flask, automated error telemetry dispatch via `trackError()`, single-click experiment reinitialization, and quick directory links to active STEM lab suites.
+
+- **Refreshed Blog Page (`app/blog/page.tsx`, `app/components/blog/BlogGrid.tsx`)**:
+  - Redesigned blog page with streamlined vertical padding, dark/light mode token alignment, and clean hero header.
+  - Added interactive client-side **Search Bar** and dynamic **Category Filter Pills** with live matching and filter reset actions.
+  - Upgraded article cards with responsive aspect ratio previews, topic badge icons, estimated reading times, and smooth elevation hover effects.
+  - Preserved Schema.org JSON-LD structured schemas (`Blog`, `BreadcrumbList`).
+
+- **Redesigned Blog Post Page (`app/blog/[slug]/page.tsx`, `app/components/blog/BlogPostInteractive.tsx`)**:
+  - **Full Layout & UX Redesign**: 2-column desktop layout (`max-w-7xl`) with sticky sidebar, dynamic Table of Contents with scroll-spy heading tracking, live top reading progress bar, 1-click code block copying, and quick social sharing triggers (X/Twitter, LinkedIn, WhatsApp, Copy Link).
+  - **AEO & SEO Optimization**: Executive Key Takeaways summary card for Answer Engine Optimization (AEO / Perplexity / Google SGE), anchor IDs on all headings, author E-E-A-T credentials card, and deep Schema.org structured data (`BlogPosting`, `FAQPage`, `BreadcrumbList`).
+  - **GEO & Regional Signals**: Regional geotargeting metadata and international student applicability tags.
+  - **Interactive Learning & Discovery**: Dynamic simulation launch CTA matching the article's STEM category, interactive FAQ accordions, and 3-column related publications grid.
+
+- **Refreshed Contact Page (`app/contact/page.tsx`, `app/contact/ContactForm.tsx`)**:
+  - Streamlined hero, contact channels, and form section with compact vertical spacing and responsive layouts matching the updated design system.
+  - Aligned all styling with semantic Tailwind tokens (`bg-card`, `text-foreground`, `text-muted-foreground`, `border-border`, `bg-primary`, `bg-accent`) for seamless light/dark mode switching.
+  - Added live simulation network status card, bug reporting triage guidance, accessible field labels with iconography, and responsive feedback states.
+  - Preserved structured Schema.org JSON-LD schemas (`ContactPage`, `EducationalOrganization`, `BreadcrumbList`).
+
+- **Refreshed About Page (`app/about/page.tsx`)**:
+  - Updated platform statistics to reflect **50+ virtual labs** across **5 active STEM disciplines** (Physics, Chemistry, Biology, Mathematics, and Computer Science).
+  - Modernized hero section with vibrant gradients, dark/light theme token alignment, and quick navigation CTAs.
+  - Added interactive active disciplines matrix showcasing all 5 subject suites with lab counts and descriptions.
+  - Added authentic **"What's Coming to OpenLabs"** section highlighting Advanced STEM Lab Suites, Verifiable Skill Certificates, and Real-Time Collaborative Labs.
+  - Preserved structured JSON-LD schemas (`AboutPage`, `EducationalOrganization`, `BreadcrumbList`).
+
 - **First-Party Web Analytics & Runtime Error Diagnostics Dashboard (`/api/analytics/collect`, `/api/analytics/error`, `/admin/analytics`)**:
   - **Client-Side Telemetry Engine (`app/components/OpenLabsTracker.tsx`, `app/lib/tracker.ts`)**: Lightweight, non-blocking beacon observer capturing pageviews, active dwell time, scroll depth milestones (25%, 50%, 75%, 100%), traffic referrers, UTM parameters, devices, and countries.
   - **Global Runtime Error & Boundary Capture**: Automated error reporting for uncaught window exceptions, unhandled Promise rejections, and Next.js React Error Boundaries (`app/error.tsx`), with 24h smart deduplication on `{ message, pathname }` to prevent database bloat.

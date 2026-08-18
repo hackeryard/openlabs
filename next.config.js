@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
+process.env.DOTENV_CONFIG_QUIET = "true";
+process.env.DOTENVX_LOG = "error";
+process.env.BROWSERSLIST_IGNORE_OLD_DATA = "true";
 import "./scripts/guard.cjs";
 import dns from 'dns'
 dns.setServers(['8.8.8.8', '1.1.1.1'])

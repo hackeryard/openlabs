@@ -1,6 +1,9 @@
 // public/scripts/guard.cjs
-require("dotenv").config({ path: ".env.local" });
-require("dotenv").config({ path: ".env" });
+process.env.DOTENV_CONFIG_QUIET = "true";
+process.env.DOTENVX_LOG = "error";
+process.env.BROWSERSLIST_IGNORE_OLD_DATA = "true";
+require("dotenv").config({ path: ".env.local", quiet: true });
+require("dotenv").config({ path: ".env", quiet: true });
 
 if (!process.env.CHATBOT_API_KEY) {
   process.env.CHATBOT_API_KEY =

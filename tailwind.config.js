@@ -31,6 +31,9 @@ module.exports = {
           foreground: 'hsl(var(--accent-foreground))',
         },
       },
+      transitionTimingFunction: {
+        'spring-smooth': 'cubic-bezier(0.16, 1, 0.3, 1)',
+      },
     },
   },
   plugins: [

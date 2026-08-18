@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { ArrowRight, Search, Atom } from "lucide-react";
+import { ArrowRight, Search, Dna, Microscope } from "lucide-react";
 
-export type PhysicsExperiment = {
+export type BiologyExperiment = {
   href: string;
   title: string;
   desc: string;
@@ -14,31 +14,29 @@ export type PhysicsExperiment = {
   duration: string;
 };
 
+const categories = ["All", "Cellular Biology", "Genetics", "Physiology", "Anatomy", "Neuroscience"];
+
 function getCategoryStyles(category: string) {
   switch (category) {
-    case "Mechanics":
-      return {
-        badge: "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-100 dark:border-blue-900",
-      };
-    case "Electricity":
+    case "Cellular Biology":
       return {
         badge: "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-100 dark:border-emerald-900",
       };
-    case "Optics":
-      return {
-        badge: "bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border-violet-100 dark:border-violet-900",
-      };
-    case "Electromagnetism":
-      return {
-        badge: "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-100 dark:border-amber-900",
-      };
-    case "Quantum Physics":
+    case "Genetics":
       return {
         badge: "bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-100 dark:border-purple-900",
       };
-    case "Thermodynamics":
+    case "Physiology":
       return {
         badge: "bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-100 dark:border-rose-900",
+      };
+    case "Anatomy":
+      return {
+        badge: "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-100 dark:border-blue-900",
+      };
+    case "Neuroscience":
+      return {
+        badge: "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-100 dark:border-amber-900",
       };
     default:
       return {
@@ -60,7 +58,7 @@ function getDifficultyStyles(difficulty: string) {
   }
 }
 
-function ExperimentCard({ exp }: { exp: PhysicsExperiment }) {
+function ExperimentCard({ exp }: { exp: BiologyExperiment }) {
   const styles = getCategoryStyles(exp.category);
   const diffStyles = getDifficultyStyles(exp.difficulty);
 
@@ -71,7 +69,7 @@ function ExperimentCard({ exp }: { exp: PhysicsExperiment }) {
         className="h-full bg-card rounded-3xl border border-border p-6 shadow-md hover:shadow-xl transition-all duration-300 relative overflow-hidden flex flex-col justify-between"
         aria-label={`Go to ${exp.title}`}
       >
-        <div className="absolute top-0 left-0 right-0 h-1 bg-muted group-hover:bg-indigo-500/30 transition-all" />
+        <div className="absolute top-0 left-0 right-0 h-1 bg-muted group-hover:bg-rose-500/30 transition-all" />
 
         <div>
           {/* Meta row */}
@@ -87,7 +85,7 @@ function ExperimentCard({ exp }: { exp: PhysicsExperiment }) {
           </div>
 
           {/* Title */}
-          <h3 className="text-xl font-extrabold text-foreground group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors mb-2.5 tracking-tight leading-snug">
+          <h3 className="text-xl font-extrabold text-foreground group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors mb-2.5 tracking-tight leading-snug">
             {exp.title}
           </h3>
 
@@ -97,13 +95,13 @@ function ExperimentCard({ exp }: { exp: PhysicsExperiment }) {
           </p>
         </div>
 
-        {/* Footer info */}
+        {/* Footer info: Formula/Concept + Action */}
         <div className="pt-4 border-t border-border/60 flex items-center justify-between mt-auto">
           <div className="min-w-0 pr-2">
             <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground block mb-0.5">
-              Governing Law
+              Biological Concept
             </span>
-            <code className="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400 truncate block">
+            <code className="text-xs font-mono font-bold text-rose-600 dark:text-rose-400 truncate block">
               {exp.formula}
             </code>
           </div>
@@ -118,31 +116,29 @@ function ExperimentCard({ exp }: { exp: PhysicsExperiment }) {
   );
 }
 
-export default function PhysicsExperimentExplorer({
+export default function BiologyExperimentExplorer({
   experiments,
 }: {
-  experiments: PhysicsExperiment[];
+  experiments: BiologyExperiment[];
 }) {
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   const categories = useMemo(() => {
     return ["All", ...Array.from(new Set(experiments.map((e) => e.category)))];
   }, [experiments]);
 
-  const filteredExperiments = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
+  const filtered = useMemo(() => {
     return experiments.filter((exp) => {
-      const matchesCategory = activeCategory === "All" || exp.category === activeCategory;
-      const matchesSearch =
-        !query ||
-        exp.title.toLowerCase().includes(query) ||
-        exp.desc.toLowerCase().includes(query) ||
-        exp.formula.toLowerCase().includes(query) ||
-        exp.category.toLowerCase().includes(query);
-      return matchesCategory && matchesSearch;
+      const matchSearch =
+        exp.title.toLowerCase().includes(search.toLowerCase()) ||
+        exp.desc.toLowerCase().includes(search.toLowerCase()) ||
+        exp.formula.toLowerCase().includes(search.toLowerCase());
+      const matchCat =
+        selectedCategory === "All" || exp.category === selectedCategory;
+      return matchSearch && matchCat;
     });
-  }, [activeCategory, experiments, searchQuery]);
+  }, [experiments, search, selectedCategory]);
 
   return (
     <div className="space-y-8">
@@ -153,26 +149,34 @@ export default function PhysicsExperimentExplorer({
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <input
             type="text"
-            placeholder="Search physics experiments, laws, or formulas..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search biology labs, cell structures, genetics..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-background text-foreground placeholder:text-muted-foreground rounded-xl border border-border text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
           />
         </div>
 
         {/* Categories */}
+        <style jsx global>{`
+          .no-scrollbar::-webkit-scrollbar {
+            display: none;
+          }
+          .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+        `}</style>
         <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 no-scrollbar">
           {categories.map((cat) => {
-            const active = activeCategory === cat;
+            const active = selectedCategory === cat;
             return (
               <button
                 key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-                  active
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${active
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                }`}
+                  }`}
               >
                 {cat}
               </button>
@@ -182,15 +186,15 @@ export default function PhysicsExperimentExplorer({
       </div>
 
       {/* Grid */}
-      {filteredExperiments.length === 0 ? (
+      {filtered.length === 0 ? (
         <div className="text-center py-16 bg-card rounded-3xl border border-border p-8">
-          <Atom className="w-12 h-12 mx-auto text-muted-foreground/40 mb-3" />
-          <p className="text-base font-bold text-foreground">No physics simulations found</p>
+          <Dna className="w-12 h-12 mx-auto text-muted-foreground/40 mb-3" />
+          <p className="text-base font-bold text-foreground">No biology simulations found</p>
           <p className="text-xs text-muted-foreground mt-1">Try adjusting your search query or selected category.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredExperiments.map((exp) => (
+          {filtered.map((exp) => (
             <ExperimentCard key={exp.href} exp={exp} />
           ))}
         </div>
