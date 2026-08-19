@@ -1,5 +1,8 @@
+// app/hooks/useXP.ts
+
 import { useState, useRef, useCallback } from "react";
 import { analyticsService } from "@/lib/analytics";
+import { getNextLabInTrack, getTrackForLab, getTrackProgress, CurriculumTrack, TrackLabStep } from "@/app/lib/tracks";
 
 export interface XPResult {
   xpEarned: number;
@@ -8,8 +11,17 @@ export interface XPResult {
   firstTime: boolean;
 }
 
+export interface NextLabProgression {
+  track: CurriculumTrack;
+  nextStep: TrackLabStep;
+  isFinalStep: boolean;
+  trackPercentage: number;
+}
+
 export function useLab(labId: string, subject: string, type: "simulation" | "exploration" | "editor") {
   const [xpResult, setXpResult] = useState<XPResult | null>(null);
+  const [nextLabProgression, setNextLabProgression] = useState<NextLabProgression | null>(null);
+  const [showNextLabModal, setShowNextLabModal] = useState(false);
   const calledRef = useRef(false);
 
   const completeExperiment = useCallback(async () => {
@@ -36,12 +48,29 @@ export function useLab(labId: string, subject: string, type: "simulation" | "exp
       // Track learning milestone
       analyticsService.trackLabCompleted(labId, subject, data.xpEarned, data.leveledUp);
 
+      // Check curriculum track progression
+      const track = getTrackForLab(labId);
+      const nextInfo = getNextLabInTrack(labId);
+      if (track && nextInfo) {
+        const progress = getTrackProgress(track, [labId]);
+        setNextLabProgression({
+          track: nextInfo.track,
+          nextStep: nextInfo.nextStep,
+          isFinalStep: nextInfo.isFinalStep,
+          trackPercentage: progress.percentage,
+        });
+        setShowNextLabModal(true);
+      }
+
+      // Show toast if modal is not open
       const toast = document.createElement("div");
-      toast.className = "fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce transition-opacity duration-500";
+      toast.className = "fixed bottom-4 right-4 bg-emerald-600 text-white px-6 py-3.5 rounded-2xl shadow-xl z-50 animate-bounce transition-opacity duration-500 flex items-center gap-3";
       toast.innerHTML = `
-        <h4 class="font-bold">Experiment Completed!</h4>
-        <p>+${data.xpEarned} XP Earned</p>
-        ${data.leveledUp ? `<p class="font-bold text-yellow-300 mt-1">Level Up! You are now level ${data.newLevel}</p>` : ""}
+        <div class="font-bold">
+          <div class="text-sm">🎉 Experiment Completed!</div>
+          <div class="text-xs text-emerald-100">+${data.xpEarned} XP Earned</div>
+          ${data.leveledUp ? `<div class="text-xs text-amber-300 font-black mt-0.5">⭐ Level Up! You reached Level ${data.newLevel}</div>` : ""}
+        </div>
       `;
       document.body.appendChild(toast);
       
@@ -55,5 +84,11 @@ export function useLab(labId: string, subject: string, type: "simulation" | "exp
     }
   }, [labId, subject, type]);
 
-  return { completeExperiment, xpResult };
+  return {
+    completeExperiment,
+    xpResult,
+    nextLabProgression,
+    showNextLabModal,
+    setShowNextLabModal,
+  };
 }

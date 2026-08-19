@@ -35,8 +35,11 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 - FR-10b: The authentication system shall automatically synchronize and refresh the user's `auth-token` session cookie whenever database role changes are detected during `/api/auth/me` verification.
 - FR-11: Users shall complete a one-time profile setup (unique username, avatar, bio) after account creation.
 
-### 2.3 Gamification (XP, levels, streaks, challenges)
+### 2.3 Gamification (XP, levels, streaks, challenges & curriculum tracks)
 - FR-12: Completing a lab shall award XP once per calendar day per lab, based on the lab's `type`.
+- FR-12a: The system shall organize all 53 simulations into **13 Guided Curriculum Tracks** across Physics, Chemistry, Biology, Computer Science, and Mathematics with sequenced step milestones, live percentage progress tracking, and interactive circular node timelines.
+- FR-12b: Upon lab or challenge completion, the system shall prompt learners via a Post-Lab Continuation Modal (`<NextLabModal />`) celebrating earned XP and providing a 1-click continuation link to the next experiment in the active track.
+- FR-12c: The platform shall provide a dedicated public `/tracks` hub, subject hub track banners, and a user profile "Learning Tracks" dashboard displaying active and completed tracks.
 - FR-13: Accumulated XP shall determine a user level via a fixed progression curve.
 - FR-14: The system shall track a daily activity streak per user, incrementing on consecutive-day activity and resetting on a missed day.
 - FR-15: The system shall generate one daily challenge per challenge-eligible lab, refreshed once every 24 hours.
@@ -47,6 +50,7 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 
 ### 2.4 AI assistant
 - FR-18: Authenticated users shall be able to ask an AI chat assistant questions about the lab/page they are currently viewing.
+- FR-18a: The AI Assistant shall draw upon a structured knowledge base (`app/lib/pageKnowledge.ts`) covering all 53 registered OpenLabs experiments with step-by-step usage guides, controls breakdowns, scientific formulas, inquiry suggestions, and common pitfalls.
 - FR-19: Each user shall be limited to a fixed number of AI queries per day (currently 10).
 - FR-20: The assistant shall stay scoped to STEM/OpenLabs-relevant topics.
 - FR-21: The assistant shall support speech-to-text input.

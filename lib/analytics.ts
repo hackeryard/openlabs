@@ -27,8 +27,20 @@ class AnalyticsService {
     return false;
   }
 
+  private shouldIgnore(): boolean {
+    if (this.isLocalDev()) return true;
+    if (typeof window !== "undefined") {
+      const h = window.location.hostname;
+      const p = window.location.pathname;
+      if (h.startsWith("admin.") || p.startsWith("/admin") || p === "/403") {
+        return true;
+      }
+    }
+    return false;
+  }
+
   constructor() {
-    if (typeof window !== "undefined" && !this.isLocalDev()) {
+    if (typeof window !== "undefined" && !this.shouldIgnore()) {
       try {
         const stored = sessionStorage.getItem("openlabs_clarity_events");
         if (stored) {
@@ -44,7 +56,7 @@ class AnalyticsService {
   }
 
   private persistFiredEvent(eventName: string) {
-    if (this.isLocalDev()) return;
+    if (this.shouldIgnore()) return;
     this.memoryFiredEvents.add(eventName);
     if (typeof window !== "undefined") {
       try {
@@ -62,7 +74,7 @@ class AnalyticsService {
    * Identifies the user in Microsoft Clarity.
    */
   identify(userId: string, username?: string) {
-    if (typeof window === "undefined" || this.isLocalDev()) return;
+    if (typeof window === "undefined" || this.shouldIgnore()) return;
 
     const identifyKey = `identify:${userId}:${username || ""}`;
     if (this.memoryFiredEvents.has(identifyKey)) return;
@@ -79,7 +91,7 @@ class AnalyticsService {
    * Sets a custom session tag.
    */
   setTag(key: string, value: string) {
-    if (typeof window === "undefined" || this.isLocalDev()) return;
+    if (typeof window === "undefined" || this.shouldIgnore()) return;
 
     const tagKey = `tag:${key}:${value}`;
     if (this.memoryFiredEvents.has(tagKey)) return;
@@ -96,7 +108,7 @@ class AnalyticsService {
    * Sets multiple user tags at once.
    */
   setUserTags(tags: ClarityUserTags) {
-    if (this.isLocalDev()) return;
+    if (this.shouldIgnore()) return;
     Object.entries(tags).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         this.setTag(key, String(value));
@@ -108,7 +120,7 @@ class AnalyticsService {
    * Dispatches a custom business event to both Microsoft Clarity and OpenLabs Analytics Engine.
    */
   event(eventName: ClarityEventName | string, properties: Record<string, any> = {}, value?: number) {
-    if (typeof window === "undefined" || this.isLocalDev()) return;
+    if (typeof window === "undefined" || this.shouldIgnore()) return;
 
     // 1. Send to first-party OpenLabs MongoDB telemetry
     try {

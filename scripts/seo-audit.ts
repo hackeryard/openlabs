@@ -1,5 +1,4 @@
-// scripts/seo-audit.ts
-import { ALL_CONCEPTS } from "../app/lib/knowledge/concepts";
+import { ALL_CONCEPTS } from "../app/lib/knowledge/concepts/index";
 import { validateKnowledgeGraph } from "../app/lib/knowledge/validator";
 import { LABS } from "../app/lib/labs";
 

@@ -52,18 +52,28 @@ function getClientTech() {
 }
 
 export default function OpenLabsTracker() {
-  // Do not track analytics or errors in development mode or localhost
+  const pathname = usePathname();
+
+  // Do not track analytics or errors in development mode, localhost, or Admin Panel
   if (process.env.NODE_ENV !== "production") {
     return null;
   }
   if (typeof window !== "undefined") {
     const host = window.location.hostname;
-    if (host === "localhost" || host === "127.0.0.1" || host.endsWith(".local")) {
+    if (
+      host === "localhost" ||
+      host === "127.0.0.1" ||
+      host.endsWith(".local") ||
+      host.startsWith("admin.") ||
+      window.location.port !== ""
+    ) {
       return null;
     }
   }
 
-  const pathname = usePathname();
+  if (pathname?.startsWith("/admin") || pathname === "/403") {
+    return null;
+  }
 
   // State refs for active pageview
   const startTimeRef = useRef<number>(Date.now());

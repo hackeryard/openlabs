@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ChemistryExperimentExplorer, { ChemistryExperiment } from "./ChemistryExperimentExplorer";
+import CurriculumTracksExplorer from "@/app/components/CurriculumTracksExplorer";
 import {
   FlaskConical,
   Flame,
@@ -383,6 +384,16 @@ export default function ChemistryPage() {
               </div>
             </div>
           </header>
+
+          {/* Chemistry Guided Curriculum Tracks */}
+          <div className="mb-14">
+            <CurriculumTracksExplorer
+              subjectFilter="chemistry"
+              title="Chemistry Curriculum Tracks"
+              subtitle="Follow structured sequence pathways from atomic structure and trends to physical kinetics and analytical titrations."
+              showFilters={false}
+            />
+          </div>
 
           {/* Experiment Explorer (search + filters + grid) */}
           <ChemistryExperimentExplorer experiments={experiments} />

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ComputerScienceExperimentExplorer, { CSExperiment } from "./ComputerScienceExperimentExplorer";
+import CurriculumTracksExplorer from "@/app/components/CurriculumTracksExplorer";
 import {
   Binary,
   ArrowRight,
@@ -382,6 +383,16 @@ export default function ComputerSciencePage() {
               </div>
             </div>
           </header>
+
+          {/* Computer Science Guided Curriculum Tracks */}
+          <div className="mb-14">
+            <CurriculumTracksExplorer
+              subjectFilter="computerScience"
+              title="Computer Science Curriculum Tracks"
+              subtitle="Follow structured sequence pathways across algorithms & DSA, digital logic & CPU architecture, and networking & cryptography."
+              showFilters={false}
+            />
+          </div>
 
           {/* Experiment Explorer (search + filters + grid) */}
           <ComputerScienceExperimentExplorer experiments={experiments} />

@@ -179,6 +179,7 @@ export default function Navbar() {
   /* ---------------- Top-level nav links ---------------- */
 
   const topLinks = [
+    { label: "Tracks", path: "/tracks" },
     { label: "Leaderboard", path: "/leaderboard" },
     { label: "Blog", path: "/blog" },
     { label: "About", path: "/about" },
@@ -261,8 +262,7 @@ export default function Navbar() {
 
   return (
     <>
-      <motion.nav
-        layout
+      <nav
         data-site-navbar
         className="
           fixed top-0 left-0 w-full
@@ -764,7 +764,7 @@ export default function Navbar() {
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.nav>
+      </nav>
 
       {/* Spacer for fixed navbar */}
       <div className="h-14" />

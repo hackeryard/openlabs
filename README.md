@@ -9,7 +9,7 @@
 
 **OpenLabs** is a comprehensive, interactive platform providing in-browser science labs and visualizations across **Physics**, **Chemistry**, **Biology**, **Computer Science**, and **Mathematics**. Built with modern web technologies, it enables students, educators, and enthusiasts to conduct hands-on experiments and explore scientific concepts without requiring physical lab equipment.
 
-> Related docs: [CLAUDE.md](CLAUDE.md) (architecture notes for Claude Code), [AGENTS.md](AGENTS.md) (tool-agnostic agent instructions), [REQUIREMENTS.md](REQUIREMENTS.md) (functional/non-functional requirements), [CHANGELOG.md](CHANGELOG.md) (release history).
+> Related docs: [LAB_CREATION_GUIDE.md](LAB_CREATION_GUIDE.md) (complete 9-step guide for creating new labs), [CLAUDE.md](CLAUDE.md) (architecture notes for Claude Code), [AGENTS.md](AGENTS.md) (tool-agnostic agent instructions), [REQUIREMENTS.md](REQUIREMENTS.md) (functional/non-functional requirements), [ROADMAP.md](ROADMAP.md) (future work & feature roadmap), [CHANGELOG.md](CHANGELOG.md) (release history).
 
 ---
 

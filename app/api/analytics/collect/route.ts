@@ -34,18 +34,21 @@ function extractDomain(ref?: string): string {
 export async function POST(req: Request) {
   try {
     const host = req.headers.get("host") || "";
-    // Only ingest telemetry in real production deployments (never local dev or localhost)
+    const body = await req.json();
+    const { type, visitorId, sessionId, pathname } = body;
+
+    // Do not track telemetry for local dev or admin panel
     if (
       process.env.NODE_ENV !== "production" ||
       host.includes("localhost") ||
       host.includes("127.0.0.1") ||
-      host.endsWith(".local")
+      host.endsWith(".local") ||
+      host.startsWith("admin.") ||
+      pathname?.startsWith("/admin") ||
+      pathname === "/403"
     ) {
-      return NextResponse.json({ ok: true, devMode: true });
+      return NextResponse.json({ ok: true, ignored: true });
     }
-
-    const body = await req.json();
-    const { type, visitorId, sessionId, pathname } = body;
 
     if (!visitorId || !sessionId || !pathname) {
       return NextResponse.json({ ok: false, error: "Missing identity params" }, { status: 400 });

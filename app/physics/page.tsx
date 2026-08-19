@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import PhysicsExperimentExplorer, { PhysicsExperiment } from "./PhysicsExperimentExplorer";
+import CurriculumTracksExplorer from "@/app/components/CurriculumTracksExplorer";
 import {
   Orbit,
   ArrowRight,
@@ -421,6 +422,16 @@ export default function PhysicsPage() {
               </div>
             </div>
           </header>
+
+          {/* Physics Guided Curriculum Tracks */}
+          <div className="mb-14">
+            <CurriculumTracksExplorer
+              subjectFilter="physics"
+              title="Physics Curriculum Tracks"
+              subtitle="Follow structured sequence pathways from basic Newtonian kinematics to advanced quantum mechanics and electromagnetism."
+              showFilters={false}
+            />
+          </div>
 
           {/* Experiment Explorer (search + filters + grid) */}
           <PhysicsExperimentExplorer experiments={experiments} />

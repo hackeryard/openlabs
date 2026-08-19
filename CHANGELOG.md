@@ -2,7 +2,22 @@
 
 All notable changes to OpenLabs are documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/); since the project has no version tags yet, entries are grouped by date instead of version number. Generated from git history; merge commits and duplicate/typo commits are omitted.
 
-## Unreleased
+- **Guided Curriculum Tracks & Next-Lab Progression Engine (`app/lib/tracks.ts`, `app/components/CurriculumTracksExplorer.tsx`, `app/components/NextLabModal.tsx`, `app/hooks/useXP.ts`, `app/profile/ProfileViewClient.tsx`, `app/<subject>/page.tsx`)**:
+  - Structured all 53 OpenLabs simulations into **13 Guided Curriculum Tracks** across Physics, Chemistry, Biology, Computer Science, and Mathematics with learning sequence steps, estimated times, difficulty tags, and track completion badges.
+  - **Interactive Tracks Explorer (`<CurriculumTracksExplorer />`)**: Renders visual step-by-step node timelines (completed checkmarks, active pulsing target nodes, upcoming steps), real-time percentage progress bars, and 1-click *"Resume Track (Step X of Y) →"* direct links.
+  - **Post-Lab Continuation Modal (`<NextLabModal />`)**: An automated celebratory modal that fires upon completing an experiment or daily challenge, celebrating earned XP, updating track progress, and providing a single-click bridge to the next experiment.
+  - **Profile Dashboard Integration (`/profile`)**: Added dedicated **"Learning Tracks"** tab with full track catalog and embedded active track progress cards on the main Dashboard Overview.
+  - **Discipline Landing Page Placements (`/physics`, `/chemistry`, `/biology`, `/computer-science`, `/mathematics`)**: Embedded each subject's guided tracks prominently above the simulation cards.
+
+- **Comprehensive Lab Usage Guide & Knowledge Base for AI Assistant (`app/lib/pageKnowledge.ts`)**:
+  - Implemented comprehensive, structured interactive lab knowledge across all **53 registered OpenLabs experiments** spanning Physics, Chemistry, Biology, Computer Science, and Mathematics.
+  - Whenever a student opens the AI Assistant on any experiment or landing page and asks *"How do I use this lab?"*, the assistant now receives detailed, curated context including:
+    - **Step-by-step Usage Protocols** (what sliders to drag, buttons to click, and measurement steps).
+    - **Controls & Tool Breakdowns** (multimeters, oscilloscopes, burettes, 3D orbit controls, ray tracers).
+    - **Governing Equations & Core Scientific Concepts** (kinematics, Ohm's law, VSEPR geometries, Michaelis-Menten kinetics, Central Dogma, Big-O complexity, calculus integration).
+    - **Recommended "What to Try" Experiments** to guide open-ended student inquiry.
+    - **Common Pitfalls & Mistakes to Avoid**.
+  - Seamlessly resolves route paths via `resolveLabIdFromPath()` across both simulation routes (`/labs/*`) and landing routes (`/<subject>/*`).
 
 - **Strict Role-Based Access Control (RBAC) & In-Place Soft 403 Access Denied (`middleware.ts`, `app/lib/adminAuth.ts`, `app/components/AdminAccessDenied.tsx`, `app/components/AdminLockScreen.tsx`, `app/api/admin/*`, `app/components/AdminSecretContext.tsx`)**:
   - **In-Place Soft 403 (`app/components/AdminAccessDenied.tsx`)**: When a regular user (`role: "user"`) visits any admin dashboard or subdomain, the page stays on the current URL and immediately renders a soft, elegant *"Access Restricted"* card without redirecting or flashing.
@@ -57,10 +72,10 @@ All notable changes to OpenLabs are documented in this file. Format loosely foll
     - **Code Lab Project Actions** (`project_created`, `project_deleted`, `workspace_created`).
     - **Authentication & Onboarding Milestones** (`signup_started`, `signup_completed`, `login_completed`, `logout_completed`, `onboarding_completed`).
 
-- **Disabled Analytics & Error Telemetry in Local & Preview Environments (`yarn dev`, `yarn start`, `localhost`)**:
+- **Disabled Analytics & Error Telemetry in Admin Panel and Local Environments (`yarn dev`, `yarn start`, `localhost`, `admin.*`, `/admin/*`)**:
   - Created centralized [`AppAnalytics.tsx`](file:///d:/openlabs/app/components/AppAnalytics.tsx) client controller to strictly isolate all tracking services: Google Analytics 4, Microsoft Clarity, Vercel Analytics, Vercel Speed Insights, and OpenLabs first-party telemetry observer.
-  - Added multi-point hostname & port guards (`localhost`, `127.0.0.1`, `0.0.0.0`, `*.local`, `port: 3000`, `port: 5000`) across [`app/layout.tsx`](file:///d:/openlabs/app/layout.tsx), [`app/components/AppAnalytics.tsx`](file:///d:/openlabs/app/components/AppAnalytics.tsx), [`app/lib/tracker.ts`](file:///d:/openlabs/app/lib/tracker.ts), [`lib/analytics.ts`](file:///d:/openlabs/lib/analytics.ts), [`components/ClarityProvider.tsx`](file:///d:/openlabs/components/ClarityProvider.tsx), and [`components/ClarityTrackerObserver.tsx`](file:///d:/openlabs/components/ClarityTrackerObserver.tsx) so analytics never load or fire during `yarn start` or local testing.
-  - Added request `host` header inspection to backend ingestion endpoints ([`/api/analytics/collect`](file:///d:/openlabs/app/api/analytics/collect/route.ts), [`/api/analytics/error`](file:///d:/openlabs/app/api/analytics/error/route.ts)) to completely bypass telemetry database writes for local/preview traffic.
+  - Added multi-point hostname & port guards (`localhost`, `127.0.0.1`, `0.0.0.0`, `*.local`, `port: 3000`, `port: 5000`, `admin.*`, `/admin/*`, `/403`) across [`app/layout.tsx`](file:///d:/openlabs/app/layout.tsx), [`app/components/AppAnalytics.tsx`](file:///d:/openlabs/app/components/AppAnalytics.tsx), [`app/lib/tracker.ts`](file:///d:/openlabs/app/lib/tracker.ts), [`lib/analytics.ts`](file:///d:/openlabs/lib/analytics.ts), [`components/ClarityProvider.tsx`](file:///d:/openlabs/components/ClarityProvider.tsx), and [`components/ClarityTrackerObserver.tsx`](file:///d:/openlabs/components/ClarityTrackerObserver.tsx) so analytics never load or fire during `yarn start`, local testing, or admin operations.
+  - Added request `host` and `pathname` inspection to backend ingestion endpoints ([`/api/analytics/collect`](file:///d:/openlabs/app/api/analytics/collect/route.ts), [`/api/analytics/error`](file:///d:/openlabs/app/api/analytics/error/route.ts)) to completely bypass telemetry database writes for local/preview traffic and admin dashboard routes.
 
 - **Fixed Next.js App Router Static Export Error (`app/500`)**:
   - Removed obsolete `app/500/page.tsx` route which caused Next.js Pages-Router internal error export collisions (`ENOENT: rename 500.html`). Standardized full 500 error handling inside Next.js App Router boundaries `app/error.tsx` and `app/global-error.tsx`.

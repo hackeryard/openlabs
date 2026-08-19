@@ -41,6 +41,7 @@ import {
   Lock,
   ArrowRight,
 } from "lucide-react";
+import CurriculumTracksExplorer from "@/app/components/CurriculumTracksExplorer";
 
 const AVATARS = [
   "/images/avatars/avatar-01.png",
@@ -163,7 +164,7 @@ const SUBJECT_THEMES: Record<
 
 export default function ProfileViewClient() {
   const [user, setUser] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<"overview" | "history" | "badges" | "settings">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "tracks" | "history" | "badges" | "settings">("overview");
   const [form, setForm] = useState({ username: "", bio: "", avatar: "" });
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -389,6 +390,7 @@ export default function ProfileViewClient() {
         >
           {[
             { id: "overview", label: "Dashboard Overview", icon: Activity },
+            { id: "tracks", label: "Learning Tracks", icon: Compass },
             { id: "history", label: "Simulation Log", icon: History, count: totalCompleted },
             { id: "badges", label: "Trophy Case & Quests", icon: Trophy, count: user.badges?.length || 0 },
             { id: "settings", label: "Account & Avatar", icon: Settings },
@@ -574,6 +576,47 @@ export default function ProfileViewClient() {
                 </div>
               </section>
 
+              {/* Curriculum Tracks Quick Progress Preview */}
+              <div className="rounded-3xl border border-border bg-card p-5 sm:p-6 shadow-xs space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <div className="inline-flex items-center gap-1 text-[11px] font-black uppercase tracking-widest text-primary">
+                      <Compass size={12} />
+                      <span>Guided Learning Journeys</span>
+                    </div>
+                    <h2 className="text-base sm:text-lg font-black text-foreground tracking-tight">
+                      Active Curriculum Tracks
+                    </h2>
+                  </div>
+                  <Link
+                    href="/tracks"
+                    className="text-xs font-bold text-primary hover:underline flex items-center gap-1 shrink-0"
+                  >
+                    <span>View All 13 Tracks</span>
+                    <ArrowRight size={12} />
+                  </Link>
+                </div>
+
+                <CurriculumTracksExplorer
+                  completedLabIds={(user.completedExperiments || []).map((e: any) => e.experimentId)}
+                  limit={2}
+                  title=""
+                  subtitle=""
+                  showFilters={false}
+                  compact={true}
+                />
+
+                <div className="pt-2 text-center">
+                  <Link
+                    href="/tracks"
+                    className="inline-flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl bg-muted hover:bg-accent text-xs font-bold text-foreground border border-border transition-all"
+                  >
+                    <span>Explore All 13 Science & Math Tracks</span>
+                    <ArrowRight size={13} />
+                  </Link>
+                </div>
+              </div>
+
               {/* Bottom 2-Col Grid (Weekly Activity + Quick Challenge) */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 <div className="lg:col-span-8">
@@ -639,7 +682,19 @@ export default function ProfileViewClient() {
             </div>
           )}
 
-          {/* ═════════ TAB 2: SIMULATION LOG ═════════ */}
+          {/* ═════════ TAB 2: CURRICULUM TRACKS ═════════ */}
+          {activeTab === "tracks" && (
+            <div className="rounded-3xl border border-border bg-card p-5 sm:p-7 shadow-xs space-y-6 animate-in fade-in duration-300">
+              <CurriculumTracksExplorer
+                completedLabIds={(user.completedExperiments || []).map((e: any) => e.experimentId)}
+                title="All Curriculum Tracks"
+                subtitle="Complete structured tracks across Physics, Chemistry, Biology, Computer Science, and Mathematics to earn master badges."
+                showFilters={true}
+              />
+            </div>
+          )}
+
+          {/* ═════════ TAB 3: SIMULATION LOG ═════════ */}
           {activeTab === "history" && (
             <div className="rounded-3xl border border-border bg-card p-5 sm:p-7 shadow-xs space-y-4 animate-in fade-in duration-300">
               <div className="flex items-center justify-between border-b border-border pb-4">
