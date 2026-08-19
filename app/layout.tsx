@@ -96,28 +96,31 @@ export const metadata: Metadata = {
 }
 
 import { AuthProvider } from '@/components/AuthProvider'
+import { AdminSecretProvider } from './components/AdminSecretContext'
 
 export default function RootLayout({ children, }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="bg-background text-foreground">
         <AuthProvider>
-          <ThemeProvider>
-          <AmbientBackground />
-          <Navbar />
-          <div className="mx-auto">
-            <div data-ol-page-root>
-              <ChatProvider>
-                {children}
-                <OpenLabsAILoader />
-                <FloatingLabFeedback />
-                {/* Analytics conditionally initialized only on live production domain (never localhost or yarn start) */}
-                <AppAnalytics />
-              </ChatProvider>
-            </div>
-          </div>
-          <Footer />
-          </ThemeProvider>
+          <AdminSecretProvider>
+            <ThemeProvider>
+              <AmbientBackground />
+              <Navbar />
+              <div className="mx-auto">
+                <div data-ol-page-root>
+                  <ChatProvider>
+                    {children}
+                    <OpenLabsAILoader />
+                    <FloatingLabFeedback />
+                    {/* Analytics conditionally initialized only on live production domain (never localhost or yarn start) */}
+                    <AppAnalytics />
+                  </ChatProvider>
+                </div>
+              </div>
+              <Footer />
+            </ThemeProvider>
+          </AdminSecretProvider>
         </AuthProvider>
 
         {/* Structured Data */}

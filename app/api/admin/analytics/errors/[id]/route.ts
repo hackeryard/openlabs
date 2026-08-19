@@ -1,18 +1,16 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/app/lib/mongodb";
 import ErrorLog from "@/app/models/ErrorLog";
+import { verifyAdminAccess } from "@/app/lib/adminAuth";
 
 export async function PATCH(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    // Admin auth
-    const adminSecret = request.headers.get("x-admin-secret");
-    const expectedSecret = process.env.ADMIN_SECRET;
-
-    if (!adminSecret || (expectedSecret && adminSecret !== expectedSecret)) {
-      return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
+    const auth = verifyAdminAccess(request);
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.error || "Unauthorized" }, { status: auth.status });
     }
 
     await connectDB();
@@ -36,11 +34,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Error record not found" }, { status: 404 });
     }
 
-    return NextResponse.json({
-      updated: true,
-      errorId: errorDoc._id,
-      status: errorDoc.status,
-    });
+    return NextResponse.json(errorDoc);
   } catch (err) {
     console.error("Admin error PATCH error:", err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
@@ -52,12 +46,16 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Admin auth
-    const adminSecret = request.headers.get("x-admin-secret");
-    const expectedSecret = process.env.ADMIN_SECRET;
+    const auth = verifyAdminAccess(request);
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.error || "Unauthorized" }, { status: auth.status });
+    }
 
-    if (!adminSecret || (expectedSecret && adminSecret !== expectedSecret)) {
-      return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
+    if (auth.role !== "admin") {
+      return NextResponse.json(
+        { error: "Forbidden: Only administrators can permanently delete error logs" },
+        { status: 403 }
+      );
     }
 
     await connectDB();

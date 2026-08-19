@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/app/lib/mongodb';
 import Blog from '@/app/models/Blog';
+import { verifyAdminAccess } from '@/app/lib/adminAuth';
 
 export async function GET(request: Request, { params }: { params: { slug: string } }) {
   try {
-    const adminSecret = request.headers.get('x-admin-secret');
-
-    if (!adminSecret || adminSecret !== process.env.ADMIN_SECRET) {
-      return NextResponse.json({ error: 'Unauthorized access' }, { status: 401 });
+    const auth = verifyAdminAccess(request);
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.error || "Unauthorized" }, { status: auth.status });
     }
 
     await connectDB();
@@ -26,10 +26,9 @@ export async function GET(request: Request, { params }: { params: { slug: string
 
 export async function PUT(request: Request, { params }: { params: { slug: string } }) {
   try {
-    const adminSecret = request.headers.get('x-admin-secret');
-
-    if (!adminSecret || adminSecret !== process.env.ADMIN_SECRET) {
-      return NextResponse.json({ error: 'Unauthorized access' }, { status: 401 });
+    const auth = verifyAdminAccess(request);
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.error || "Unauthorized" }, { status: auth.status });
     }
 
     await connectDB();
@@ -54,10 +53,16 @@ export async function PUT(request: Request, { params }: { params: { slug: string
 
 export async function DELETE(request: Request, { params }: { params: { slug: string } }) {
   try {
-    const adminSecret = request.headers.get('x-admin-secret');
+    const auth = verifyAdminAccess(request);
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.error || "Unauthorized" }, { status: auth.status });
+    }
 
-    if (!adminSecret || adminSecret !== process.env.ADMIN_SECRET) {
-      return NextResponse.json({ error: 'Unauthorized access' }, { status: 401 });
+    if (auth.role !== "admin") {
+      return NextResponse.json(
+        { error: "Forbidden: Only administrators can permanently delete publications" },
+        { status: 403 }
+      );
     }
 
     await connectDB();

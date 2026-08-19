@@ -2,6 +2,7 @@ import { serialize } from "cookie"
 
 export async function POST() {
   const headers = new Headers()
+  const isProd = process.env.NODE_ENV === "production"
   headers.append("Content-Type", "application/json")
   headers.append(
     "Set-Cookie",
@@ -9,6 +10,7 @@ export async function POST() {
       httpOnly: true,
       expires: new Date(0),
       path: "/",
+      domain: isProd ? ".openlabs.org.in" : undefined,
     })
   )
   headers.append(

@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import AdminLockScreen from "@/app/components/AdminLockScreen";
+import { useAdminSecret } from "@/app/components/AdminSecretContext";
 import {
   Users,
   BookOpen,
@@ -81,9 +83,8 @@ function parseUserAgent(ua?: string | null): { device: "mobile" | "desktop"; bro
   return { device: isMobile ? "mobile" : "desktop", browser };
 }
 
-export default function AdminContactsPage() {
-  const [adminSecret, setAdminSecret] = useState("");
-  const [authenticated, setAuthenticated] = useState(false);
+export default function AdminContactsDashboard() {
+  const { adminSecret, isUnlocked, isAdmin, unlock, lock } = useAdminSecret();
   const [loading, setLoading] = useState(false);
 
   const [stats, setStats] = useState<ContactStats | null>(null);
@@ -95,72 +96,72 @@ export default function AdminContactsPage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  // Initialize admin secret
-  useEffect(() => {
-    const stored = getAdminSecret();
-    if (stored) {
-      setAdminSecret(stored);
-      setAuthenticated(true);
-    }
-  }, []);
-
   // Fetch contacts
-  const fetchContacts = useCallback(async () => {
-    if (!adminSecret) return;
-    setLoading(true);
+  const fetchContacts = useCallback(
+    async (secretOverride?: string) => {
+      if (!isUnlocked && !secretOverride) return;
+      setLoading(true);
 
-    try {
-      const params = new URLSearchParams();
-      if (statusFilter) params.set("status", statusFilter);
-      if (sortBy) params.set("sortBy", sortBy);
-      if (searchQuery.trim()) params.set("query", searchQuery.trim());
+      try {
+        const params = new URLSearchParams();
+        if (statusFilter) params.set("status", statusFilter);
+        if (sortBy) params.set("sortBy", sortBy);
+        if (searchQuery.trim()) params.set("query", searchQuery.trim());
 
-      const res = await fetch(`/api/admin/contacts?${params.toString()}`, {
-        headers: { "x-admin-secret": adminSecret },
-      });
+        const activeSecret =
+          secretOverride ||
+          adminSecret ||
+          (typeof window !== "undefined"
+            ? localStorage.getItem("openlabs-admin-secret") ||
+              sessionStorage.getItem("adminSecret") ||
+              ""
+            : "");
 
-      if (!res.ok) {
-        if (res.status === 401) {
-          setAuthenticated(false);
-          return;
+        const headers: Record<string, string> = {};
+        if (activeSecret) headers["x-admin-secret"] = activeSecret;
+
+        const res = await fetch(`/api/admin/contacts?${params.toString()}`, {
+          headers,
+        });
+
+        if (!res.ok) {
+          if (res.status === 401) {
+            lock();
+            return;
+          }
+          throw new Error("Fetch failed");
         }
-        throw new Error("Fetch failed");
-      }
 
-      const data = await res.json();
-      setStats(data.stats);
-      setContacts(data.contacts || []);
-      setAuthenticated(true);
-      localStorage.setItem("openlabs-admin-secret", adminSecret);
-    } catch (err) {
-      console.error("Admin contacts fetch error:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [adminSecret, statusFilter, sortBy, searchQuery]);
+        const data = await res.json();
+        setStats(data.stats);
+        setContacts(data.contacts || []);
+        if (secretOverride) unlock(secretOverride);
+      } catch (err) {
+        console.error("Admin contacts fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [isUnlocked, adminSecret, statusFilter, sortBy, searchQuery, lock, unlock]
+  );
 
   useEffect(() => {
-    if (authenticated) {
+    if (isUnlocked) {
       fetchContacts();
     }
-  }, [authenticated, fetchContacts]);
-
-  // Handle login
-  const handleLogin = () => {
-    if (adminSecret.trim()) {
-      setAuthenticated(true);
-    }
-  };
+  }, [isUnlocked, fetchContacts]);
 
   // Status update
   const handleStatusUpdate = async (contactId: string, newStatus: string) => {
     try {
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (adminSecret) headers["x-admin-secret"] = adminSecret;
+
       const res = await fetch(`/api/admin/contacts/${contactId}`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-secret": adminSecret,
-        },
+        headers,
         body: JSON.stringify({ status: newStatus }),
       });
 
@@ -180,14 +181,22 @@ export default function AdminContactsPage() {
 
   // Delete submission
   const handleDelete = async (contactId: string) => {
+    if (!isAdmin) {
+      alert("Contact submission deletion is restricted to Administrators only.");
+      return;
+    }
+
     if (!window.confirm("Are you sure you want to permanently delete this contact submission?")) {
       return;
     }
 
     try {
+      const headers: Record<string, string> = {};
+      if (adminSecret) headers["x-admin-secret"] = adminSecret;
+
       const res = await fetch(`/api/admin/contacts/${contactId}`, {
         method: "DELETE",
-        headers: { "x-admin-secret": adminSecret },
+        headers,
       });
 
       if (res.ok) {
@@ -209,97 +218,33 @@ export default function AdminContactsPage() {
   };
 
   // ─── Login Screen ────────────────────────────────────────────────────
-  if (!authenticated) {
+  if (!isUnlocked) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-6">
-        <div className="bg-card border border-border rounded-3xl p-8 max-w-sm w-full shadow-xl space-y-5">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center">
-              <ShieldCheck size={22} className="text-primary" />
-            </div>
-            <div>
-              <h1 className="text-lg font-black text-foreground">Admin Contacts Dashboard</h1>
-              <p className="text-xs text-muted-foreground">Enter your admin secret to access</p>
-            </div>
-          </div>
-          <input
-            type="password"
-            value={adminSecret}
-            onChange={(e) => setAdminSecret(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-            placeholder="Admin Secret"
-            className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-          />
-          <button
-            onClick={handleLogin}
-            className="w-full px-4 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-bold transition hover:bg-primary/90 shadow-md"
-          >
-            Access Dashboard
-          </button>
-        </div>
-      </div>
+      <AdminLockScreen
+        title="Admin Contacts & Inquiries"
+        description="Enter your shared Admin Secret to access incoming student inquiries, contact messages, and partnership requests."
+        onUnlock={async (secret) => {
+          try {
+            const res = await fetch("/api/admin/contacts?sortBy=recent", {
+              headers: { "x-admin-secret": secret },
+            });
+            if (!res.ok) return false;
+            const data = await res.json();
+            setContacts(data.contacts || []);
+            setStats(data.stats || null);
+            unlock(secret);
+            return true;
+          } catch {
+            return false;
+          }
+        }}
+      />
     );
   }
 
   // ─── Main Contacts Dashboard ─────────────────────────────────────────
   return (
     <div className="min-h-screen bg-background text-foreground p-4 sm:p-6 lg:p-8 space-y-6">
-      {/* Admin Navigation Breadcrumb & Tabs */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
-        <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-          <Link href="/admin/seo-dashboard" className="hover:text-foreground">
-            Admin
-          </Link>
-          <span>/</span>
-          <span className="text-foreground">Contact Form Submissions</span>
-        </div>
-
-        <div className="flex items-center gap-2 text-xs font-bold flex-wrap">
-          <Link
-            href="/admin/users"
-            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-          >
-            <Users size={13} />
-            <span>Users</span>
-          </Link>
-          <Link
-            href="/admin/blogs"
-            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-          >
-            <BookOpen size={13} />
-            <span>Blogs</span>
-          </Link>
-          <Link
-            href="/admin/seo-dashboard"
-            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-          >
-            <Activity size={13} />
-            <span>SEO</span>
-          </Link>
-          <Link
-            href="/admin/feedback"
-            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-          >
-            <MessageSquare size={13} />
-            <span>Feedback</span>
-          </Link>
-          <Link
-            href="/admin/contacts"
-            className="px-3 py-1.5 rounded-xl bg-primary text-primary-foreground font-bold shadow-sm flex items-center gap-1.5"
-          >
-            <Inbox size={13} />
-            <span>Contacts</span>
-          </Link>
-          <Link
-            href="/admin/analytics"
-            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-          >
-            <BarChart3 size={13} />
-            <span>Analytics</span>
-          </Link>
-        </div>
-      </div>
-
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-card border border-border rounded-3xl p-5 md:p-6 shadow-md">
         <div className="flex items-center gap-3.5">
@@ -548,13 +493,15 @@ export default function AdminContactsPage() {
                     </div>
 
                     {/* Delete button */}
-                    <button
-                      onClick={() => handleDelete(c._id)}
-                      className="p-1.5 rounded-xl border border-border text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition"
-                      title="Delete Submission"
-                    >
-                      <Trash2 size={14} />
-                    </button>
+                    {isAdmin && (
+                      <button
+                        onClick={() => handleDelete(c._id)}
+                        className="p-1.5 rounded-xl border border-border text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition"
+                        title="Delete Submission"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    )}
                   </div>
                 </div>
 

@@ -3,15 +3,13 @@ import { connectDB } from "@/app/lib/mongodb";
 import Feedback from "@/app/models/Feedback";
 import User from "@/app/models/User"; // Ensure User model is registered for populate
 import { getAdminFeedbackSummary } from "@/app/lib/feedback";
+import { verifyAdminAccess } from "@/app/lib/adminAuth";
 
 export async function GET(request: Request) {
   try {
-    // Admin auth: same pattern as /api/admin/users
-    const adminSecret = request.headers.get("x-admin-secret");
-    const expectedSecret = process.env.ADMIN_SECRET;
-
-    if (!adminSecret || (expectedSecret && adminSecret !== expectedSecret)) {
-      return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
+    const auth = verifyAdminAccess(request);
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.error || "Unauthorized" }, { status: auth.status });
     }
 
     await connectDB();

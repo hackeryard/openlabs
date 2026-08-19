@@ -31,6 +31,8 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 - FR-8: Users shall be able to sign in with OAuth (Google, GitHub, or Azure AD); a first-time OAuth sign-in shall provision an account automatically with the email pre-verified.
 - FR-9: Regardless of sign-in method, an authenticated session shall be represented by a single JWT stored in an httpOnly cookie.
 - FR-10: Unauthenticated users shall be redirected to login when accessing any lab simulation (`/labs/*`) or admin (`/admin/*`) route; subject landing pages, the blog, and marketing pages shall remain public.
+- FR-10a: The system shall enforce Role-Based Access Control (RBAC) with `user`, `moderator`, and `admin` roles. Regular users (`role: "user"`) visiting `/admin/*` or `admin.openlabs.org.in` shall receive an in-place soft 403 Access Restricted screen without showing admin navigation or footer chrome.
+- FR-10b: The authentication system shall automatically synchronize and refresh the user's `auth-token` session cookie whenever database role changes are detected during `/api/auth/me` verification.
 - FR-11: Users shall complete a one-time profile setup (unique username, avatar, bio) after account creation.
 
 ### 2.3 Gamification (XP, levels, streaks, challenges)
@@ -49,11 +51,13 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 - FR-20: The assistant shall stay scoped to STEM/OpenLabs-relevant topics.
 - FR-21: The assistant shall support speech-to-text input.
 
-### 2.5 Blog & content management
+### 2.5 Administration & Content Management
 - FR-22: The system shall support published/draft blog posts with slug-based URLs, categories, and cover images.
 - FR-23: Only published posts shall be visible through public endpoints/pages.
-- FR-24: Content administrators shall be able to create, edit, and delete blog posts, including uploading cover images, through an admin interface gated by a shared admin secret (in addition to standard authentication).
-- FR-24a: Content administrators shall be able to inspect, search, filter, sort, export to CSV, and delete user accounts through an admin user telemetry dashboard (`/admin/users`) gated by a shared admin secret.
+- FR-24: Administrators (`role: "admin"`) shall have direct, instant clearance across all administration routes, user role mutations, and permanent deletion of accounts, publications, error logs, and contact submissions.
+- FR-24a: Moderators (`role: "moderator"`) shall access admin dashboards by entering the shared `ADMIN_SECRET`, with permission to triage feedback, reply to contact inquiries, draft blogs, and inspect telemetry, while remaining blocked from modifying user roles or deleting records.
+- FR-24b: The system shall provide an isolated admin subdomain (`admin.openlabs.org.in`) with dedicated `AdminNavbar` and `AdminFooter` components, zero-flash secret state persistence, and automatic 404 hiding on the apex domain.
+- FR-24c: Administrators and moderators shall be able to inspect, search, filter, sort, and export to CSV student telemetry via the Admin Users dashboard (`/admin/users`).
 
 ### 2.6 Code editor labs
 - FR-25: The Computer Science "code lab" shall provide an in-browser HTML/CSS/JS editor with saved projects per user.

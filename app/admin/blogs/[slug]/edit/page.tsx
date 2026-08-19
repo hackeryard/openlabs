@@ -3,9 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Save, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import AdminLockScreen from '@/app/components/AdminLockScreen';
+import { useAdminSecret } from '@/app/components/AdminSecretContext';
 
 export default function EditBlogPage({ params }: { params: { slug: string } }) {
   const router = useRouter();
+  const { adminSecret, isUnlocked, unlock } = useAdminSecret();
 
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
@@ -30,20 +33,19 @@ export default function EditBlogPage({ params }: { params: { slug: string } }) {
   });
 
   useEffect(() => {
-    const storedSecret = sessionStorage.getItem('adminSecret');
-    if (!storedSecret) {
-      router.push('/admin/blogs');
+    if (!isUnlocked) {
+      setFetching(false);
       return;
     }
 
-    setFormData(prev => ({ ...prev, adminSecret: storedSecret }));
-
     const fetchBlog = async () => {
+      setFetching(true);
       try {
+        const headers: Record<string, string> = {};
+        if (adminSecret) headers['x-admin-secret'] = adminSecret;
+
         const res = await fetch(`/api/admin/blogs/${params.slug}`, {
-          headers: {
-            'x-admin-secret': storedSecret
-          }
+          headers,
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Failed to fetch blog details');
@@ -155,6 +157,20 @@ export default function EditBlogPage({ params }: { params: { slug: string } }) {
       setLoading(false);
     }
   };
+
+  if (!isUnlocked) {
+    return (
+      <AdminLockScreen
+        title="Edit Blog Clearance"
+        description="Enter your shared Admin Secret to update existing publications in the OpenLabs Journal."
+        error={error}
+        loading={loading}
+        onUnlock={async (secret) => {
+          unlock(secret);
+        }}
+      />
+    );
+  }
 
   if (fetching) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;

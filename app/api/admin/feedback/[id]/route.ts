@@ -1,18 +1,16 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/app/lib/mongodb";
 import Feedback from "@/app/models/Feedback";
+import { verifyAdminAccess } from "@/app/lib/adminAuth";
 
 export async function PATCH(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    // Admin auth
-    const adminSecret = request.headers.get("x-admin-secret");
-    const expectedSecret = process.env.ADMIN_SECRET;
-
-    if (!adminSecret || (expectedSecret && adminSecret !== expectedSecret)) {
-      return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
+    const auth = verifyAdminAccess(request);
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.error || "Unauthorized" }, { status: auth.status });
     }
 
     await connectDB();

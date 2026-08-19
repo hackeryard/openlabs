@@ -2,6 +2,7 @@ import PageView from "@/app/models/PageView";
 import AnalyticsEvent from "@/app/models/AnalyticsEvent";
 import ErrorLog from "@/app/models/ErrorLog";
 import User from "@/app/models/User";
+import { getFullCountryName } from "@/app/lib/countries";
 
 /**
  * Calculates start date based on time range string
@@ -390,11 +391,26 @@ export async function getAnalyticsDashboardData(timeRange = "7d") {
     percentage: totalViews > 0 ? parseFloat(((s.count / totalViews) * 100).toFixed(1)) : 0,
   }));
 
-  // Countries
-  const countries = countriesRaw.map((c: any) => ({
-    country: c._id || "Unknown",
-    count: c.count,
-    percentage: totalViews > 0 ? parseFloat(((c.count / totalViews) * 100).toFixed(1)) : 0,
+  // Countries - normalize all ISO codes to full names and consolidate duplicates
+  const countryCountsMap = new Map<string, number>();
+  countriesRaw.forEach((c: any) => {
+    const fullName = getFullCountryName(c._id);
+    countryCountsMap.set(fullName, (countryCountsMap.get(fullName) || 0) + (c.count || 0));
+  });
+
+  const countries = Array.from(countryCountsMap.entries())
+    .map(([country, count]) => ({
+      country,
+      count,
+      percentage: totalViews > 0 ? parseFloat(((count / totalViews) * 100).toFixed(1)) : 0,
+    }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 25);
+
+  // Format recent pageviews country names
+  const formattedPageViews = recentPageViews.map((pv: any) => ({
+    ...pv,
+    country: getFullCountryName(pv.country),
   }));
 
   // Duration Distribution
@@ -451,7 +467,7 @@ export async function getAnalyticsDashboardData(timeRange = "7d") {
     countries,
     durationDistribution,
     scrollDistribution,
-    recentPageViews,
+    recentPageViews: formattedPageViews,
     recentEvents,
     recentErrors,
     errorStats,

@@ -113,8 +113,12 @@ export default function AuthPage({ initialMode = "login" }: { initialMode?: "log
 
       // Refresh central auth state & redirect to original intended path or home
       await checkAuth();
-      router.push(nextPath);
-      router.refresh();
+      if (nextPath.startsWith("http://") || nextPath.startsWith("https://")) {
+        window.location.href = nextPath;
+      } else {
+        router.push(nextPath);
+        router.refresh();
+      }
     } catch (err: any) {
       setServerError(err.message || "An unexpected error occurred. Please try again.");
     } finally {

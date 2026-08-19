@@ -3,18 +3,19 @@ import { connectDB } from "@/app/lib/mongodb";
 import PageView from "@/app/models/PageView";
 import AnalyticsEvent from "@/app/models/AnalyticsEvent";
 import { getUserFromToken } from "@/app/lib/getUserFromToken";
+import { getFullCountryName } from "@/app/lib/countries";
 
 /**
- * Extracts country code from Edge/CDN headers
+ * Extracts country code from Edge/CDN headers and resolves to full name
  */
 function getGeoCountry(req: Request): string {
   const headers = req.headers;
-  const country =
+  const rawCountry =
     headers.get("x-vercel-ip-country") ||
     headers.get("cf-ipcountry") ||
     headers.get("x-country-code") ||
     "Unknown";
-  return country;
+  return getFullCountryName(rawCountry);
 }
 
 /**

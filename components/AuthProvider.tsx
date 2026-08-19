@@ -75,26 +75,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(null);
         setAuthState("AUTHENTICATED_BUT_UNVERIFIED");
 
-        // WIPE stale cookies so middleware and browser client stay in sync
-        await fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
-
         const isProtected = protectedPrefixes.some(p => pathname.startsWith(p));
         if (isProtected) {
           const emailParam = data.email ? `?email=${encodeURIComponent(data.email)}` : "";
           router.push(`/verify-email${emailParam}`);
         }
       } else {
-        // 401, 404, 500 -> Invalid/Expired JWT or User Deleted
+        // 401, 404, 500 -> Unauthenticated
         setUser(null);
         setAuthState("UNAUTHENTICATED");
-
-        // WIPE stale cookies so browser clears token
-        await fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
-
-        const isProtected = protectedPrefixes.some(p => pathname.startsWith(p));
-        if (isProtected) {
-          router.push(`/login?next=${encodeURIComponent(pathname)}`);
-        }
       }
     } catch (err) {
       console.error("Auth check error:", err);

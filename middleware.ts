@@ -10,8 +10,7 @@ const publicPaths = [
   '/verify-email',
   '/about',
   '/contact',
-  '/500',
-  '/404',
+  '/403',
   '/sitemap.xml',
   '/robots.txt',
   '/llms.txt',
@@ -27,10 +26,10 @@ const publicPrefixes = [
   '/mathematics',
 ];
 
-function isJwtExpired(tokenString: string): boolean {
+function decodeJwtPayload(tokenString: string): any {
   try {
     const parts = tokenString.split('.');
-    if (parts.length !== 3) return true;
+    if (parts.length !== 3) return null;
     const base64Url = parts[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload = decodeURIComponent(
@@ -39,16 +38,20 @@ function isJwtExpired(tokenString: string): boolean {
         .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
         .join('')
     );
-    const payload = JSON.parse(jsonPayload);
-    if (!payload.exp) return false;
-    return Date.now() >= payload.exp * 1000;
+    return JSON.parse(jsonPayload);
   } catch {
-    return true;
+    return null;
   }
+}
+
+function isJwtExpired(payload: any): boolean {
+  if (!payload || !payload.exp) return true;
+  return Date.now() >= payload.exp * 1000;
 }
 
 export function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
+  const host = request.headers.get('host') || '';
 
   // Exclude _next and static assets from being intercepted
   if (
@@ -58,29 +61,124 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Allow all /api/auth routes, cron jobs, and contact form submission
+  const isLocalDev =
+    host.includes('localhost') ||
+    host.includes('127.0.0.1') ||
+    host.endsWith('.local') ||
+    process.env.NODE_ENV !== 'production';
+
+  const isAdminSubdomain =
+    host.startsWith('admin.openlabs.org.in') ||
+    host.startsWith('admin.localhost') ||
+    host.startsWith('admin.');
+
+  // Parse JWT token & Role
+  const rawCookie = request.cookies.get('auth-token')?.value;
+  const tokenPayload = rawCookie ? decodeJwtPayload(rawCookie) : null;
+  let hasValidAuthToken = false;
+  let isExpired = false;
+  let userRole: string = 'user';
+
+  if (tokenPayload) {
+    if (isJwtExpired(tokenPayload)) {
+      isExpired = true;
+    } else {
+      hasValidAuthToken = true;
+      userRole = tokenPayload.role || 'user';
+    }
+  }
+
+  const hasAdminOrModRole = userRole === 'admin' || userRole === 'moderator';
+
+  // Allow all /api/auth routes, cron jobs, contact form submission, and public APIs
   if (
     pathname.startsWith('/api/auth') ||
     pathname.startsWith('/api/challenges/generate') ||
     pathname.startsWith('/api/contact') ||
-    pathname.startsWith('/api/blogs') ||
-    pathname.startsWith('/api/admin')
+    pathname.startsWith('/api/blogs')
   ) {
     return NextResponse.next();
   }
 
-  const rawCookie = request.cookies.get('auth-token')?.value;
-  let hasValidAuthToken = false;
-  let isExpired = false;
+  // ── 0. ADMIN API RBAC CHECK (/api/admin/*) ───────────────────────────
+  if (pathname.startsWith('/api/admin')) {
+    // If request has standalone x-admin-secret header matching server secret, let backend verify
+    const secretHeader = request.headers.get('x-admin-secret');
+    if (secretHeader) {
+      return NextResponse.next();
+    }
+    // If logged in with admin or moderator role, allow to API handler
+    if (hasValidAuthToken && hasAdminOrModRole) {
+      return NextResponse.next();
+    }
+    // If logged in but regular user: 403 Forbidden
+    if (hasValidAuthToken && !hasAdminOrModRole) {
+      return NextResponse.json(
+        { error: 'Forbidden: Admin or Moderator privileges required' },
+        { status: 403 }
+      );
+    }
+    // Unauthenticated: 401
+    return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+  }
 
-  if (rawCookie) {
-    if (isJwtExpired(rawCookie)) {
-      isExpired = true;
-    } else {
-      hasValidAuthToken = true;
+  // ── 1. SUBDOMAIN ROUTING: admin.openlabs.org.in (or admin.localhost) ──
+  if (isAdminSubdomain) {
+    // If not authenticated:
+    if (!hasValidAuthToken) {
+      if (pathname === '/login' || pathname === '/signup') {
+        return NextResponse.next();
+      }
+      const url = request.nextUrl.clone();
+      url.pathname = '/login';
+      url.searchParams.set('next', pathname + search);
+      const res = NextResponse.redirect(url);
+      if (isExpired) res.cookies.delete('auth-token');
+      return res;
+    }
+
+    // Authenticated on admin subdomain:
+    if (pathname === '/login' || pathname === '/signup') {
+      const url = request.nextUrl.clone();
+      url.pathname = '/';
+      url.search = '';
+      return NextResponse.redirect(url);
+    }
+
+    let targetPath = pathname;
+    if (pathname === '/') {
+      targetPath = '/admin/analytics';
+    } else if (!pathname.startsWith('/admin')) {
+      targetPath = `/admin${pathname}`;
+    }
+
+    const rewriteUrl = request.nextUrl.clone();
+    rewriteUrl.pathname = targetPath;
+    const res = NextResponse.rewrite(rewriteUrl);
+    res.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+    return res;
+  }
+
+  // ── 2. MAIN DOMAIN: hide /admin completely in Production (404) ───────
+  if (pathname.startsWith('/admin') && !isLocalDev) {
+    const notFoundUrl = request.nextUrl.clone();
+    notFoundUrl.pathname = '/404';
+    return NextResponse.rewrite(notFoundUrl, { status: 404 });
+  }
+
+  // ── 3. MAIN DOMAIN: Protect /admin in Local Dev (Require Login) ─────
+  if (pathname.startsWith('/admin') && isLocalDev) {
+    if (!hasValidAuthToken) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/login';
+      url.searchParams.set('next', pathname + search);
+      const res = NextResponse.redirect(url);
+      if (isExpired) res.cookies.delete('auth-token');
+      return res;
     }
   }
 
+  // ── 4. STANDARD PUBLIC & PROTECTED ACCESS RULES ─────────────────────
   const isPublicPath =
     publicPaths.includes(pathname) ||
     publicPrefixes.some((prefix) => pathname.startsWith(prefix));
@@ -101,18 +199,21 @@ export function middleware(request: NextRequest) {
     return res;
   }
 
-  // If user has a valid authenticated token and tries to access login/signup
+  // If user is already authenticated and visits /login or /signup
   if (hasValidAuthToken && (pathname === '/login' || pathname === '/signup')) {
-    const nextPath = request.nextUrl.searchParams.get('next') || '/';
-    const url = request.nextUrl.clone();
-    if (nextPath.startsWith('/') && !nextPath.startsWith('/login') && !nextPath.startsWith('/signup')) {
+    const nextPath = request.nextUrl.searchParams.get('next');
+    if (
+      nextPath &&
+      nextPath.startsWith('/') &&
+      !nextPath.startsWith('//') &&
+      !nextPath.startsWith('/login') &&
+      !nextPath.startsWith('/signup')
+    ) {
+      const url = request.nextUrl.clone();
       url.pathname = nextPath.split('?')[0];
       url.search = nextPath.split('?')[1] ? `?${nextPath.split('?')[1]}` : '';
-    } else {
-      url.pathname = '/';
-      url.search = '';
+      return NextResponse.redirect(url);
     }
-    return NextResponse.redirect(url);
   }
 
   const response = NextResponse.next();
@@ -123,5 +224,7 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image).*)'],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|woff|woff2|ttf|eot)$).*)',
+  ],
 };
