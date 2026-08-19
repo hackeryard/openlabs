@@ -56,6 +56,8 @@ export async function POST(req) {
     // Delete the OTP record
     await OTP.deleteOne({ _id: otpRecord._id })
 
+    const isProd = process.env.NODE_ENV === "production";
+
     return new Response(
       JSON.stringify({
         message: "Email verified successfully",
@@ -68,6 +70,7 @@ export async function POST(req) {
           "Set-Cookie": serialize("auth-token", token, {
             httpOnly: true,
             path: "/",
+            domain: isProd ? ".openlabs.org.in" : undefined,
             maxAge: 60 * 60 * 24,
           }),
         },

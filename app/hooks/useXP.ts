@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from "react";
+import { analyticsService } from "@/lib/analytics";
 
 export interface XPResult {
   xpEarned: number;
@@ -31,6 +32,9 @@ export function useLab(labId: string, subject: string, type: "simulation" | "exp
       if (data.alreadyCompleted) return;
 
       setXpResult(data);
+
+      // Track learning milestone
+      analyticsService.trackLabCompleted(labId, subject, data.xpEarned, data.leveledUp);
 
       const toast = document.createElement("div");
       toast.className = "fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce transition-opacity duration-500";

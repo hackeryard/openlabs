@@ -2,51 +2,57 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import AdminLockScreen from "@/app/components/AdminLockScreen";
+import { useAdminSecret } from "@/app/components/AdminSecretContext";
 import { Plus, Edit2, Trash2, Eye, Lock, Globe, FileEdit, Users, BookOpen, Activity, MessageSquare, Inbox, BarChart3 } from 'lucide-react';
 
-export default function AdminBlogsDashboard() {
-  const [adminSecret, setAdminSecret] = useState('');
-  const [isAuthorized, setIsAuthorized] = useState(false);
+export default function AdminBlogsPage() {
+  const { adminSecret, isUnlocked, isAdmin, unlock, lock } = useAdminSecret();
   const [blogs, setBlogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const storedSecret = sessionStorage.getItem('adminSecret');
-    if (storedSecret) {
-      setAdminSecret(storedSecret);
-      fetchBlogs(storedSecret);
-    }
-  }, []);
-
-  const fetchBlogs = async (secret: string) => {
+  const fetchBlogs = async (secret?: string) => {
     setLoading(true);
     setError(null);
     try {
+      const headers: Record<string, string> = {};
+      const activeSecret = secret || adminSecret;
+      if (activeSecret) headers['x-admin-secret'] = activeSecret;
+
       const res = await fetch('/api/admin/blogs', {
-        headers: { 'x-admin-secret': secret }
+        headers,
       });
       const data = await res.json();
       
-      if (!res.ok) throw new Error(data.error || 'Failed to fetch blogs');
+      if (!res.ok) {
+        if (res.status === 401) {
+          lock();
+        }
+        throw new Error(data.error || 'Failed to fetch blogs');
+      }
       
       setBlogs(data.posts || []);
-      setIsAuthorized(true);
+      if (activeSecret) unlock(activeSecret);
     } catch (err: any) {
       setError(err.message);
-      setIsAuthorized(false);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    sessionStorage.setItem('adminSecret', adminSecret);
-    fetchBlogs(adminSecret);
-  };
+  useEffect(() => {
+    if (isUnlocked) {
+      fetchBlogs(adminSecret);
+    }
+  }, [isUnlocked]);
 
   const handleDelete = async (slug: string) => {
+    if (!isAdmin) {
+      alert("Publication deletion is restricted to Administrators only.");
+      return;
+    }
+
     if (!confirm(`Are you sure you want to delete the blog "${slug}"?`)) return;
 
     try {
@@ -64,96 +70,21 @@ export default function AdminBlogsDashboard() {
     }
   };
 
-  if (!isAuthorized) {
+  if (!isUnlocked) {
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center p-6">
-        <div className="bg-card p-8 rounded-3xl shadow-sm border border-border max-w-md w-full text-center">
-          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-primary">
-            <Lock className="w-8 h-8" />
-          </div>
-          <h1 className="text-2xl font-bold text-foreground mb-2">Admin Access</h1>
-          <p className="text-muted-foreground mb-8 text-sm">Enter your Admin Secret to manage blog posts.</p>
-
-          <form onSubmit={handleLogin} className="space-y-4">
-            <input
-              type="password"
-              value={adminSecret}
-              onChange={(e) => setAdminSecret(e.target.value)}
-              placeholder="Admin Secret..."
-              className="w-full bg-muted border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary outline-none text-center"
-              required
-            />
-            {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
-            <button 
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors disabled:opacity-50"
-            >
-              {loading ? 'Verifying...' : 'Access Dashboard'}
-            </button>
-          </form>
-        </div>
-      </main>
+      <AdminLockScreen
+        title="Admin Blog Management"
+        description="Enter your shared Admin Secret to create, edit, upload assets, and manage public publications."
+        error={error}
+        loading={loading}
+        onUnlock={fetchBlogs}
+      />
     );
   }
 
   return (
     <main className="min-h-screen text-foreground py-24">
       <div className="max-w-6xl mx-auto px-6 space-y-6">
-        {/* Navigation Breadcrumb & Tabs */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
-          <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-            <Link href="/admin/seo-dashboard" className="hover:text-foreground">Admin</Link>
-            <span>/</span>
-            <span className="text-foreground">Blog Management</span>
-          </div>
-
-          <div className="flex items-center gap-2 text-xs font-bold flex-wrap">
-            <Link
-              href="/admin/users"
-              className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-            >
-              <Users size={13} />
-              <span>Users</span>
-            </Link>
-            <Link
-              href="/admin/blogs"
-              className="px-3 py-1.5 rounded-xl bg-primary text-primary-foreground font-bold shadow-sm flex items-center gap-1.5"
-            >
-              <BookOpen size={13} />
-              <span>Blogs</span>
-            </Link>
-            <Link
-              href="/admin/seo-dashboard"
-              className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-            >
-              <Activity size={13} />
-              <span>SEO</span>
-            </Link>
-            <Link
-              href="/admin/feedback"
-              className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-            >
-              <MessageSquare size={13} />
-              <span>Feedback</span>
-            </Link>
-            <Link
-              href="/admin/contacts"
-              className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-            >
-              <Inbox size={13} />
-              <span>Contacts</span>
-            </Link>
-            <Link
-              href="/admin/analytics"
-              className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-            >
-              <BarChart3 size={13} />
-              <span>Analytics</span>
-            </Link>
-          </div>
-        </div>
-
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-12">
           <div>
             <h1 className="text-3xl font-bold text-foreground mb-2">Blog Management</h1>
@@ -217,13 +148,15 @@ export default function AdminBlogsDashboard() {
                         >
                           <Edit2 className="w-4 h-4" />
                         </Link>
-                        <button
-                          onClick={() => handleDelete(blog.slug)}
-                          className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Delete"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        {isAdmin && (
+                          <button
+                            onClick={() => handleDelete(blog.slug)}
+                            className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

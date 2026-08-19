@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { analyticsService } from "@/lib/analytics";
 
 // ── Types ──────────────────────────────────────────────────────────────
 export interface FeedbackStats {
@@ -93,6 +94,9 @@ export function useFeedback(labId: string) {
           setSubmitted(true);
           markSubmittedForLab(labId);
 
+          // Track feedback submission event
+          analyticsService.trackFeedbackSubmitted(labId, helpful ? 5 : 1, "pulse");
+
           // Optimistic local stats update
           setStats((prev) =>
             prev
@@ -141,6 +145,13 @@ export function useFeedback(labId: string) {
         if (res.ok) {
           setSubmitted(true);
           markSubmittedForLab(labId);
+
+          // Track detailed feedback event
+          analyticsService.trackFeedbackSubmitted(
+            labId,
+            data.rating || (data.helpful ? 5 : 1),
+            data.category || "deep_feedback"
+          );
         }
       } catch {
         // Silent fail

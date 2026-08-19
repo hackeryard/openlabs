@@ -36,10 +36,22 @@ export async function GET(req: Request) {
 
     const token = generateToken(user);
     const secure = process.env.NODE_ENV === "production";
-    const cookie = `auth-token=${token}; Path=/; HttpOnly; SameSite=Lax; ${secure ? "Secure; " : ""
+    const domainPart = secure ? "Domain=.openlabs.org.in; " : "";
+    const cookie = `auth-token=${token}; Path=/; ${domainPart}HttpOnly; SameSite=Lax; ${secure ? "Secure; " : ""
       }Max-Age=${60 * 60 * 24}`;
 
-    const redirectTarget = next.startsWith('http') ? next : `${origin}${next}`;
+    let cleanNext = next;
+    while (cleanNext.includes("/api/auth/nextauth/sync")) {
+      try {
+        const parsed = new URL(cleanNext, origin);
+        cleanNext = parsed.searchParams.get("next") || "/";
+      } catch {
+        cleanNext = "/";
+        break;
+      }
+    }
+
+    const redirectTarget = cleanNext.startsWith('http') ? cleanNext : `${origin}${cleanNext.startsWith('/') ? cleanNext : `/${cleanNext}`}`;
 
     return new Response(null, {
       status: 302,

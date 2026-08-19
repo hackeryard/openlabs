@@ -4,6 +4,59 @@ All notable changes to OpenLabs are documented in this file. Format loosely foll
 
 ## Unreleased
 
+- **Strict Role-Based Access Control (RBAC) & In-Place Soft 403 Access Denied (`middleware.ts`, `app/lib/adminAuth.ts`, `app/components/AdminAccessDenied.tsx`, `app/components/AdminLockScreen.tsx`, `app/api/admin/*`, `app/components/AdminSecretContext.tsx`)**:
+  - **In-Place Soft 403 (`app/components/AdminAccessDenied.tsx`)**: When a regular user (`role: "user"`) visits any admin dashboard or subdomain, the page stays on the current URL and immediately renders a soft, elegant *"Access Restricted"* card without redirecting or flashing.
+  - **Admin Navbar & Footer Suppression**: Users without `admin` or `moderator` roles never see the [`AdminNavbar`](file:///d:/openlabs/app/components/AdminNavbar.tsx) or [`AdminFooter`](file:///d:/openlabs/app/components/AdminFooter.tsx) anywhere on the subdomain or admin paths.
+  - **Admin Users (`role: "admin"`)**: Granted instant full access to all admin dashboards and APIs **without being prompted for an admin secret key**, with full authority to promote/demote user roles and permanently delete accounts, publications, error logs, and contact submissions.
+  - **Moderator Users (`role: "moderator"`)**: Allowed to access admin pages by **entering the Admin Secret (`ADMIN_SECRET`)**, with granular permission boundaries:
+    - **User Role Mutation Lock**: Restricted to viewing roles in [`/admin/users`](file:///d:/openlabs/app/admin/users/page.tsx); only administrators can promote/demote user roles.
+    - **Hard Deletion Lock**: Prevented from permanently deleting user accounts, blog publications, telemetry error logs, and contact inquiries (moderators are limited to operational status workflows such as `investigating`, `resolved`, `replied`, `archived`).
+    - **Read-Only SEO Audit Clearance**: Displays read-only audit badges on [`/admin/seo-dashboard`](file:///d:/openlabs/app/admin/seo-dashboard/page.tsx).
+  - Centralized RBAC + secret validation in [`verifyAdminAccess()`](file:///d:/openlabs/app/lib/adminAuth.ts) across all `/api/admin/*` endpoints (`analytics`, `users`, `blogs`, `feedback`, `contacts`).
+
+- **Global Zero-Flash Admin Secret State Management (`app/components/AdminSecretContext.tsx`, `app/layout.tsx`, `app/admin/*`)**:
+  - Implemented global [`AdminSecretProvider`](file:///d:/openlabs/app/components/AdminSecretContext.tsx) context wrapping the application root.
+  - Persists and synchronizes admin clearance in React state and `localStorage` so entering the secret once unlocks all admin routes (**Analytics**, **Users**, **Blogs**, **Feedback**, **Contacts**, and **SEO Graph**) with zero flash, zero popups, and no redundant re-verifications between page navigations.
+  - Automatically clears credentials and shows lock screen if and only if an API responds with `401 Unauthorized`.
+  - Added instant **Lock Admin Console** action in [`AdminNavbar.tsx`](file:///d:/openlabs/app/components/AdminNavbar.tsx) to immediately revoke clearance on demand.
+  - Removed duplicate in-page breadcrumbs and tab navigation bars across all admin pages in favor of the unified header.
+  - Added fixed navbar layout spacer to prevent admin dashboards from sliding underneath the top navigation bar.
+
+- **Dedicated Admin Navbar & Footer Components (`app/components/AdminNavbar.tsx`, `app/components/AdminFooter.tsx`, `app/components/Navbar.tsx`, `app/components/Footer.tsx`)**:
+  - Created dedicated [`AdminNavbar.tsx`](file:///d:/openlabs/app/components/AdminNavbar.tsx) with executive OpenLabs branding, telemetry status indicator, direct navigation tabs (`Analytics`, `Users`, `Blogs`, `Feedback`, `Contacts`, `SEO Graph`), "Live Site" quick launcher, theme toggle, and an Admin profile dropdown with role badge & sign-out action.
+  - Created dedicated [`AdminFooter.tsx`](file:///d:/openlabs/app/components/AdminFooter.tsx) with high-security access notices, telemetry status, and quick admin route navigation.
+  - Automatically switches between student and admin navbars/footers based on `/admin` route or subdomain context.
+  - Enhanced student [`Navbar.tsx`](file:///d:/openlabs/app/components/Navbar.tsx) profile avatar resolution to display user initials and fallback icons when authenticated.
+
+- **Admin Subdomain Next.js Routing (`admin.openlabs.org.in`) & Cross-Subdomain Auth (`middleware.ts`, `app/admin/page.tsx`, `app/api/auth/*`)**:
+  - Implemented Next.js App Router host-level middleware interception for `admin.openlabs.org.in` (and `admin.localhost`).
+  - Automatically rewrites incoming subdomain traffic:
+    - Root `admin.openlabs.org.in/` &rarr; rewrites internally to executive dashboard [`/admin/analytics`](file:///d:/openlabs/app/admin/analytics/page.tsx).
+    - Subpaths (`/users`, `/blogs`, `/analytics`, `/contacts`, `/feedback`, `/seo-dashboard`) &rarr; rewrite to `/admin/*`.
+    - Injects `X-Robots-Tag: noindex, nofollow, noarchive` security header across all admin routes.
+  - Completely hid `/admin/*` on the main domain (`openlabs.org.in`), returning an immediate 404 Not Found response (no redirect) so the admin path is invisible to external visitors.
+  - Added wildcard cross-subdomain cookie domain (`domain: ".openlabs.org.in"`) across [`login`](file:///d:/openlabs/app/api/auth/login/route.js), [`verify-otp`](file:///d:/openlabs/app/api/auth/verify-otp/route.js), [`logout`](file:///d:/openlabs/app/api/auth/logout/route.js), and [`nextauth sync`](file:///d:/openlabs/app/api/auth/nextauth/sync/route.ts) for unified single-sign-on (SSO).
+
+- **User Schema Role Field & Database Migration (`app/models/User.js`, `app/lib/auth.js`, `app/api/admin/users`)**:
+  - Added `role` field (`enum: ["user", "admin", "moderator"]`, `default: "user"`, indexed) to Mongoose [`User.js`](file:///d:/openlabs/app/models/User.js) schema.
+  - Updated [`generateToken()`](file:///d:/openlabs/app/lib/auth.js) JWT signing to embed `role` directly inside authenticated session payloads.
+  - Executed database migration across MongoDB collection, successfully backfilling and updating all **614 existing user accounts** with `role: "user"`.
+  - Updated Admin Users API ([`/api/admin/users`](file:///d:/openlabs/app/api/admin/users/route.ts)) and dashboard ([`/admin/users`](file:///d:/openlabs/app/admin/users/page.tsx)) to project, display, and manage user roles with visual admin/moderator badges and PATCH support.
+
+- **Full Country Name Resolution in Analytics (`app/lib/countries.ts`, `app/lib/analyticsDb.ts`, `app/admin/analytics`)**:
+  - Implemented automatic ISO 3166-1 alpha-2 country code resolution (`getFullCountryName`, `getCountryFlag`) converting raw edge geo codes (e.g. `IN`, `US`, `GB`, `DE`, `CA`, `AU`, `SG`) into full, readable country names (`India`, `United States`, `United Kingdom`, `Germany`, etc.) across all telemetry data ingestion pipelines, database aggregation feeds, and the executive Admin Analytics Dashboard.
+  - Normalized database country groupings to automatically consolidate legacy 2-letter codes with full names without duplication.
+
+- **Integrated First-Party Custom Event Tracking Pipeline (`app/lib/tracker.ts`, `lib/analytics.ts`, `app/hooks/useXP.ts`, `app/hooks/useDailyChallenge.ts`, `app/components/OpenLabsAI.tsx`, `app/hooks/useFeedback.ts`)**:
+  - Bridged all high-level business and learning events directly into the first-party MongoDB Analytics Engine (`AnalyticsEvent` schema) alongside Microsoft Clarity.
+  - Wired live event dispatchers across key user interactions:
+    - **Lab & Simulation Completions** (`lab_completed` with `labId`, `subject`, `xpEarned`, `leveledUp`).
+    - **Daily Challenge Submissions & Solutions** (`challenge_completed` with `labId`, `difficulty`, `xpEarned`, `correct`).
+    - **AI Chat Assistant Queries** (`ai_query_asked` with `subject`, `labId`, `queryLength`).
+    - **Lab Feedback & Rating Submissions** (`feedback_submitted` with `labId`, `rating`, `category`).
+    - **Code Lab Project Actions** (`project_created`, `project_deleted`, `workspace_created`).
+    - **Authentication & Onboarding Milestones** (`signup_started`, `signup_completed`, `login_completed`, `logout_completed`, `onboarding_completed`).
+
 - **Disabled Analytics & Error Telemetry in Local & Preview Environments (`yarn dev`, `yarn start`, `localhost`)**:
   - Created centralized [`AppAnalytics.tsx`](file:///d:/openlabs/app/components/AppAnalytics.tsx) client controller to strictly isolate all tracking services: Google Analytics 4, Microsoft Clarity, Vercel Analytics, Vercel Speed Insights, and OpenLabs first-party telemetry observer.
   - Added multi-point hostname & port guards (`localhost`, `127.0.0.1`, `0.0.0.0`, `*.local`, `port: 3000`, `port: 5000`) across [`app/layout.tsx`](file:///d:/openlabs/app/layout.tsx), [`app/components/AppAnalytics.tsx`](file:///d:/openlabs/app/components/AppAnalytics.tsx), [`app/lib/tracker.ts`](file:///d:/openlabs/app/lib/tracker.ts), [`lib/analytics.ts`](file:///d:/openlabs/lib/analytics.ts), [`components/ClarityProvider.tsx`](file:///d:/openlabs/components/ClarityProvider.tsx), and [`components/ClarityTrackerObserver.tsx`](file:///d:/openlabs/components/ClarityTrackerObserver.tsx) so analytics never load or fire during `yarn start` or local testing.

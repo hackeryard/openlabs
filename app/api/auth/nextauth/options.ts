@@ -66,9 +66,11 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async redirect({ url, baseUrl }) {
-      // After NextAuth flow completes, redirect to our sync endpoint
-      const dest = url ?? baseUrl;
-      return `/api/auth/nextauth/sync?next=${encodeURIComponent(String(dest || "/"))}`;
+      if (url && url.includes("/api/auth/nextauth/sync")) {
+        return url;
+      }
+      const dest = url.startsWith("/") ? `${baseUrl}${url}` : url;
+      return `/api/auth/nextauth/sync?next=${encodeURIComponent(String(dest || baseUrl || "/"))}`;
     },
   },
 };

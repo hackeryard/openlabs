@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { getPageKnowledgeText } from "@/app/lib/pageKnowledge";
+import { analyticsService } from "@/lib/analytics";
 
 // Routes where the chatbot is never shown, regardless of auth status
 const HIDDEN_ROUTES = ["/login", "/signup", "/forgot"];
@@ -288,6 +289,9 @@ export default function OpenLabsAI() {
 
     setLoading(true);
     setIsTyping(true);
+
+    // Track AI query custom event
+    analyticsService.trackAiQueryAsked(contextInfo.label, pathname, text.length);
 
     try {
       const pageSnapshot = buildPageSnapshot() || lastSnapshotRef.current || "";

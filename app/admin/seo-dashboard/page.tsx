@@ -1,16 +1,24 @@
+"use client";
+
 import React from "react";
-import Link from "next/link";
+import AdminLockScreen from "@/app/components/AdminLockScreen";
+import { useAdminSecret } from "@/app/components/AdminSecretContext";
 import { ALL_CONCEPTS } from "@/app/lib/knowledge/concepts";
 import { validateKnowledgeGraph } from "@/app/lib/knowledge/validator";
 import { LABS } from "@/app/lib/labs";
-import { Activity, CheckCircle2, AlertTriangle, FileCode2, Layers, Network, Database, Users, BookOpen, MessageSquare, Inbox, BarChart3 } from "lucide-react";
-
-export const metadata = {
-  title: "Internal SEO & Knowledge Graph Dashboard | OpenLabs Admin",
-  robots: { index: false, follow: false },
-};
+import {
+  Activity,
+  CheckCircle2,
+  AlertTriangle,
+  FileCode2,
+  Layers,
+  Network,
+  Database,
+} from "lucide-react";
 
 export default function AdminSeoDashboardPage() {
+  const { isUnlocked, isAdmin, unlock } = useAdminSecret();
+
   const graphValidation = validateKnowledgeGraph();
   const labCount = LABS.length;
   const conceptCount = ALL_CONCEPTS.length;
@@ -20,62 +28,31 @@ export default function AdminSeoDashboardPage() {
   const biologyConcepts = ALL_CONCEPTS.filter((c) => c.subject === "biology").length;
   const csConcepts = ALL_CONCEPTS.filter((c) => c.subject === "computerScience").length;
 
+  if (!isUnlocked) {
+    return (
+      <AdminLockScreen
+        title="SEO & Knowledge Graph Clearance"
+        description="Enter your shared Admin Secret to inspect internal SEO telemetry, indexation audits, and Concept Knowledge Graph integrity."
+        onUnlock={async (secret) => {
+          try {
+            const res = await fetch("/api/admin/users", {
+              headers: { "x-admin-secret": secret },
+            });
+            if (!res.ok) return false;
+            unlock(secret);
+            return true;
+          } catch {
+            return false;
+          }
+        }}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background p-6 space-y-6 max-w-7xl mx-auto">
-      {/* Navigation Breadcrumb & Tabs */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
-        <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-          <span className="text-foreground">Admin / SEO & Knowledge Graph</span>
-        </div>
-
-        <div className="flex items-center gap-2 text-xs font-bold flex-wrap">
-          <Link
-            href="/admin/users"
-            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-          >
-            <Users size={13} />
-            <span>Users</span>
-          </Link>
-          <Link
-            href="/admin/blogs"
-            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-          >
-            <BookOpen size={13} />
-            <span>Blogs</span>
-          </Link>
-          <Link
-            href="/admin/seo-dashboard"
-            className="px-3 py-1.5 rounded-xl bg-primary text-primary-foreground font-bold shadow-sm flex items-center gap-1.5"
-          >
-            <Activity size={13} />
-            <span>SEO</span>
-          </Link>
-          <Link
-            href="/admin/feedback"
-            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-          >
-            <MessageSquare size={13} />
-            <span>Feedback</span>
-          </Link>
-          <Link
-            href="/admin/contacts"
-            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-          >
-            <Inbox size={13} />
-            <span>Contacts</span>
-          </Link>
-          <Link
-            href="/admin/analytics"
-            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-          >
-            <BarChart3 size={13} />
-            <span>Analytics</span>
-          </Link>
-        </div>
-      </div>
-
       {/* Header */}
-      <div className="flex justify-between items-center border-b border-border pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <Activity className="text-primary" /> SEO & Knowledge Graph Health Dashboard
@@ -83,6 +60,17 @@ export default function AdminSeoDashboardPage() {
           <p className="text-sm text-muted-foreground mt-1">
             Real-time monitoring of sitemaps, indexability, knowledge graph nodes, and prerequisite integrity.
           </p>
+        </div>
+        <div>
+          {isAdmin ? (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              <CheckCircle2 size={13} /> Administrator • Full Authority
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+              <Activity size={13} /> Moderator • Read-Only Audit Clearance
+            </span>
+          )}
         </div>
       </div>
 

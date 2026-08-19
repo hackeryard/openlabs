@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { analyticsService } from "@/lib/analytics";
 
 export interface Challenge {
   challenge: string;
@@ -76,10 +77,13 @@ export function useDailyChallenge(labId: string) {
         setAttempts(data.attempts);
       }
 
+      // Track challenge completion event
+      analyticsService.trackChallengeCompleted(labId, challenge?.difficulty, data.xpEarned, !!data.correct);
+
     } catch (err) {
       console.error("Failed to validate challenge:", err);
     }
-  }, [labId]);
+  }, [labId, challenge?.difficulty]);
 
   return { challenge, loading, validateChallenge, result, attempts, alreadyCompleted };
 }

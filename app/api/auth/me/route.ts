@@ -1,6 +1,8 @@
 import { connectDB } from "@/app/lib/mongodb";
 import User from "@/app/models/User";
 import { getUserFromToken } from "@/app/lib/getUserFromToken";
+import { generateToken } from "@/app/lib/auth";
+import { serialize } from "cookie";
 
 export async function GET(req: Request) {
   try {
@@ -34,14 +36,28 @@ export async function GET(req: Request) {
       );
     }
 
+    const responseHeaders: Record<string, string> = {
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      "Pragma": "no-cache",
+      "Expires": "0",
+    };
+
+    // If role in DB has changed since token was minted, auto-refresh JWT cookie
+    if (user.role && user.role !== payload.role) {
+      const refreshedToken = generateToken(user);
+      const isProd = process.env.NODE_ENV === "production";
+      responseHeaders["Set-Cookie"] = serialize("auth-token", refreshedToken, {
+        httpOnly: true,
+        path: "/",
+        domain: isProd ? ".openlabs.org.in" : undefined,
+        maxAge: 60 * 60 * 24,
+      });
+    }
+
     return Response.json(
       { user },
       {
-        headers: {
-          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-          "Pragma": "no-cache",
-          "Expires": "0",
-        },
+        headers: responseHeaders,
       }
     );
   } catch (err) {

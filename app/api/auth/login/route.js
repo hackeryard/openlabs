@@ -48,12 +48,14 @@ export async function POST(req) {
   }
 
   const token = generateToken(user)
+  const isProd = process.env.NODE_ENV === "production"
 
   return new Response(JSON.stringify({ message: "Login success", emailVerified: true }), {
     headers: {
       "Set-Cookie": serialize("auth-token", token, {
         httpOnly: true,
         path: "/",
+        domain: isProd ? ".openlabs.org.in" : undefined,
         maxAge: 60 * 60 * 24,
       }),
     },

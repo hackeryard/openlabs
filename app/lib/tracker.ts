@@ -90,21 +90,29 @@ export function trackEvent(
   properties: Record<string, any> = {},
   value?: number
 ) {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined" || isLocalDevelopment()) return;
 
-  let labId = null;
-  const path = window.location.pathname;
-  if (path.startsWith("/labs/")) {
+  let labId = properties.labId || null;
+  const path = properties.pathname || window.location.pathname;
+  if (!labId && path.startsWith("/labs/")) {
     labId = path.replace(/^\/labs\//, "").replace(/\/$/, "");
   }
+
+  const category = properties.category || (labId ? "lab" : "interaction");
+
+  // Create clean copy of properties
+  const cleanProperties: Record<string, any> = { ...properties };
+  delete cleanProperties.category;
+  if (properties.labId) delete cleanProperties.labId;
+  if (properties.pathname) delete cleanProperties.pathname;
 
   sendTelemetryBeacon("/api/analytics/collect", {
     type: "event",
     eventName,
-    category: properties.category || (labId ? "lab" : "interaction"),
+    category,
     labId,
     pathname: path,
-    properties,
+    properties: cleanProperties,
     value,
   });
 }

@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import { useAuth } from "@/components/AuthProvider";
+import AdminNavbar from "./AdminNavbar";
 
 /* ---------------- Animations ---------------- */
 
@@ -233,7 +234,26 @@ export default function Navbar() {
     setMobileLabsOpen(false);
   }, [pathname]);
 
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   /* ---------------- Helpers ---------------- */
+
+  const isSubdomain = mounted && typeof window !== "undefined" && window.location.hostname.startsWith("admin.");
+  const hasAdminOrModRole = mounted && (user?.role === "admin" || user?.role === "moderator");
+  const isAdminRoute = mounted && (pathname.startsWith("/admin") || isSubdomain) && pathname !== "/403" && hasAdminOrModRole;
+
+  if (isAdminRoute) {
+    return <AdminNavbar />;
+  }
+
+  // If on 403 page on admin subdomain, hide navbar entirely
+  if (mounted && pathname === "/403" && isSubdomain) {
+    return null;
+  }
 
   const isLabsActive =
     labCategories.some((c) => pathname.startsWith(c.path)) ||
@@ -521,15 +541,21 @@ export default function Navbar() {
                     hover:bg-accent
                     transition
                   "
-                  title="My Profile"
+                  title={`${user.name || "User"} Profile`}
                 >
-                  <Image
-                    src={user.avatar || "/images/avatars/avatar-01.png"}
-                    alt="User profile"
-                    width={32}
-                    height={32}
-                    className="rounded-full object-cover border border-border"
-                  />
+                  {user.avatar ? (
+                    <Image
+                      src={user.avatar}
+                      alt="User profile"
+                      width={32}
+                      height={32}
+                      className="w-8 h-8 rounded-full object-cover border border-border"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center font-bold text-xs border border-primary/20">
+                      {user.name?.charAt(0).toUpperCase() || <UserIcon className="w-4 h-4" />}
+                    </div>
+                  )}
                 </Link>
               </div>
             )}
@@ -714,14 +740,23 @@ export default function Navbar() {
                       onClick={() => setMobileOpen(false)}
                       className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-accent transition"
                     >
-                      <Image
-                        src={user.avatar || "/images/avatars/avatar-01.png"}
-                        alt=""
-                        width={28}
-                        height={28}
-                        className="rounded-full object-cover border border-border"
-                      />
-                      <span className="text-xs font-bold text-foreground">My Profile</span>
+                      {user.avatar ? (
+                        <Image
+                          src={user.avatar}
+                          alt=""
+                          width={28}
+                          height={28}
+                          className="w-7 h-7 rounded-full object-cover border border-border"
+                        />
+                      ) : (
+                        <div className="w-7 h-7 rounded-full bg-primary/15 text-primary flex items-center justify-center font-bold text-xs border border-primary/20">
+                          {user.name?.charAt(0).toUpperCase() || <UserIcon className="w-3.5 h-3.5" />}
+                        </div>
+                      )}
+                      <div className="flex flex-col">
+                        <span className="text-xs font-bold text-foreground">{user.name || "My Profile"}</span>
+                        <span className="text-[10px] text-muted-foreground">View Profile & XP</span>
+                      </div>
                     </Link>
                   </li>
                 )}

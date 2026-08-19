@@ -1,5 +1,6 @@
 import Clarity from "@microsoft/clarity";
 import { ClarityEventName, ClarityUserTags } from "@/types/analytics";
+import { trackEvent } from "@/app/lib/tracker";
 
 class AnalyticsService {
   private memoryFiredEvents = new Set<string>();
@@ -104,35 +105,41 @@ class AnalyticsService {
   }
 
   /**
-   * Dispatches a custom business event.
+   * Dispatches a custom business event to both Microsoft Clarity and OpenLabs Analytics Engine.
    */
-  event(eventName: ClarityEventName) {
+  event(eventName: ClarityEventName | string, properties: Record<string, any> = {}, value?: number) {
     if (typeof window === "undefined" || this.isLocalDev()) return;
 
+    // 1. Send to first-party OpenLabs MongoDB telemetry
+    try {
+      trackEvent(eventName, properties, value);
+    } catch {}
+
+    // 2. Send to Microsoft Clarity
     if (this.memoryFiredEvents.has(eventName)) {
       return;
     }
 
     try {
-      Clarity.event(eventName);
+      Clarity.event(eventName as ClarityEventName);
       this.persistFiredEvent(eventName);
     } catch (err) {
       console.error(`Clarity analytics: event [${eventName}] failed`, err);
     }
   }
 
-  // --- Helper Business Methods ---
+  // --- Helper Business & Learning Methods ---
 
-  trackSignupStarted() {
-    this.event("signup_started");
+  trackSignupStarted(properties?: Record<string, any>) {
+    this.event("signup_started", { category: "auth", ...properties });
   }
 
-  trackSignupCompleted() {
-    this.event("signup_completed");
+  trackSignupCompleted(properties?: Record<string, any>) {
+    this.event("signup_completed", { category: "auth", ...properties });
   }
 
-  trackLoginCompleted() {
-    this.event("login_completed");
+  trackLoginCompleted(properties?: Record<string, any>) {
+    this.event("login_completed", { category: "auth", ...properties });
   }
 
   trackLogoutCompleted() {
@@ -142,46 +149,100 @@ class AnalyticsService {
       } catch {}
     }
     this.memoryFiredEvents.clear();
-    this.event("logout_completed");
+    this.event("logout_completed", { category: "auth" });
   }
 
   trackOnboardingStarted() {
-    this.event("onboarding_started");
+    this.event("onboarding_started", { category: "onboarding" });
   }
 
   trackOnboardingCompleted() {
-    this.event("onboarding_completed");
+    this.event("onboarding_completed", { category: "onboarding" });
+  }
+
+  trackLabCompleted(labId: string, subject: string, xpEarned?: number, leveledUp?: boolean) {
+    this.event(
+      "lab_completed",
+      {
+        category: "learning",
+        labId,
+        subject,
+        xpEarned: xpEarned || 0,
+        leveledUp: !!leveledUp,
+      },
+      xpEarned
+    );
+  }
+
+  trackChallengeCompleted(labId: string, difficulty?: string, xpEarned?: number, correct = true) {
+    this.event(
+      "challenge_completed",
+      {
+        category: "challenge",
+        labId,
+        difficulty: difficulty || "medium",
+        xpEarned: xpEarned || 0,
+        correct,
+      },
+      xpEarned
+    );
+  }
+
+  trackFeedbackSubmitted(labId: string, rating: number, category?: string) {
+    this.event(
+      "feedback_submitted",
+      {
+        category: "feedback",
+        labId,
+        rating,
+        feedbackCategory: category || "general",
+      },
+      rating
+    );
+  }
+
+  trackAiQueryAsked(subject?: string, labId?: string, queryLength?: number) {
+    this.event("ai_query_asked", {
+      category: "ai",
+      subject: subject || "general",
+      labId: labId || null,
+      queryLength: queryLength || 0,
+    });
   }
 
   trackWorkspaceCreated() {
-    this.event("workspace_created");
+    this.event("workspace_created", { category: "editor" });
   }
 
-  trackProjectCreated(projectId?: string) {
+  trackProjectCreated(projectId?: string, title?: string) {
     if (projectId) {
       this.setTag("last_created_project_id", projectId);
     }
-    this.event("project_created");
+    this.event("project_created", { category: "editor", projectId, title });
+  }
+
+  trackProjectDeleted(projectId?: string) {
+    this.event("project_deleted", { category: "editor", projectId });
   }
 
   trackInviteSent() {
-    this.event("invite_sent");
+    this.event("invite_sent", { category: "social" });
   }
 
   trackCheckoutStarted() {
-    this.event("checkout_started");
+    this.event("checkout_started", { category: "billing" });
   }
 
   trackCheckoutCompleted() {
-    this.event("checkout_completed");
+    this.event("checkout_completed", { category: "billing" });
   }
 
   trackSubscriptionUpgraded() {
-    this.event("subscription_upgraded");
+    this.event("subscription_upgraded", { category: "billing" });
   }
 
   trackSubscriptionCancelled() {
-    this.event("subscription_cancelled");
+    this.event("subscription_cancelled", { category: "billing" });
   }
 }
 

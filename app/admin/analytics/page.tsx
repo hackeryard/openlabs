@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import AdminLockScreen from "@/app/components/AdminLockScreen";
+import { useAdminSecret } from "@/app/components/AdminSecretContext";
 import {
   Activity,
   Users,
@@ -42,6 +44,7 @@ import {
   Sliders,
   Calendar,
 } from "lucide-react";
+import { getFullCountryName } from "@/app/lib/countries";
 
 // ── Types ──────────────────────────────────────────────────────────────
 interface UserSnippet {
@@ -207,8 +210,7 @@ function formatExactDate(dateString: string): string {
 }
 
 export default function AdminAnalyticsDashboard() {
-  const [adminSecret, setAdminSecret] = useState("");
-  const [authenticated, setAuthenticated] = useState(false);
+  const { adminSecret, isUnlocked, isAdmin, unlock, lock } = useAdminSecret();
   const [loading, setLoading] = useState(false);
 
   const [timeRange, setTimeRange] = useState("7d");
@@ -228,29 +230,31 @@ export default function AdminAnalyticsDashboard() {
   const [expandedErrorId, setExpandedErrorId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  // Initialize admin secret
-  useEffect(() => {
-    const stored = getAdminSecret();
-    if (stored) {
-      setAdminSecret(stored);
-      setAuthenticated(true);
-    }
-  }, []);
-
   // Fetch data
   const fetchData = useCallback(
     async (range = timeRange, isBackground = false) => {
-      if (!adminSecret) return;
+      if (!isUnlocked) return;
       if (!isBackground) setLoading(true);
 
       try {
+        const activeSecret =
+          adminSecret ||
+          (typeof window !== "undefined"
+            ? localStorage.getItem("openlabs-admin-secret") ||
+              sessionStorage.getItem("adminSecret") ||
+              ""
+            : "");
+
+        const headers: Record<string, string> = {};
+        if (activeSecret) headers["x-admin-secret"] = activeSecret;
+
         const res = await fetch(`/api/admin/analytics?timeRange=${range}`, {
-          headers: { "x-admin-secret": adminSecret },
+          headers,
         });
 
         if (!res.ok) {
           if (res.status === 401) {
-            setAuthenticated(false);
+            lock();
             return;
           }
           throw new Error("Fetch failed");
@@ -258,39 +262,30 @@ export default function AdminAnalyticsDashboard() {
 
         const json = await res.json();
         setData(json);
-        setAuthenticated(true);
-        localStorage.setItem("openlabs-admin-secret", adminSecret);
       } catch (err) {
         console.error("Admin analytics error:", err);
       } finally {
         if (!isBackground) setLoading(false);
       }
     },
-    [adminSecret, timeRange]
+    [isUnlocked, adminSecret, timeRange, lock]
   );
 
   useEffect(() => {
-    if (authenticated) {
+    if (isUnlocked) {
       fetchData(timeRange);
     }
-  }, [authenticated, timeRange, fetchData]);
+  }, [isUnlocked, timeRange, fetchData]);
 
   // Auto-refresh loop
   useEffect(() => {
-    if (!authenticated || autoRefreshInterval <= 0) return;
+    if (!isUnlocked || autoRefreshInterval <= 0) return;
     const interval = setInterval(() => {
       fetchData(timeRange, true);
     }, autoRefreshInterval * 1000);
 
     return () => clearInterval(interval);
-  }, [authenticated, autoRefreshInterval, timeRange, fetchData]);
-
-  // Handle login
-  const handleLogin = () => {
-    if (adminSecret.trim()) {
-      setAuthenticated(true);
-    }
-  };
+  }, [isUnlocked, autoRefreshInterval, timeRange, fetchData]);
 
   // Status update for error triage
   const handleUpdateErrorStatus = async (errorId: string, newStatus: string) => {
@@ -351,35 +346,26 @@ export default function AdminAnalyticsDashboard() {
   };
 
   // ─── Login Screen ────────────────────────────────────────────────────
-  if (!authenticated) {
+  if (!isUnlocked) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-6">
-        <div className="bg-card border border-border rounded-3xl p-8 max-w-sm w-full shadow-xl space-y-5">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center">
-              <ShieldCheck size={22} className="text-primary" />
-            </div>
-            <div>
-              <h1 className="text-lg font-black text-foreground">Admin Analytics</h1>
-              <p className="text-xs text-muted-foreground">Enter admin secret to access</p>
-            </div>
-          </div>
-          <input
-            type="password"
-            value={adminSecret}
-            onChange={(e) => setAdminSecret(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-            placeholder="Admin Secret"
-            className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-          />
-          <button
-            onClick={handleLogin}
-            className="w-full px-4 py-2.5 bg-primary text-primary-foreground rounded-xl text-sm font-bold transition hover:bg-primary/90 shadow-md"
-          >
-            Access Dashboard
-          </button>
-        </div>
-      </div>
+      <AdminLockScreen
+        title="Admin Telemetry Analytics"
+        description="Enter your shared Admin Secret to unlock real-time visitor telemetry, error streams, and engagement matrices."
+        onUnlock={async (secret) => {
+          try {
+            const res = await fetch(`/api/admin/analytics?timeRange=${timeRange}`, {
+              headers: { "x-admin-secret": secret },
+            });
+            if (!res.ok) return false;
+            const json = await res.json();
+            setData(json);
+            unlock(secret);
+            return true;
+          } catch {
+            return false;
+          }
+        }}
+      />
     );
   }
 
@@ -420,62 +406,6 @@ export default function AdminAnalyticsDashboard() {
 
   return (
     <div className="min-h-screen bg-background text-foreground p-4 sm:p-6 lg:p-8 space-y-6">
-      {/* Admin Navigation Breadcrumb & Tabs */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
-        <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-          <Link href="/admin/seo-dashboard" className="hover:text-foreground">
-            Admin
-          </Link>
-          <span>/</span>
-          <span className="text-foreground">Analytics & Telemetry</span>
-        </div>
-
-        <div className="flex items-center gap-2 text-xs font-bold flex-wrap">
-          <Link
-            href="/admin/users"
-            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-          >
-            <Users size={13} />
-            <span>Users</span>
-          </Link>
-          <Link
-            href="/admin/blogs"
-            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-          >
-            <BookOpen size={13} />
-            <span>Blogs</span>
-          </Link>
-          <Link
-            href="/admin/seo-dashboard"
-            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-          >
-            <Activity size={13} />
-            <span>SEO</span>
-          </Link>
-          <Link
-            href="/admin/feedback"
-            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-          >
-            <MessageSquare size={13} />
-            <span>Feedback</span>
-          </Link>
-          <Link
-            href="/admin/contacts"
-            className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-          >
-            <Inbox size={13} />
-            <span>Contacts</span>
-          </Link>
-          <Link
-            href="/admin/analytics"
-            className="px-3 py-1.5 rounded-xl bg-primary text-primary-foreground font-bold shadow-sm flex items-center gap-1.5"
-          >
-            <BarChart3 size={13} />
-            <span>Analytics</span>
-          </Link>
-        </div>
-      </div>
-
       {/* Header & Controls Bar */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-card border border-border rounded-3xl p-5 md:p-6 shadow-md">
         <div className="flex items-center gap-3.5">
@@ -842,7 +772,7 @@ export default function AdminAnalyticsDashboard() {
                         </div>
                         <div className="flex items-center gap-1 text-[10px] text-muted-foreground mt-0.5">
                           <Globe size={10} className="text-primary" />
-                          <span>{pv.country}</span>
+                          <span>{getFullCountryName(pv.country)}</span>
                           {pv.screen && <span>({pv.screen})</span>}
                         </div>
                       </td>
@@ -1065,7 +995,7 @@ export default function AdminAnalyticsDashboard() {
                 >
                   <span className="text-foreground flex items-center gap-1.5">
                     <Globe size={12} className="text-primary" />
-                    {c.country}
+                    {getFullCountryName(c.country)}
                   </span>
                   <span className="font-mono text-muted-foreground">{c.count} views</span>
                 </div>
@@ -1335,13 +1265,15 @@ export default function AdminAnalyticsDashboard() {
                         </button>
                       </div>
 
-                      <button
-                        onClick={() => handleDeleteError(err._id)}
-                        className="p-1.5 rounded-xl border border-border text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition"
-                        title="Delete Error Record"
-                      >
-                        <Trash2 size={14} />
-                      </button>
+                      {isAdmin && (
+                        <button
+                          onClick={() => handleDeleteError(err._id)}
+                          className="p-1.5 rounded-xl border border-border text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition"
+                          title="Delete Error Record"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
                     </div>
                   </div>
 

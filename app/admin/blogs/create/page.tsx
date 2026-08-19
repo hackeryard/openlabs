@@ -1,12 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Trash2, Save, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import AdminLockScreen from '@/app/components/AdminLockScreen';
+import { useAdminSecret } from '@/app/components/AdminSecretContext';
 
 export default function CreateBlogPage() {
   const router = useRouter();
+  const { adminSecret, isUnlocked, unlock } = useAdminSecret();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -27,15 +30,6 @@ export default function CreateBlogPage() {
     metaDescription: '',
     faqs: [] as { question: string, answer: string }[],
   });
-
-  useEffect(() => {
-    const storedSecret = sessionStorage.getItem('adminSecret');
-    if (!storedSecret) {
-      router.push('/admin/blogs');
-    } else {
-      setFormData(prev => ({ ...prev, adminSecret: storedSecret }));
-    }
-  }, [router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -129,6 +123,20 @@ export default function CreateBlogPage() {
       setLoading(false);
     }
   };
+
+  if (!isUnlocked) {
+    return (
+      <AdminLockScreen
+        title="Create Blog Clearance"
+        description="Enter your shared Admin Secret to create and publish articles to the OpenLabs Journal."
+        error={error}
+        loading={loading}
+        onUnlock={async (secret) => {
+          unlock(secret);
+        }}
+      />
+    );
+  }
 
   return (
     <main className="min-h-screen text-foreground py-24">

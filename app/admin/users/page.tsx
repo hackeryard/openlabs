@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import AdminLockScreen from "@/app/components/AdminLockScreen";
+import { useAdminSecret } from "@/app/components/AdminSecretContext";
 import {
   Users,
   BookOpen,
@@ -40,6 +42,7 @@ interface UserListItem {
   _id: string;
   name: string;
   email: string;
+  role?: "user" | "admin" | "moderator" | string;
   username?: string;
   avatar?: string;
   bio?: string;
@@ -100,8 +103,7 @@ type SortField =
   | "email";
 
 export default function AdminUsersDashboard() {
-  const [adminSecret, setAdminSecret] = useState("");
-  const [isAuthorized, setIsAuthorized] = useState(false);
+  const { adminSecret, isUnlocked, isAdmin, isModerator, unlock, lock } = useAdminSecret();
   const [rawUsers, setRawUsers] = useState<UserListItem[]>([]);
   const [stats, setStats] = useState<StatsData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -126,48 +128,52 @@ export default function AdminUsersDashboard() {
   // Selected User Modal / Drawer State
   const [selectedUser, setSelectedUser] = useState<FullUserDetail | null>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
+  const [updatingRole, setUpdatingRole] = useState(false);
 
-  useEffect(() => {
-    const storedSecret = sessionStorage.getItem("adminSecret");
-    if (storedSecret) {
-      setAdminSecret(storedSecret);
-      fetchUsers(storedSecret);
-    }
-  }, []);
-
-  const fetchUsers = async (secret: string) => {
+  const fetchUsers = async (secret?: string) => {
     setLoading(true);
     setError(null);
     try {
+      const headers: Record<string, string> = {};
+      const activeSecret = secret || adminSecret;
+      if (activeSecret) headers["x-admin-secret"] = activeSecret;
+
       const res = await fetch("/api/admin/users", {
-        headers: { "x-admin-secret": secret },
+        headers,
       });
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.error || "Failed to fetch users");
+      if (!res.ok) {
+        if (res.status === 401) {
+          lock();
+        }
+        throw new Error(data.error || "Failed to fetch users");
+      }
 
       setRawUsers(data.users || []);
       setStats(data.stats || null);
-      setIsAuthorized(true);
+      if (activeSecret) unlock(activeSecret);
     } catch (err: any) {
       setError(err.message);
-      setIsAuthorized(false);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    sessionStorage.setItem("adminSecret", adminSecret);
-    fetchUsers(adminSecret);
-  };
+  useEffect(() => {
+    if (isUnlocked) {
+      fetchUsers(adminSecret);
+    }
+  }, [isUnlocked]);
 
   const fetchUserDetail = async (userId: string) => {
     setLoadingDetail(true);
     try {
+      const headers: Record<string, string> = {};
+      if (adminSecret) headers["x-admin-secret"] = adminSecret;
+
       const res = await fetch(`/api/admin/users/${userId}`, {
-        headers: { "x-admin-secret": adminSecret },
+        headers,
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to fetch user details");
@@ -179,15 +185,54 @@ export default function AdminUsersDashboard() {
     }
   };
 
+  const handleUpdateUserRole = async (userId: string, newRole: string) => {
+    if (!isAdmin) {
+      alert("Role mutation is restricted to Administrators only.");
+      return;
+    }
+    setUpdatingRole(true);
+    try {
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (adminSecret) headers["x-admin-secret"] = adminSecret;
+
+      const res = await fetch(`/api/admin/users/${userId}`, {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify({ role: newRole }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to update role");
+
+      setRawUsers((prev) =>
+        prev.map((u) => (u._id === userId ? { ...u, role: newRole } : u))
+      );
+      if (selectedUser && selectedUser._id === userId) {
+        setSelectedUser({ ...selectedUser, role: newRole });
+      }
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setUpdatingRole(false);
+    }
+  };
+
   const handleDeleteUser = async (userId: string, userName: string) => {
+    if (!isAdmin) {
+      alert("User deletion is restricted to Administrators only.");
+      return;
+    }
+
     if (!confirm(`Are you sure you want to permanently delete user "${userName}"?`)) {
       return;
     }
 
     try {
+      const headers: Record<string, string> = {};
+      if (adminSecret) headers["x-admin-secret"] = adminSecret;
+
       const res = await fetch(`/api/admin/users/${userId}`, {
         method: "DELETE",
-        headers: { "x-admin-secret": adminSecret },
+        headers,
       });
 
       const data = await res.json();
@@ -357,99 +402,21 @@ export default function AdminUsersDashboard() {
     document.body.removeChild(link);
   };
 
-  if (!isAuthorized) {
+  if (!isUnlocked) {
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center p-6 bg-background">
-        <div className="bg-card p-8 rounded-3xl shadow-xl border border-border max-w-md w-full text-center">
-          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-primary">
-            <Lock className="w-8 h-8" />
-          </div>
-          <h1 className="text-2xl font-black text-foreground mb-2">Admin Telemetry Access</h1>
-          <p className="text-muted-foreground mb-8 text-sm">
-            Enter your Admin Secret to access user records and analytics.
-          </p>
-
-          <form onSubmit={handleLogin} className="space-y-4">
-            <input
-              type="password"
-              value={adminSecret}
-              onChange={(e) => setAdminSecret(e.target.value)}
-              placeholder="Admin Secret..."
-              className="w-full bg-muted border border-border rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary outline-none text-center"
-              required
-            />
-            {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl transition-colors disabled:opacity-50 shadow-md"
-            >
-              {loading ? "Authenticating..." : "Access User Portal"}
-            </button>
-          </form>
-        </div>
-      </main>
+      <AdminLockScreen
+        title="Admin Users Management"
+        description="Enter your shared Admin Secret to unlock student accounts, telemetry history, and role management controls."
+        error={error}
+        loading={loading}
+        onUnlock={fetchUsers}
+      />
     );
   }
 
   return (
     <main className="min-h-screen text-foreground py-10 px-4 sm:px-6 lg:px-8 bg-background">
       <div className="max-w-7xl mx-auto space-y-8">
-        
-        {/* Navigation Breadcrumb & Tabs */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
-          <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-            <Link href="/admin/seo-dashboard" className="hover:text-foreground">Admin</Link>
-            <ChevronRight size={12} />
-            <span className="text-foreground">User Management & Telemetry</span>
-          </div>
-
-          <div className="flex items-center gap-2 text-xs font-bold flex-wrap">
-            <Link
-              href="/admin/users"
-              className="px-3 py-1.5 rounded-xl bg-primary text-primary-foreground font-bold shadow-sm flex items-center gap-1.5"
-            >
-              <Users size={13} />
-              <span>Users</span>
-            </Link>
-            <Link
-              href="/admin/blogs"
-              className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-            >
-              <BookOpen size={13} />
-              <span>Blogs</span>
-            </Link>
-            <Link
-              href="/admin/seo-dashboard"
-              className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-            >
-              <Activity size={13} />
-              <span>SEO</span>
-            </Link>
-            <Link
-              href="/admin/feedback"
-              className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-            >
-              <MessageSquare size={13} />
-              <span>Feedback</span>
-            </Link>
-            <Link
-              href="/admin/contacts"
-              className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-            >
-              <Inbox size={13} />
-              <span>Contacts</span>
-            </Link>
-            <Link
-              href="/admin/analytics"
-              className="px-3 py-1.5 rounded-xl border border-border bg-card hover:bg-accent text-foreground transition flex items-center gap-1.5"
-            >
-              <BarChart3 size={13} />
-              <span>Analytics</span>
-            </Link>
-          </div>
-        </div>
-
         {/* Header Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -770,8 +737,18 @@ export default function AdminUsersDashboard() {
                           )}
                         </div>
                         <div>
-                          <div className="font-extrabold text-foreground flex items-center gap-2">
-                            {user.name}
+                          <div className="font-extrabold text-foreground flex items-center gap-2 flex-wrap">
+                            <span>{user.name}</span>
+                            {user.role === "admin" && (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 text-[10px] font-black tracking-wide uppercase">
+                                <Shield size={10} /> Admin
+                              </span>
+                            )}
+                            {user.role === "moderator" && (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 text-[10px] font-black tracking-wide uppercase">
+                                <Shield size={10} /> Mod
+                              </span>
+                            )}
                             {user.username && (
                               <span className="text-xs font-medium text-indigo-600 bg-indigo-50 dark:bg-indigo-950/50 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800">
                                 @{user.username}
@@ -842,13 +819,15 @@ export default function AdminUsersDashboard() {
                         >
                           <Eye size={18} />
                         </button>
-                        <button
-                          onClick={() => handleDeleteUser(user._id, user.name)}
-                          className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg transition"
-                          title="Delete User Account"
-                        >
-                          <Trash2 size={18} />
-                        </button>
+                        {isAdmin && (
+                          <button
+                            onClick={() => handleDeleteUser(user._id, user.name)}
+                            className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg transition"
+                            title="Delete User Account"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        )}
                       </div>
                     </td>
 
@@ -981,6 +960,36 @@ export default function AdminUsersDashboard() {
                       <p className="text-foreground italic">{selectedUser.bio}</p>
                     </div>
                   )}
+
+                  {/* Role Control */}
+                  <div className="pt-3 border-t border-border/50 flex items-center justify-between">
+                    <div>
+                      <span className="text-xs font-extrabold uppercase text-foreground block">Account Role</span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {isAdmin ? "Change access level for this user" : "Role modification restricted to Administrators"}
+                      </span>
+                    </div>
+
+                    {isAdmin ? (
+                      <div className="flex items-center gap-2">
+                        {updatingRole && <RefreshCw size={14} className="animate-spin text-primary" />}
+                        <select
+                          disabled={updatingRole}
+                          value={selectedUser.role || "user"}
+                          onChange={(e) => handleUpdateUserRole(selectedUser._id, e.target.value)}
+                          className="px-3 py-1.5 text-xs font-bold rounded-xl border border-border bg-card text-foreground focus:ring-2 focus:ring-primary/20 focus:outline-none cursor-pointer"
+                        >
+                          <option value="user">User (Student)</option>
+                          <option value="moderator">Moderator</option>
+                          <option value="admin">Administrator</option>
+                        </select>
+                      </div>
+                    ) : (
+                      <span className="px-2.5 py-1 rounded-lg bg-muted border border-border text-xs font-bold uppercase text-foreground">
+                        {selectedUser.role || "user"}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Gamification Cockpit */}
@@ -1096,12 +1105,21 @@ export default function AdminUsersDashboard() {
                   <h3 className="text-xs font-bold text-red-500 uppercase tracking-wider flex items-center gap-1">
                     <Shield size={14} /> Admin Danger Zone
                   </h3>
-                  <button
-                    onClick={() => handleDeleteUser(selectedUser._id, selectedUser.name)}
-                    className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs rounded-xl transition shadow-sm flex items-center justify-center gap-2"
-                  >
-                    <Trash2 size={16} /> Permanently Delete User Account
-                  </button>
+                  {isAdmin ? (
+                    <button
+                      onClick={() => handleDeleteUser(selectedUser._id, selectedUser.name)}
+                      className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs rounded-xl transition shadow-sm flex items-center justify-center gap-2"
+                    >
+                      <Trash2 size={16} /> Permanently Delete User Account
+                    </button>
+                  ) : (
+                    <div className="p-3 rounded-xl bg-muted/40 border border-border text-xs text-muted-foreground flex items-center justify-between">
+                      <span>Account deletion is restricted to Administrators</span>
+                      <span className="px-2 py-0.5 rounded bg-muted text-[10px] font-bold uppercase border border-border">
+                        Moderator Clearance
+                      </span>
+                    </div>
+                  )}
                 </div>
               </>
             )}

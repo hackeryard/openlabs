@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -21,6 +21,9 @@ import {
   Globe,
 } from "lucide-react";
 
+import AdminFooter from "./AdminFooter";
+import { useAuth } from "@/components/AuthProvider";
+
 const stemDisciplines = [
   { label: "Physics Suite (14)", url: "/physics", icon: Atom, color: "text-blue-500" },
   { label: "Chemistry Studio (4)", url: "/chemistry", icon: Flame, color: "text-emerald-500" },
@@ -39,6 +42,25 @@ const platformLinks = [
 
 export default function Footer() {
   const pathname = usePathname();
+  const { user } = useAuth();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isSubdomain = mounted && typeof window !== "undefined" && window.location.hostname.startsWith("admin.");
+  const hasAdminOrModRole = mounted && (user?.role === "admin" || user?.role === "moderator");
+  const isAdminRoute = mounted && (pathname.startsWith("/admin") || isSubdomain) && pathname !== "/403" && hasAdminOrModRole;
+
+  if (isAdminRoute) {
+    return <AdminFooter />;
+  }
+
+  // If on 403 page on admin subdomain, hide footer entirely
+  if (mounted && pathname === "/403" && isSubdomain) {
+    return null;
+  }
 
   // Hide footer on focused auth screens
   if (pathname === "/login" || pathname === "/signup") {

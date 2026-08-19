@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 import { uploadImage } from '@/app/lib/cloudinary';
+import { verifyAdminAccess } from '@/app/lib/adminAuth';
 
 export async function POST(request: Request) {
   try {
-    const adminSecret = request.headers.get('x-admin-secret');
-    
-    if (!adminSecret || adminSecret !== process.env.ADMIN_SECRET) {
-      return NextResponse.json({ error: 'Unauthorized access' }, { status: 401 });
+    const auth = verifyAdminAccess(request);
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.error || "Unauthorized" }, { status: auth.status });
     }
 
     // Next.js 14 App Router uses Web Request APIs, not Node.js Express Streams.

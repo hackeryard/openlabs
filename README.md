@@ -393,12 +393,16 @@ Supports optional `?next=/path` query parameter to redirect users to their inten
 | `/profile` | Fully mobile-responsive user stats, badges, streaks, and customization |
 
 ### Blog & Admin Platform
-| Route | Purpose |
+| Route / Subdomain | Purpose |
 |-------|---------|
 | `/blog` | Visual listing grid of all public articles with reading time and cover photo hovers |
 | `/blog/[slug]` | Dedicated editorial view with cover image and auto-injected dynamic FAQ Schema JSON-LD |
+| `admin.openlabs.org.in` | Executive Admin Subdomain with dedicated `AdminNavbar` and `AdminFooter` |
+| `/admin/analytics` | Real-time visitor telemetry, live event streams, error triage, and country traffic mapping |
+| `/admin/users` | Comprehensive User Telemetry Dashboard for inspecting accounts, XP, badges, and managing user roles (`user`, `moderator`, `admin`) |
 | `/admin/blogs` | Admin blog manager dashboard listing (published vs draft status) |
-| `/admin/users` | Comprehensive User Telemetry Dashboard for inspecting all users, XP, labs completed, and activity logs |
+| `/admin/feedback` | Virtual lab rating and review triage cockpit with status filtering |
+| `/admin/contacts` | Incoming student contact and partnership message management dashboard |
 | `/admin/seo-dashboard` | Internal Technical SEO Audit & Knowledge Graph node coverage monitoring panel |
 | `/admin/blogs/create` | Admin blog creator tool equipped with custom drag-and-drop Cloudinary file uploader |
 | `/admin/blogs/[slug]/edit` | Admin blog editor updating cover image, markdown content, metadata, and FAQs |
