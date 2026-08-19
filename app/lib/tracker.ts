@@ -50,10 +50,17 @@ export function isProduction(): boolean {
   return !isLocalDevelopment();
 }
 
+export function isAdminRoute(): boolean {
+  if (typeof window === "undefined") return false;
+  const host = window.location.hostname;
+  const path = window.location.pathname;
+  return host.startsWith("admin.") || path.startsWith("/admin") || path === "/403";
+}
+
 export function sendTelemetryBeacon(url: string, data: Record<string, any>) {
   if (typeof window === "undefined") return;
-  // Never track analytics or telemetry in local development
-  if (isLocalDevelopment()) return;
+  // Never track analytics or telemetry in local development or admin panel
+  if (isLocalDevelopment() || isAdminRoute()) return;
 
   const payload = JSON.stringify({
     ...data,
@@ -90,7 +97,7 @@ export function trackEvent(
   properties: Record<string, any> = {},
   value?: number
 ) {
-  if (typeof window === "undefined" || isLocalDevelopment()) return;
+  if (typeof window === "undefined" || isLocalDevelopment() || isAdminRoute()) return;
 
   let labId = properties.labId || null;
   const path = properties.pathname || window.location.pathname;
@@ -127,7 +134,7 @@ export function trackError(
     extra?: Record<string, any>;
   } = {}
 ) {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined" || isLocalDevelopment() || isAdminRoute()) return;
 
   const message = typeof error === "string" ? error : error.message || "Unknown error";
   const stack = typeof error === "string" ? "" : error.stack || "";

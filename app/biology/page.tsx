@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import BiologyExperimentExplorer, { BiologyExperiment } from "./BiologyExperimentExplorer";
+import CurriculumTracksExplorer from "@/app/components/CurriculumTracksExplorer";
 import {
   Dna,
   ArrowRight,
@@ -375,6 +376,16 @@ export default function BiologyPage() {
               </div>
             </div>
           </header>
+
+          {/* Biology Guided Curriculum Tracks */}
+          <div className="mb-14">
+            <CurriculumTracksExplorer
+              subjectFilter="biology"
+              title="Biology Curriculum Tracks"
+              subtitle="Follow structured sequence pathways across cytology, Mendelian genetics, cellular respiration, and human physiology."
+              showFilters={false}
+            />
+          </div>
 
           {/* Experiment Explorer (search + filters + grid) */}
           <BiologyExperimentExplorer experiments={experiments} />

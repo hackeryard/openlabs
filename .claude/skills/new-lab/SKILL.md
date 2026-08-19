@@ -1,47 +1,51 @@
 ---
 name: new-lab
-description: Scaffold a new interactive lab in OpenLabs (landing page + simulation route + component + labs.ts registry entry + navbar link). Use whenever the user asks to add a new lab, experiment, or simulation for Physics, Chemistry, Biology, Computer Science, or Maths.
+description: Scaffold a new interactive lab in OpenLabs (component + simulation route + gamification/XP + AI knowledge + landing page + central registry + curriculum tracks + navbar + sitemap). Use whenever the user asks to add a new lab, experiment, or simulation for Physics, Chemistry, Biology, Computer Science, or Maths.
 ---
 
 # Adding a new OpenLabs lab
 
-A lab in this repo is **five pieces working together**, not one file. Missing any one of them leaves the lab unreachable, unregistered for XP/daily challenges, or invisible in navigation. Do all five for every new lab:
+A lab in this repository is **nine connected pieces working together**, not one file. See the complete standard operating procedure in [`LAB_CREATION_GUIDE.md`](../../../LAB_CREATION_GUIDE.md).
 
-1. **Component** — `app/components/<subject>/<LabName>Lab.jsx` (or `.tsx`). The actual interactive UI/logic. If it uses three.js/d3/canvas/WebGL, it must be a client component (`'use client'`) — it will be dynamically imported with `ssr: false`.
+Complete all 9 steps for every new lab:
 
-2. **Simulation route** — `app/labs/<subject>/<lab-slug>/page.tsx`. Thin wrapper:
+1. **Component** — `app/components/<subject>/<LabName>Lab.jsx` (or `.tsx`). The interactive UI/logic. Must be `'use client'`, using Tailwind semantic variables (`bg-card`, `text-foreground`, `border-border`, etc.). Register context with `useChat().setExperimentData({ title, theory, extraContext })` on mount.
+
+2. **Simulation route** — `app/labs/<subject>/<lab-slug>/page.tsx`. Thin dynamic-import wrapper:
    ```tsx
-   'use client'
-   import dynamic from 'next/dynamic'
+   'use client';
+   import dynamic from 'next/dynamic';
+   import UniversalLoader from '@/app/components/UniversalLoader';
 
-   const XLab = dynamic(() => import('@/app/components/<subject>/<LabName>Lab'), {
+   const Lab = dynamic(() => import('@/app/components/<subject>/<LabName>Lab'), {
      ssr: false,
-     loading: () => <UniversalLoader ... />,
-   })
+     loading: () => <UniversalLoader subject="<subject>" />,
+   });
 
    export default function Page() {
-     return <XLab />
+     return <Lab />;
    }
    ```
-   This route requires auth — `middleware.ts` protects everything under `/labs/*`.
+   * Protected automatically by auth in `middleware.ts`.
 
-3. **Landing/SEO page** — `app/<subject>/<lab-slug>/page.tsx`. Public page exporting Next.js `Metadata` (title, description, OG/Twitter, canonical `https://www.openlabs.org.in/<subject>/<lab-slug>`), rendering a shared landing layout from the **root** `components/` dir (e.g. `PhysicsExperimentLanding.tsx` for physics — check for a subject-appropriate equivalent, or reuse `EducationalLandingLayout.tsx`). It links to the simulation route from step 2 via a `launchUrl` prop. Look at an existing pair (e.g. `app/physics/freefall/` + `app/labs/physics/freefall/`) before writing a new one — copy the shape, don't invent a new one.
+3. **Gamification & XP** — In the lab component:
+   * Call `useLab(labId, subject, type)` from `app/hooks/useXP.ts` and invoke `completeExperiment()` when the user satisfies the goal.
+   * Render `<NextLabModal />` upon completion to celebrate XP and provide 1-click continuation.
+   * Render `<DailyChallengeCard labId=... currentParams=... />` if the lab has a measurable parameter.
 
-4. **Registry entry** — add to the `LABS` array in `app/lib/labs.ts`:
-   - `id`: `"<subject>/<lab-slug>"` (matches the route)
+4. **AI Assistant Knowledge** — Add entry into `PAGE_KNOWLEDGE` in `app/lib/pageKnowledge.ts` with step-by-step usage guide, controls guide, formulas, suggested inquiry experiments, and common pitfalls.
+
+5. **Landing/SEO page** — `app/<subject>/<lab-slug>/page.tsx`. Public page exporting Next.js `Metadata` and rendering `EducationalLandingLayout.tsx` (or `PhysicsExperimentLanding.tsx` for physics) with `launchUrl="/labs/<subject>/<lab-slug>"`.
+
+6. **Central Registry Entry** — Add to `LABS` array in `app/lib/labs.ts`:
+   - `id`: `"<subject>/<lab-slug>"`
    - `name`, `subject`
-   - `type`: `"simulation" | "exploration" | "editor"` — determines XP reward tier (`app/lib/xp.ts`)
-   - `challengeEnabled` + `challengeParams` — only set `challengeEnabled: true` if the lab has a numeric parameter a daily challenge can target (see `api/challenges/generate` / `api/challenges/validate` for the shape it expects)
+   - `type`: `"simulation" | "exploration" | "editor"` (tier XP reward)
+   - `challengeEnabled` + `challengeParams`
    - `description`
 
-5. **Navigation** — add the lab to `app/components/Navbar.tsx`, and to the relevant subject hub page if one exists (`app/<subject>/page.tsx`).
+7. **Curriculum Tracks** — Add step to the appropriate track in `app/lib/tracks.ts` with step title, description, difficulty, duration, and XP reward.
 
-## Don't do
+8. **Navigation & Catalogs** — Add to `app/components/Navbar.tsx` (mega-menu highlights), `app/components/Hero.tsx` (homepage carousel if featured), and `app/<subject>/page.tsx` (`experiments` array).
 
-- Don't add the lab only under `app/<subject>/` or only under `app/labs/<subject>/` — both are required, they serve different purposes (public SEO vs. authenticated simulation).
-- Don't skip the `labs.ts` registry entry even for a quick prototype — the daily-challenge cron iterates that array, and a missing entry silently means no XP/challenges for the lab.
-- Don't add `getServerSideProps`/SSR data fetching to canvas/WebGL-heavy components — they must render client-only.
-
-## After scaffolding
-
-Run `yarn lint` and manually visit both the landing page and `/labs/...` route in dev (`yarn dev`) to confirm the dynamic import resolves and the page isn't blocked by auth middleware unexpectedly. Then follow the `sync-docs` skill to log the addition in `CHANGELOG.md` and update `README.md`'s feature list if this is a new lab category.
+9. **Sitemap & Verification** — Add URLs to `app/sitemap.ts`, verify with `npx tsc --noEmit` and `yarn lint`, and log in `CHANGELOG.md`.

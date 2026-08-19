@@ -5,6 +5,7 @@ This file is the **single source of truth** for AI coding agents (Claude Code an
 Companion docs, each with a distinct job — don't duplicate content between them, cross-reference instead:
 - **[AGENTS.md](AGENTS.md)** — cross-tool-standard entry point (Cursor/Codex/etc.), condensed operational summary that points back here for depth.
 - **[REQUIREMENTS.md](REQUIREMENTS.md)** — product scope: what OpenLabs is for, functional/non-functional requirements per module, explicit out-of-scope items.
+- **[ROADMAP.md](ROADMAP.md)** — prioritized future work, advanced science labs, AI tutoring capabilities, and platform milestones.
 - **[CHANGELOG.md](CHANGELOG.md)** — dated, factual record of what shipped, derived from git history.
 - **[README.md](README.md)** — human/contributor-facing overview (marketing tone, setup instructions, feature list).
 
@@ -68,18 +69,18 @@ Every subject/lab has **two separate route trees that both must exist**, plus a 
 
 2. **Subtopic Hub Pages** (`app/<subject>/<subtopic>/page.tsx`, e.g. `app/computer-science/networking/page.tsx`, `app/biology/genetics/page.tsx`):
    - Uses `app/components/SubtopicHubLayout.tsx` (Server Component) to render SEO/GEO/AEO schemas, headers, investigation protocols, and computational matrices.
-   - Uses `app/components/SubtopicCardExplorer.tsx` (`"use client"`) to render the interactive search, category filter tags, and subtopic experiment card grid.
    - Note on RSC boundaries: `SubtopicHubLayout.tsx` is kept as a Server Component so that Lucide icon components can be passed without serialization errors. Only plain JSON serializable array data (`cards`) is passed down to `SubtopicCardExplorer.tsx`.
 
-**Concrete step-by-step for adding a new lab** — see the `new-lab` skill (`.claude/skills/new-lab/SKILL.md`) for the full checklist; short version:
-1. Build the interactive component under `app/components/<subject>/`, following the sibling pattern for that subject (canvas for physics, React Three Fiber for 3D chemistry/biology, whatever fits for CS).
-2. Wire it into `app/labs/<subject>/<slug>/page.tsx` via `dynamic(..., {ssr:false, loading: () => <UniversalLoader .../>})`.
-3. Inside the component: register with `useChat().setExperimentData({title, theory, extraContext})` on mount (AI assistant context), call `useLab(labId, subject, type)` from `app/hooks/useXP.ts` and invoke the returned `completeExperiment()` when the user finishes, and render `<DailyChallengeCard labId=... currentParams={...} />` if the lab has a numeric/measurable outcome worth challenging.
-4. Write the SEO landing page at `app/<subject>/<slug>/page.tsx` with full `Metadata` + `EducationalLandingLayout` (or `PhysicsExperimentLanding` for physics), `launchUrl="/labs/<subject>/<slug>"`.
-5. Add an entry to `LABS` in `app/lib/labs.ts` (same `id` as used in step 3's `useLab()`/`DailyChallengeCard` calls).
-6. Add nav entries in `Navbar.tsx` (and `Hero.tsx` if it should appear on the homepage).
-7. Add a `sitemap.ts` entry for both the landing and lab URL if you want it indexed/crawled with a specific priority.
-8. If the lab should offer AI-assistant page knowledge beyond the generic `experimentData` you set in step 3, add a matcher to `app/lib/pageKnowledge.ts`.
+**Concrete step-by-step for adding a new lab** — see the full standard operating procedure in **[`LAB_CREATION_GUIDE.md`](LAB_CREATION_GUIDE.md)** and the `new-lab` skill (`.claude/skills/new-lab/SKILL.md`); complete all 9 steps:
+1. **Interactive Component** — `app/components/<subject>/<LabName>Lab.tsx` (`'use client'`, light/dark semantic tokens, `useChat().setExperimentData()`).
+2. **Simulation Route** — `app/labs/<subject>/<slug>/page.tsx` (`dynamic(..., {ssr:false, loading: () => <UniversalLoader .../>})`).
+3. **Gamification & XP Hook** — `useLab(labId, subject, type)` from `app/hooks/useXP.ts` (`completeExperiment()`, `nextLabProgression`, `<NextLabModal />`, `<DailyChallengeCard />`).
+4. **AI Assistant Knowledge** — Detailed usage guide, controls, formulas, and inquiry experiments in `app/lib/pageKnowledge.ts`.
+5. **SEO Landing Page** — `app/<subject>/<slug>/page.tsx` with full `Metadata` + `EducationalLandingLayout` (or `PhysicsExperimentLanding` for physics) and `launchUrl="/labs/<subject>/<slug>"`.
+6. **Central Registry Entry** — Add to `LABS` in `app/lib/labs.ts` (`id`, `name`, `subject`, `type`, `challengeEnabled`, `challengeParams`).
+7. **Curriculum Tracks Progression** — Map to appropriate track in `app/lib/tracks.ts` with difficulty, duration, and XP reward.
+8. **Navigation & Catalogs** — Add to `app/components/Navbar.tsx`, `app/components/Hero.tsx`, and `app/<subject>/page.tsx`.
+9. **Sitemap & Verification** — Add to `app/sitemap.ts`, run `npx tsc --noEmit` + `yarn lint`, and update `CHANGELOG.md`.
 
 ### Directory map (non-obvious bits only — the tree is large, this highlights what's easy to miss)
 

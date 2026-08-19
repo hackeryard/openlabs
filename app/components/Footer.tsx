@@ -33,6 +33,7 @@ const stemDisciplines = [
 ];
 
 const platformLinks = [
+  { label: "13 Guided Tracks", url: "/tracks" },
   { label: "50+ Virtual Labs", url: "/#labs" },
   { label: "Global XP Leaderboard", url: "/leaderboard" },
   { label: "Research & Blog", url: "/blog" },

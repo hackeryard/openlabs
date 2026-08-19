@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import MathematicsExperimentExplorer, { MathExperiment } from "./MathematicsExperimentExplorer";
+import CurriculumTracksExplorer from "@/app/components/CurriculumTracksExplorer";
 import {
   Calculator,
   ArrowRight,
@@ -400,6 +401,16 @@ export default function MathematicsPage() {
               </div>
             </div>
           </header>
+
+          {/* Mathematics Guided Curriculum Tracks */}
+          <div className="mb-14">
+            <CurriculumTracksExplorer
+              subjectFilter="mathematics"
+              title="Mathematics Curriculum Tracks"
+              subtitle="Follow structured sequence pathways across functions & geometry, calculus & dynamical systems, and discrete probability."
+              showFilters={false}
+            />
+          </div>
 
           {/* Experiment Explorer (search + filters + grid) */}
           <MathematicsExperimentExplorer experiments={experiments} />

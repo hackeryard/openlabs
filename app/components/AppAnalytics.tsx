@@ -33,17 +33,27 @@ function isLocalHost(): boolean {
   );
 }
 
+/**
+ * Returns true if current route or subdomain is part of the Admin Panel.
+ */
+function isAdminContext(): boolean {
+  if (typeof window === "undefined") return false;
+  const host = window.location.hostname;
+  const path = window.location.pathname;
+  return host.startsWith("admin.") || path.startsWith("/admin") || path === "/403";
+}
+
 export default function AppAnalytics() {
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
-    // Only track if running in real production on a live domain (never yarn start / yarn dev / localhost)
-    if (!isLocalHost() && process.env.NODE_ENV === "production") {
+    // Only track if running in real production on public student site (never admin panel or localhost)
+    if (!isLocalHost() && !isAdminContext() && process.env.NODE_ENV === "production") {
       setEnabled(true);
     }
   }, []);
 
-  if (!enabled) {
+  if (!enabled || isAdminContext()) {
     return null;
   }
 

@@ -6,16 +6,6 @@ import { getUserFromToken } from "@/app/lib/getUserFromToken";
 export async function POST(req: Request) {
   try {
     const host = req.headers.get("host") || "";
-    // Only record error diagnostics in real production deployments (never local dev or localhost)
-    if (
-      process.env.NODE_ENV !== "production" ||
-      host.includes("localhost") ||
-      host.includes("127.0.0.1") ||
-      host.endsWith(".local")
-    ) {
-      return NextResponse.json({ ok: true, devMode: true });
-    }
-
     const body = await req.json();
     const {
       message,
@@ -27,6 +17,19 @@ export async function POST(req: Request) {
       visitorId,
       sessionId,
     } = body;
+
+    // Do not record diagnostics for local dev or admin panel
+    if (
+      process.env.NODE_ENV !== "production" ||
+      host.includes("localhost") ||
+      host.includes("127.0.0.1") ||
+      host.endsWith(".local") ||
+      host.startsWith("admin.") ||
+      pathname?.startsWith("/admin") ||
+      pathname === "/403"
+    ) {
+      return NextResponse.json({ ok: true, ignored: true });
+    }
 
     if (!message || !pathname) {
       return NextResponse.json({ ok: false, error: "message and pathname required" }, { status: 400 });
