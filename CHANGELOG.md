@@ -2,6 +2,12 @@
 
 All notable changes to OpenLabs are documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/); since the project has no version tags yet, entries are grouped by date instead of version number. Generated from git history; merge commits and duplicate/typo commits are omitted.
 
+- **Strict Page-Context Enclosure & AI Tutor Lock (`app/api/chat/route.ts`, `app/components/OpenLabsAI.tsx`)**:
+  - **Uncompromising Context Lock**: The AI Tutor is now strictly bounded to the active page/simulation context (`pageContext`). It will **under no condition** answer questions outside the current lab/page topic—even if the question is related to education, science, or programming.
+  - **Refusal & Redirection Protocol**: If a student is on a Physics lab (e.g. *Ohm's Law*) and asks about an unrelated topic (e.g. *Factorial in Java* or *Photosynthesis*), the AI strictly declines and redirects them back to the active lab's formulas, controls, and concepts.
+  - **Zero-Fluff & Pedagogical Clarity**: Responses jump directly into the active simulation's mechanisms, sliders, plots, and derivations without filler introductions.
+  - **Multi-Turn Memory**: Preserves the last 8 conversation turns within the active lab session.
+
 - **Guided Curriculum Tracks & Next-Lab Progression Engine (`app/lib/tracks.ts`, `app/components/CurriculumTracksExplorer.tsx`, `app/components/NextLabModal.tsx`, `app/hooks/useXP.ts`, `app/profile/ProfileViewClient.tsx`, `app/<subject>/page.tsx`)**:
   - Structured all 53 OpenLabs simulations into **13 Guided Curriculum Tracks** across Physics, Chemistry, Biology, Computer Science, and Mathematics with learning sequence steps, estimated times, difficulty tags, and track completion badges.
   - **Interactive Tracks Explorer (`<CurriculumTracksExplorer />`)**: Renders visual step-by-step node timelines (completed checkmarks, active pulsing target nodes, upcoming steps), real-time percentage progress bars, and 1-click *"Resume Track (Step X of Y) →"* direct links.

@@ -284,8 +284,9 @@ export default function OpenLabsAI() {
   const sendMessageWithText = async (text: string) => {
     if (!text.trim()) return;
 
-    const userMessage = { role: "user" as const, content: text };
-    setMessages((prev) => [...prev, userMessage]);
+    const userMessage = { role: "user" as const, content: text.trim() };
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
 
     setLoading(true);
     setIsTyping(true);
@@ -302,26 +303,18 @@ export default function OpenLabsAI() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: `
-      You are OpenLabs AI Assistant, an elite scientific and educational companion for STEM simulations!
-
-      RELEVANCE & SAFETY RULES:
-      - Answer questions enthusiastically and thoroughly about science, physics, chemistry, biology, mathematics, computer science, code algorithms, theories, experiment equations, formulas, and how to operate controls on the page.
-      - Decline only if the prompt is entirely off-topic (e.g. pop culture, politics, celebrity gossip).
-      - Always respond in the SAME language/dialect as the question (English, Hindi, Hinglish, etc.).
-      - Use markdown formatting with clear bold headings, bullet points, and code blocks for formulas where helpful.
-
-      PAGE SNAPSHOT:
-      ${pageSnapshot || "(snapshot unavailable)"}
-
-      Experiment info:
-      - Path: ${experimentData?.path || "(unknown)"}
-      - Title: ${(hasFreshExperimentContext ? experimentData?.title : "") || "General STEM"}
-      - Theory: ${(hasFreshExperimentContext ? experimentData?.theory : "") || "N/A"}
-
-      User Question:
-      ${text}
-        `,
+          message: text.trim(),
+          messages: updatedMessages.slice(-8).map((m) => ({
+            role: m.role,
+            content: m.content,
+          })),
+          pageContext: {
+            pathname,
+            title: (hasFreshExperimentContext ? experimentData?.title : "") || "",
+            theory: (hasFreshExperimentContext ? experimentData?.theory : "") || "",
+            knowledge: getPageKnowledgeText(pathname) || "",
+            pageSnapshot: pageSnapshot || "",
+          },
         }),
       });
 
@@ -330,9 +323,9 @@ export default function OpenLabsAI() {
         setRemainingQueries(data.remainingQueries);
       }
       if (!res.ok && !data.reply) {
-        throw new Error("Failed to connect to AI server");
+        throw new Error(data.error || "Failed to connect to AI server");
       }
-      const reply = data.reply || "I encountered an issue processing your scientific inquiry. Please try again.";
+      const reply = data.reply || "I encountered an issue processing your request. Please try again.";
 
       runTypewriter(reply);
     } catch (err: any) {
