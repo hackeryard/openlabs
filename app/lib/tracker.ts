@@ -128,7 +128,19 @@ export function trackEvent(
 export function trackError(
   error: Error | string,
   context: {
-    errorType?: "runtime" | "unhandledrejection" | "boundary" | "network" | "api";
+    errorType?:
+      | "runtime"
+      | "unhandledrejection"
+      | "boundary"
+      | "network"
+      | "api"
+      | "resource"
+      | "webgl"
+      | "console"
+      | "hydration"
+      | "not_found"
+      | "http_4xx"
+      | "http_5xx";
     digest?: string;
     componentStack?: string;
     extra?: Record<string, any>;
@@ -137,7 +149,13 @@ export function trackError(
   if (typeof window === "undefined" || isLocalDevelopment() || isAdminRoute()) return;
 
   const message = typeof error === "string" ? error : error.message || "Unknown error";
-  const stack = typeof error === "string" ? "" : error.stack || "";
+  let stack = typeof error === "string" ? "" : error.stack || "";
+
+  if (context.extra && Object.keys(context.extra).length > 0) {
+    stack = stack
+      ? `${stack}\n\n[Diagnostic Context]\n${JSON.stringify(context.extra, null, 2)}`
+      : `[Diagnostic Context]\n${JSON.stringify(context.extra, null, 2)}`;
+  }
 
   sendTelemetryBeacon("/api/analytics/error", {
     message,

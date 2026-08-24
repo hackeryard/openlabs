@@ -13,7 +13,24 @@ import {
   Code2 
 } from "lucide-react";
 
+import { useEffect } from "react";
+import { trackError } from "@/app/lib/tracker";
+
 export default function NotFound() {
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const currentPath = window.location.pathname;
+      const ref = typeof document !== "undefined" ? document.referrer : "";
+      trackError(`404 Not Found (Broken Page Route: ${currentPath})`, {
+        errorType: "not_found",
+        extra: {
+          requestedPath: currentPath,
+          referrer: ref || "Direct Navigation",
+        },
+      });
+    }
+  }, []);
+
   const labDirectories = [
     { name: "Periodic Table", path: "/chemistry/periodictable", icon: <Atom className="w-4 h-4" /> },
     { name: "Free Fall Experiment", path: "/physics/freefall", icon: <Map className="w-4 h-4" /> },

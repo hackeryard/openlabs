@@ -4,13 +4,9 @@ import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import AdminLockScreen from "@/app/components/AdminLockScreen";
 import { useAdminSecret } from "@/app/components/AdminSecretContext";
+import { getMainSiteHref } from "@/app/lib/adminUrl";
 import {
   Users,
-  BookOpen,
-  Activity,
-  MessageSquare,
-  Inbox,
-  BarChart3,
   Search,
   CheckCircle2,
   XCircle,
@@ -19,23 +15,19 @@ import {
   Flame,
   Bot,
   FlaskConical,
-  Lock,
   Trash2,
-  Eye,
   RefreshCw,
   X,
   Shield,
   Mail,
   UserCheck,
-  ChevronRight,
   ArrowUpDown,
-  ArrowUp,
   ArrowDown,
-  Filter,
   Download,
   RotateCcw,
-  Sparkles,
   TrendingUp,
+  ArrowUp,
+  ExternalLink,
 } from "lucide-react";
 
 interface UserListItem {
@@ -246,6 +238,19 @@ export default function AdminUsersDashboard() {
       alert(err.message);
     }
   };
+
+  // Close details sidebar on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && selectedUser) {
+        setSelectedUser(null);
+      }
+    };
+    if (selectedUser) {
+      window.addEventListener("keydown", handleKeyDown);
+      return () => window.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [selectedUser]);
 
   const handleSortToggle = (field: SortField) => {
     if (sortField === field) {
@@ -500,7 +505,7 @@ export default function AdminUsersDashboard() {
 
         {/* Multi-attribute Filter & Sort Panel */}
         <div className="bg-card border border-border rounded-2xl p-5 space-y-4 shadow-sm">
-          
+
           {/* Top Row: Instant Search & Reset */}
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
             <div className="relative w-full sm:w-96">
@@ -533,7 +538,7 @@ export default function AdminUsersDashboard() {
 
           {/* Bottom Row: Detailed Filter Dropdowns */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 pt-3 border-t border-border">
-            
+
             {/* Email Verification Filter */}
             <div>
               <label className="text-[10px] font-extrabold uppercase text-muted-foreground block mb-1">
@@ -640,7 +645,7 @@ export default function AdminUsersDashboard() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-muted/70 border-b border-border text-xs font-extrabold text-muted-foreground uppercase tracking-wider select-none">
-                  
+
                   {/* Name Sort Header */}
                   <th
                     onClick={() => handleSortToggle("name")}
@@ -718,14 +723,17 @@ export default function AdminUsersDashboard() {
                       )}
                     </div>
                   </th>
-
-                  <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border text-sm">
                 {paginatedUsers.map((user) => (
-                  <tr key={user._id} className="hover:bg-muted/30 transition-colors">
-                    
+                  <tr
+                    key={user._id}
+                    onClick={() => fetchUserDetail(user._id)}
+                    className="hover:bg-muted/50 transition-colors cursor-pointer group"
+                    title="Click to view user details"
+                  >
+
                     {/* User Profile Info */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -738,7 +746,7 @@ export default function AdminUsersDashboard() {
                         </div>
                         <div>
                           <div className="font-extrabold text-foreground flex items-center gap-2 flex-wrap">
-                            <span>{user.name}</span>
+                            <span className="group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{user.name}</span>
                             {user.role === "admin" && (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 text-[10px] font-black tracking-wide uppercase">
                                 <Shield size={10} /> Admin
@@ -804,31 +812,33 @@ export default function AdminUsersDashboard() {
                       <Bot size={14} /> {user.aiQueriesCount}
                     </td>
 
-                    {/* Joined Date */}
-                    <td className="px-6 py-4 text-xs text-muted-foreground font-mono">
-                      {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A"}
-                    </td>
-
-                    {/* Actions */}
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => fetchUserDetail(user._id)}
-                          className="p-2 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950 rounded-lg transition"
-                          title="View Full Telemetry"
-                        >
-                          <Eye size={18} />
-                        </button>
-                        {isAdmin && (
-                          <button
-                            onClick={() => handleDeleteUser(user._id, user.name)}
-                            className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg transition"
-                            title="Delete User Account"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                        )}
-                      </div>
+                    {/* Joined Date & Time */}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {user.createdAt ? (
+                        <div className="space-y-0.5 font-mono">
+                          <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                            <span>
+                              {new Date(user.createdAt).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                                hour12: true,
+                              })}
+                            </span>
+                          </div>
+                          <div className="text-[11px] text-muted-foreground">
+                            <span>
+                              {new Date(user.createdAt).toLocaleDateString([], {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              })}
+                            </span>
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-muted-foreground font-mono">N/A</span>
+                      )}
                     </td>
 
                   </tr>
@@ -836,7 +846,7 @@ export default function AdminUsersDashboard() {
 
                 {paginatedUsers.length === 0 && !loading && (
                   <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center text-muted-foreground font-medium">
+                    <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground font-medium">
                       No users match your filters. Try resetting filters or adjusting search.
                     </td>
                   </tr>
@@ -891,9 +901,15 @@ export default function AdminUsersDashboard() {
 
       {/* Detailed Telemetry Modal */}
       {selectedUser && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex justify-end">
-          <div className="bg-card w-full max-w-2xl h-full overflow-y-auto border-l border-border p-6 shadow-2xl space-y-6 animate-in slide-in-from-right duration-300">
-            
+        <div
+          onClick={() => setSelectedUser(null)}
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex justify-end cursor-pointer"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-card w-full max-w-2xl h-full overflow-y-auto border-l border-border p-6 shadow-2xl space-y-6 animate-in slide-in-from-right duration-300 cursor-default"
+          >
+
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-border pb-4">
               <div className="flex items-center gap-3">
@@ -907,7 +923,7 @@ export default function AdminUsersDashboard() {
                 <div>
                   <h2 className="text-xl font-black text-foreground">{selectedUser.name}</h2>
                   <p className="text-xs text-muted-foreground font-mono">
-                    ID: {selectedUser._id} • Joined {new Date(selectedUser.createdAt).toLocaleDateString()}
+                    ID: {selectedUser._id} • Joined {new Date(selectedUser.createdAt).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" })} at {new Date(selectedUser.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true })}
                   </p>
                 </div>
               </div>
@@ -937,7 +953,19 @@ export default function AdminUsersDashboard() {
                     <div>
                       <span className="text-muted-foreground font-bold uppercase tracking-wider block mb-0.5">Username</span>
                       <span className="font-mono text-foreground font-semibold">
-                        {selectedUser.username ? `@${selectedUser.username}` : "Unset"}
+                        {selectedUser.username ? (
+                          <a
+                            href={getMainSiteHref(`/profile/${selectedUser.username}`)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-indigo-600 dark:text-indigo-400 hover:underline inline-flex items-center gap-1"
+                          >
+                            @{selectedUser.username}
+                            <ExternalLink size={10} />
+                          </a>
+                        ) : (
+                          "Unset"
+                        )}
                       </span>
                     </div>
                     <div>
@@ -997,7 +1025,7 @@ export default function AdminUsersDashboard() {
                   <h3 className="text-sm font-extrabold text-foreground uppercase tracking-wider flex items-center gap-2">
                     <Zap size={16} className="text-amber-500" /> Gamification & Telemetry
                   </h3>
-                  
+
                   <div className="grid grid-cols-4 gap-3 text-center">
                     <div className="bg-card border border-border p-3 rounded-xl">
                       <span className="text-[10px] text-muted-foreground font-bold uppercase">XP</span>

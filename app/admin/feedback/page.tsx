@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import AdminLockScreen from "@/app/components/AdminLockScreen";
 import { useAdminSecret } from "@/app/components/AdminSecretContext";
+import { getAdminHref, getMainSiteHref } from "@/app/lib/adminUrl";
 import {
   Users,
   BookOpen,
@@ -293,14 +294,15 @@ export default function AdminFeedbackPage() {
                       {user.name || "OpenLabs User"}
                     </span>
                     {user.username && (
-                      <Link
-                        href={`/profile/${user.username}`}
+                      <a
+                        href={getMainSiteHref(`/profile/${user.username}`)}
                         target="_blank"
+                        rel="noopener noreferrer"
                         className="text-xs text-muted-foreground hover:text-primary font-mono flex items-center gap-0.5"
                       >
                         @{user.username}
                         <ExternalLink size={10} />
-                      </Link>
+                      </a>
                     )}
                   </div>
                   <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
@@ -385,14 +387,15 @@ export default function AdminFeedbackPage() {
         {/* Middle: Feedback Ratings & Badges */}
         <div className="flex flex-wrap items-center gap-2 text-xs">
           {/* Lab Link */}
-          <Link
-            href={`/labs/${fb.labId}`}
+          <a
+            href={getMainSiteHref(`/labs/${fb.labId}`)}
             target="_blank"
+            rel="noopener noreferrer"
             className="px-2.5 py-1 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-xl font-bold font-mono flex items-center gap-1 text-[11px] transition"
           >
             <span>/labs/{fb.labId}</span>
             <ExternalLink size={10} />
-          </Link>
+          </a>
 
           {/* Helpful pulse */}
           {fb.helpful !== null && (

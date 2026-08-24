@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { AlertTriangle, Home, RefreshCw } from "lucide-react";
 import { useEffect } from "react";
+import { trackError } from "@/app/lib/tracker";
 
 export default function GlobalError({
   error,
@@ -14,6 +15,10 @@ export default function GlobalError({
 }) {
   useEffect(() => {
     console.error("Global error:", error);
+    trackError(error, {
+      errorType: "boundary",
+      digest: error.digest,
+    });
   }, [error]);
 
   return (

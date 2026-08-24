@@ -5,33 +5,146 @@ import User from "@/app/models/User";
 import { getFullCountryName } from "@/app/lib/countries";
 
 /**
- * Calculates start date based on time range string
+ * Calculates date match stage and range metadata from timeRange string or explicit dates
  */
-function getStartDate(timeRange: string): Date {
+export function parseDateFilter(
+  timeRange = "7d",
+  startDateParam?: string | null,
+  endDateParam?: string | null
+): {
+  matchStage: { createdAt: { $gte: Date; $lte?: Date } };
+  isHourly: boolean;
+  label: string;
+} {
   const now = new Date();
+
+  // 1. Explicit startDate and endDate params or "custom:YYYY-MM-DD_YYYY-MM-DD"
+  if (
+    (startDateParam && endDateParam) ||
+    timeRange.startsWith("custom:")
+  ) {
+    let startStr = startDateParam;
+    let endStr = endDateParam;
+
+    if (timeRange.startsWith("custom:")) {
+      const parts = timeRange.replace(/^custom:/, "").split("_");
+      startStr = parts[0];
+      endStr = parts[1] || parts[0];
+    }
+
+    const start = new Date(`${startStr}T00:00:00.000Z`);
+    const end = new Date(`${endStr}T23:59:59.999Z`);
+    const isSingleDay = startStr === endStr;
+
+    return {
+      matchStage: {
+        createdAt: {
+          $gte: isNaN(start.getTime()) ? new Date(0) : start,
+          $lte: isNaN(end.getTime()) ? now : end,
+        },
+      },
+      isHourly: isSingleDay,
+      label: isSingleDay ? startStr || "" : `${startStr} to ${endStr}`,
+    };
+  }
+
+  // 2. Single specific day navigation "date:YYYY-MM-DD"
+  if (timeRange.startsWith("date:")) {
+    const dateStr = timeRange.replace(/^date:/, "").trim();
+    const start = new Date(`${dateStr}T00:00:00.000Z`);
+    const end = new Date(`${dateStr}T23:59:59.999Z`);
+
+    return {
+      matchStage: {
+        createdAt: {
+          $gte: isNaN(start.getTime()) ? new Date(0) : start,
+          $lte: isNaN(end.getTime()) ? now : end,
+        },
+      },
+      isHourly: true,
+      label: dateStr,
+    };
+  }
+
+  // 3. Preset ranges
   switch (timeRange) {
     case "today": {
-      const today = new Date(now);
-      today.setUTCHours(0, 0, 0, 0);
-      return today;
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      return {
+        matchStage: { createdAt: { $gte: todayStart, $lte: now } },
+        isHourly: true,
+        label: "Today",
+      };
+    }
+    case "yesterday": {
+      const yStart = new Date();
+      yStart.setDate(yStart.getDate() - 1);
+      yStart.setHours(0, 0, 0, 0);
+
+      const yEnd = new Date();
+      yEnd.setDate(yEnd.getDate() - 1);
+      yEnd.setHours(23, 59, 59, 999);
+
+      return {
+        matchStage: { createdAt: { $gte: yStart, $lte: yEnd } },
+        isHourly: true,
+        label: "Yesterday",
+      };
     }
     case "24h":
-      return new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      return {
+        matchStage: {
+          createdAt: { $gte: new Date(now.getTime() - 24 * 60 * 60 * 1000) },
+        },
+        isHourly: true,
+        label: "Past 24 Hours",
+      };
     case "7d":
-      return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      return {
+        matchStage: {
+          createdAt: { $gte: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000) },
+        },
+        isHourly: false,
+        label: "Past 7 Days",
+      };
     case "30d":
-      return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      return {
+        matchStage: {
+          createdAt: { $gte: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000) },
+        },
+        isHourly: false,
+        label: "Past 30 Days",
+      };
+    case "90d":
+      return {
+        matchStage: {
+          createdAt: { $gte: new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000) },
+        },
+        isHourly: false,
+        label: "Past 90 Days",
+      };
     case "all":
     default:
-      return new Date(0); // 1970
+      return {
+        matchStage: { createdAt: { $gte: new Date(0) } },
+        isHourly: false,
+        label: "All Time",
+      };
   }
 }
 
-export async function getAnalyticsDashboardData(timeRange = "7d") {
-  const startDate = getStartDate(timeRange);
+export async function getAnalyticsDashboardData(
+  timeRange = "7d",
+  startDateParam?: string | null,
+  endDateParam?: string | null
+) {
+  const { matchStage, isHourly } = parseDateFilter(
+    timeRange,
+    startDateParam,
+    endDateParam
+  );
   const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-
-  const matchStage = { createdAt: { $gte: startDate } };
 
   // 1. High-level Overview Metrics
   const overviewPromise = (PageView as any).aggregate([
@@ -42,6 +155,16 @@ export async function getAnalyticsDashboardData(timeRange = "7d") {
         totalViews: { $sum: 1 },
         uniqueVisitors: { $addToSet: "$visitorId" },
         uniqueSessions: { $addToSet: "$sessionId" },
+        anonymousSessions: {
+          $addToSet: {
+            $cond: [{ $eq: ["$userId", null] }, "$sessionId", "$$REMOVE"],
+          },
+        },
+        authenticatedSessions: {
+          $addToSet: {
+            $cond: [{ $ne: ["$userId", null] }, "$sessionId", "$$REMOVE"],
+          },
+        },
         avgDuration: { $avg: "$duration" },
         avgScrollDepth: { $avg: "$scrollDepth" },
       },
@@ -63,7 +186,6 @@ export async function getAnalyticsDashboardData(timeRange = "7d") {
   ]);
 
   // 3. Time Series Graph
-  const isHourly = timeRange === "today" || timeRange === "24h";
   const dateFormat = isHourly ? "%Y-%m-%d %H:00" : "%Y-%m-%d";
 
   const timeseriesPromise = (PageView as any).aggregate([
@@ -96,9 +218,23 @@ export async function getAnalyticsDashboardData(timeRange = "7d") {
     { $limit: 25 },
   ]);
 
-  // 5. Referrers & Acquisition
+  // 5. Referrers & Acquisition (Excluding OAuth auth redirectors & internal app subdomains)
   const topReferrersPromise = (PageView as any).aggregate([
-    { $match: matchStage },
+    {
+      $match: {
+        ...matchStage,
+        referrerDomain: {
+          $nin: [
+            "accounts.google.com",
+            "appleid.apple.com",
+            "openlabs.org.in",
+            "admin.openlabs.org.in",
+            "localhost",
+            "127.0.0.1",
+          ],
+        },
+      },
+    },
     {
       $group: {
         _id: "$referrerDomain",
@@ -314,6 +450,8 @@ export async function getAnalyticsDashboardData(timeRange = "7d") {
   const totalViews = rawO.totalViews || 0;
   const uniqueVisitors = rawO.uniqueVisitors?.length || 0;
   const uniqueSessions = rawO.uniqueSessions?.length || 0;
+  const anonymousSessions = rawO.anonymousSessions?.length || 0;
+  const authenticatedSessions = rawO.authenticatedSessions?.length || 0;
   const avgDuration = rawO.avgDuration ? Math.round(rawO.avgDuration) : 0;
   const avgScrollDepth = rawO.avgScrollDepth ? Math.round(rawO.avgScrollDepth) : 0;
 
@@ -448,6 +586,8 @@ export async function getAnalyticsDashboardData(timeRange = "7d") {
       totalViews,
       uniqueVisitors,
       uniqueSessions,
+      anonymousSessions,
+      authenticatedSessions,
       avgDuration,
       avgScrollDepth,
       activeUsers: totalActiveUsers,
