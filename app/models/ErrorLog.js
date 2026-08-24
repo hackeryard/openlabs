@@ -27,7 +27,20 @@ const ErrorLogSchema = new mongoose.Schema(
 
         errorType: {
             type: String,
-            enum: ["runtime", "unhandledrejection", "boundary", "network", "api"],
+            enum: [
+                "runtime",
+                "unhandledrejection",
+                "boundary",
+                "network",
+                "api",
+                "resource",
+                "webgl",
+                "console",
+                "hydration",
+                "not_found",
+                "http_4xx",
+                "http_5xx",
+            ],
             default: "runtime",
             index: true,
         },

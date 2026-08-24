@@ -19,13 +19,29 @@ function getGeoCountry(req: Request): string {
 }
 
 /**
- * Extracts domain name from referrer string
+ * Extracts domain name from referrer string, ignoring authentication redirectors and internal domains
  */
 function extractDomain(ref?: string): string {
   if (!ref || ref.trim() === "") return "Direct";
   try {
     const url = new URL(ref);
-    return url.hostname.replace(/^www\./, "");
+    const host = url.hostname.replace(/^www\./, "").toLowerCase();
+
+    // Ignore OAuth authentication redirectors and internal OpenLabs hosts
+    if (
+      host === "accounts.google.com" ||
+      host.endsWith(".google.com") && (url.pathname.includes("/oauth") || url.pathname.includes("/signin") || url.pathname.includes("/ServiceLogin")) ||
+      host === "appleid.apple.com" ||
+      host === "openlabs.org.in" ||
+      host === "admin.openlabs.org.in" ||
+      host.endsWith(".openlabs.org.in") ||
+      host === "localhost" ||
+      host === "127.0.0.1"
+    ) {
+      return "Direct";
+    }
+
+    return host;
   } catch {
     return "Direct";
   }

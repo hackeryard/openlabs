@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import AdminLockScreen from "@/app/components/AdminLockScreen";
 import { useAdminSecret } from "@/app/components/AdminSecretContext";
+import { getAdminHref, getMainSiteHref } from "@/app/lib/adminUrl";
 import {
   Users,
   BookOpen,
@@ -410,14 +411,15 @@ export default function AdminContactsDashboard() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-black text-foreground text-sm">{c.name}</span>
                         {user?.username && (
-                          <Link
-                            href={`/profile/${user.username}`}
+                          <a
+                            href={getMainSiteHref(`/profile/${user.username}`)}
                             target="_blank"
+                            rel="noopener noreferrer"
                             className="text-xs text-muted-foreground hover:text-primary font-mono flex items-center gap-0.5"
                           >
                             @{user.username}
                             <ExternalLink size={10} />
-                          </Link>
+                          </a>
                         )}
                         {user?.level && (
                           <span className="px-1.5 py-0.2 bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 rounded font-bold font-mono text-[10px]">

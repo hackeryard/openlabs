@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import AdminLockScreen from "@/app/components/AdminLockScreen";
 import { useAdminSecret } from "@/app/components/AdminSecretContext";
+import { getMainSiteHref } from "@/app/lib/adminUrl";
 import {
   Activity,
   Users,
@@ -28,6 +29,10 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronUp,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
   Trash2,
   Search,
   Filter,
@@ -43,6 +48,9 @@ import {
   Check,
   Sliders,
   Calendar,
+  Play,
+  Pause,
+  SlidersHorizontal,
 } from "lucide-react";
 import { getFullCountryName } from "@/app/lib/countries";
 
@@ -64,26 +72,30 @@ interface PageViewItem {
   labId?: string | null;
   visitorId: string;
   sessionId: string;
+  userId?: UserSnippet | null;
   referrer?: string;
   referrerDomain?: string;
   utmSource?: string | null;
   utmMedium?: string | null;
   utmCampaign?: string | null;
-  device: string;
+  device: "desktop" | "mobile" | "tablet" | "unknown";
   browser: string;
   os: string;
   screen?: string;
+  language?: string;
+  timezone?: string;
   country: string;
+  city?: string;
   duration: number;
   scrollDepth: number;
   createdAt: string;
-  userId?: UserSnippet | null;
+  updatedAt: string;
 }
 
 interface CustomEventItem {
   _id: string;
   eventName: string;
-  category: string;
+  category?: string;
   labId?: string | null;
   pathname: string;
   properties?: any;
@@ -100,15 +112,16 @@ interface ErrorLogItem {
   stack?: string;
   digest?: string;
   componentStack?: string;
-  errorType: string;
+  errorType?: string;
   pathname: string;
-  device: string;
-  browser: string;
-  os: string;
+  device?: string;
+  browser?: string;
+  os?: string;
   status: "new" | "investigating" | "resolved" | "ignored";
   occurrences: number;
+  firstOccurredAt?: string;
   lastOccurredAt: string;
-  createdAt: string;
+  createdAt?: string;
   userId?: UserSnippet | null;
 }
 
@@ -117,6 +130,8 @@ interface AnalyticsData {
     totalViews: number;
     uniqueVisitors: number;
     uniqueSessions: number;
+    anonymousSessions?: number;
+    authenticatedSessions?: number;
     avgDuration: number;
     avgScrollDepth: number;
     activeUsers: number;
@@ -151,7 +166,6 @@ interface AnalyticsData {
   countries: { country: string; count: number; percentage: number }[];
   durationDistribution: { label: string; count: number }[];
   scrollDistribution: { label: string; count: number }[];
-  recentPageViews: PageViewItem[];
   recentEvents: CustomEventItem[];
   recentErrors: ErrorLogItem[];
   errorStats: {
@@ -161,11 +175,6 @@ interface AnalyticsData {
     statusInvestigating: number;
     statusResolved: number;
   };
-}
-
-function getAdminSecret(): string {
-  if (typeof window === "undefined") return "";
-  return localStorage.getItem("openlabs-admin-secret") || "";
 }
 
 function formatDuration(seconds: number): string {
@@ -209,85 +218,278 @@ function formatExactDate(dateString: string): string {
   });
 }
 
+function getTodayString(): string {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function getYesterdayString(): string {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function offsetDateString(dateStr: string, offsetDays: number): string {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const date = new Date(y, m - 1, d);
+  date.setDate(date.getDate() + offsetDays);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function formatDayLabel(dateStr: string): string {
+  const today = getTodayString();
+  const yesterday = getYesterdayString();
+  if (dateStr === today) return "Today";
+  if (dateStr === yesterday) return "Yesterday";
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const date = new Date(y, m - 1, d);
+  return date.toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
+}
+
+function DateRangeNavigator({
+  value,
+  onChange,
+  className = "",
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  className?: string;
+}) {
+  const [showCustomModal, setShowCustomModal] = useState(false);
+  const today = getTodayString();
+  const yesterday = getYesterdayString();
+
+  // Determine current active single date
+  let activeSingleDate = today;
+  if (value.startsWith("date:")) {
+    activeSingleDate = value.replace("date:", "");
+  } else if (value === "yesterday") {
+    activeSingleDate = yesterday;
+  } else if (value === "today" || value === "24h") {
+    activeSingleDate = today;
+  }
+
+  // Custom date range inputs
+  const isCustomRange = value.startsWith("custom:");
+  const customParts = isCustomRange ? value.replace("custom:", "").split("_") : [today, today];
+  const [customStart, setCustomStart] = useState(customParts[0] || today);
+  const [customEnd, setCustomEnd] = useState(customParts[1] || today);
+
+  const isToday = activeSingleDate >= today;
+  const isSingleDayMode = value.startsWith("date:") || value === "today" || value === "yesterday";
+
+  const handlePrevDay = () => {
+    const prev = offsetDateString(activeSingleDate, -1);
+    if (prev === yesterday) {
+      onChange("yesterday");
+    } else {
+      onChange(`date:${prev}`);
+    }
+  };
+
+  const handleNextDay = () => {
+    if (isToday) return;
+    const next = offsetDateString(activeSingleDate, 1);
+    if (next >= today) {
+      onChange("today");
+    } else if (next === yesterday) {
+      onChange("yesterday");
+    } else {
+      onChange(`date:${next}`);
+    }
+  };
+
+  const handleApplyCustom = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customStart || !customEnd) return;
+    if (customStart === customEnd) {
+      if (customStart === today) onChange("today");
+      else if (customStart === yesterday) onChange("yesterday");
+      else onChange(`date:${customStart}`);
+    } else {
+      onChange(`custom:${customStart}_${customEnd}`);
+    }
+    setShowCustomModal(false);
+  };
+
+  return (
+    <div className={`flex items-center gap-1.5 flex-wrap ${className}`}>
+      {/* 1. Quick Presets Strip */}
+      <div className="flex items-center bg-muted/60 rounded-xl p-1 border border-border text-xs font-bold">
+        {[
+          { id: "today", label: "Today" },
+          { id: "yesterday", label: "Yesterday" },
+          { id: "7d", label: "7 Days" },
+          { id: "30d", label: "30 Days" },
+          { id: "all", label: "All Time" },
+        ].map((t) => {
+          const active = value === t.id;
+          return (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => onChange(t.id)}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition ${
+                active
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* 2. Day-by-Day Stepper Navigator (< Day >) */}
+      <div className="flex items-center bg-muted/60 border border-border rounded-xl p-1 text-xs">
+        <button
+          type="button"
+          onClick={handlePrevDay}
+          className="p-1.5 rounded-lg hover:bg-card text-muted-foreground hover:text-foreground transition"
+          title="Previous Day"
+        >
+          <ChevronLeft size={14} />
+        </button>
+
+        <span className="px-2 font-mono text-[11px] font-bold text-foreground select-none whitespace-nowrap">
+          {isSingleDayMode
+            ? formatDayLabel(activeSingleDate)
+            : isCustomRange
+            ? `${customParts[0]} → ${customParts[1]}`
+            : formatDayLabel(activeSingleDate)}
+        </span>
+
+        <button
+          type="button"
+          onClick={handleNextDay}
+          disabled={isToday && isSingleDayMode}
+          className="p-1.5 rounded-lg hover:bg-card text-muted-foreground hover:text-foreground transition disabled:opacity-30 disabled:cursor-not-allowed"
+          title="Next Day"
+        >
+          <ChevronRight size={14} />
+        </button>
+      </div>
+
+      {/* 3. Custom Date Range Picker */}
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setShowCustomModal(!showCustomModal)}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition shadow-xs ${
+            isCustomRange
+              ? "bg-primary text-primary-foreground border-primary shadow-sm"
+              : "bg-card border-border text-foreground hover:bg-muted"
+          }`}
+          title="Custom Date Range"
+        >
+          <Calendar size={13} />
+          <span>{isCustomRange ? `${customParts[0]} to ${customParts[1]}` : "Custom Range"}</span>
+        </button>
+
+        {/* Custom Range Popover Dropdown */}
+        {showCustomModal && (
+          <div className="absolute right-0 top-full mt-2 z-50 p-4 bg-card border border-border rounded-2xl shadow-2xl w-72 space-y-3 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-border pb-2">
+              <span className="text-xs font-black text-foreground">Custom Date Range</span>
+              <button
+                type="button"
+                onClick={() => setShowCustomModal(false)}
+                className="text-muted-foreground hover:text-foreground text-xs font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleApplyCustom} className="space-y-2.5">
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase text-muted-foreground block">
+                  From Date
+                </label>
+                <input
+                  type="date"
+                  value={customStart}
+                  max={today}
+                  onChange={(e) => setCustomStart(e.target.value)}
+                  className="w-full px-2.5 py-1.5 bg-background border border-border rounded-xl text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase text-muted-foreground block">
+                  To Date
+                </label>
+                <input
+                  type="date"
+                  value={customEnd}
+                  max={today}
+                  onChange={(e) => setCustomEnd(e.target.value)}
+                  className="w-full px-2.5 py-1.5 bg-background border border-border rounded-xl text-xs font-mono text-foreground focus:outline-none focus:border-primary"
+                  required
+                />
+              </div>
+
+              <div className="flex items-center gap-2 pt-1">
+                <button
+                  type="submit"
+                  className="w-full py-2 bg-primary hover:bg-primary/90 text-primary-foreground font-black text-xs rounded-xl transition shadow-sm"
+                >
+                  Apply Range
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function AdminAnalyticsDashboard() {
   const { adminSecret, isUnlocked, isAdmin, unlock, lock } = useAdminSecret();
   const [loading, setLoading] = useState(false);
-
   const [timeRange, setTimeRange] = useState("7d");
   const [data, setData] = useState<AnalyticsData | null>(null);
-
-  // Auto-refresh interval: 0 (off), 10, 30, 60 seconds
   const [autoRefreshInterval, setAutoRefreshInterval] = useState<number>(0);
-
-  // Sub-view Tab
   const [activeTab, setActiveTab] = useState<
     "live_feed" | "pages" | "acquisition" | "tech" | "engagement" | "events" | "errors"
   >("live_feed");
 
-  // Search queries per tab
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
   const [expandedErrorId, setExpandedErrorId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  // Fetch data
-  const fetchData = useCallback(
-    async (range = timeRange, isBackground = false) => {
-      if (!isUnlocked) return;
-      if (!isBackground) setLoading(true);
+  const [paginatedPageviews, setPaginatedPageviews] = useState<PageViewItem[]>([]);
+  const [pvPagination, setPvPagination] = useState({
+    total: 0,
+    page: 1,
+    limit: 50,
+    totalPages: 1,
+    hasPrevPage: false,
+    hasNextPage: false,
+  });
+  const [pvLoading, setPvLoading] = useState(false);
+  const [pvPage, setPvPage] = useState(1);
+  const [pvLimit, setPvLimit] = useState(50);
+  const [pvQuery, setPvQuery] = useState("");
+  const [pvUserType, setPvUserType] = useState("all");
+  const [pvDevice, setPvDevice] = useState("all");
+  const [pvSort, setPvSort] = useState("createdAt_desc");
+  const [pvTimeRange, setPvTimeRange] = useState("7d");
+  const [liveStreamActive, setLiveStreamActive] = useState(true);
+  const [jumpPageInput, setJumpPageInput] = useState("");
 
-      try {
-        const activeSecret =
-          adminSecret ||
-          (typeof window !== "undefined"
-            ? localStorage.getItem("openlabs-admin-secret") ||
-              sessionStorage.getItem("adminSecret") ||
-              ""
-            : "");
-
-        const headers: Record<string, string> = {};
-        if (activeSecret) headers["x-admin-secret"] = activeSecret;
-
-        const res = await fetch(`/api/admin/analytics?timeRange=${range}`, {
-          headers,
-        });
-
-        if (!res.ok) {
-          if (res.status === 401) {
-            lock();
-            return;
-          }
-          throw new Error("Fetch failed");
-        }
-
-        const json = await res.json();
-        setData(json);
-      } catch (err) {
-        console.error("Admin analytics error:", err);
-      } finally {
-        if (!isBackground) setLoading(false);
-      }
-    },
-    [isUnlocked, adminSecret, timeRange, lock]
-  );
-
-  useEffect(() => {
-    if (isUnlocked) {
-      fetchData(timeRange);
-    }
-  }, [isUnlocked, timeRange, fetchData]);
-
-  // Auto-refresh loop
-  useEffect(() => {
-    if (!isUnlocked || autoRefreshInterval <= 0) return;
-    const interval = setInterval(() => {
-      fetchData(timeRange, true);
-    }, autoRefreshInterval * 1000);
-
-    return () => clearInterval(interval);
-  }, [isUnlocked, autoRefreshInterval, timeRange, fetchData]);
-
-  // Status update for error triage
   const handleUpdateErrorStatus = async (errorId: string, newStatus: string) => {
     try {
       const res = await fetch(`/api/admin/analytics/errors/${errorId}`, {
@@ -315,7 +517,6 @@ export default function AdminAnalyticsDashboard() {
     }
   };
 
-  // Delete error record
   const handleDeleteError = async (errorId: string) => {
     if (!window.confirm("Permanently delete this error record?")) return;
 
@@ -339,13 +540,105 @@ export default function AdminAnalyticsDashboard() {
     }
   };
 
+  const fetchData = useCallback(
+    async (range = timeRange, isBackground = false) => {
+      if (!isUnlocked) return;
+      if (!isBackground) setLoading(true);
+
+      try {
+        const activeSecret = adminSecret || (typeof window !== "undefined" ? localStorage.getItem("openlabs-admin-secret") || sessionStorage.getItem("adminSecret") || "" : "");
+        const headers: Record<string, string> = {};
+        if (activeSecret) headers["x-admin-secret"] = activeSecret;
+        const res = await fetch(`/api/admin/analytics?timeRange=${range}`, { headers });
+        if (!res.ok) { if (res.status === 401) lock(); return; }
+        const json = await res.json();
+        setData(json);
+      } catch (err) {
+        console.error("Admin analytics error:", err);
+      } finally {
+        if (!isBackground) setLoading(false);
+      }
+    },
+    [isUnlocked, adminSecret, timeRange, lock]
+  );
+
+  const fetchPaginatedPageviews = useCallback(
+    async (isBackground = false) => {
+      if (!isUnlocked) return;
+      if (!isBackground) setPvLoading(true);
+      try {
+        const activeSecret = adminSecret || (typeof window !== "undefined" ? localStorage.getItem("openlabs-admin-secret") || sessionStorage.getItem("adminSecret") || "" : "");
+        const headers: Record<string, string> = {};
+        if (activeSecret) headers["x-admin-secret"] = activeSecret;
+        const params = new URLSearchParams({
+          page: pvPage.toString(),
+          limit: pvLimit.toString(),
+          timeRange: pvTimeRange,
+          userType: pvUserType,
+          query: pvQuery,
+          device: pvDevice,
+          sortBy: pvSort,
+        });
+        const res = await fetch(`/api/admin/analytics/pageviews?${params.toString()}`, { headers });
+        if (res.ok) {
+          const json = await res.json();
+          setPaginatedPageviews(json.pageviews || []);
+          if (json.pagination) setPvPagination(json.pagination);
+        }
+      } catch (err) {
+        console.error("Failed to fetch paginated pageviews:", err);
+      } finally {
+        if (!isBackground) setPvLoading(false);
+      }
+    },
+    [isUnlocked, adminSecret, pvPage, pvLimit, pvTimeRange, pvUserType, pvQuery, pvDevice, pvSort]
+  );
+
+  useEffect(() => { if (isUnlocked) fetchData(timeRange); }, [isUnlocked, timeRange, fetchData]);
+  useEffect(() => { if (isUnlocked) fetchPaginatedPageviews(); }, [isUnlocked, fetchPaginatedPageviews]);
+
+  useEffect(() => {
+    if (!isUnlocked || !liveStreamActive || activeTab !== "live_feed") return;
+    const streamInterval = setInterval(() => { fetchPaginatedPageviews(true); }, 5000);
+    return () => clearInterval(streamInterval);
+  }, [isUnlocked, liveStreamActive, activeTab, fetchPaginatedPageviews]);
+
+  useEffect(() => {
+    if (!isUnlocked || autoRefreshInterval <= 0) return;
+    const interval = setInterval(() => { fetchData(timeRange, true); }, autoRefreshInterval * 1000);
+    return () => clearInterval(interval);
+  }, [isUnlocked, autoRefreshInterval, timeRange, fetchData]);
+
   const handleCopy = (id: string, text: string) => {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  // ─── Login Screen ────────────────────────────────────────────────────
+  const handleJumpPage = (e: React.FormEvent) => {
+    e.preventDefault();
+    const target = parseInt(jumpPageInput, 10);
+    if (!isNaN(target) && target >= 1 && target <= pvPagination.totalPages) {
+      setPvPage(target);
+      setJumpPageInput("");
+    }
+  };
+
+  const getPageNumbers = () => {
+    const total = pvPagination.totalPages;
+    const current = pvPage;
+    const delta = 2;
+    const range: (number | string)[] = [];
+    for (let i = 1; i <= total; i++) {
+      if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+        range.push(i);
+      } else if (range[range.length - 1] !== "...") {
+        range.push("...");
+      }
+    }
+    return range;
+  };
+
   if (!isUnlocked) {
     return (
       <AdminLockScreen
@@ -361,52 +654,18 @@ export default function AdminAnalyticsDashboard() {
             setData(json);
             unlock(secret);
             return true;
-          } catch {
-            return false;
-          }
+          } catch { return false; }
         }}
       />
     );
   }
 
-  const maxTimeseriesViews =
-    data?.timeseries?.reduce((max, item) => Math.max(max, item.views), 1) || 1;
-
-  // Filtered views
-  const filteredPageViews =
-    data?.recentPageViews?.filter(
-      (pv) =>
-        !searchQuery ||
-        pv.pathname.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pv.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pv.referrerDomain?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pv.country?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pv.userId?.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pv.visitorId?.toLowerCase().includes(searchQuery.toLowerCase())
-    ) || [];
-
-  const filteredEvents =
-    data?.recentEvents?.filter(
-      (evt) =>
-        !searchQuery ||
-        evt.eventName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        evt.pathname.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        evt.labId?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        evt.userId?.email?.toLowerCase().includes(searchQuery.toLowerCase())
-    ) || [];
-
-  const filteredErrors =
-    data?.recentErrors?.filter(
-      (err) =>
-        !searchQuery ||
-        err.message.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        err.pathname.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        err.digest?.toLowerCase().includes(searchQuery.toLowerCase())
-    ) || [];
+  const maxTimeseriesViews = data?.timeseries?.reduce((max, item) => Math.max(max, item.views), 1) || 1;
+  const filteredEvents = data?.recentEvents?.filter((evt) => !searchQuery || evt.eventName.toLowerCase().includes(searchQuery.toLowerCase()) || evt.pathname.toLowerCase().includes(searchQuery.toLowerCase()) || evt.labId?.toLowerCase().includes(searchQuery.toLowerCase()) || evt.userId?.email?.toLowerCase().includes(searchQuery.toLowerCase())) || [];
+  const filteredErrors = data?.recentErrors?.filter((err) => !searchQuery || err.message.toLowerCase().includes(searchQuery.toLowerCase()) || err.pathname.toLowerCase().includes(searchQuery.toLowerCase()) || err.digest?.toLowerCase().includes(searchQuery.toLowerCase())) || [];
 
   return (
     <div className="min-h-screen bg-background text-foreground p-4 sm:p-6 lg:p-8 space-y-6">
-      {/* Header & Controls Bar */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-card border border-border rounded-3xl p-5 md:p-6 shadow-md">
         <div className="flex items-center gap-3.5">
           <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-sm shrink-0">
@@ -414,171 +673,83 @@ export default function AdminAnalyticsDashboard() {
           </div>
           <div>
             <div className="flex items-center gap-2.5 flex-wrap">
-              <h1 className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
-                Executive Web Analytics & Error Diagnostics
-              </h1>
-              {/* Live Realtime Pulse Badge */}
+              <h1 className="text-xl sm:text-2xl font-black text-foreground tracking-tight">Executive Web Analytics &amp; Error Diagnostics</h1>
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-extrabold font-mono shadow-sm">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0" />
                 <span>{data?.realtime?.totalActiveUsers || 0} Online Now</span>
               </div>
             </div>
-            <p className="text-xs font-medium text-muted-foreground mt-0.5">
-              Live student session telemetry, traffic attribution, exact event timestamps, and automated error diagnostics
-            </p>
+            <p className="text-xs font-medium text-muted-foreground mt-0.5">Live student session telemetry, traffic attribution, exact event timestamps, and automated error diagnostics</p>
           </div>
         </div>
 
-        {/* Timeframe & Auto-Refresh Controls */}
-        <div className="flex items-center gap-2 flex-wrap">
-          {/* Timeframe selector */}
-          <div className="flex items-center bg-muted/60 rounded-xl p-1 border border-border text-xs font-bold">
-            {[
-              { id: "today", label: "Today" },
-              { id: "24h", label: "24h" },
-              { id: "7d", label: "7 Days" },
-              { id: "30d", label: "30 Days" },
-              { id: "all", label: "All Time" },
-            ].map((t) => (
-              <button
-                key={t.id}
-                onClick={() => setTimeRange(t.id)}
-                className={`px-3 py-1.5 rounded-lg transition ${
-                  timeRange === t.id
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <DateRangeNavigator value={timeRange} onChange={(val) => setTimeRange(val)} />
 
-          {/* Auto Refresh Menu */}
-          <select
-            value={autoRefreshInterval}
-            onChange={(e) => setAutoRefreshInterval(Number(e.target.value))}
-            className="px-3 py-2 rounded-xl border border-border bg-card text-foreground text-xs font-bold focus:outline-none focus:ring-1 focus:ring-primary shadow-sm"
-            title="Auto Refresh Interval"
-          >
-            <option value={0}>Auto: Off</option>
-            <option value={10}>Auto: 10s</option>
-            <option value={30}>Auto: 30s</option>
-            <option value={60}>Auto: 60s</option>
-          </select>
-
-          {/* Refresh button */}
           <button
-            onClick={() => fetchData()}
-            disabled={loading}
-            className="p-2.5 bg-card hover:bg-accent border border-border rounded-xl text-foreground text-xs font-bold transition shadow-sm"
-            title="Refresh Data"
+            onClick={() => { fetchData(timeRange); fetchPaginatedPageviews(); }}
+            disabled={loading || pvLoading}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-card border border-border text-xs font-bold hover:bg-muted transition shadow-sm disabled:opacity-50"
+            title="Refresh All Analytics"
           >
-            <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+            <RefreshCw size={14} className={loading || pvLoading ? "animate-spin text-primary" : ""} />
+            <span>Refresh</span>
           </button>
         </div>
       </div>
 
-      {/* KPI Overview Cards */}
       {data && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4">
           <div className="p-4 bg-card border border-border rounded-2xl shadow-sm space-y-1">
-            <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">
-              Total Pageviews
-            </span>
-            <span className="text-2xl font-black text-foreground">
-              {data.overview.totalViews.toLocaleString()}
-            </span>
+            <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">Total Pageviews</span>
+            <span className="text-2xl font-black text-foreground">{data.overview.totalViews.toLocaleString()}</span>
           </div>
-
           <div className="p-4 bg-card border border-border rounded-2xl shadow-sm space-y-1">
-            <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">
-              Unique Visitors
-            </span>
-            <span className="text-2xl font-black text-foreground">
-              {data.overview.uniqueVisitors.toLocaleString()}
-            </span>
+            <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">Unique Visitors</span>
+            <span className="text-2xl font-black text-foreground">{data.overview.uniqueVisitors.toLocaleString()}</span>
           </div>
-
           <div className="p-4 bg-card border border-border rounded-2xl shadow-sm space-y-1">
-            <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">
-              Total Sessions
-            </span>
-            <span className="text-2xl font-black text-foreground">
-              {data.overview.uniqueSessions.toLocaleString()}
-            </span>
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">Total Sessions</span>
+            </div>
+            <span className="text-2xl font-black text-foreground">{data.overview.uniqueSessions.toLocaleString()}</span>
+            <div className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
+              <span>{data.overview.anonymousSessions ?? "?"} guest</span>
+              <span>&bull;</span>
+              <span>{data.overview.authenticatedSessions ?? "?"} user</span>
+            </div>
           </div>
-
           <div className="p-4 bg-card border border-border rounded-2xl shadow-sm space-y-1">
-            <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">
-              Avg Dwell Time
-            </span>
-            <span className="text-2xl font-black text-foreground font-mono">
-              {formatDuration(data.overview.avgDuration)}
-            </span>
+            <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">Avg Dwell Time</span>
+            <span className="text-2xl font-black text-foreground font-mono">{formatDuration(data.overview.avgDuration)}</span>
           </div>
-
           <div className="p-4 bg-card border border-border rounded-2xl shadow-sm space-y-1">
-            <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">
-              Avg Scroll Depth
-            </span>
-            <span className="text-2xl font-black text-foreground font-mono">
-              {data.overview.avgScrollDepth}%
-            </span>
+            <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">Avg Scroll Depth</span>
+            <span className="text-2xl font-black text-foreground font-mono">{data.overview.avgScrollDepth}%</span>
           </div>
-
-          <div
-            className={`p-4 rounded-2xl border shadow-sm space-y-1 ${
-              data.errorStats.totalErrors > 0
-                ? "bg-rose-500/10 border-rose-500/20 text-rose-600 dark:text-rose-400"
-                : "bg-card border border-border"
-            }`}
-          >
+          <div className={`p-4 rounded-2xl border shadow-sm space-y-1 ${data.errorStats.totalErrors > 0 ? "bg-rose-500/10 border-rose-500/20 text-rose-600 dark:text-rose-400" : "bg-card border border-border"}`}>
             <span className="text-[10px] font-extrabold uppercase block">Runtime Errors</span>
-            <span className="text-2xl font-black">
-              {data.errorStats.totalErrors}
-              <span className="text-xs ml-1 font-normal opacity-80">
-                ({data.errorStats.statusNew} new)
-              </span>
-            </span>
+            <span className="text-2xl font-black">{data.errorStats.totalErrors} <span className="text-xs ml-1 font-normal opacity-80">({data.errorStats.statusNew} new)</span></span>
           </div>
         </div>
       )}
 
-      {/* Traffic Time-Series Chart */}
       {data && data.timeseries.length > 0 && (
         <div className="p-5 bg-card border border-border rounded-3xl shadow-sm space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <TrendingUp size={16} className="text-primary" />
-              <h3 className="text-sm font-black text-foreground">Traffic & Views Trend</h3>
+              <h3 className="text-sm font-black text-foreground">Traffic &amp; Views Trend</h3>
             </div>
-            <span className="text-xs text-muted-foreground font-mono">
-              {data.timeseries.length} data points
-            </span>
+            <span className="text-xs text-muted-foreground font-mono">{data.timeseries.length} data points</span>
           </div>
-
-          {/* Pure CSS / SVG Bar Chart */}
           <div className="h-40 flex items-end gap-1.5 sm:gap-2 pt-4 border-b border-border/50">
             {data.timeseries.map((item, idx) => {
               const heightPct = Math.max(6, Math.round((item.views / maxTimeseriesViews) * 100));
               return (
-                <div
-                  key={idx}
-                  className="flex-1 flex flex-col items-center gap-1 group relative h-full justify-end"
-                >
-                  {/* Tooltip */}
-                  <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none bg-slate-900 text-white text-[10px] font-mono px-2 py-1 rounded-lg shadow-lg z-20 whitespace-nowrap">
-                    {item.label}: {item.views} views, {item.visitors} visitors
-                  </div>
-
-                  <div
-                    style={{ height: `${heightPct}%` }}
-                    className="w-full max-w-[28px] bg-gradient-to-t from-primary/80 to-primary rounded-t-lg group-hover:brightness-125 transition-all shadow-sm"
-                  />
-                  <span className="text-[9px] text-muted-foreground font-mono truncate w-full text-center hidden sm:block">
-                    {item.label.split(" ").pop() || item.label}
-                  </span>
+                <div key={idx} className="flex-1 flex flex-col items-center gap-1 group relative h-full justify-end">
+                  <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none bg-slate-900 text-white text-[10px] font-mono px-2 py-1 rounded-lg shadow-lg z-20 whitespace-nowrap">{item.label}: {item.views} views</div>
+                  <div style={{ height: `${heightPct}%` }} className="w-full max-w-[28px] bg-gradient-to-t from-primary/80 to-primary rounded-t-lg transition-all" />
                 </div>
               );
             })}
@@ -586,28 +757,11 @@ export default function AdminAnalyticsDashboard() {
         </div>
       )}
 
-      {/* Navigation Sub-Tabs */}
       <div className="flex items-center gap-1.5 p-1 bg-card border border-border rounded-2xl overflow-x-auto shadow-sm text-xs font-bold">
-        {[
-          { id: "live_feed", label: `Live Stream (${data?.recentPageViews?.length || 0})`, icon: Radio },
-          { id: "pages", label: "Top Pages & Labs", icon: Layers },
-          { id: "acquisition", label: "Traffic & Campaigns", icon: Compass },
-          { id: "tech", label: "Tech & Geography", icon: Laptop },
-          { id: "engagement", label: "Dwell & Scroll Dist", icon: Sliders },
-          { id: "events", label: `Custom Events (${data?.recentEvents?.length || 0})`, icon: Zap },
-          { id: "errors", label: `Error Diagnostics (${data?.recentErrors?.length || 0})`, icon: Bug },
-        ].map((tab) => {
+        {[ { id: "live_feed", label: `All Page Views & Stream (${pvPagination.total.toLocaleString()})`, icon: Radio }, { id: "pages", label: "Top Pages & Labs", icon: Layers }, { id: "acquisition", label: "Traffic & Campaigns", icon: Compass }, { id: "tech", label: "Tech & Geography", icon: Laptop }, { id: "engagement", label: "Dwell & Scroll Dist", icon: Sliders }, { id: "events", label: `Custom Events (${data?.recentEvents?.length || 0})`, icon: Zap }, { id: "errors", label: `Error Diagnostics (${data?.recentErrors?.length || 0})`, icon: Bug } ].map((tab) => {
           const Icon = tab.icon;
           return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl transition shrink-0 ${
-                activeTab === tab.id
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-              }`}
-            >
+            <button key={tab.id} onClick={() => setActiveTab(tab.id as any)} className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl transition shrink-0 ${activeTab === tab.id ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"}`}>
               <Icon size={14} />
               <span>{tab.label}</span>
             </button>
@@ -615,38 +769,73 @@ export default function AdminAnalyticsDashboard() {
         })}
       </div>
 
-      {/* Search Filter Bar for Active Tab */}
-      <div className="flex items-center gap-3 bg-card border border-border rounded-2xl p-3 shadow-sm">
-        <Search size={14} className="text-muted-foreground" />
-        <input
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder={`Search ${activeTab.replace("_", " ")} by path, email, device, country, or event name…`}
-          className="w-full bg-transparent text-xs text-foreground focus:outline-none placeholder:text-muted-foreground"
-        />
-        {searchQuery && (
-          <button
-            onClick={() => setSearchQuery("")}
-            className="text-[10px] text-muted-foreground hover:text-foreground font-bold px-2 py-0.5 rounded bg-muted"
-          >
-            Clear
-          </button>
-        )}
-      </div>
-
-      {/* ─── TAB 1: LIVE FEED (RAW PAGEVIEWS STREAM) ─── */}
-      {activeTab === "live_feed" && data && (
-        <div className="bg-card border border-border rounded-3xl shadow-sm overflow-hidden space-y-3">
-          <div className="p-4 border-b border-border bg-muted/20 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <h3 className="text-xs font-black uppercase tracking-wider text-foreground">
-                Real-Time Pageviews Stream
-              </h3>
+      {activeTab === "live_feed" && (
+        <div className="bg-card border border-border rounded-3xl shadow-sm overflow-hidden space-y-4">
+          <div className="p-4 sm:p-5 border-b border-border bg-muted/20 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <span className={`w-2.5 h-2.5 rounded-full ${liveStreamActive ? "bg-emerald-500 animate-pulse shadow-sm shadow-emerald-500/50" : "bg-muted-foreground"}`} />
+                <h3 className="text-sm font-black tracking-tight text-foreground">All Pageview Events &amp; Live Stream</h3>
+              </div>
+              <button onClick={() => setLiveStreamActive((v) => !v)} className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border transition ${liveStreamActive ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30" : "bg-muted text-muted-foreground border-border hover:text-foreground"}`}>
+                {liveStreamActive ? ( <><Pause size={10} /> <span>Live (5s)</span></> ) : ( <><Play size={10} /> <span>Stream Paused</span></> )}
+              </button>
             </div>
-            <span className="text-xs font-mono font-bold text-muted-foreground">
-              Showing {filteredPageViews.length} events
-            </span>
+            <div className="flex items-center gap-2 flex-wrap text-xs">
+              <span className="text-muted-foreground font-mono">Showing <strong className="text-foreground font-bold">{pvPagination.total === 0 ? 0 : (pvPage - 1) * pvLimit + 1}–{Math.min(pvPage * pvLimit, pvPagination.total)}</strong> of <strong className="text-foreground font-bold">{pvPagination.total.toLocaleString()}</strong> events</span>
+            </div>
+          </div>
+
+          <div className="p-4 border-b border-border/70 space-y-3 bg-muted/10">
+            {/* Date Range & Day Stepper for Live Events */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-background border border-border rounded-2xl p-3 shadow-xs">
+              <div className="flex items-center gap-2">
+                <Calendar size={15} className="text-primary shrink-0" />
+                <span className="text-xs font-black text-foreground">Filter Live Pageviews by Date:</span>
+              </div>
+              <DateRangeNavigator value={pvTimeRange} onChange={(val) => { setPvTimeRange(val); setPvPage(1); }} />
+            </div>
+
+            {/* Filter Dropdowns Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {/* Search Input */}
+              <div className="flex items-center gap-2 bg-background border border-border rounded-xl px-3 py-2 text-xs">
+                <Search size={14} className="text-muted-foreground shrink-0" />
+                <input value={pvQuery} onChange={(e) => { setPvQuery(e.target.value); setPvPage(1); }} placeholder="Search path, visitor, country…" className="w-full bg-transparent text-xs text-foreground focus:outline-none placeholder:text-muted-foreground" />
+              </div>
+
+              {/* User Type Filter */}
+              <div className="flex items-center gap-2 bg-background border border-border rounded-xl px-3 py-2 text-xs">
+                <Users size={14} className="text-muted-foreground shrink-0" />
+                <select value={pvUserType} onChange={(e) => { setPvUserType(e.target.value); setPvPage(1); }} className="w-full bg-transparent text-xs font-bold text-foreground focus:outline-none cursor-pointer">
+                  <option value="all">All Visitors</option>
+                  <option value="anonymous">Guests / Anonymous Only</option>
+                  <option value="authenticated">Logged-In Users Only</option>
+                </select>
+              </div>
+
+              {/* Device Filter */}
+              <div className="flex items-center gap-2 bg-background border border-border rounded-xl px-3 py-2 text-xs">
+                <Smartphone size={14} className="text-muted-foreground shrink-0" />
+                <select value={pvDevice} onChange={(e) => { setPvDevice(e.target.value); setPvPage(1); }} className="w-full bg-transparent text-xs font-bold text-foreground focus:outline-none cursor-pointer">
+                  <option value="all">All Devices</option>
+                  <option value="desktop">Desktop Only</option>
+                  <option value="mobile">Mobile Only</option>
+                  <option value="tablet">Tablet Only</option>
+                </select>
+              </div>
+
+              {/* Sort Filter */}
+              <div className="flex items-center gap-2 bg-background border border-border rounded-xl px-3 py-2 text-xs">
+                <SlidersHorizontal size={14} className="text-muted-foreground shrink-0" />
+                <select value={pvSort} onChange={(e) => { setPvSort(e.target.value); setPvPage(1); }} className="w-full bg-transparent text-xs font-bold text-foreground focus:outline-none cursor-pointer">
+                  <option value="createdAt_desc">Newest First</option>
+                  <option value="createdAt_asc">Oldest First</option>
+                  <option value="duration_desc">Longest Dwell</option>
+                  <option value="scroll_desc">Deepest Scroll</option>
+                </select>
+              </div>
+            </div>
           </div>
 
           <div className="overflow-x-auto">
@@ -654,24 +843,33 @@ export default function AdminAnalyticsDashboard() {
               <thead className="bg-muted/40 border-b border-border text-[10px] font-black uppercase tracking-wider text-muted-foreground">
                 <tr>
                   <th className="p-3.5">Exact Event Time</th>
-                  <th className="p-3.5">Path & Lab</th>
-                  <th className="p-3.5">User / Visitor</th>
+                  <th className="p-3.5">Path &amp; Lab</th>
+                  <th className="p-3.5">User / Visitor ID</th>
                   <th className="p-3.5">Dwell Time</th>
                   <th className="p-3.5">Scroll</th>
                   <th className="p-3.5">Referrer / UTM</th>
-                  <th className="p-3.5">Device & Geo</th>
+                  <th className="p-3.5">Device &amp; Geo</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {filteredPageViews.length === 0 ? (
+                {pvLoading && paginatedPageviews.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="p-8 text-center text-muted-foreground text-xs">
-                      No pageviews recorded matching search.
+                    <td colSpan={7} className="p-12 text-center text-muted-foreground text-xs">
+                      <div className="flex items-center justify-center gap-2">
+                        <RefreshCw size={16} className="animate-spin text-primary" />
+                        <span>Loading pageview stream...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : paginatedPageviews.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="p-12 text-center text-muted-foreground text-xs">
+                      No pageviews recorded matching the selected filters.
                     </td>
                   </tr>
                 ) : (
-                  filteredPageViews.map((pv) => (
-                    <tr key={pv._id} className="hover:bg-muted/20 transition">
+                  paginatedPageviews.map((pv) => (
+                    <tr key={pv._id} className="hover:bg-muted/30 transition group">
                       {/* Exact Event Time */}
                       <td className="p-3.5 whitespace-nowrap">
                         <div className="font-mono font-bold text-foreground flex items-center gap-1.5">
@@ -687,14 +885,15 @@ export default function AdminAnalyticsDashboard() {
 
                       {/* Path & Title */}
                       <td className="p-3.5 max-w-xs">
-                        <Link
-                          href={pv.pathname}
+                        <a
+                          href={getMainSiteHref(pv.pathname)}
                           target="_blank"
+                          rel="noopener noreferrer"
                           className="font-mono font-bold text-foreground hover:text-primary flex items-center gap-1 truncate"
                         >
                           <span className="truncate">{pv.pathname}</span>
-                          <ExternalLink size={10} className="shrink-0" />
-                        </Link>
+                          <ExternalLink size={10} className="shrink-0 text-muted-foreground group-hover:text-primary" />
+                        </a>
                         {pv.title && pv.title !== pv.pathname && (
                           <span className="text-[10px] text-muted-foreground truncate block">
                             {pv.title}
@@ -711,7 +910,7 @@ export default function AdminAnalyticsDashboard() {
                       <td className="p-3.5">
                         {pv.userId ? (
                           <div className="space-y-0.5">
-                            <span className="font-bold text-foreground block truncate">
+                            <span className="font-bold text-foreground block truncate max-w-[150px]">
                               {pv.userId.name || pv.userId.email}
                             </span>
                             <div className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
@@ -724,11 +923,40 @@ export default function AdminAnalyticsDashboard() {
                             </div>
                           </div>
                         ) : (
-                          <div className="font-mono text-[10px] text-muted-foreground">
-                            <span className="block truncate max-w-[110px]" title={pv.visitorId}>
-                              {pv.visitorId.slice(0, 12)}…
-                            </span>
-                            <span className="text-[9px] opacity-70">Anonymous</span>
+                          <div className="font-mono text-[10px] text-muted-foreground space-y-1">
+                            <div className="flex items-center gap-1.5">
+                              <span className="px-1.5 py-0.5 rounded bg-muted/80 text-muted-foreground font-sans font-bold text-[9px] uppercase tracking-wide border border-border/50">
+                                Guest / Anonymous
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 text-[10px]">
+                              <button
+                                onClick={() => handleCopy(pv._id + "_vid", pv.visitorId)}
+                                className="hover:text-foreground inline-flex items-center gap-1 text-muted-foreground"
+                                title="Visitor ID (click to copy)"
+                              >
+                                <span className="truncate max-w-[90px]">vid:{pv.visitorId.slice(0, 8)}…</span>
+                                {copiedId === pv._id + "_vid" ? (
+                                  <Check size={9} className="text-emerald-500" />
+                                ) : (
+                                  <Copy size={9} className="opacity-60" />
+                                )}
+                              </button>
+                              {pv.sessionId && (
+                                <button
+                                  onClick={() => handleCopy(pv._id + "_sid", pv.sessionId)}
+                                  className="hover:text-foreground inline-flex items-center gap-1 text-muted-foreground/70"
+                                  title="Session ID (click to copy)"
+                                >
+                                  <span className="truncate max-w-[70px]">sid:{pv.sessionId.slice(0, 6)}…</span>
+                                  {copiedId === pv._id + "_sid" ? (
+                                    <Check size={9} className="text-emerald-500" />
+                                  ) : (
+                                    <Copy size={9} className="opacity-50" />
+                                  )}
+                                </button>
+                              )}
+                            </div>
                           </div>
                         )}
                       </td>
@@ -740,7 +968,15 @@ export default function AdminAnalyticsDashboard() {
 
                       {/* Scroll */}
                       <td className="p-3.5 font-mono text-muted-foreground whitespace-nowrap">
-                        {pv.scrollDepth}%
+                        <div className="flex items-center gap-1.5">
+                          <span>{pv.scrollDepth}%</span>
+                          <div className="w-12 h-1.5 rounded-full bg-muted overflow-hidden">
+                            <div
+                              className="h-full bg-primary rounded-full"
+                              style={{ width: `${Math.min(100, pv.scrollDepth)}%` }}
+                            />
+                          </div>
+                        </div>
                       </td>
 
                       {/* Referrer & UTM */}
@@ -760,11 +996,11 @@ export default function AdminAnalyticsDashboard() {
                       <td className="p-3.5 whitespace-nowrap font-mono text-[11px] text-muted-foreground">
                         <div className="flex items-center gap-1.5 text-foreground font-bold">
                           {pv.device === "mobile" ? (
-                            <Smartphone size={12} />
+                            <Smartphone size={12} className="text-amber-500" />
                           ) : pv.device === "tablet" ? (
-                            <Tablet size={12} />
+                            <Tablet size={12} className="text-blue-500" />
                           ) : (
-                            <Laptop size={12} />
+                            <Laptop size={12} className="text-emerald-500" />
                           )}
                           <span>{pv.browser}</span>
                           <span>&bull;</span>
@@ -773,7 +1009,7 @@ export default function AdminAnalyticsDashboard() {
                         <div className="flex items-center gap-1 text-[10px] text-muted-foreground mt-0.5">
                           <Globe size={10} className="text-primary" />
                           <span>{getFullCountryName(pv.country)}</span>
-                          {pv.screen && <span>({pv.screen})</span>}
+                          {pv.city && <span>({pv.city})</span>}
                         </div>
                       </td>
                     </tr>
@@ -781,6 +1017,100 @@ export default function AdminAnalyticsDashboard() {
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* ── Dynamic Pagination Navigation Bar ── */}
+          <div className="p-4 border-t border-border bg-muted/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="text-xs text-muted-foreground">
+              Page <strong className="text-foreground">{pvPage}</strong> of{" "}
+              <strong className="text-foreground">{pvPagination.totalPages}</strong> (
+              {pvPagination.total.toLocaleString()} total events)
+            </div>
+
+            {/* Pagination Controls */}
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {/* First Page */}
+              <button
+                onClick={() => setPvPage(1)}
+                disabled={pvPage <= 1 || pvLoading}
+                className="p-1.5 rounded-lg bg-card border border-border text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition"
+                title="First Page"
+              >
+                <ChevronsLeft size={14} />
+              </button>
+
+              {/* Prev Page */}
+              <button
+                onClick={() => setPvPage((p) => Math.max(1, p - 1))}
+                disabled={!pvPagination.hasPrevPage || pvLoading}
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-card border border-border text-xs font-bold text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition"
+              >
+                <ChevronLeft size={14} />
+                <span>Prev</span>
+              </button>
+
+              {/* Numbered Pills */}
+              <div className="hidden sm:flex items-center gap-1">
+                {getPageNumbers().map((num, idx) =>
+                  typeof num === "number" ? (
+                    <button
+                      key={idx}
+                      onClick={() => setPvPage(num)}
+                      className={`w-7 h-7 rounded-lg text-xs font-bold transition ${
+                        pvPage === num
+                          ? "bg-primary text-primary-foreground shadow-xs"
+                          : "bg-card border border-border hover:bg-muted text-foreground"
+                      }`}
+                    >
+                      {num}
+                    </button>
+                  ) : (
+                    <span key={idx} className="px-1 text-muted-foreground text-xs font-bold">
+                      …
+                    </span>
+                  )
+                )}
+              </div>
+
+              {/* Next Page */}
+              <button
+                onClick={() => setPvPage((p) => Math.min(pvPagination.totalPages, p + 1))}
+                disabled={!pvPagination.hasNextPage || pvLoading}
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-card border border-border text-xs font-bold text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition"
+              >
+                <span>Next</span>
+                <ChevronRight size={14} />
+              </button>
+
+              {/* Last Page */}
+              <button
+                onClick={() => setPvPage(pvPagination.totalPages)}
+                disabled={pvPage >= pvPagination.totalPages || pvLoading}
+                className="p-1.5 rounded-lg bg-card border border-border text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition"
+                title="Last Page"
+              >
+                <ChevronsRight size={14} />
+              </button>
+
+              {/* Jump to Page Form */}
+              <form onSubmit={handleJumpPage} className="flex items-center gap-1 ml-2">
+                <input
+                  type="number"
+                  min={1}
+                  max={pvPagination.totalPages}
+                  value={jumpPageInput}
+                  onChange={(e) => setJumpPageInput(e.target.value)}
+                  placeholder="Go to"
+                  className="w-14 px-2 py-1 bg-card border border-border rounded-lg text-xs text-foreground placeholder:text-muted-foreground focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  className="px-2 py-1 bg-muted hover:bg-accent border border-border rounded-lg text-[11px] font-bold text-foreground"
+                >
+                  Go
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       )}
@@ -812,14 +1142,15 @@ export default function AdminAnalyticsDashboard() {
                 {data.topPages.map((page, idx) => (
                   <tr key={idx} className="hover:bg-muted/20 transition">
                     <td className="p-3.5">
-                      <Link
-                        href={page.pathname}
+                      <a
+                        href={getMainSiteHref(page.pathname)}
                         target="_blank"
+                        rel="noopener noreferrer"
                         className="font-bold text-foreground hover:text-primary flex items-center gap-1.5 font-mono"
                       >
                         <span>{page.pathname}</span>
                         <ExternalLink size={11} className="text-muted-foreground" />
-                      </Link>
+                      </a>
                       {page.title && page.title !== page.pathname && (
                         <span className="text-[11px] text-muted-foreground block truncate max-w-md">
                           {page.title}
@@ -1099,14 +1430,15 @@ export default function AdminAnalyticsDashboard() {
                       )}
 
                       {evt.pathname && (
-                        <Link
-                          href={evt.pathname}
+                        <a
+                          href={getMainSiteHref(evt.pathname)}
                           target="_blank"
+                          rel="noopener noreferrer"
                           className="text-[11px] font-mono text-muted-foreground hover:text-foreground flex items-center gap-0.5"
                         >
                           <span>{evt.pathname}</span>
                           <ExternalLink size={10} />
-                        </Link>
+                        </a>
                       )}
                     </div>
 
@@ -1197,22 +1529,51 @@ export default function AdminAnalyticsDashboard() {
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-border pb-3">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="px-2 py-0.5 bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/20 rounded font-black font-mono text-[10px] uppercase">
-                          {err.errorType}
+                        <span
+                          className={`px-2 py-0.5 rounded font-black font-mono text-[10px] uppercase border ${
+                            err.errorType === "not_found"
+                              ? "bg-orange-500/15 text-orange-600 dark:text-orange-400 border-orange-500/20"
+                              : err.errorType === "http_4xx"
+                              ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20"
+                              : err.errorType === "http_5xx" || err.errorType === "boundary"
+                              ? "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/20"
+                              : err.errorType === "api"
+                              ? "bg-fuchsia-500/15 text-fuchsia-600 dark:text-fuchsia-400 border-fuchsia-500/20"
+                              : err.errorType === "resource"
+                              ? "bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border-cyan-500/20"
+                              : err.errorType === "webgl"
+                              ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                              : err.errorType === "hydration" || err.errorType === "console"
+                              ? "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border-indigo-500/20"
+                              : err.errorType === "unhandledrejection"
+                              ? "bg-yellow-500/15 text-yellow-600 dark:text-yellow-400 border-yellow-500/20"
+                              : err.errorType === "network"
+                              ? "bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/20"
+                              : "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/20"
+                          }`}
+                        >
+                          {err.errorType === "not_found"
+                            ? "404 Not Found"
+                            : err.errorType === "http_4xx"
+                            ? "HTTP 4xx (Client)"
+                            : err.errorType === "http_5xx"
+                            ? "HTTP 5xx (Server)"
+                            : err.errorType || "runtime"}
                         </span>
 
                         <span className="px-2 py-0.5 bg-muted rounded font-mono text-[10px] text-muted-foreground">
                           {err.occurrences} {err.occurrences === 1 ? "occurrence" : "occurrences"}
                         </span>
 
-                        <Link
-                          href={err.pathname}
+                        <a
+                          href={getMainSiteHref(err.pathname)}
                           target="_blank"
+                          rel="noopener noreferrer"
                           className="text-xs font-mono font-bold text-foreground hover:text-primary flex items-center gap-1"
                         >
                           <span>{err.pathname}</span>
                           <ExternalLink size={10} />
-                        </Link>
+                        </a>
                       </div>
 
                       <h4 className="font-bold text-foreground text-sm leading-snug font-mono">

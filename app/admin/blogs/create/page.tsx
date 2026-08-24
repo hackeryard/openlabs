@@ -6,6 +6,7 @@ import { Plus, Trash2, Save, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import AdminLockScreen from '@/app/components/AdminLockScreen';
 import { useAdminSecret } from '@/app/components/AdminSecretContext';
+import { getAdminHref } from '@/app/lib/adminUrl';
 
 export default function CreateBlogPage() {
   const router = useRouter();
@@ -102,6 +103,7 @@ export default function CreateBlogPage() {
       }
 
       setSuccess(`Blog post "${data.post.title}" created successfully!`);
+
       // Reset form partially
       setFormData(prev => ({
         ...prev,
@@ -112,10 +114,10 @@ export default function CreateBlogPage() {
         faqs: [],
       }));
 
-      // Optional: redirect to the new blog post after a short delay
+      // Redirect back to blog list
       setTimeout(() => {
-        router.push(`/blog/${data.post.slug}`);
-      }, 2000);
+        router.push(getAdminHref('/admin/blogs'));
+      }, 1500);
 
     } catch (err: any) {
       setError(err.message);
@@ -139,11 +141,13 @@ export default function CreateBlogPage() {
   }
 
   return (
-    <main className="min-h-screen text-foreground py-24">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Create New Blog Post</h1>
-          <p className="text-muted-foreground">Publish a new article to the OpenLabs Journal.</p>
+    <main className="min-h-screen text-foreground pt-6 sm:pt-8 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card/70 backdrop-blur-xl border border-border/80 rounded-3xl p-5 sm:p-6 shadow-sm">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-foreground">Create New Blog Post</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">Publish a new article to the OpenLabs Journal.</p>
+          </div>
         </div>
 
         {error && (

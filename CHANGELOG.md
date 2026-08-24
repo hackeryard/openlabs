@@ -2,6 +2,97 @@
 
 All notable changes to OpenLabs are documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/); since the project has no version tags yet, entries are grouped by date instead of version number. Generated from git history; merge commits and duplicate/typo commits are omitted.
 
+- **Universal Mobile Responsiveness & Automatic Subdomain Redirection Across All Admin Pages (`middleware.ts`, `app/lib/adminUrl.ts`, `app/components/AdminNavbar.tsx`, `app/admin/*`)**:
+  - **Automatic Subdomain Redirection (`middleware.ts`)**: Accessing any `/admin` or `/admin/*` sub-route on the main domain (e.g. `openlabs.org.in/admin/users`, `localhost:3000/admin/analytics`) automatically redirects the user to the dedicated admin subdomain with clean URLs (e.g. `admin.openlabs.org.in/users`, `admin.localhost:3000/analytics`), preserving query parameters.
+  - **Subdomain Path Normalizer**: If `/admin/*` prefix is accessed while already on the subdomain (e.g. `admin.openlabs.org.in/admin/blogs`), it cleanly normalizes to `admin.openlabs.org.in/blogs`.
+  - **Universal Admin URL Helper (`app/lib/adminUrl.ts`)**: Implemented `getAdminHref(path)` and `getMainSiteHref(path)` enabling all internal and external links in the Admin Portal to resolve cleanly on both root path (`openlabs.org.in/admin/...`) and dedicated subdomain (`admin.openlabs.org.in/...`) setups.
+  - **External Student/Public Route Safeguards**: External links to student profiles (`/profile/[username]`), interactive labs (`/labs/[labId]`), published articles (`/blog/[slug]`), and live platform buttons now route directly to the main platform domain rather than dead-ending on the admin subdomain.
+  - **Mobile & Tablet Responsive Grid Upgrades**: Fully optimized all admin surfaces (`/admin`, `/admin/analytics`, `/admin/users`, `/admin/blogs`, `/admin/feedback`, `/admin/contacts`, `/admin/seo-dashboard`) for mobile viewports (360px–480px) with responsive card grids, touch-friendly tap targets, and smooth scrollable table/tab containers.
+  - **Admin Users Table Ergonomics**: Enabled row-click navigation to the user telemetry drawer, outside click dismissal, `Escape` key close shortcut, and removed obsolete action columns.
+
+- **Admin Users Joined Date & Exact Time Display (`app/admin/users/page.tsx`)**:
+  - **Joined Date & Time Table Cell**: Formatted the Joined Date column to display exact local time (`hh:mm:ss a`) with clock icon alongside the formatted date (`MMM D, YYYY`).
+  - **User Detail Drawer Telemetry**: Updated user profile drawer header to display both exact join date and time timestamp.
+
+- **Custom Date Range Filter & Day-by-Day Navigator in Analytics (`app/admin/analytics/page.tsx`, `app/lib/analyticsDb.ts`, `app/api/admin/analytics/route.ts`, `app/api/admin/analytics/pageviews/route.ts`)**:
+  - **Unified `<DateRangeNavigator />` Component**: Integrated into both the **Top Executive Dashboard Header** and the **Live Feed Pageviews Filter Bar**.
+  - **Day-by-Day Stepper Navigation**: Added `<` (Previous Day) and `>` (Next Day) navigation buttons to inspect analytics day-by-day with dynamic labels (`Today`, `Yesterday`, `Aug 22, 2026`, etc.) and future-date guards.
+  - **Arbitrary Custom Date Range Picker**: Added date range popover allowing administrators to select exact `From:` and `To:` calendar dates to inspect any historical timeframe.
+  - **Quick Presets**: Reorganized one-click presets (`Today`, `Yesterday`, `7 Days`, `30 Days`, `All Time`).
+  - **Backend Date Engine (`parseDateFilter`)**: Supports single-day hourly views (`date:YYYY-MM-DD`), custom ranges (`custom:YYYY-MM-DD_YYYY-MM-DD` or `startDate`/`endDate`), and presets across both aggregate statistics and paginated pageviews.
+
+- **Comprehensive 360-Degree Error Telemetry & Diagnostics (`app/components/OpenLabsTracker.tsx`, `app/lib/tracker.ts`, `app/models/ErrorLog.js`, `app/not-found.tsx`, `app/global-error.tsx`, `app/admin/analytics/page.tsx`)**:
+  - **400-Series Client & API Errors (`http_4xx`)**: Automatically intercepts and tracks HTTP 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 API Not Found, 422 Unprocessable Entity, and 429 Rate Limit Exceeded on `/api/*` endpoints with HTTP status codes and route URLs.
+  - **500-Series Server Faults (`http_5xx`)**: Intercepts HTTP 500 Internal Server Error, 502 Bad Gateway, 503 Service Unavailable, and 504 Gateway Timeout on all API requests.
+  - **404 Broken Page Route Tracking (`not_found`)**: Automated telemetry in `app/not-found.tsx` reporting every missing or broken page route visited along with referrer data.
+  - **Resource Load Failure Interception (`resource`)**: Capture-phase listener intercepting broken/missing asset loading failures on `<img>`, `<script>`, `<link>`, `<audio>`, and `<video>` tags with asset URL and DOM element tag metadata.
+  - **WebGL / 3D Canvas Context Loss (`webgl`)**: Global `webglcontextlost` event capturing for 3D physics, chemistry molecular models, and periodic table GPU crashes.
+  - **Hydration & Critical Console Error Capture (`hydration` & `console`)**: Intercepts React hydration mismatches and unhandled errors logged to console with rate-limited deduplication.
+  - **Root Layout Boundary Integration (`boundary`)**: Connected `app/global-error.tsx` root layout error boundary to automated MongoDB error telemetry via `trackError()`.
+  - **Admin Diagnostic Visuals**: Added distinct badge styling and color coding for each error category (404, 4xx, 5xx, WebGL, Hydration, Resources, etc.) in the Admin Analytics Diagnostic panel.
+
+- **Two-Phase Adaptive Feedback Flow (`app/components/FloatingLabFeedback.tsx`)**:
+  - **Initial Pulse Prompt**: Displays a clean, compact *"Was this lab helpful?"* prompt (`👍 Yes, Helpful` vs `👎 Not Helpful`) with a manual expansion toggle.
+  - **Helpful Flow (Mandatory 1–5 Star Rating)**: Clicking *"Yes, Helpful"* transitions to the rating screen where selecting at least 1 star is mandatory to submit (`selectedRating >= 1`).
+  - **Not Helpful Flow (Optional Details & Skip)**: Clicking *"Not Helpful"* automatically logs the initial response in the background and opens optional category chips (`🐛 Found a Bug`, `😕 Confusing`, `⚡ Too Slow`, `💡 Suggestion`) and comments, with a frictionless *"Skip & Exit"* button to leave anytime without mandatory input.
+
+- **Strict Lab Exit Trigger Refinement (`app/components/FloatingLabFeedback.tsx`)**:
+  - **Eliminated In-Experiment Triggers**: Completely removed `mouseleave` cursor tracking so the feedback modal never pops up while the student is actively interacting with the simulation or moving the cursor across canvas tools/controls.
+  - **Exclusive Departure Navigation Intercept**: The feedback modal now triggers *strictly and exclusively* when the student clicks to leave the simulation page (`/labs/...` ➔ Navbar, Subject Hub, Home, Profile, Tracks, or external routes).
+  - **Voluntary Access Retained**: The discrete bottom-left floating feedback trigger pill remains available for voluntary feedback submissions anytime.
+
+- **Chemistry Hub Routing & Simulation Scope Optimization (`app/chemistry/page.tsx`, `app/lib/labs.ts`, `app/components/FloatingLabFeedback.tsx`)**:
+  - **Fixed 404 Route Links in Chemistry Hub (`app/chemistry/page.tsx`)**: Replaced deprecated/unmapped paths with active interactive chemistry simulations:
+    - `/chemistry/salt-analysis` ➔ `/chemistry/flame-test` (*Flame Test & Atomic Emission Spectrometry*).
+    - `/chemistry/redox` ➔ `/chemistry/electrochemistry` (*Electrochemistry & Galvanic Cells*).
+    - `/chemistry/organic-reactions` ➔ `/chemistry/vsepr-geometry` (*3D Molecular Geometry & VSEPR Studio*).
+  - **Strict Simulation Route Scoping for Feedback Modal (`FloatingLabFeedback.tsx`, `labs.ts`)**:
+    - Restricted the exit-intent feedback triggers and docked pill strictly to interactive simulations (`/labs/...`).
+    - Fixed `resolveLabIdFromPath()` in `app/lib/labs.ts` to prevent general subject landing pages (like `/chemistry` or `/physics`) from falsely matching simulation IDs.
+    - Removed extraneous history state modifications to avoid triggering false popups upon initial page visits.
+
+- **Lab Exit-Intent & Page Transition Feedback Mechanism (`app/components/FloatingLabFeedback.tsx`, `app/hooks/useFeedback.ts`)**:
+  - **Automated Exit-Intent Feedback Modal**: Automatically prompts students when they attempt to exit or navigate away from an interactive simulation lab (`/labs/...`):
+    - **Desktop Mouse Exit-Intent**: Detects cursor movement toward top browser tab / address bar (`clientY <= 15`).
+    - **Navigation Intercept Protocol**: Intercepts internal links pointing away from the lab (e.g. Navbar, Breadcrumbs, Subject hubs) to prompt for a quick rating before smoothly redirecting to the intended destination.
+    - **Smart Engagement Gate**: Enforces a minimum 8-second engagement threshold to prevent prompt fatigue on accidental bounces, respects 24-hour rate limits, and honors session-level dismissals.
+  - **High-Conversion 1-Click Interactive Feedback Modal**:
+    - Interactive 5-star rating with real-time emoji descriptors (`1: Needs Work` to `5: Masterpiece!`).
+    - Instant category reaction chips (`❤️ Loved It!`, `✨ Super Clear`, `💡 Suggestion`, `😕 Confusing`, `🐛 Found a Bug`).
+    - Background submission with celebratory thank-you screen and **+10 Contributor XP** gamification reward.
+    - Preserved discrete bottom-left floating feedback trigger pill for manual submissions anytime.
+
+- **OAuth Referrer Sanitization & Anonymous Session Tracking Engine (`app/components/OpenLabsTracker.tsx`, `app/api/analytics/collect/route.ts`, `app/lib/analyticsDb.ts`, `app/api/admin/analytics/pageviews/route.ts`, `app/admin/analytics/page.tsx`)**:
+  - **Fixed OAuth Google/Apple Authentication Referrer Pollution**:
+    - Eliminated `accounts.google.com`, `appleid.apple.com`, and internal subdomains from corrupting Top Referring Domains and traffic attribution.
+    - Added client-side `sessionStorage` acquisition referrer preservation in `OpenLabsTracker.tsx` so external traffic sources (e.g., Google Search, Twitter, Reddit) are retained even after users complete Google OAuth sign-in redirects.
+    - Updated backend ingestion (`/api/analytics/collect`) and aggregation pipelines (`analyticsDb.ts`) to normalize OAuth redirect domains to `"Direct"` and filter them from acquisition tables.
+  - **Anonymous / Unknown Session Tracking & Filtering**:
+    - Added dedicated **User Type Filter** (`[All Visitors | Guests / Anonymous Only | Logged-In Users Only]`) to the Analytics Event Stream and PageViews API.
+    - Enhanced table UI with visual **Guest / Anonymous Learner** badges, separate copyable `vid:` (Visitor ID) and `sid:` (Session ID) hashes.
+    - Added real-time breakdown of **Guest vs Logged-In Sessions** in top KPI telemetry overview cards.
+
+- **Server-Side Pagination & Live Stream Browser for Analytics (`app/admin/analytics/page.tsx`, `app/api/admin/analytics/pageviews/route.ts`)**:
+  - **Full Server-Side Pagination**: Implemented complete pagination for pageview telemetry events with configurable page size (25, 50, 100, 200 items/page), numbered pagination pills, direct jump-to-page navigation, and total event counters.
+  - **Dedicated Paginated PageViews API (`/api/admin/analytics/pageviews`)**: Supports text search filtering (path, title, visitor ID, email, country, referrer, device, browser), date range filters (today, 24h, 7d, 30d, all), device filters, and multi-mode sorting (newest, oldest, dwell time, scroll depth).
+  - **Live Auto-Streaming Mode**: Built an automated live-stream toggle with pulsing beacon that polls every 5 seconds for incoming real-time pageviews without resetting page state or flickering.
+  - **Rich Event Inspection**: Detailed event rows displaying exact millisecond timestamps, dwell time progress bars, scroll percentages, referrer/UTM attribution, device icons, browser/OS, country & city, and 1-click visitor ID copy.
+
+- **Master Admin Portal Home Dashboard & Unauthenticated Login Gate (`app/admin/page.tsx`, `app/api/admin/summary/route.ts`, `app/components/AdminLockScreen.tsx`, `app/components/AdminNavbar.tsx`, `middleware.ts`)**:
+  - **Fixed Unauthenticated Secret Key Leak/Exposure (`app/components/AdminLockScreen.tsx`)**: Unauthenticated users visiting the admin portal or admin subdomain are now presented with a clear **Staff Authentication Required** login prompt. The Admin Secret input modal is never displayed to unauthenticated visitors.
+  - **Master Operations Home Dashboard (`/admin` / `app/admin/page.tsx`)**: Built an executive overview dashboard replacing the blank redirect. Displays real-time operational status across all 6 admin modules:
+    1. **Top KPI Ribbon**: Total Users, 24h & All-time Pageviews, Student XP earned, Pending Feedback Issues, Unread Contact Inquiries, and Published Stories.
+    2. **6 Modular Service Command Cards**: Telemetry & Top Simulations, User & Role Management, Editorial & Blog Posts, Lab Feedback & Triage, Support & Contact Inquiries, and SEO Search Graph (53/53 labs coverage).
+    3. **Live Activity Feeds**: Real-time user registrations list and recent feedback/support inquiries.
+  - **Unified Summary Telemetry API (`/api/admin/summary`)**: Aggregates multi-service health, metrics, and MongoDB collections in parallel.
+  - **Admin Navigation (`app/components/AdminNavbar.tsx`)**: Added `Overview` tab linked to `/admin` and updated brand home target.
+
+- **Strict Page-Context Enclosure & AI Tutor Lock (`app/api/chat/route.ts`, `app/components/OpenLabsAI.tsx`)**:
+  - **Uncompromising Context Lock**: The AI Tutor is now strictly bounded to the active page/simulation context (`pageContext`). It will **under no condition** answer questions outside the current lab/page topic—even if the question is related to education, science, or programming.
+  - **Refusal & Redirection Protocol**: If a student is on a Physics lab (e.g. *Ohm's Law*) and asks about an unrelated topic (e.g. *Factorial in Java* or *Photosynthesis*), the AI strictly declines and redirects them back to the active lab's formulas, controls, and concepts.
+  - **Zero-Fluff & Pedagogical Clarity**: Responses jump directly into the active simulation's mechanisms, sliders, plots, and derivations without filler introductions.
+  - **Multi-Turn Memory**: Preserves the last 8 conversation turns within the active lab session.
+
 - **Guided Curriculum Tracks & Next-Lab Progression Engine (`app/lib/tracks.ts`, `app/components/CurriculumTracksExplorer.tsx`, `app/components/NextLabModal.tsx`, `app/hooks/useXP.ts`, `app/profile/ProfileViewClient.tsx`, `app/<subject>/page.tsx`)**:
   - Structured all 53 OpenLabs simulations into **13 Guided Curriculum Tracks** across Physics, Chemistry, Biology, Computer Science, and Mathematics with learning sequence steps, estimated times, difficulty tags, and track completion badges.
   - **Interactive Tracks Explorer (`<CurriculumTracksExplorer />`)**: Renders visual step-by-step node timelines (completed checkmarks, active pulsing target nodes, upcoming steps), real-time percentage progress bars, and 1-click *"Resume Track (Step X of Y) →"* direct links.

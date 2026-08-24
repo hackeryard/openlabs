@@ -14,8 +14,10 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const timeRange = searchParams.get("timeRange") || "7d";
+    const startDate = searchParams.get("startDate") || null;
+    const endDate = searchParams.get("endDate") || null;
 
-    const data = await getAnalyticsDashboardData(timeRange);
+    const data = await getAnalyticsDashboardData(timeRange, startDate, endDate);
 
     return NextResponse.json(data, { status: 200 });
   } catch (error) {

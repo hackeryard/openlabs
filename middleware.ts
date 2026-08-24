@@ -124,6 +124,14 @@ export function middleware(request: NextRequest) {
 
   // ── 1. SUBDOMAIN ROUTING: admin.openlabs.org.in (or admin.localhost) ──
   if (isAdminSubdomain) {
+    // If route still has /admin prefix on the subdomain, redirect to clean URL
+    if (pathname.startsWith('/admin')) {
+      const cleanPath = pathname.replace(/^\/admin/, '') || '/';
+      const cleanUrl = request.nextUrl.clone();
+      cleanUrl.pathname = cleanPath;
+      return NextResponse.redirect(cleanUrl);
+    }
+
     // If not authenticated:
     if (!hasValidAuthToken) {
       if (pathname === '/login' || pathname === '/signup') {
@@ -147,7 +155,7 @@ export function middleware(request: NextRequest) {
 
     let targetPath = pathname;
     if (pathname === '/') {
-      targetPath = '/admin/analytics';
+      targetPath = '/admin';
     } else if (!pathname.startsWith('/admin')) {
       targetPath = `/admin${pathname}`;
     }
@@ -159,23 +167,25 @@ export function middleware(request: NextRequest) {
     return res;
   }
 
-  // ── 2. MAIN DOMAIN: hide /admin completely in Production (404) ───────
-  if (pathname.startsWith('/admin') && !isLocalDev) {
-    const notFoundUrl = request.nextUrl.clone();
-    notFoundUrl.pathname = '/404';
-    return NextResponse.rewrite(notFoundUrl, { status: 404 });
-  }
+  // ── 2. MAIN DOMAIN: Redirect /admin & /admin/* to Subdomain with Clean URL ─
+  if (pathname.startsWith('/admin')) {
+    const cleanPath = pathname.replace(/^\/admin/, '') || '/';
+    let adminHost = host;
 
-  // ── 3. MAIN DOMAIN: Protect /admin in Local Dev (Require Login) ─────
-  if (pathname.startsWith('/admin') && isLocalDev) {
-    if (!hasValidAuthToken) {
-      const url = request.nextUrl.clone();
-      url.pathname = '/login';
-      url.searchParams.set('next', pathname + search);
-      const res = NextResponse.redirect(url);
-      if (isExpired) res.cookies.delete('auth-token');
-      return res;
+    if (host.includes('localhost')) {
+      adminHost = host.replace(/^(?:admin\.)?localhost/, 'admin.localhost');
+    } else if (host.includes('127.0.0.1')) {
+      adminHost = host.replace(/^(?:admin\.)?127\.0\.0\.1/, 'admin.localhost');
+    } else {
+      adminHost = `admin.${host.replace(/^www\./, '').replace(/^admin\./, '')}`;
     }
+
+    const proto =
+      request.headers.get('x-forwarded-proto') ||
+      (request.nextUrl.protocol ? request.nextUrl.protocol.replace(':', '') : isLocalDev ? 'http' : 'https');
+
+    const targetUrl = `${proto}://${adminHost}${cleanPath}${search}`;
+    return NextResponse.redirect(targetUrl);
   }
 
   // ── 4. STANDARD PUBLIC & PROTECTED ACCESS RULES ─────────────────────

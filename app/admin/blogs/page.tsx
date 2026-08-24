@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AdminLockScreen from "@/app/components/AdminLockScreen";
 import { useAdminSecret } from "@/app/components/AdminSecretContext";
-import { Plus, Edit2, Trash2, Eye, Lock, Globe, FileEdit, Users, BookOpen, Activity, MessageSquare, Inbox, BarChart3 } from 'lucide-react';
+import { getAdminHref, getMainSiteHref } from "@/app/lib/adminUrl";
+import { Plus, Edit2, Trash2, Eye, Globe, FileEdit, RefreshCw } from 'lucide-react';
 
 export default function AdminBlogsPage() {
   const { adminSecret, isUnlocked, isAdmin, unlock, lock } = useAdminSecret();
@@ -43,28 +44,32 @@ export default function AdminBlogsPage() {
 
   useEffect(() => {
     if (isUnlocked) {
-      fetchBlogs(adminSecret);
+      fetchBlogs();
     }
   }, [isUnlocked]);
 
   const handleDelete = async (slug: string) => {
     if (!isAdmin) {
-      alert("Publication deletion is restricted to Administrators only.");
+      alert("Delete action is restricted to Admins only.");
       return;
     }
-
-    if (!confirm(`Are you sure you want to delete the blog "${slug}"?`)) return;
+    if (!confirm(`Are you sure you want to delete post "${slug}"?`)) return;
 
     try {
+      const headers: Record<string, string> = {};
+      if (adminSecret) headers['x-admin-secret'] = adminSecret;
+
       const res = await fetch(`/api/admin/blogs/${slug}`, {
         method: 'DELETE',
-        headers: { 'x-admin-secret': adminSecret }
+        headers,
       });
-      
-      if (!res.ok) throw new Error('Failed to delete blog');
-      
-      // Remove from UI
-      setBlogs(blogs.filter(b => b.slug !== slug));
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to delete blog');
+      }
+
+      setBlogs(blogs.filter((b) => b.slug !== slug));
     } catch (err: any) {
       alert(err.message);
     }
@@ -74,36 +79,45 @@ export default function AdminBlogsPage() {
     return (
       <AdminLockScreen
         title="Admin Blog Management"
-        description="Enter your shared Admin Secret to create, edit, upload assets, and manage public publications."
-        error={error}
-        loading={loading}
+        description="Enter your shared Admin Secret to access editorial tools, publish posts, or manage articles."
         onUnlock={fetchBlogs}
       />
     );
   }
 
   return (
-    <main className="min-h-screen text-foreground py-24">
-      <div className="max-w-6xl mx-auto px-6 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-12">
+    <main className="min-h-screen text-foreground pt-6 sm:pt-8 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card/70 backdrop-blur-xl border border-border/80 rounded-3xl p-5 sm:p-6 shadow-sm">
           <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">Blog Management</h1>
-            <p className="text-muted-foreground">Manage your published articles and drafts.</p>
+            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-foreground">Blog Management</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">Manage your published articles, author assignments, and draft content.</p>
           </div>
-          <Link 
-            href={`/admin/blogs/create`}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl transition-colors shadow-sm"
-          >
-            <Plus className="w-4 h-4" />
-            New Blog Post
-          </Link>
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => fetchBlogs()}
+              disabled={loading}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-muted/80 hover:bg-accent border border-border/80 text-xs font-bold text-foreground transition"
+              title="Refresh Blogs"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-primary" : ""}`} />
+              <span>Refresh</span>
+            </button>
+            <Link 
+              href={getAdminHref(`/admin/blogs/create`)}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-bold rounded-xl transition shadow-xs"
+            >
+              <Plus className="w-4 h-4" />
+              <span>New Blog Post</span>
+            </Link>
+          </div>
         </div>
 
         <div className="bg-card rounded-3xl shadow-sm border border-border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-muted border-b border-border">
+                <tr className="bg-muted/70 border-b border-border">
                   <th className="px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-widest">Title</th>
                   <th className="px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-widest">Status</th>
                   <th className="px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-widest">Date</th>
@@ -112,38 +126,39 @@ export default function AdminBlogsPage() {
               </thead>
               <tbody className="divide-y divide-border">
                 {blogs.map((blog) => (
-                  <tr key={blog._id} className="hover:bg-accent transition-colors">
+                  <tr key={blog._id} className="hover:bg-muted/30 transition-colors">
                     <td className="px-6 py-4">
                       <p className="font-bold text-foreground">{blog.title}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{blog.slug}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5 font-mono">{blog.slug}</p>
                     </td>
                     <td className="px-6 py-4">
                       {blog.published ? (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-bold">
                           <Globe className="w-3.5 h-3.5" /> Published
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-bold">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-xs font-bold">
                           <FileEdit className="w-3.5 h-3.5" /> Draft
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">
+                    <td className="px-6 py-4 text-xs font-mono text-muted-foreground">
                       {new Date(blog.date).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Link
-                          href={`/blog/${blog.slug}`}
+                        <a
+                          href={getMainSiteHref(`/blog/${blog.slug}`)}
                           target="_blank"
-                          className="p-2 text-muted-foreground hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                          title="View Live"
+                          rel="noopener noreferrer"
+                          className="p-2 text-muted-foreground hover:text-primary hover:bg-muted rounded-lg transition"
+                          title="View Live Article"
                         >
                           <Eye className="w-4 h-4" />
-                        </Link>
+                        </a>
                         <Link
-                          href={`/admin/blogs/${blog.slug}/edit`}
-                          className="p-2 text-muted-foreground hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          href={getAdminHref(`/admin/blogs/${blog.slug}/edit`)}
+                          className="p-2 text-muted-foreground hover:text-blue-600 hover:bg-blue-500/10 rounded-lg transition"
                           title="Edit"
                         >
                           <Edit2 className="w-4 h-4" />
@@ -151,7 +166,7 @@ export default function AdminBlogsPage() {
                         {isAdmin && (
                           <button
                             onClick={() => handleDelete(blog.slug)}
-                            className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-500/10 rounded-lg transition"
                             title="Delete"
                           >
                             <Trash2 className="w-4 h-4" />

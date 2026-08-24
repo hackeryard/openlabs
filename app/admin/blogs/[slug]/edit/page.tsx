@@ -5,6 +5,7 @@ import { Plus, Trash2, Save, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import AdminLockScreen from '@/app/components/AdminLockScreen';
 import { useAdminSecret } from '@/app/components/AdminSecretContext';
+import { getAdminHref } from '@/app/lib/adminUrl';
 
 export default function EditBlogPage({ params }: { params: { slug: string } }) {
   const router = useRouter();
@@ -24,6 +25,8 @@ export default function EditBlogPage({ params }: { params: { slug: string } }) {
     category: '',
     author: 'OpenLabs Team',
     readTime: '5 min read',
+    gradient: 'from-blue-100 to-cyan-50',
+    border: 'group-hover:border-blue-200',
     published: false,
     coverImage: '',
     adminSecret: '',
@@ -33,26 +36,17 @@ export default function EditBlogPage({ params }: { params: { slug: string } }) {
   });
 
   useEffect(() => {
-    if (!isUnlocked) {
-      setFetching(false);
-      return;
-    }
-
-    const fetchBlog = async () => {
-      setFetching(true);
+    async function loadBlog() {
       try {
-        const headers: Record<string, string> = {};
-        if (adminSecret) headers['x-admin-secret'] = adminSecret;
-
-        const res = await fetch(`/api/admin/blogs/${params.slug}`, {
-          headers,
-        });
+        const res = await fetch(`/api/admin/blogs/${params.slug}`);
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Failed to fetch blog details');
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Failed to load blog');
+        }
 
         const post = data.post;
-        setFormData(prev => ({
-          ...prev,
+        setFormData({
           title: post.title || '',
           slug: post.slug || '',
           excerpt: post.excerpt || '',
@@ -60,20 +54,26 @@ export default function EditBlogPage({ params }: { params: { slug: string } }) {
           category: post.category || '',
           author: post.author || 'OpenLabs Team',
           readTime: post.readTime || '5 min read',
+          gradient: post.gradient || 'from-blue-100 to-cyan-50',
+          border: post.border || 'group-hover:border-blue-200',
           published: post.published || false,
           coverImage: post.coverImage || '',
+          adminSecret: adminSecret || '',
           metaTitle: post.metaTitle || '',
           metaDescription: post.metaDescription || '',
           faqs: post.faqs || [],
-        }));
+        });
       } catch (err: any) {
-        setError("Could not load blog post details. Are you sure it exists?");
+        setError(err.message);
       } finally {
         setFetching(false);
       }
-    };
-    fetchBlog();
-  }, [params.slug]);
+    }
+
+    if (isUnlocked) {
+      loadBlog();
+    }
+  }, [params.slug, isUnlocked, adminSecret]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
@@ -148,7 +148,7 @@ export default function EditBlogPage({ params }: { params: { slug: string } }) {
       setSuccess(`Blog post "${data.post.title}" updated successfully!`);
 
       setTimeout(() => {
-        router.push(`/admin/blogs`);
+        router.push(getAdminHref('/admin/blogs'));
       }, 1500);
 
     } catch (err: any) {
@@ -173,15 +173,21 @@ export default function EditBlogPage({ params }: { params: { slug: string } }) {
   }
 
   if (fetching) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
   }
 
   return (
-    <main className="min-h-screen text-foreground py-24">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Edit Blog Post</h1>
-          <p className="text-muted-foreground">Update an existing article in the OpenLabs Journal.</p>
+    <main className="min-h-screen text-foreground pt-6 sm:pt-8 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card/70 backdrop-blur-xl border border-border/80 rounded-3xl p-5 sm:p-6 shadow-sm">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-foreground">Edit Blog Post</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">Update an existing article in the OpenLabs Journal.</p>
+          </div>
         </div>
 
         {error && (

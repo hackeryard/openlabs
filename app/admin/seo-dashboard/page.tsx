@@ -50,17 +50,18 @@ export default function AdminSeoDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6 space-y-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Activity className="text-primary" /> SEO & Knowledge Graph Health Dashboard
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Real-time monitoring of sitemaps, indexability, knowledge graph nodes, and prerequisite integrity.
-          </p>
-        </div>
+    <div className="min-h-screen bg-background text-foreground pt-6 sm:pt-8 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card/70 backdrop-blur-xl border border-border/80 rounded-3xl p-5 sm:p-6 shadow-sm">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-foreground flex items-center gap-2">
+              <Activity className="text-primary" /> SEO & Knowledge Graph Health Dashboard
+            </h1>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+              Real-time monitoring of sitemaps, indexability, knowledge graph nodes, and prerequisite integrity.
+            </p>
+          </div>
         <div>
           {isAdmin ? (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
@@ -186,5 +187,6 @@ export default function AdminSeoDashboardPage() {
         </div>
       </div>
     </div>
+  </div>
   );
 }

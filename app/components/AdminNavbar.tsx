@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
+  LayoutDashboard,
   BarChart3,
   Users,
   FileText,
@@ -24,6 +25,7 @@ import {
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import { useAuth } from "@/components/AuthProvider";
 import { useAdminSecret } from "@/app/components/AdminSecretContext";
+import { getAdminHref, getMainSiteHref } from "@/app/lib/adminUrl";
 
 interface AdminNavItem {
   label: string;
@@ -32,6 +34,7 @@ interface AdminNavItem {
 }
 
 const navItems: AdminNavItem[] = [
+  { label: "Overview", href: "/admin", icon: LayoutDashboard },
   { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   { label: "Users", href: "/admin/users", icon: Users },
   { label: "Blogs", href: "/admin/blogs", icon: FileText },
@@ -72,22 +75,12 @@ export default function AdminNavbar() {
     window.location.href = "/login";
   };
 
-  const isSubdomain = typeof window !== "undefined" && window.location.hostname.startsWith("admin.");
-  const mainSiteUrl = isSubdomain
-    ? window.location.protocol + "//" + window.location.hostname.replace(/^admin\./, "")
-    : "/";
-
-  const getCleanHref = (href: string) => {
-    if (isSubdomain) {
-      return href.replace(/^\/admin/, "") || "/";
-    }
-    return href;
-  };
+  const mainSiteUrl = getMainSiteHref("/");
 
   const isItemActive = (href: string) => {
-    const cleanHref = getCleanHref(href);
+    const cleanHref = getAdminHref(href);
     if (pathname === href || pathname === cleanHref) return true;
-    if (href !== "/admin/analytics" && pathname.startsWith(href)) return true;
+    if (href !== "/admin" && pathname.startsWith(href)) return true;
     return false;
   };
 
@@ -97,7 +90,7 @@ export default function AdminNavbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
         {/* ── Left: Brand & Admin Badge ── */}
         <div className="flex items-center gap-4">
-          <Link href={getCleanHref("/admin/analytics")} className="flex items-center gap-2.5 group">
+          <Link href={getAdminHref("/admin")} className="flex items-center gap-2.5 group">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
               <Shield className="w-4 h-4" />
             </div>
@@ -126,7 +119,7 @@ export default function AdminNavbar() {
             return (
               <li key={item.href}>
                 <Link
-                  href={getCleanHref(item.href)}
+                  href={getAdminHref(item.href)}
                   className={`
                     h-8 inline-flex items-center gap-1.5 px-3 rounded-lg text-xs font-semibold transition-all
                     ${active
@@ -235,7 +228,7 @@ export default function AdminNavbar() {
                     </div>
 
                     <Link
-                      href={getCleanHref("/admin/users")}
+                      href={getAdminHref("/admin/users")}
                       onClick={() => setProfileOpen(false)}
                       className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-xs font-medium hover:bg-accent transition"
                     >
@@ -244,7 +237,7 @@ export default function AdminNavbar() {
                     </Link>
 
                     <Link
-                      href={getCleanHref("/admin/analytics")}
+                      href={getAdminHref("/admin/analytics")}
                       onClick={() => setProfileOpen(false)}
                       className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-xs font-medium hover:bg-accent transition"
                     >
@@ -304,7 +297,7 @@ export default function AdminNavbar() {
               return (
                 <Link
                   key={item.href}
-                  href={getCleanHref(item.href)}
+                  href={getAdminHref(item.href)}
                   onClick={() => setMobileOpen(false)}
                   className={`
                     flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition
