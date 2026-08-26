@@ -2,38 +2,40 @@ import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "Speed of Light Lab - Physics Simulator | OpenLabs",
+  title: "Speed of Light Measurement & Time-of-Flight Studio | OpenLabs",
   description:
-    "Interactive speed of light lab for exploring light propagation, media, refractive index, and measurement concepts.",
+    "Interactive physics simulation of historical and modern speed of light measurements: Fizeau toothed wheel (1849), Foucault rotating mirror, multi-media refractive race, and time-of-flight picosecond telemetry.",
   keywords: [
-    "speed of light",
-    "optical physics",
-    "refractive index",
-    "light propagation",
-    "physics lab",
-    "interactive simulation"
+    "speed of light simulation",
+    "Fizeau toothed wheel",
+    "Foucault rotating mirror",
+    "refractive index speed of light",
+    "time of flight measurement",
+    "SI constant c",
+    "299792458 m/s",
+    "Michelson interferometer",
   ],
   alternates: {
     canonical: "https://www.openlabs.org.in/physics/speedoflight",
   },
   openGraph: {
-    title: "Speed of Light Lab | Interactive Physics Simulator | OpenLabs",
+    title: "Speed of Light Measurement & Time-of-Flight Studio | OpenLabs",
     description:
-      "Interactive speed of light lab for exploring light propagation, media, refractive index, and measurement concepts.",
+      "Simulate historical Fizeau toothed-wheel extinction, multi-media photon races (Vacuum, Air, Water, Glass, Diamond), and picosecond time-of-flight round trips.",
     url: "https://www.openlabs.org.in/physics/speedoflight",
     type: "website",
     images: [
       {
         url: "https://www.openlabs.org.in/images/physics/speed-of-light-hero.png",
-        alt: "Speed of Light Physics Lab | OpenLabs",
+        alt: "Speed of Light Simulator | OpenLabs",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Speed of Light Lab | Interactive Physics Simulator | OpenLabs",
+    title: "Speed of Light Measurement & Time-of-Flight Studio | OpenLabs",
     description:
-      "Interactive speed of light lab for exploring light propagation, media, refractive index, and measurement concepts.",
+      "Interactive speed of light laboratory: Fizeau toothed wheel, refractive media speed race, and time-of-flight telemetry.",
     images: ["https://www.openlabs.org.in/images/physics/speed-of-light-hero.png"],
   },
   robots: {
@@ -46,49 +48,51 @@ export default function SpeedOfLightPage() {
   return (
     <PhysicsExperimentLanding
       slug="speedoflight"
-      title="Speed of Light"
-      description="Demonstration of speed of light in different media."
-      heroDescription="Explore how light travels and why its speed changes in different materials. Use the simulation to connect propagation speed with refractive index."
-      theory="Light travels fastest in a vacuum and slows down in materials such as water or glass. The refractive index describes how much a medium reduces light speed."
-      formula="v = c / n"
-      formulaLabel="Speed in a medium"
+      title="Speed of Light & Time-of-Flight"
+      description="Historical Fizeau toothed-wheel apparatus, Foucault rotating mirrors, multi-media refractive speeds, and picosecond time-of-flight telemetry."
+      heroDescription="Explore the universal speed limit c = 299,792,458 m/s. Recreate Armand Fizeau's 1849 Parisian baseline across 8.63 km with a spinning 720-tooth cogwheel, simulate photon races through vacuum, water, glass, and diamond, and analyze lunar laser ranging round-trips."
+      theory="The speed of light in vacuum c is a fundamental physical constant defined exactly as 299,792,458 m/s by the 17th CGPM in 1983. In dielectric media with refractive index n, electromagnetic waves propagate at phase velocity v = c / n due to continuous atomic polarization. In Armand Fizeau's 1849 experiment, a pulse of light passed through a spinning toothed wheel (N teeth) to a distant mirror at distance D; extinction occurs when the wheel rotates by half a tooth during the round trip (t = 2D/c = 1/(2Nω)), yielding c = 4NDω."
+      formula="c = 4ND\omega \quad \text{and} \quad v = \frac{c}{n}"
+      formulaLabel="Fizeau Extinction & Medium Phase Velocity Equations"
       launchUrl="/labs/physics/speedoflight"
       heroImageUrl="/images/physics/speed-of-light-hero.png"
-      visualLabel="Light model"
-      visualDetail="Medium, index, speed"
-      accent={{ primary: "#eab308", secondary: "#f97316", warm: "#0ea5e9" }}
+      visualLabel="Optical Apparatus"
+      visualDetail="Baseline D, teeth count N, angular velocity ω, refractive index n"
+      accent={{ primary: "#10b981", secondary: "#38bdf8", warm: "#f59e0b" }}
       learningObjectives={[
-        "Compare light speed in different media.",
-        "Relate refractive index to propagation speed.",
-        "Understand why light bends at boundaries.",
-        "Connect measurement concepts with optical physics.",
+        "Derive the Fizeau extinction condition: c = 4NDω from tooth angular displacement during round-trip time.",
+        "Calculate phase velocity v = c/n and optical delay across Vacuum, Air, Water, Glass, and Diamond.",
+        "Understand why the SI metre is defined via the fixed constant speed of light (1/299,792,458 s).",
+        "Explore real-world time-of-flight applications, including Apollo lunar laser ranging (2.56s delay) and subsea fiber optics.",
+        "Analyze the null result of the Michelson-Morley interferometer and its implications for special relativity.",
       ]}
       applications={[
-        "Fiber optic communication",
-        "Lens and prism design",
-        "Astronomy measurements",
-        "Optical sensor systems",
+        "Global Positioning System (GPS) satellite nanosecond trilateration",
+        "Apollo Lunar Laser Ranging (LLR) for general relativity verification",
+        "Transcontinental submarine fiber optic communication latency optimization",
+        "Laser Detection and Ranging (LiDAR) autonomous vehicle navigation",
+        "High-precision laser rangefinders & optical time-domain reflectometry (OTDR)",
       ]}
       faqs={[
         {
-          question: "What is the speed of light in vacuum?",
+          question: "How did Armand Fizeau measure the speed of light without electronics in 1849?",
           answer:
-            "The speed of light in vacuum is approximately 299,792,458 meters per second.",
+            "Fizeau directed a light beam from Suresnes to a mirror in Montmartre (8.63 km away) through the teeth of a spinning cogwheel with 720 teeth. As he increased the rotational speed, light passing through a tooth gap on the outbound trip was blocked by the adjacent incoming tooth upon return. At ω = 12.6 rps, the light was completely eclipsed, allowing him to compute c = 4NDω ≈ 313,000 km/s.",
         },
         {
-          question: "Does light slow down in glass?",
+          question: "Why is the speed of light in vacuum considered an exact constant with zero uncertainty?",
           answer:
-            "Yes. Light travels slower in glass than in vacuum because glass has a refractive index greater than one.",
+            "Since 1983, the International System of Units (SI) defined the metre as the distance light travels in vacuum in exactly 1 / 299,792,458 of a second. Consequently, c is an exact defined constant (c = 299,792,458 m/s by definition), and experimental measurements now refine the definition of distance rather than the speed of light.",
         },
         {
-          question: "What is refractive index?",
+          question: "Why does light slow down in dense materials like glass or diamond?",
           answer:
-            "Refractive index compares light speed in vacuum with light speed in a material.",
+            "Inside a dielectric medium, the oscillating electric field of the light wave induces oscillating electric dipoles in the material's electron shells. These dipoles radiate secondary electromagnetic waves with a phase lag. The superposition of the incident wave and secondary waves creates a resultant wave with a lower phase velocity v = c/n.",
         },
         {
-          question: "Why does light bend?",
+          question: "How does Lunar Laser Ranging measure the Earth-Moon distance?",
           answer:
-            "Light bends when it changes speed while crossing between materials with different refractive indices.",
+            "Observatories fire short laser pulses at retroreflector arrays placed on the lunar surface during the Apollo 11, 14, and 15 missions. By measuring the elapsed round-trip time of flight (approximately 2.564 seconds) with picosecond timers, scientists calculate distance D = c · Δt / 2 to within a few millimeters.",
         },
       ]}
     />

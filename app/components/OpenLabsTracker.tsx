@@ -91,6 +91,20 @@ export default function OpenLabsTracker() {
         const src = (el as any).src || (el as any).href || (el as any).currentSrc || "";
 
         if (src) {
+          // Ignore external 3rd-party adblocker blocks (Clarity, Google Analytics, GTM, DoubleClick)
+          const lowerSrc = src.toLowerCase();
+          if (
+            lowerSrc.includes("clarity.ms") ||
+            lowerSrc.includes("googletagmanager") ||
+            lowerSrc.includes("google-analytics") ||
+            lowerSrc.includes("doubleclick") ||
+            lowerSrc.includes("googleads") ||
+            lowerSrc.includes("chrome-extension://") ||
+            lowerSrc.includes("safari-extension://")
+          ) {
+            return;
+          }
+
           trackError(`Resource Load Failed: <${tagName}> ${src}`, {
             errorType: "resource",
             extra: {
@@ -107,6 +121,17 @@ export default function OpenLabsTracker() {
       const errEvent = event as ErrorEvent;
       const message = errEvent.message || "Uncaught runtime error";
       if (message.includes("Script error") && !errEvent.filename) return;
+
+      // Ignore benign browser notifications & extension mutations
+      if (
+        message.includes("ResizeObserver loop") ||
+        message.includes("removeChild") ||
+        message.includes("not a child of this node") ||
+        message.includes("@context") ||
+        (errEvent.filename && (errEvent.filename.includes("extension://") || errEvent.filename.includes("clarity.ms")))
+      ) {
+        return;
+      }
 
       trackError(errEvent.error || message, {
         errorType: "runtime",
@@ -125,6 +150,15 @@ export default function OpenLabsTracker() {
         typeof reason === "string"
           ? reason
           : reason?.message || "Unhandled Promise Rejection";
+
+      // Ignore benign / extension errors
+      if (
+        message.includes("ResizeObserver loop") ||
+        message.includes("AbortError") ||
+        message.includes("cancelled")
+      ) {
+        return;
+      }
 
       trackError(reason || message, {
         errorType: "unhandledrejection",
@@ -151,6 +185,12 @@ export default function OpenLabsTracker() {
 
         // Only monitor internal /api/ routes (ignore analytics beacons to prevent infinite loops)
         if (url.includes("/api/") && !url.includes("/api/analytics/")) {
+          // Normal expected client state checks:
+          // /api/auth/me returning 401 (guest) or 403 (unverified email) is normal status response
+          if (url.includes("/api/auth/me") && (response.status === 401 || response.status === 403)) {
+            return response;
+          }
+
           if (response.status >= 500) {
             // 500-series server error (500 Internal Server Error, 502 Bad Gateway, 503, 504)
             trackError(`HTTP ${response.status} Server Error: ${response.statusText || "Server Fault"} (${url})`, {
@@ -178,7 +218,9 @@ export default function OpenLabsTracker() {
         return response;
       } catch (err: any) {
         const url = typeof args[0] === "string" ? args[0] : (args[0] as Request)?.url || "";
-        if (url.includes("/api/") && !url.includes("/api/analytics/")) {
+        const isAbort = err?.name === "AbortError" || String(err).includes("aborted");
+
+        if (url.includes("/api/") && !url.includes("/api/analytics/") && !isAbort) {
           trackError(err || `Network Fetch Failure: ${url}`, {
             errorType: "network",
             extra: {

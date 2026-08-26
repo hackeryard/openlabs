@@ -2,24 +2,25 @@ import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "Simple Pendulum Simulator | Physics Lab | OpenLabs",
+  title: "Simple Pendulum & Harmonic Motion Simulator | Physics Lab | OpenLabs",
   description:
-    "Interactive simple pendulum simulator with length, gravity, damping, period, and angle controls for browser-based physics learning.",
+    "Interactive simple pendulum and harmonic oscillation simulator. Explore small-angle approximations, large-angle non-linearity, phase-space portraits, and planetary gravitation.",
   keywords: [
-    "simple pendulum",
-    "pendulum simulator",
-    "harmonic motion",
-    "physics lab",
-    "period formula",
-    "interactive physics"
+    "simple pendulum simulator",
+    "harmonic motion lab",
+    "pendulum period formula",
+    "large angle pendulum non-linearity",
+    "phase space portrait pendulum",
+    "damping oscillation physics",
+    "photogate timer simulation",
   ],
   alternates: {
     canonical: "https://www.openlabs.org.in/physics/simplependulum",
   },
   openGraph: {
-    title: "Simple Pendulum Simulator Online | Interactive Physics Lab | OpenLabs",
+    title: "Simple Pendulum & Harmonic Motion Simulator | Physics Lab | OpenLabs",
     description:
-      "Interactive simple pendulum simulator with length, gravity, damping, period, and angle controls for browser-based physics learning.",
+      "Interactive simple pendulum and harmonic oscillation simulator. Explore small-angle approximations, large-angle non-linearity, phase-space portraits, and planetary gravitation.",
     url: "https://www.openlabs.org.in/physics/simplependulum",
     type: "website",
     images: [
@@ -31,9 +32,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Simple Pendulum Simulator Online | Interactive Physics Lab | OpenLabs",
+    title: "Simple Pendulum & Harmonic Motion Simulator | Physics Lab | OpenLabs",
     description:
-      "Interactive simple pendulum simulator with length, gravity, damping, period, and angle controls for browser-based physics learning.",
+      "Interactive simple pendulum and harmonic oscillation simulator. Explore small-angle approximations, large-angle non-linearity, and planetary gravitation.",
     images: ["https://www.openlabs.org.in/images/physics/simple-pendulum-hero-v2.png"],
   },
   robots: {
@@ -46,48 +47,51 @@ export default function SimplePendulumPage() {
   return (
     <PhysicsExperimentLanding
       slug="simplependulum"
-      title="Simple Pendulum"
-      description="Simulate pendulum motion and compare theory vs measured period."
-      heroDescription="Study pendulum motion with a focused browser lab. Change the setup, observe the swing, and compare the result with the standard period relationship used in physics."
-      theory="A simple pendulum is a bob suspended from a fixed point by a light string or rod. When it is displaced and released, gravity pulls it back toward equilibrium, creating repeated oscillation. The simulator lets you experiment with that motion instead of only reading the formula."
-      formula="T = 2pi sqrt(L / g)"
+      title="Simple Pendulum & Harmonic Motion"
+      description="Simulate pendulum oscillations, large-angle non-linearity, phase portraits, and energy balance."
+      heroDescription="Explore harmonic motion and large-angle pendulum physics. Adjust string length, bob mass, release angle, and air damping to visualize phase-space trajectories and measure exact oscillation periods."
+      theory="A simple pendulum consists of a point mass m suspended on a massless string of length L. The exact non-linear equation of motion is d²θ/dt² = -(g/L) sin θ - γ(dθ/dt). For small angles (θ ≤ 15°), sin θ ≈ θ yields Simple Harmonic Motion with period T0 = 2π√(L/g). For larger angles, exact elliptic integrals demonstrate period elongation T ≈ T0(1 + ¼sin²(θ0/2))."
+      formula="T_0 = 2\pi\sqrt{\frac{L}{g}} \quad \text{and} \quad T \approx T_0\left(1 + \frac{1}{4}\sin^2\frac{\theta_0}{2}\right)"
+      formulaLabel="Small-Angle Approximation & Large-Angle Correction"
       launchUrl="/labs/physics/simplependulum"
       heroImageUrl="/images/physics/simple-pendulum-hero-v2.png"
-      visualLabel="Pendulum motion"
-      visualDetail="Length, gravity, damping, period"
-      accent={{ primary: "#2f7d6d", secondary: "#1491a6", warm: "#d86f45" }}
+      visualLabel="Runge-Kutta RK4 Non-Linear Oscillator"
+      visualDetail="Phase-Space (ω vs θ) • Photogate Laser Sensor • Energy Conservation"
+      accent={{ primary: "#0284c7", secondary: "#0d9488", warm: "#f59e0b" }}
       learningObjectives={[
-        "Explore how length changes the time period of a pendulum.",
-        "Compare theoretical period with observed simulation behavior.",
-        "See how gravity and damping affect oscillation in real time.",
-        "Connect pendulum motion with simple harmonic motion concepts.",
+        "Verify Galileo's law of isochronism and demonstrate that period T depends strictly on length L and gravity g, not bob mass m.",
+        "Compare small-angle linear Simple Harmonic Motion (sin θ ≈ θ) with exact non-linear large-angle oscillations.",
+        "Observe continuous interchange between gravitational potential energy (Ep = mgL(1 - cos θ)) and kinetic energy (Ek = ½mL²ω²).",
+        "Analyze phase-space portraits (angular velocity ω vs displacement θ) to visualize limit cycles and exponential damping decay spirals.",
+        "Measure exact periods using a virtual photogate laser sensor at the equilibrium position (θ = 0°).",
       ]}
       applications={[
-        "Clock mechanisms and timing systems",
-        "Seismology demonstrations",
-        "Engineering vibration models",
-        "Classroom physics experiments",
+        "Mechanical pendulum clock escapements (Christiaan Huygens)",
+        "Foucault pendulum proving Earth's planetary rotation",
+        "Tuned mass dampers in skyscrapers (Taipei 101 earthquake mitigation)",
+        "Gravimeters measuring local geological variations in g",
+        "Seismograph sensor mechanisms",
       ]}
       faqs={[
         {
-          question: "What does a simple pendulum simulator show?",
+          question: "Why does the period of a simple pendulum not depend on mass?",
           answer:
-            "It shows how a pendulum swings under gravity and how length, gravitational acceleration, damping, and starting angle change the motion.",
+            "Because gravitational force (which accelerates the bob) and inertia (which resists acceleration) are both directly proportional to mass m. In the equation of motion md²θ/dt² = -mg sin θ, mass cancels out completely on both sides, leaving d²θ/dt² = -(g/L) sin θ.",
         },
         {
-          question: "Which formula is used for pendulum period?",
+          question: "Why does a pendulum take longer to swing at large initial angles?",
           answer:
-            "For small angles, the period is commonly estimated with T = 2pi sqrt(L / g), where L is length and g is gravitational acceleration.",
+            "The linear approximation assumes sin θ ≈ θ, which holds true only for small angles (< 15°). At large angles like 90°, sin θ < θ, meaning the restoring force near the extremes is weaker than linear spring physics predicts. This weakens acceleration and elongates the period by ~18%.",
         },
         {
-          question: "Does the bob mass affect the period?",
+          question: "What does the phase-space portrait of a pendulum represent?",
           answer:
-            "In the ideal simple pendulum model, bob mass does not affect the period. Length and gravity are the main factors.",
+            "A phase-space portrait plots angular velocity (ω = dθ/dt) on the y-axis against angular position (θ) on the x-axis. For undamped motion, it forms closed elliptical orbits representing energy conservation. With air friction, the orbit spirals inward toward the resting origin (0, 0).",
         },
         {
-          question: "Why does damping matter?",
+          question: "How does planetary gravity change the pendulum's oscillation frequency?",
           answer:
-            "Damping represents energy loss from air resistance or friction. More damping makes the swing amplitude decrease faster over time.",
+            "Period is inversely proportional to the square root of gravity (T ∝ 1/√g). On the Moon where gravity is 1/6th of Earth (1.62 m/s²), a 1-meter pendulum takes nearly 5 seconds per swing compared to 2.01 seconds on Earth.",
         },
       ]}
     />

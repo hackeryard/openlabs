@@ -59,7 +59,6 @@ export function useLab(labId: string, subject: string, type: "simulation" | "exp
           isFinalStep: nextInfo.isFinalStep,
           trackPercentage: progress.percentage,
         });
-        setShowNextLabModal(true);
       }
 
       // Show toast if modal is not open

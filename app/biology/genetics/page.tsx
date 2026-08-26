@@ -47,7 +47,7 @@ const cards: SubtopicCard[] = [
     duration: "15 min",
   },
   {
-    href: "/biology/genetics/dna-transcription",
+    href: "/biology/genetics/transcription-translation",
     title: "DNA Transcription & Translation",
     desc: "Central Dogma pipeline: DNA template unzipping, complementary mRNA copying, tRNA ribosome reading, and mutation testing.",
     tag: "Molecular",

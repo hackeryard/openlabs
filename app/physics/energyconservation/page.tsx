@@ -2,24 +2,24 @@ import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "Energy Conservation Simulator - Physics Lab | OpenLabs",
+  title: "Mechanical Energy Conservation & Roller Coaster Simulator | Physics Lab | OpenLabs",
   description:
-    "Investigate energy transformation and conservation with an interactive browser-based physics simulation.",
+    "Interactive roller coaster energy simulator for kinetic energy, gravitational potential energy, loop-the-loop apex critical velocity, and thermal friction dissipation.",
   keywords: [
-    "energy conservation",
-    "kinetic energy",
-    "potential energy",
-    "energy transformation",
-    "physics lab",
-    "mechanics simulation"
+    "energy conservation simulator",
+    "roller coaster physics simulation",
+    "kinetic potential energy interchange",
+    "loop the loop critical velocity",
+    "centripetal normal force g force",
+    "friction thermal dissipation",
   ],
   alternates: {
     canonical: "https://www.openlabs.org.in/physics/energyconservation",
   },
   openGraph: {
-    title: "Energy Conservation Simulator | Interactive Physics Lab | OpenLabs",
+    title: "Mechanical Energy Conservation & Roller Coaster Simulator | Physics Lab | OpenLabs",
     description:
-      "Investigate energy transformation and conservation with an interactive browser-based physics simulation.",
+      "Interactive roller coaster energy simulator for kinetic energy, gravitational potential energy, loop-the-loop apex critical velocity, and thermal friction dissipation.",
     url: "https://www.openlabs.org.in/physics/energyconservation",
     type: "website",
     images: [
@@ -31,9 +31,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Energy Conservation Simulator | Interactive Physics Lab | OpenLabs",
+    title: "Mechanical Energy Conservation & Roller Coaster Simulator | Physics Lab | OpenLabs",
     description:
-      "Investigate energy transformation and conservation with an interactive browser-based physics simulation.",
+      "Interactive roller coaster energy simulator for kinetic energy, gravitational potential energy, loop-the-loop apex critical velocity, and thermal friction dissipation.",
     images: ["https://www.openlabs.org.in/images/physics/energy-conservation-hero.png"],
   },
   robots: {
@@ -46,49 +46,51 @@ export default function EnergyConservationPage() {
   return (
     <PhysicsExperimentLanding
       slug="energyconservation"
-      title="Energy Conservation"
-      description="Investigate energy transformation and conservation."
-      heroDescription="Track how energy changes form while the total stays consistent in an ideal system. Use the lab to connect motion with energy accounting."
-      theory="The law of conservation of energy says that energy cannot be created or destroyed, only transformed from one form to another. In mechanics, kinetic and potential energy often trade places during motion."
-      formula="E = KE + PE"
-      formulaLabel="Total mechanical energy"
+      title="Mechanical Energy Conservation"
+      description="Track continuous kinetic, gravitational potential, and thermal energy conversion along custom roller coaster tracks."
+      heroDescription="Explore the fundamental law of mechanical energy conservation with interactive roller coaster tracks. Sculpt custom terrain splines, test vertical loop-the-loop critical apex velocities (h_min = 2.5R), inspect real-time floating energy pie charts, and measure normal force G-meter loads."
+      theory="The Law of Conservation of Energy states that total energy in an isolated system remains strictly constant: E_total = E_p + E_k + E_th = constant. Gravitational potential energy Ep = mgy converts into kinetic energy Ek = ½mv² as the cart descends. In real systems with friction, non-conservative friction forces fk = μk·mg·cosθ perform negative work, transforming mechanical energy into internal thermal dissipation (Eth)."
+      formula="E_{\text{total}} = mgy + \frac{1}{2}mv^2 + \int f_k \, ds = \text{constant}"
+      formulaLabel="Conservation of Total Mechanical & Thermal Energy"
       launchUrl="/labs/physics/energyconservation"
       heroImageUrl="/images/physics/energy-conservation-hero.png"
-      visualLabel="Energy model"
-      visualDetail="Kinetic, potential, total energy"
-      accent={{ primary: "#16a34a", secondary: "#0f766e", warm: "#f59e0b" }}
+      visualLabel="Interactive Roller Coaster Track Spline Simulation"
+      visualDetail="Loop-the-Loop • Floating Energy Pie Chart • G-Force Telemetry"
+      accent={{ primary: "#0284c7", secondary: "#10b981", warm: "#f59e0b" }}
       learningObjectives={[
-        "Identify kinetic and potential energy changes.",
-        "Observe how total energy behaves in an ideal system.",
-        "Connect height, speed, and energy transformation.",
-        "Recognize where losses appear in real systems.",
+        "Verify the quantitative equivalence between lost gravitational potential energy (ΔEp = mgΔy) and gained kinetic energy (ΔEk = ½mΔv²).",
+        "Determine the minimum entry velocity and drop height (h_min = 2.5R) required to complete a vertical circular loop without cart detachment (FN ≥ 0 at apex).",
+        "Observe how normal force FN = m(v²/R + g·cosθ) produces intense G-forces in track valleys and weightlessness (0g) at hill crests.",
+        "Quantify thermal energy dissipation (Eth = ∫fk ds) across varying track friction coefficients μk and examine oscillatory decay.",
+        "Compare energy interchange dynamics across Earth (9.81 m/s²), Moon (1.62 m/s²), Mars (3.72 m/s²), and Jupiter (24.79 m/s²).",
       ]}
       applications={[
-        "Roller coaster design",
-        "Mechanical system analysis",
-        "Renewable energy demonstrations",
-        "Sports and motion studies",
+        "Theme park thrill ride and loop-the-loop coaster engineering",
+        "Automotive regenerative braking and kinetic energy recovery systems (KERS)",
+        "Hydroelectric gravity-fed pumped storage power plants",
+        "Aerospace orbital trajectory insertion and gravitational slingshots",
+        "Civil engineering ski jump slopes and highway runaway truck ramps",
       ]}
       faqs={[
         {
-          question: "What is conserved in energy conservation?",
+          question: "Why must the initial drop height for a circular loop be at least 2.5 times the loop radius (h ≥ 2.5R)?",
           answer:
-            "The total energy of an isolated system is conserved, even as energy changes form.",
+            "At the top of the loop (apex), the cart requires a minimum centripetal acceleration ac = v²/R = g so that normal force FN ≥ 0 (critical velocity v_apex = √(gR)). Conserving mechanical energy from release height h to apex height 2R gives mgh = mg(2R) + ½m(gR) = 2.5mgR, proving h_min = 2.5R.",
         },
         {
-          question: "What is kinetic energy?",
+          question: "Does the mass of the roller coaster cart change its maximum speed on a frictionless track?",
           answer:
-            "Kinetic energy is energy of motion. It increases as speed increases.",
+            "No. In frictionless motion, mgh = ½mv², which simplifies to v = √(2gh). Mass m cancels out completely, meaning heavy and light carts achieve identical speeds at equal altitudes.",
         },
         {
-          question: "What is potential energy?",
+          question: "What creates the feeling of weightlessness over hill crests?",
           answer:
-            "Potential energy is stored energy due to position, height, or configuration.",
+            "When cresting a curved hill of radius R at speed v, the required centripetal acceleration points downward. The normal force exerted by the seat is FN = m(g - v²/R). When v = √(gR), FN drops to exactly 0, giving riders the sensation of pure zero-G weightlessness.",
         },
         {
-          question: "Why can real systems lose mechanical energy?",
+          question: "How does friction affect the total energy of the roller coaster system?",
           answer:
-            "Friction and air resistance convert some mechanical energy into heat, sound, or deformation.",
+            "Friction does not destroy energy; it converts organized macroscopic mechanical energy (PE + KE) into disorganized microscopic internal thermal energy (heat in the wheels and rails), keeping the universe's total energy strictly conserved.",
         },
       ]}
     />

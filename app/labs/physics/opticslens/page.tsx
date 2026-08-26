@@ -1,16 +1,16 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
+import UniversalLoader from '@/app/components/UniversalLoader'
 
-const OpticsLensLab = dynamic(() => import('@/app/components/physics/OpticsLensLab'), { ssr: false, loading: () => <p className="p-6">Loading projectile motion…</p> })
+const OpticsLens = dynamic(() => import('@/app/components/physics/OpticsLensLab'), { 
+  ssr: false, 
+  loading: () => <UniversalLoader subject="physics" customMessage="Loading Geometric Optics & Lens Ray Tracing Studio..." /> 
+})
 
-export default function ProjectileMotionPage() {
+export default function OpticsLensSimulationPage() {
   return (
-    <main className="min-h-screen p-6">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-bold">Projectile Motion</h1>
-        <p className="text-muted-foreground mb-4">2D projectile motion virtual lab.</p>
-        <OpticsLensLab />
-      </div>
+    <main className="min-h-screen bg-background text-foreground">
+      <OpticsLens />
     </main>
   )
 }

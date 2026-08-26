@@ -1,21 +1,16 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
-
 import UniversalLoader from '@/app/components/UniversalLoader'
 
 const WaveOptics = dynamic(() => import('@/app/components/physics/WaveOpticsLab'), { 
   ssr: false, 
-  loading: () => <UniversalLoader subject="physics" customMessage="Loading Wave Optics simulation..." /> 
+  loading: () => <UniversalLoader subject="physics" customMessage="Loading Wave Optics & Double-Slit Studio..." /> 
 })
 
-export default function WaveOpticsPage() {
+export default function WaveOpticsSimulationPage() {
   return (
-    <main className="min-h-screen p-6">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-bold">Wave Optics</h1>
-        <p className="text-muted-foreground mb-4">Wave optics diffraction and interference lab.</p>
-        <WaveOptics />
-      </div>
+    <main className="min-h-screen bg-background text-foreground">
+      <WaveOptics />
     </main>
   )
 }
