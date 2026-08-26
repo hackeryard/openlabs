@@ -11,7 +11,7 @@ export async function GET(req: Request) {
 
     const currentUser = await (User as any).findById(payload.id).select("username xp subjectProgress");
     if (!currentUser || !currentUser.username) {
-      return Response.json({ error: "User not found or no username set" }, { status: 404 });
+      return Response.json({ success: false, notRanked: true }, { status: 200 });
     }
 
     // Calculate Global Rank

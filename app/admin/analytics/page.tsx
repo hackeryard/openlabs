@@ -51,6 +51,14 @@ import {
   Play,
   Pause,
   SlidersHorizontal,
+  Download,
+  FileText,
+  FileJson,
+  FileSpreadsheet,
+  Code2,
+  CheckCheck,
+  Wrench,
+  Bot,
 } from "lucide-react";
 import { getFullCountryName } from "@/app/lib/countries";
 
@@ -490,6 +498,224 @@ export default function AdminAnalyticsDashboard() {
   const [liveStreamActive, setLiveStreamActive] = useState(true);
   const [jumpPageInput, setJumpPageInput] = useState("");
 
+  // Error Tab State & Filters
+  const [errorStatusFilter, setErrorStatusFilter] = useState<string>("all");
+  const [errorTypeFilter, setErrorTypeFilter] = useState<string>("all");
+  const [errorSearchQuery, setErrorSearchQuery] = useState<string>("");
+  const [copiedErrorId, setCopiedErrorId] = useState<string | null>(null);
+  const [copiedAllErrors, setCopiedAllErrors] = useState<boolean>(false);
+  const [showExportDropdown, setShowExportDropdown] = useState<boolean>(false);
+  const [showBulkActionDropdown, setShowBulkActionDropdown] = useState<boolean>(false);
+  const [errorBulkLoading, setErrorBulkLoading] = useState<boolean>(false);
+
+  const generateAiFixPrompt = (err: ErrorLogItem) => {
+    return `# 🐛 Bug Diagnostic & Fix Report
+**Route / Pathname:** \`${err.pathname}\`
+**Error Type:** \`${err.errorType || "runtime"}\`
+**Occurrences:** ${err.occurrences}
+**Environment:** ${err.browser || "Unknown"} on ${err.os || "Unknown"} (${err.device || "Desktop"})
+**Digest / Error Code:** ${err.digest || "None"}
+**Last Seen:** ${new Date(err.lastOccurredAt).toLocaleString()}
+**Error ID:** \`${err._id}\`
+
+### 🚨 Error Message
+\`\`\`
+${err.message}
+\`\`\`
+
+### 📜 Stack Trace
+\`\`\`
+${err.stack || "No client stack trace available"}
+\`\`\`
+
+---
+### 🛠️ AI Fix Instructions
+1. Inspect the route component or API handler at \`${err.pathname}\`.
+2. Locate the function throwing: \`${err.message}\`.
+3. Check for undefined/null property access, missing SSR guards (\`typeof window !== "undefined"\`), invalid JSON parsing, or missing API responses.
+4. Implement safe fallbacks or boundary checks to completely eliminate this error.`;
+  };
+
+  const handleCopyAiPrompt = async (err: ErrorLogItem) => {
+    const promptText = generateAiFixPrompt(err);
+    try {
+      await navigator.clipboard.writeText(promptText);
+      setCopiedErrorId(err._id);
+      setTimeout(() => setCopiedErrorId(null), 2500);
+    } catch (e) {
+      console.error("Clipboard copy failed:", e);
+    }
+  };
+
+  const handleCopyAllAiPrompts = async (errorsToCopy: ErrorLogItem[]) => {
+    if (errorsToCopy.length === 0) return;
+    const header = `# 🛠️ OpenLabs Automated Error Triage Report
+Generated on: ${new Date().toLocaleString()}
+Total Tracked Errors: ${errorsToCopy.length}
+
+---
+`;
+    const body = errorsToCopy
+      .map(
+        (err, idx) =>
+          `## Bug #${idx + 1}: [${(err.errorType || "runtime").toUpperCase()}] on ${err.pathname}\n${generateAiFixPrompt(
+            err
+          )}`
+      )
+      .join("\n\n---\n\n");
+    try {
+      await navigator.clipboard.writeText(header + body);
+      setCopiedAllErrors(true);
+      setTimeout(() => setCopiedAllErrors(false), 2500);
+    } catch (e) {
+      console.error("Clipboard copy failed:", e);
+    }
+  };
+
+  const handleExportErrors = (format: "markdown" | "json" | "csv", errorsToExport: ErrorLogItem[]) => {
+    if (errorsToExport.length === 0) return;
+    setShowExportDropdown(false);
+
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+    let content = "";
+    let mimeType = "text/plain";
+    let filename = `openlabs_errors_${timestamp}`;
+
+    if (format === "markdown") {
+      filename += ".md";
+      mimeType = "text/markdown";
+      const header = `# 📋 OpenLabs Error Diagnostics & AI Fix Report
+- **Export Date:** ${new Date().toLocaleString()}
+- **Total Filtered Errors:** ${errorsToExport.length}
+- **Active Errors:** ${
+        errorsToExport.filter((e) => e.status === "new" || e.status === "investigating").length
+      }
+- **Resolved Errors:** ${errorsToExport.filter((e) => e.status === "resolved").length}
+
+---
+
+`;
+      const body = errorsToExport
+        .map(
+          (err, idx) =>
+            `## #${idx + 1} - \`${err.errorType}\` on [${err.pathname}](${getMainSiteHref(
+              err.pathname
+            )})\n` + generateAiFixPrompt(err)
+        )
+        .join("\n\n---\n\n");
+      content = header + body;
+    } else if (format === "json") {
+      filename += ".json";
+      mimeType = "application/json";
+      content = JSON.stringify(errorsToExport, null, 2);
+    } else if (format === "csv") {
+      filename += ".csv";
+      mimeType = "text/csv;charset=utf-8;";
+      const headers = [
+        "ID",
+        "Type",
+        "Status",
+        "Occurrences",
+        "Pathname",
+        "Message",
+        "Digest",
+        "Browser",
+        "OS",
+        "Device",
+        "LastOccurredAt",
+      ];
+      const rows = errorsToExport.map((err) => [
+        `"${err._id}"`,
+        `"${err.errorType}"`,
+        `"${err.status}"`,
+        err.occurrences,
+        `"${(err.pathname || "").replace(/"/g, '""')}"`,
+        `"${(err.message || "").replace(/"/g, '""')}"`,
+        `"${(err.digest || "").replace(/"/g, '""')}"`,
+        `"${(err.browser || "").replace(/"/g, '""')}"`,
+        `"${(err.os || "").replace(/"/g, '""')}"`,
+        `"${(err.device || "").replace(/"/g, '""')}"`,
+        `"${err.lastOccurredAt}"`,
+      ]);
+      content = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    }
+
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleBulkUpdateErrors = async (newStatus: string, errorIds: string[]) => {
+    if (errorIds.length === 0) return;
+    setErrorBulkLoading(true);
+    setShowBulkActionDropdown(false);
+    try {
+      const res = await fetch("/api/admin/analytics/errors", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-secret": adminSecret,
+        },
+        body: JSON.stringify({ errorIds, status: newStatus }),
+      });
+      if (res.ok) {
+        setData((prev) => {
+          if (!prev) return prev;
+          const idSet = new Set(errorIds);
+          return {
+            ...prev,
+            recentErrors: prev.recentErrors.map((err) =>
+              idSet.has(err._id) ? { ...err, status: newStatus as any } : err
+            ),
+          };
+        });
+      }
+    } catch (err) {
+      console.error("Bulk update errors error:", err);
+    } finally {
+      setErrorBulkLoading(false);
+    }
+  };
+
+  const handleBulkPurgeErrors = async (purgeMode: "resolved" | "all" | "ignored") => {
+    const label =
+      purgeMode === "all"
+        ? "ALL error records"
+        : purgeMode === "resolved"
+        ? "all RESOLVED error records"
+        : "all IGNORED error records";
+    if (!window.confirm(`Are you sure you want to permanently delete ${label}?`)) return;
+
+    setErrorBulkLoading(true);
+    setShowBulkActionDropdown(false);
+    try {
+      const res = await fetch(`/api/admin/analytics/errors?purge=${purgeMode}`, {
+        method: "DELETE",
+        headers: { "x-admin-secret": adminSecret },
+      });
+      if (res.ok) {
+        setData((prev) => {
+          if (!prev) return prev;
+          let remaining = prev.recentErrors;
+          if (purgeMode === "all") remaining = [];
+          else if (purgeMode === "resolved") remaining = remaining.filter((e) => e.status !== "resolved");
+          else if (purgeMode === "ignored") remaining = remaining.filter((e) => e.status !== "ignored");
+          return { ...prev, recentErrors: remaining };
+        });
+      }
+    } catch (err) {
+      console.error("Purge errors error:", err);
+    } finally {
+      setErrorBulkLoading(false);
+    }
+  };
+
   const handleUpdateErrorStatus = async (errorId: string, newStatus: string) => {
     try {
       const res = await fetch(`/api/admin/analytics/errors/${errorId}`, {
@@ -662,7 +888,41 @@ export default function AdminAnalyticsDashboard() {
 
   const maxTimeseriesViews = data?.timeseries?.reduce((max, item) => Math.max(max, item.views), 1) || 1;
   const filteredEvents = data?.recentEvents?.filter((evt) => !searchQuery || evt.eventName.toLowerCase().includes(searchQuery.toLowerCase()) || evt.pathname.toLowerCase().includes(searchQuery.toLowerCase()) || evt.labId?.toLowerCase().includes(searchQuery.toLowerCase()) || evt.userId?.email?.toLowerCase().includes(searchQuery.toLowerCase())) || [];
-  const filteredErrors = data?.recentErrors?.filter((err) => !searchQuery || err.message.toLowerCase().includes(searchQuery.toLowerCase()) || err.pathname.toLowerCase().includes(searchQuery.toLowerCase()) || err.digest?.toLowerCase().includes(searchQuery.toLowerCase())) || [];
+
+  const allErrors = data?.recentErrors || [];
+  const errorCounts = {
+    total: allErrors.length,
+    new: allErrors.filter((e) => e.status === "new").length,
+    investigating: allErrors.filter((e) => e.status === "investigating").length,
+    resolved: allErrors.filter((e) => e.status === "resolved").length,
+    ignored: allErrors.filter((e) => e.status === "ignored").length,
+    active: allErrors.filter((e) => e.status === "new" || e.status === "investigating").length,
+  };
+
+  const filteredErrors = allErrors.filter((err) => {
+    if (errorStatusFilter === "active") {
+      if (err.status !== "new" && err.status !== "investigating") return false;
+    } else if (errorStatusFilter !== "all") {
+      if (err.status !== errorStatusFilter) return false;
+    }
+
+    if (errorTypeFilter !== "all") {
+      if (err.errorType !== errorTypeFilter) return false;
+    }
+
+    const q = (errorSearchQuery || searchQuery).toLowerCase().trim();
+    if (!q) return true;
+    return (
+      (err.message || "").toLowerCase().includes(q) ||
+      (err.pathname || "").toLowerCase().includes(q) ||
+      (err.digest || "").toLowerCase().includes(q) ||
+      (err.stack || "").toLowerCase().includes(q) ||
+      (err.errorType || "").toLowerCase().includes(q) ||
+      (err.browser || "").toLowerCase().includes(q) ||
+      (err.os || "").toLowerCase().includes(q) ||
+      (err.device || "").toLowerCase().includes(q)
+    );
+  });
 
   return (
     <div className="min-h-screen bg-background text-foreground p-4 sm:p-6 lg:p-8 space-y-6">
@@ -1502,32 +1762,299 @@ export default function AdminAnalyticsDashboard() {
 
       {/* ─── TAB 7: RUNTIME ERRORS & ANOMALY TRIAGE ─── */}
       {activeTab === "errors" && data && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground">
-              Error Diagnostic Reports & Trace Logs
-            </h3>
-            <span className="text-xs font-mono font-bold text-muted-foreground">
-              Showing {filteredErrors.length} errors
-            </span>
+        <div className="space-y-5">
+          {/* Header Strip & Export Toolbar */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-card border border-border rounded-3xl p-5 md:p-6 shadow-sm">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <h3 className="text-base sm:text-lg font-black text-foreground tracking-tight flex items-center gap-2">
+                  <Bug className="text-rose-500" size={20} />
+                  <span>Error Diagnostics & AI Triage Engine</span>
+                </h3>
+                <span className="px-2.5 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-mono font-bold">
+                  {errorCounts.active} Active / {errorCounts.total} Total
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Export error traces, copy AI fix prompts with stack traces, and triage anomalies across all lab routes.
+              </p>
+            </div>
+
+            {/* Action Buttons: Copy All, Export Menu, Bulk Actions */}
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* Copy All AI Prompts Button */}
+              <button
+                type="button"
+                onClick={() => handleCopyAllAiPrompts(filteredErrors)}
+                disabled={filteredErrors.length === 0}
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer disabled:opacity-50 ${
+                  copiedAllErrors
+                    ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
+                    : "bg-primary text-primary-foreground hover:bg-primary/90"
+                }`}
+                title="Copy all currently filtered errors as an actionable prompt for AI agents (Antigravity, Cursor, Claude Code)"
+              >
+                {copiedAllErrors ? <Check size={14} /> : <Bot size={14} />}
+                <span>{copiedAllErrors ? "Copied All AI Prompts! 📋" : `Copy AI Fix Prompts (${filteredErrors.length})`}</span>
+              </button>
+
+              {/* Export Dropdown */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowExportDropdown(!showExportDropdown);
+                    setShowBulkActionDropdown(false);
+                  }}
+                  disabled={filteredErrors.length === 0}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-card border border-border text-xs font-bold text-foreground hover:bg-muted transition shadow-xs cursor-pointer disabled:opacity-50"
+                  title="Export error diagnostics"
+                >
+                  <Download size={14} />
+                  <span>Export ({filteredErrors.length})</span>
+                  <ChevronDown size={12} className={showExportDropdown ? "rotate-180 transition" : "transition"} />
+                </button>
+
+                {showExportDropdown && (
+                  <div className="absolute right-0 top-full mt-2 z-50 p-2 bg-card border border-border rounded-2xl shadow-2xl w-64 space-y-1 animate-in fade-in zoom-in-95 duration-150">
+                    <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-muted-foreground border-b border-border mb-1">
+                      Choose Export Format
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleExportErrors("markdown", filteredErrors)}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-foreground hover:bg-muted rounded-xl transition text-left cursor-pointer"
+                    >
+                      <FileText size={14} className="text-primary shrink-0" />
+                      <div>
+                        <div className="font-black">AI Debug Report (.md)</div>
+                        <div className="text-[10px] text-muted-foreground font-normal">Formatted markdown with AI fix prompts</div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleExportErrors("json", filteredErrors)}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-foreground hover:bg-muted rounded-xl transition text-left cursor-pointer"
+                    >
+                      <FileJson size={14} className="text-amber-500 shrink-0" />
+                      <div>
+                        <div className="font-black">Raw JSON Dump (.json)</div>
+                        <div className="text-[10px] text-muted-foreground font-normal">Complete telemetry dataset</div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleExportErrors("csv", filteredErrors)}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-foreground hover:bg-muted rounded-xl transition text-left cursor-pointer"
+                    >
+                      <FileSpreadsheet size={14} className="text-emerald-500 shrink-0" />
+                      <div>
+                        <div className="font-black">Spreadsheet Table (.csv)</div>
+                        <div className="text-[10px] text-muted-foreground font-normal">Excel and Google Sheets compatible</div>
+                      </div>
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Bulk Actions Dropdown */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowBulkActionDropdown(!showBulkActionDropdown);
+                    setShowExportDropdown(false);
+                  }}
+                  disabled={errorBulkLoading}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-card border border-border text-xs font-bold text-foreground hover:bg-muted transition shadow-xs cursor-pointer disabled:opacity-50"
+                  title="Bulk error actions"
+                >
+                  <SlidersHorizontal size={14} />
+                  <span>Bulk Actions</span>
+                  <ChevronDown size={12} className={showBulkActionDropdown ? "rotate-180 transition" : "transition"} />
+                </button>
+
+                {showBulkActionDropdown && (
+                  <div className="absolute right-0 top-full mt-2 z-50 p-2 bg-card border border-border rounded-2xl shadow-2xl w-60 space-y-1 animate-in fade-in zoom-in-95 duration-150">
+                    <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-muted-foreground border-b border-border mb-1">
+                      Status Management
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleBulkUpdateErrors(
+                          "resolved",
+                          filteredErrors.map((e) => e._id)
+                        )
+                      }
+                      disabled={filteredErrors.length === 0}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-foreground hover:bg-muted rounded-xl transition text-left cursor-pointer disabled:opacity-50"
+                    >
+                      <CheckCheck size={14} className="text-emerald-500 shrink-0" />
+                      <span>Mark Filtered ({filteredErrors.length}) as Resolved</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleBulkUpdateErrors(
+                          "investigating",
+                          filteredErrors.map((e) => e._id)
+                        )
+                      }
+                      disabled={filteredErrors.length === 0}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-foreground hover:bg-muted rounded-xl transition text-left cursor-pointer disabled:opacity-50"
+                    >
+                      <Wrench size={14} className="text-amber-500 shrink-0" />
+                      <span>Mark Filtered as Investigating</span>
+                    </button>
+
+                    {isAdmin && (
+                      <>
+                        <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-rose-500 border-t border-border mt-1 pt-1.5">
+                          Admin Purge Tools
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleBulkPurgeErrors("resolved")}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-500/10 rounded-xl transition text-left cursor-pointer"
+                        >
+                          <Trash2 size={14} className="shrink-0" />
+                          <span>Purge Resolved ({errorCounts.resolved})</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleBulkPurgeErrors("all")}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-500/10 rounded-xl transition text-left cursor-pointer"
+                        >
+                          <Trash2 size={14} className="shrink-0" />
+                          <span>Purge All ({errorCounts.total}) Records</span>
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
-          <div className="space-y-3">
+          {/* Filter Bar: Status Pills, Type Select & Search */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-card/60 border border-border/80 rounded-2xl p-3.5 shadow-2xs">
+            {/* Status Filter Tabs */}
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 lg:pb-0">
+              {[
+                { id: "all", label: "All", count: errorCounts.total },
+                { id: "active", label: "Active", count: errorCounts.active },
+                { id: "new", label: "New", count: errorCounts.new },
+                { id: "investigating", label: "Investigating", count: errorCounts.investigating },
+                { id: "resolved", label: "Resolved", count: errorCounts.resolved },
+                { id: "ignored", label: "Ignored", count: errorCounts.ignored },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setErrorStatusFilter(tab.id)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
+                    errorStatusFilter === tab.id
+                      ? "bg-primary text-primary-foreground shadow-xs"
+                      : "bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted"
+                  }`}
+                >
+                  <span>{tab.label}</span>
+                  <span
+                    className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
+                      errorStatusFilter === tab.id
+                        ? "bg-primary-foreground/20 text-primary-foreground"
+                        : "bg-card text-muted-foreground"
+                    }`}
+                  >
+                    {tab.count}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {/* Error Type Selector & Search Input */}
+            <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+              {/* Type Select */}
+              <select
+                value={errorTypeFilter}
+                onChange={(e) => setErrorTypeFilter(e.target.value)}
+                aria-label="Filter error logs by type"
+                className="px-3 py-1.5 bg-card border border-border rounded-xl text-xs font-bold text-foreground focus:outline-none focus:border-primary shadow-2xs cursor-pointer"
+              >
+                <option value="all">All Error Types</option>
+                <option value="not_found">404 Not Found</option>
+                <option value="runtime">Runtime Exception</option>
+                <option value="boundary">React Boundary</option>
+                <option value="http_5xx">Server 5xx</option>
+                <option value="http_4xx">Client 4xx</option>
+                <option value="api">API Endpoint</option>
+                <option value="hydration">Hydration Mismatch</option>
+                <option value="console">Console Error</option>
+                <option value="unhandledrejection">Unhandled Promise</option>
+                <option value="network">Network Failure</option>
+                <option value="resource">Resource Load</option>
+                <option value="webgl">WebGL / Shader</option>
+              </select>
+
+              {/* Search Box */}
+              <div className="relative flex-grow sm:w-64">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  type="text"
+                  value={errorSearchQuery}
+                  onChange={(e) => setErrorSearchQuery(e.target.value)}
+                  placeholder="Search error, path, stack..."
+                  className="w-full pl-8 pr-8 py-1.5 bg-card border border-border rounded-xl text-xs font-mono text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary shadow-2xs"
+                />
+                {errorSearchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setErrorSearchQuery("")}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground text-xs"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* List of Error Cards */}
+          <div className="space-y-3.5">
             {filteredErrors.length === 0 ? (
-              <div className="p-12 text-center bg-card border border-border rounded-3xl text-xs text-muted-foreground">
-                🎉 No runtime errors recorded matching criteria.
+              <div className="p-12 text-center bg-card border border-border rounded-3xl space-y-2 shadow-sm">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto text-xl">
+                  🎉
+                </div>
+                <h4 className="text-sm font-bold text-foreground">No Runtime Errors Found</h4>
+                <p className="text-xs text-muted-foreground">
+                  {errorSearchQuery || errorStatusFilter !== "all" || errorTypeFilter !== "all"
+                    ? "No error traces matched your current filter criteria."
+                    : "Your application is running smoothly with zero tracked exceptions!"}
+                </p>
               </div>
             ) : (
               filteredErrors.map((err) => (
                 <div
                   key={err._id}
-                  className={`p-4 sm:p-5 bg-card border rounded-3xl space-y-3 shadow-sm ${
-                    err.status === "new" ? "border-rose-500/40 bg-rose-500/[0.02]" : "border-border"
+                  className={`p-4 sm:p-5 bg-card border rounded-3xl space-y-3.5 shadow-sm transition-all ${
+                    err.status === "new"
+                      ? "border-rose-500/40 bg-rose-500/[0.02]"
+                      : err.status === "investigating"
+                      ? "border-amber-500/30 bg-amber-500/[0.01]"
+                      : "border-border"
                   }`}
                 >
                   {/* Top: Error Message & Action Buttons */}
-                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-border pb-3">
-                    <div className="space-y-1">
+                  <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-3 border-b border-border pb-3.5">
+                    <div className="space-y-1.5 flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span
                           className={`px-2 py-0.5 rounded font-black font-mono text-[10px] uppercase border ${
@@ -1561,7 +2088,7 @@ export default function AdminAnalyticsDashboard() {
                             : err.errorType || "runtime"}
                         </span>
 
-                        <span className="px-2 py-0.5 bg-muted rounded font-mono text-[10px] text-muted-foreground">
+                        <span className="px-2 py-0.5 bg-muted rounded font-mono text-[10px] text-muted-foreground font-bold">
                           {err.occurrences} {err.occurrences === 1 ? "occurrence" : "occurrences"}
                         </span>
 
@@ -1569,56 +2096,76 @@ export default function AdminAnalyticsDashboard() {
                           href={getMainSiteHref(err.pathname)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-xs font-mono font-bold text-foreground hover:text-primary flex items-center gap-1"
+                          className="text-xs font-mono font-bold text-foreground hover:text-primary flex items-center gap-1 transition"
                         >
                           <span>{err.pathname}</span>
-                          <ExternalLink size={10} />
+                          <ExternalLink size={11} />
                         </a>
                       </div>
 
-                      <h4 className="font-bold text-foreground text-sm leading-snug font-mono">
+                      <h4 className="font-bold text-foreground text-sm leading-snug font-mono break-words">
                         {err.message}
                       </h4>
                     </div>
 
-                    {/* Status Toggle Buttons */}
-                    <div className="flex items-center gap-1.5 shrink-0">
+                    {/* Action Tools: Copy AI Fix Prompt & Status Switcher */}
+                    <div className="flex items-center gap-2 shrink-0 flex-wrap">
+                      {/* One-Click Copy AI Fix Prompt */}
+                      <button
+                        type="button"
+                        onClick={() => handleCopyAiPrompt(err)}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition shadow-2xs cursor-pointer ${
+                          copiedErrorId === err._id
+                            ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
+                            : "bg-card border-border hover:border-primary text-foreground hover:bg-muted"
+                        }`}
+                        title="Copy diagnostic prompt to fix this error with AI"
+                      >
+                        {copiedErrorId === err._id ? <Check size={13} /> : <Bot size={13} className="text-primary" />}
+                        <span>{copiedErrorId === err._id ? "Copied Prompt! 📋" : "Copy AI Fix Prompt"}</span>
+                      </button>
+
+                      {/* Status Toggle Buttons */}
                       <div className="flex items-center gap-1 p-1 bg-muted/60 rounded-xl border border-border">
                         <button
+                          type="button"
                           onClick={() => handleUpdateErrorStatus(err._id, "new")}
-                          className={`px-2 py-1 rounded-lg text-xs font-bold transition ${
+                          className={`px-2 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
                             err.status === "new"
-                              ? "bg-rose-600 text-white shadow-sm"
+                              ? "bg-rose-600 text-white shadow-xs"
                               : "text-muted-foreground hover:text-foreground"
                           }`}
                         >
                           New
                         </button>
                         <button
+                          type="button"
                           onClick={() => handleUpdateErrorStatus(err._id, "investigating")}
-                          className={`px-2 py-1 rounded-lg text-xs font-bold transition ${
+                          className={`px-2 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
                             err.status === "investigating"
-                              ? "bg-amber-500 text-white shadow-sm"
+                              ? "bg-amber-500 text-white shadow-xs"
                               : "text-muted-foreground hover:text-foreground"
                           }`}
                         >
                           Investigating
                         </button>
                         <button
+                          type="button"
                           onClick={() => handleUpdateErrorStatus(err._id, "resolved")}
-                          className={`px-2 py-1 rounded-lg text-xs font-bold transition ${
+                          className={`px-2 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
                             err.status === "resolved"
-                              ? "bg-emerald-600 text-white shadow-sm"
+                              ? "bg-emerald-600 text-white shadow-xs"
                               : "text-muted-foreground hover:text-foreground"
                           }`}
                         >
                           Resolved
                         </button>
                         <button
+                          type="button"
                           onClick={() => handleUpdateErrorStatus(err._id, "ignored")}
-                          className={`px-2 py-1 rounded-lg text-xs font-bold transition ${
+                          className={`px-2 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
                             err.status === "ignored"
-                              ? "bg-slate-700 text-white shadow-sm"
+                              ? "bg-slate-700 text-white shadow-xs"
                               : "text-muted-foreground hover:text-foreground"
                           }`}
                         >
@@ -1628,21 +2175,22 @@ export default function AdminAnalyticsDashboard() {
 
                       {isAdmin && (
                         <button
+                          type="button"
                           onClick={() => handleDeleteError(err._id)}
-                          className="p-1.5 rounded-xl border border-border text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition"
+                          className="p-2 rounded-xl border border-border text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
                           title="Delete Error Record"
                         >
-                          <Trash2 size={14} />
+                          <Trash2 size={13} />
                         </button>
                       )}
                     </div>
                   </div>
 
-                  {/* Device & Exact Timestamp Bar */}
+                  {/* Device, Environment & Timestamp Bar */}
                   <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted-foreground font-mono">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span>
-                        {err.os} &bull; {err.browser} ({err.device})
+                        {err.os || "Unknown OS"} &bull; {err.browser || "Unknown Browser"} ({err.device || "desktop"})
                       </span>
                       {err.digest && (
                         <span className="bg-muted px-1.5 py-0.2 rounded text-[10px]">
@@ -1659,15 +2207,17 @@ export default function AdminAnalyticsDashboard() {
                     </div>
                   </div>
 
-                  {/* Stack Trace Toggle */}
+                  {/* Stack Trace Collapsible View */}
                   {err.stack && (
-                    <div>
+                    <div className="space-y-1.5">
                       <button
+                        type="button"
                         onClick={() =>
                           setExpandedErrorId(expandedErrorId === err._id ? null : err._id)
                         }
-                        className="text-[11px] font-bold text-primary hover:underline flex items-center gap-1"
+                        className="text-[11px] font-bold text-primary hover:underline flex items-center gap-1 cursor-pointer"
                       >
+                        <Code2 size={12} />
                         <span>
                           {expandedErrorId === err._id ? "Hide Stack Trace" : "View Full Stack Trace"}
                         </span>
@@ -1679,9 +2229,23 @@ export default function AdminAnalyticsDashboard() {
                       </button>
 
                       {expandedErrorId === err._id && (
-                        <pre className="mt-2 p-3 bg-black/90 text-rose-400 text-[10px] font-mono rounded-2xl overflow-x-auto border border-rose-500/20 leading-relaxed whitespace-pre-wrap">
-                          {err.stack}
-                        </pre>
+                        <div className="relative">
+                          <pre className="p-3.5 bg-black/95 text-rose-400 text-[10px] font-mono rounded-2xl overflow-x-auto border border-rose-500/20 leading-relaxed whitespace-pre-wrap">
+                            {err.stack}
+                          </pre>
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              try {
+                                await navigator.clipboard.writeText(err.stack || "");
+                              } catch {}
+                            }}
+                            className="absolute top-2.5 right-2.5 px-2 py-1 bg-white/10 hover:bg-white/20 text-white rounded-lg text-[9px] font-bold font-mono transition"
+                            title="Copy stack trace only"
+                          >
+                            Copy Trace
+                          </button>
+                        </div>
                       )}
                     </div>
                   )}

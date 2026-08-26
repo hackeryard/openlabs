@@ -35,7 +35,7 @@ const FeedbackSchema = new mongoose.Schema(
 
         category: {
             type: String,
-            enum: ["bug", "confusing", "wrong-content", "suggestion", "praise", null],
+            enum: ["bug", "confusing", "wrong-content", "suggestion", "praise", "helpful", "general", null],
             default: null,
         },
 

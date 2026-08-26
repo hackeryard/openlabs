@@ -167,25 +167,28 @@ export function middleware(request: NextRequest) {
     return res;
   }
 
-  // ── 2. MAIN DOMAIN: Redirect /admin & /admin/* to Subdomain with Clean URL ─
-  if (pathname.startsWith('/admin')) {
+  // ── 2. PRODUCTION: Redirect main domain /admin & /admin/* to Subdomain with Clean URL ─
+  if (pathname.startsWith('/admin') && !isLocalDev) {
     const cleanPath = pathname.replace(/^\/admin/, '') || '/';
-    let adminHost = host;
-
-    if (host.includes('localhost')) {
-      adminHost = host.replace(/^(?:admin\.)?localhost/, 'admin.localhost');
-    } else if (host.includes('127.0.0.1')) {
-      adminHost = host.replace(/^(?:admin\.)?127\.0\.0\.1/, 'admin.localhost');
-    } else {
-      adminHost = `admin.${host.replace(/^www\./, '').replace(/^admin\./, '')}`;
-    }
-
+    const adminHost = `admin.${host.replace(/^www\./, '').replace(/^admin\./, '')}`;
     const proto =
       request.headers.get('x-forwarded-proto') ||
-      (request.nextUrl.protocol ? request.nextUrl.protocol.replace(':', '') : isLocalDev ? 'http' : 'https');
+      (request.nextUrl.protocol ? request.nextUrl.protocol.replace(':', '') : 'https');
 
     const targetUrl = `${proto}://${adminHost}${cleanPath}${search}`;
     return NextResponse.redirect(targetUrl);
+  }
+
+  // ── 3. LOCAL DEV: Direct /admin access (Require Login) ─────────────────
+  if (pathname.startsWith('/admin') && isLocalDev) {
+    if (!hasValidAuthToken) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/login';
+      url.searchParams.set('next', pathname + search);
+      const res = NextResponse.redirect(url);
+      if (isExpired) res.cookies.delete('auth-token');
+      return res;
+    }
   }
 
   // ── 4. STANDARD PUBLIC & PROTECTED ACCESS RULES ─────────────────────

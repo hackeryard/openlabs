@@ -2,24 +2,24 @@ import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "Hooke's Law Simulator | Mass Spring Physics Lab | OpenLabs",
+  title: "Hooke's Law & Springs Simulator | Physics Lab | OpenLabs",
   description:
-    "Interactive Hooke's Law simulator for exploring spring force, stiffness, mass, displacement, oscillation, and period.",
+    "Interactive Hooke's Law and multi-spring simulator. Explore restoring forces, series and parallel spring combinations, elastic potential energy, and damped harmonic oscillations.",
   keywords: [
-    "hooke's law",
-    "spring simulator",
-    "mass-spring system",
-    "physics lab",
-    "oscillation",
-    "elastic force"
+    "hooke's law simulator",
+    "spring constant lab",
+    "series parallel springs simulation",
+    "elastic potential energy physics",
+    "mass spring harmonic oscillator",
+    "spring stiffness linear regression",
   ],
   alternates: {
     canonical: "https://www.openlabs.org.in/physics/hookelaw",
   },
   openGraph: {
-    title: "Hooke's Law Simulator | Mass Spring Physics Lab | OpenLabs",
+    title: "Hooke's Law & Springs Simulator | Physics Lab | OpenLabs",
     description:
-      "Interactive Hooke's Law simulator for exploring spring force, stiffness, mass, displacement, oscillation, and period.",
+      "Interactive Hooke's Law and multi-spring simulator. Explore restoring forces, series and parallel spring combinations, elastic potential energy, and damped harmonic oscillations.",
     url: "https://www.openlabs.org.in/physics/hookelaw",
     type: "website",
     images: [
@@ -31,9 +31,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hooke's Law Simulator | Mass Spring Physics Lab | OpenLabs",
+    title: "Hooke's Law & Springs Simulator | Physics Lab | OpenLabs",
     description:
-      "Interactive Hooke's Law simulator for exploring spring force, stiffness, mass, displacement, oscillation, and period.",
+      "Interactive Hooke's Law and multi-spring simulator. Explore restoring forces, series/parallel combinations, and elastic energy.",
     images: ["https://www.openlabs.org.in/images/physics/hookes-law-hero.png"],
   },
   robots: {
@@ -46,49 +46,51 @@ export default function HookesLawPage() {
   return (
     <PhysicsExperimentLanding
       slug="hookelaw"
-      title="Hooke's Law"
-      description="Mass-spring system: observe oscillations and measure period."
-      heroDescription="Investigate how springs respond to force. Adjust the mass, stiffness, damping, and displacement to see elastic behavior and oscillation in real time."
-      theory="Hooke's Law states that the restoring force of an ideal spring is proportional to its displacement from equilibrium. The negative sign shows that the force acts opposite the stretch or compression."
-      formula="F = -kx"
-      formulaLabel="Spring force"
+      title="Hooke's Law & Multi-Spring Systems"
+      description="Explore restoring forces, series and parallel spring combinations, and elastic energy."
+      heroDescription="Investigate how elastic springs stretch and oscillate under load. Configure springs in single, series, or parallel setups, measure displacement with a virtual ruler, weigh mystery masses, and plot linear force-displacement curves."
+      theory="Hooke's Law states that the restoring force exerted by an elastic spring is directly proportional to its displacement from equilibrium: Fs = -kΔx. For multi-spring systems, springs in parallel add stiffness (keff = k1 + k2), whereas springs in series add compliance (1/keff = 1/k1 + 1/k2). Under harmonic oscillation, the natural period is T = 2π√(m/keff), with total mechanical energy continually interchanging between elastic potential energy (Ue = ½k(Δx)²) and kinetic energy (Ek = ½mv²)."
+      formula="F_s = -k_{\text{eff}} \Delta x \quad \text{and} \quad T = 2\pi\sqrt{\frac{m}{k_{\text{eff}}}}"
+      formulaLabel="Hooke's Law & Natural Oscillation Period"
       launchUrl="/labs/physics/hookelaw"
       heroImageUrl="/images/physics/hookes-law-hero.png"
-      visualLabel="Spring model"
-      visualDetail="Mass, stiffness, damping, period"
-      accent={{ primary: "#0f766e", secondary: "#16a34a", warm: "#ea580c" }}
+      visualLabel="Runge-Kutta RK4 Spring-Mass Simulator"
+      visualDetail="Series & Parallel Multi-Springs • Force-Displacement Slope • Mystery Mass Weighing"
+      accent={{ primary: "#0284c7", secondary: "#0d9488", warm: "#ea580c" }}
       learningObjectives={[
-        "Understand the relationship between force and displacement.",
-        "Observe how spring constant affects motion.",
-        "Compare mass-spring period with simulated oscillation.",
-        "Explore damping and energy loss in a spring system.",
+        "Verify Hooke's Law (Fs = -kΔx) by measuring static spring extension under varying gravitational loads.",
+        "Compare equivalent spring stiffness across Single, Series (1/keff = 1/k1 + 1/k2), and Parallel (keff = k1 + k2) configurations.",
+        "Weigh unknown mystery masses (M1, M2, M3) using static displacement at equilibrium (m = kΔx/g).",
+        "Analyze real-time Force vs Displacement (F-x) curves where the linear slope represents spring constant k and area represents elastic potential energy (Ue = ½k(Δx)²).",
+        "Observe damped harmonic oscillations across planetary environments (Earth, Moon, Mars, Jupiter, Zero-G).",
       ]}
       applications={[
-        "Vehicle suspension systems",
-        "Mechanical vibration analysis",
-        "Force sensors and spring scales",
-        "Engineering material testing",
+        "Automotive suspension coil springs and struts",
+        "Seismograph ground-motion sensors and accelerometers",
+        "Atomic Force Microscopy (AFM) micro-cantilevers",
+        "Precision spring scales and load-cell dynamometers",
+        "Clockwork balance springs and mechanical escapements",
       ]}
       faqs={[
         {
-          question: "What does Hooke's Law explain?",
+          question: "How do series and parallel spring combinations differ?",
           answer:
-            "It explains how an ideal spring pushes or pulls back with a force proportional to displacement from equilibrium.",
+            "In parallel, both springs share the load and stretch by the same displacement, doubling stiffness (keff = k1 + k2). In series, both springs experience the same tension but displacements add up, making the system more compliant and halving equivalent stiffness (1/keff = 1/k1 + 1/k2).",
         },
         {
-          question: "What is the spring constant?",
+          question: "What does the slope of a Force vs Displacement graph represent?",
           answer:
-            "The spring constant k measures stiffness. A larger k means more force is needed for the same stretch.",
+            "The slope of the F vs Δx graph directly equals the spring constant k (stiffness) in N/m. The triangular area beneath the line represents the work done to stretch the spring, which equals the stored elastic potential energy Ue = ½k(Δx)².",
         },
         {
-          question: "What happens when mass increases?",
+          question: "How does a spring scale measure mass in different gravitational fields?",
           answer:
-            "Increasing mass usually makes the oscillation slower, increasing the period of the mass-spring system.",
+            "At static equilibrium, the upward restoring force balances downward gravity: kΔx = mg, meaning mass is computed as m = (kΔx)/g. On the Moon where g is 1/6th of Earth, the same mass causes 1/6th as much stretch.",
         },
         {
-          question: "Why include damping?",
+          question: "Why does the oscillation period depend on mass but not on gravity?",
           answer:
-            "Damping models friction or resistance that removes energy and reduces oscillation amplitude over time.",
+            "The natural period of a spring-mass oscillator is T = 2π√(m/k). While gravity shifts the static equilibrium position downward (x_eq = mg/k), the restoring force gradient (dF/dx = -k) is purely elastic and independent of g.",
         },
       ]}
     />

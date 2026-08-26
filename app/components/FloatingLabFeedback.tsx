@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import { resolveLabIdFromPath, getLabById } from "@/app/lib/labs";
 import { useFeedback } from "@/app/hooks/useFeedback";
 import {
@@ -66,6 +67,31 @@ export default function FloatingLabFeedback() {
   // Track engagement time on current lab
   const mountTimeRef = useRef<number>(Date.now());
   const hasTriggeredExitRef = useRef<boolean>(false);
+
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+
+  // Global 'F' keyboard shortcut to toggle feedback
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.key.toLowerCase() === "f" &&
+        !e.metaKey &&
+        !e.ctrlKey &&
+        !e.altKey &&
+        !(e.target instanceof HTMLInputElement) &&
+        !(e.target instanceof HTMLTextAreaElement) &&
+        !(e.target as HTMLElement)?.isContentEditable
+      ) {
+        e.preventDefault();
+        setIsExitTriggered(false);
+        setPulseChoice(null);
+        setIsManualExpanded(false);
+        setIsOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   // Reset states on lab route change
   useEffect(() => {
@@ -228,23 +254,62 @@ export default function FloatingLabFeedback() {
 
   return (
     <>
-      {/* ── Docked Bottom-Left Floating Trigger Pill ── */}
+      {/* ── Dynamic Island Morphing Feedback Pill ── */}
       <div className="fixed bottom-6 left-6 z-40 select-none">
-        <button
+        <motion.button
+          layout
+          initial={{ opacity: 0, scale: 0.8, y: 15 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          whileTap={{ scale: 0.94 }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          onFocus={() => setIsHovered(true)}
+          onBlur={() => setIsHovered(false)}
           onClick={() => {
             setIsExitTriggered(false);
             setPulseChoice(null);
             setIsManualExpanded(false);
             setIsOpen(true);
           }}
-          className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-card/95 hover:bg-card border border-border text-foreground text-xs font-bold shadow-lg hover:shadow-xl backdrop-blur-md transition-all duration-200 hover:scale-105 active:scale-95 group"
-          title="Give feedback on this lab"
+          transition={{
+            layout: { type: "spring", stiffness: 450, damping: 28, mass: 0.8 },
+          }}
+          className="flex items-center gap-2 h-10 px-2.5 rounded-full bg-card/95 hover:bg-card border border-border text-foreground text-xs font-bold shadow-lg hover:shadow-xl backdrop-blur-2xl transition-colors duration-200 group cursor-pointer overflow-hidden"
+          title="Give feedback on this lab (Press F)"
+          aria-label="Give feedback on this lab (Press F)"
         >
-          <div className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-            <MessageSquare size={12} />
-          </div>
-          <span className="text-foreground">Feedback</span>
-        </button>
+          {/* Circular Icon Container */}
+          <motion.div
+            layout="position"
+            className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-200"
+          >
+            <MessageSquare size={13} />
+          </motion.div>
+
+          {/* Morphing Expanding Label + Shortcut Key Reveal */}
+          <AnimatePresence mode="wait">
+            {isHovered && (
+              <motion.div
+                key="dynamic-island-content"
+                initial={{ opacity: 0, width: 0, x: -6 }}
+                animate={{ opacity: 1, width: "auto", x: 0 }}
+                exit={{ opacity: 0, width: 0, x: -6 }}
+                transition={{
+                  duration: 0.22,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                className="flex items-center gap-2 pr-1.5 whitespace-nowrap overflow-hidden"
+              >
+                <span className="text-foreground tracking-tight font-extrabold text-xs">
+                  Feedback
+                </span>
+                <kbd className="px-1.5 py-0.5 text-[9px] font-mono font-black text-muted-foreground bg-muted rounded border border-border/80 shadow-2xs">
+                  F
+                </kbd>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.button>
       </div>
 
       {/* ── Interactive Exit Feedback Modal ── */}

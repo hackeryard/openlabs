@@ -82,9 +82,9 @@ export default function DailyChallengeCard({ labId, currentParams }: DailyChalle
                         flex items-center gap-2 rounded-full pl-2.5 pr-3.5 py-2 shadow-lg
                         border backdrop-blur-xl transition-all hover:shadow-xl active:scale-95
                         ${isDone
-                          ? "bg-card/90 border-border text-muted-foreground"
-                          : "bg-gradient-to-r from-amber-500 to-orange-500 border-amber-400/50 text-white shadow-amber-500/30"
-                        }`}
+                ? "bg-card/90 border-border text-muted-foreground"
+                : "bg-gradient-to-r from-amber-500 to-orange-500 border-amber-400/50 text-white shadow-amber-500/30"
+              }`}
             aria-label={isDone ? "Daily challenge completed" : "Open today's daily challenge"}
           >
             <span className="relative flex">
@@ -101,9 +101,6 @@ export default function DailyChallengeCard({ labId, currentParams }: DailyChalle
                   )}
                 </>
               )}
-            </span>
-            <span className="text-xs font-bold whitespace-nowrap">
-              {isDone ? "Challenge cleared" : "Daily Challenge"}
             </span>
             {!isDone && (
               <span className="text-[10px] font-black bg-white/20 rounded-full px-1.5 py-0.5">
