@@ -57,8 +57,8 @@ export default function TracksPage() {
 
         {/* Full Interactive Curriculum Tracks Explorer */}
         <CurriculumTracksExplorer
-          title="All Learning Tracks & Syllabi"
-          subtitle="Filter by discipline or explore the complete curriculum sequence across all 53 interactive simulations."
+          title="Interactive Curriculum Tracks"
+          subtitle="Filter by discipline or explore the complete curriculum sequence across all 94 interactive simulations."
           showFilters={true}
         />
       </div>

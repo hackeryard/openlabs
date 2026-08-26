@@ -164,6 +164,24 @@ const experiments: PhysicsExperiment[] = [
     difficulty: "Advanced",
     duration: "18 min",
   },
+  {
+    href: "/physics/kepler-orbit",
+    title: "Kepler Orbit & Gravitational Mechanics",
+    desc: "Simulate elliptical planetary orbits, Kepler's 3 laws, Vis-Viva velocity equations, and equal swept area conservation.",
+    formula: "T^2 = (4\\pi^2 / GM) a^3",
+    category: "Mechanics",
+    difficulty: "Intermediate",
+    duration: "18 min",
+  },
+  {
+    href: "/physics/doppler-effect",
+    title: "Doppler Effect & Sonic Boom",
+    desc: "Moving wave sources, wavefront compression, sonic barrier shock waves, and supersonic Mach cone envelopes.",
+    formula: "f' = f_0 [c / (c \\mp v_s \\cos\\theta)]",
+    category: "Optics",
+    difficulty: "Intermediate",
+    duration: "16 min",
+  },
 ];
 
 const faqs = [

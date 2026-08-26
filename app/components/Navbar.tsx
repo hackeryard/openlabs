@@ -92,22 +92,22 @@ const labCategories: LabCategory[] = [
   {
     label: "Physics",
     path: "/physics",
-    count: "14 Labs",
+    count: "16 Labs",
     description: "Mechanics, circuits, optics & waves",
     icon: Atom,
     colorClass: "text-blue-600 dark:text-blue-400 group-hover/cat:text-blue-700 dark:group-hover/cat:text-blue-300",
     iconBgClass: "bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover/cat:bg-blue-500 group-hover/cat:text-white",
     highlights: [
+      { name: "Doppler Effect", path: "/physics/doppler-effect" },
+      { name: "Kepler Orbit", path: "/physics/kepler-orbit" },
       { name: "Free Fall", path: "/physics/freefall" },
-      { name: "Ohm's Law", path: "/physics/ohmslaw" },
-      { name: "Projectile", path: "/physics/projectilemotion" },
-      { name: "Wave Optics", path: "/physics/waveoptics" },
+      { name: "Faraday's Law", path: "/physics/faradays-law" },
     ],
   },
   {
     label: "Chemistry",
     path: "/chemistry",
-    count: "4 Labs",
+    count: "12 Labs",
     description: "Periodic table, bonds & titration",
     icon: Flame,
     colorClass: "text-emerald-600 dark:text-emerald-400 group-hover/cat:text-emerald-700 dark:group-hover/cat:text-emerald-300",
@@ -122,7 +122,7 @@ const labCategories: LabCategory[] = [
   {
     label: "Biology",
     path: "/biology",
-    count: "3 Labs",
+    count: "13 Labs",
     description: "Cell biology, 3D anatomy & genetics",
     icon: Dna,
     colorClass: "text-rose-600 dark:text-rose-400 group-hover/cat:text-rose-700 dark:group-hover/cat:text-rose-300",
@@ -130,14 +130,14 @@ const labCategories: LabCategory[] = [
     highlights: [
       { name: "Genetics Lab", path: "/biology/genetics" },
       { name: "Animal Cell", path: "/biology/cell/animal" },
-      { name: "Plant Cell", path: "/biology/cell/plant" },
+      { name: "Photosynthesis", path: "/biology/photosynthesis" },
       { name: "Human Anatomy", path: "/biology/human" },
     ],
   },
   {
     label: "Mathematics",
     path: "/mathematics",
-    count: "12 Labs",
+    count: "13 Labs",
     description: "Calculus, graphing & linear algebra",
     icon: Calculator,
     colorClass: "text-amber-600 dark:text-amber-400 group-hover/cat:text-amber-700 dark:group-hover/cat:text-amber-300",
@@ -152,15 +152,15 @@ const labCategories: LabCategory[] = [
   {
     label: "Computer Science",
     path: "/computer-science",
-    count: "19+ Labs",
-    description: "Algorithms, logic gates & code",
+    count: "42 Labs",
+    description: "Algorithms, logic gates & AI",
     icon: Binary,
     colorClass: "text-purple-600 dark:text-purple-400 group-hover/cat:text-purple-700 dark:group-hover/cat:text-purple-300",
     iconBgClass: "bg-purple-500/10 text-purple-600 dark:text-purple-400 group-hover/cat:bg-purple-500 group-hover/cat:text-white",
     highlights: [
       { name: "HTML/CSS/JS Lab", path: "/computer-science/code-lab/html-css-js" },
       { name: "Logic Gates", path: "/computer-science/logic-gates" },
-      { name: "Sorting Visualizer", path: "/computer-science/dsa/sorting-algorithms" },
+      { name: "DSA Algorithms", path: "/computer-science/dsa" },
       { name: "Networking Studio", path: "/computer-science/networking" },
     ],
   },
@@ -364,8 +364,8 @@ export default function Navbar() {
                           Explore Interactive STEM Suites
                         </span>
                       </div>
-                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                        50+ Simulations
+                      <span className="text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 shadow-xs">
+                        96 Simulations
                       </span>
                     </div>
 
@@ -481,10 +481,10 @@ export default function Navbar() {
                       <Link
                         href="/#labs"
                         onClick={() => setLabsOpen(false)}
-                        className="font-bold text-primary hover:underline flex items-center gap-1"
+                        className="font-bold text-primary hover:underline flex items-center gap-1 group/all"
                       >
-                        <span>Explore All 50+ Labs</span>
-                        <ArrowRight className="w-3 h-3" />
+                        <span>Explore All 96 Labs</span>
+                        <ArrowRight className="w-3.5 h-3.5 group-hover/all:translate-x-0.5 transition-transform" />
                       </Link>
                     </div>
                   </motion.div>

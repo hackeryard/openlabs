@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import EducationalLandingLayout from "@/components/EducationalLandingLayout";
+import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
 export const metadata: Metadata = {
   title: "Flame Test Simulation & Atomic Emission Spectrometry Virtual Lab | OpenLabs",
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     "metal cation flame colors",
     "emission spectroscopy online",
     "planck constant photon energy",
-    "chemistry virtual lab"
+    "chemistry virtual lab",
   ],
   alternates: {
     canonical: "https://www.openlabs.org.in/chemistry/flame-test",
@@ -40,64 +40,51 @@ export const metadata: Metadata = {
   },
 };
 
-const flameTestContent = {
-  slug: "flame-test",
-  subject: "Chemistry",
-  title: "Flame Test & Atomic Emission Spectrometry",
-  description: "An analytical chemistry simulation demonstrating quantized atomic orbital electron excitation and discrete photon emission spectrographs across metal cations.",
-  difficulty: "Beginner" as const,
-  estimatedTime: "20 minutes",
-  heroDescription: "Immerse in virtual qualitative chemical analysis. Dip platinum wire loops into aqueous salt solutions (Na⁺, K⁺, Cu²⁺, Sr²⁺, Ba²⁺, Li⁺, Ca²⁺), introduce them to a Bunsen burner flame, observe characteristic flame hues, and view discrete spectral emission lines.",
-  theory: {
-    content: `
-      <p>The <strong>flame test</strong> is an analytical technique in qualitative inorganic chemistry used to identify the presence of specific metal ions based on their characteristic emission spectrum. When a sample of metal salt is introduced into the thermal zone of a Bunsen burner flame, the heat provides thermal kinetic energy that vaporizes the salt and excites ground-state valence electrons into higher, unstable quantized energy levels (Bohr orbitals).</p>
-      <p>Because the excited state is unstable, the electrons rapidly and spontaneously relax back to lower energy ground states. As they drop, the exact quantized energy difference between the higher state ($E_2$) and lower state ($E_1$) is conserved and released as an electromagnetic wave packet—a <strong>photon</strong>—governed by the Planck-Einstein relation: $E = h\\nu = \\frac{hc}{\\lambda}$.</p>
-      <p>Because each chemical element possesses a unique nuclear charge ($Z$) and electronic orbital configuration, the energy level gaps are characteristic to each atom. Passing the emitted light through a diffraction grating or prism reveals distinct, sharp spectral lines rather than a continuous spectrum.</p>
-    `
-  },
-  learningObjectives: [
-    "Explain how thermal flame energy excites valence electrons into higher Bohr quantum energy levels.",
-    "Relate photon wavelength and frequency to quantized electronic energy transitions using E = hc/λ.",
-    "Identify characteristic flame colors for alkali and alkaline earth metal cations (e.g. Sodium intense yellow 589nm, Potassium lilac 404nm, Copper cyan/green 510nm, Strontium crimson 650nm).",
-    "Interpret discrete atomic emission spectrographs and understand qualitative spectroscopy."
-  ],
-  mathematicalFoundations: {
-    equations: [
-      "E = h\\nu = \\frac{hc}{\\lambda}",
-      "\\Delta E = E_2 - E_1",
-      "\\frac{1}{\\lambda} = R_H \\left( \\frac{1}{n_1^2} - \\frac{1}{n_2^2} \\right) \\text{ (Rydberg Formula)}"
-    ],
-    explanation: "The Planck-Einstein relation dictates that emitted photon energy is inversely proportional to wavelength. Shorter wavelengths (such as blue/violet light from copper or potassium) correspond to larger electronic energy drops, while longer wavelengths (red light from strontium or lithium) represent smaller energy gaps."
-  },
-  realWorldApplications: [
-    "Astrophysics & Stellar Composition: Identifying elemental makeup and temperatures of distant stars via stellar emission lines.",
-    "Pyrotechnics & Fireworks: Engineering vivid firework colors using strontium nitrate (red), barium chlorate (green), and copper chloride (blue).",
-    "Environmental Water Testing: Flame atomic absorption spectroscopy (FAAS) for trace heavy metal detection in municipal drinking water.",
-    "Forensic Science: Identifying trace elemental contaminants on physical evidence."
-  ],
-  howItWorks: "Select a metal salt sample from the reagent rack (such as Sodium Chloride, Potassium Chloride, Copper(II) Sulfate, or Strontium Chloride). Adjust the Bunsen burner air collar to produce a hot, non-luminous blue flame. Dip the virtual platinum wire loop into the solution and position it in the flame. Watch the flame change color, observe the electron jumping animation on the atomic orbital diagram, and inspect the real-time spectrometer wavelength readout.",
-  faqs: [
-    {
-      question: "Why do different elements produce different flame colors?",
-      answer: "Every element has a distinct number of protons in its nucleus, which creates a unique electrostatic potential well for its electron orbitals. As a result, the quantized energy gaps (ΔE) between excited and ground orbitals are element-specific, producing photons of precise wavelengths corresponding to unique colors in the visible spectrum."
-    },
-    {
-      question: "Why must the Bunsen burner flame be blue and non-luminous for flame tests?",
-      answer: "A yellow, luminous flame results from incomplete combustion containing glowing soot (carbon particles), which emits continuous yellow-orange blackbody radiation and obscures the delicate emission colors of the metal ions. A roaring blue flame has complete combustion, minimal background light, and higher temperature to efficiently excite atoms."
-    },
-    {
-      question: "Why does Sodium produce an overwhelmingly bright yellow flame?",
-      answer: "The Sodium D-line doublet (at 589.0 nm and 589.6 nm) corresponds to a 3p → 3s electronic transition with a very high transition probability (oscillator strength), and falls directly in the peak sensitivity range of the human eye."
-    }
-  ],
-  relatedExperiments: []
-};
-
 export default function FlameTestLandingPage() {
   return (
-    <EducationalLandingLayout 
-      content={flameTestContent} 
-      launchUrl="/labs/chemistry/flame-test" 
+    <STEMExperimentLanding
+      subject="chemistry"
+      slug="flame-test"
+      title="Flame Test & Atomic Emission Spectrometry"
+      description="Analytical chemistry laboratory demonstrating quantized orbital electron excitation and discrete photon emission spectra across metal cations."
+      heroDescription="Immerse in virtual qualitative chemical analysis. Dip platinum wire loops into aqueous salt solutions (Na⁺, K⁺, Cu²⁺, Sr²⁺, Ba²⁺, Li⁺, Ca²⁺), introduce them into the Bunsen flame, observe characteristic flame colors, and view discrete spectral emission lines."
+      theory="When a metal salt enters the thermal zone of a Bunsen flame, thermal energy vaporizes the sample and excites valence electrons into higher, unstable quantized energy orbitals. When electrons relax back to lower ground states, the energy difference is emitted as a photon of light governed by the Planck-Einstein relation (ΔE = hν = hc/λ). Because every element has unique energy level spacing, the resulting emission spectrum acts as a definitive optical fingerprint."
+      formula="\Delta E = E_2 - E_1 = h\nu = \frac{hc}{\lambda} \quad (\text{Rydberg: } \frac{1}{\lambda} = R_H Z^2 \left(\frac{1}{n_1^2} - \frac{1}{n_2^2}\right))"
+      formulaLabel="Planck-Einstein Relation & Rydberg Formula"
+      launchUrl="/labs/chemistry/flame-test"
+      heroImageUrl="/images/chemistry/flame-test-hero.png"
+      visualLabel="Bunsen Burner & Optical Spectroscope"
+      visualDetail="7 Metal Salt Solutions • Discrete Emission Line Analyzer • Bunsen Air Collar Control"
+      accent={{ primary: "#059669", secondary: "#0d9488", warm: "#d97706" }}
+      learningObjectives={[
+        "Explain how thermal energy promotes valence electrons to excited quantum states.",
+        "Relate emitted photon wavelength and color to quantized electronic transitions (ΔE = hc/λ).",
+        "Identify unknown metal cations by matching their composite flame colors and spectroscope lines.",
+        "Distinguish between continuous white light spectra and discrete atomic line emission spectra.",
+      ]}
+      applications={[
+        "Pyrotechnics & Fireworks Manufacturing (strontium reds, copper blues, barium greens).",
+        "Astronomical Spectroscopy (determining elemental composition of stars and distant exoplanet atmospheres).",
+        "Clinical Flame Emission Photometry (rapid quantification of sodium and potassium in serum).",
+        "Forensic Chemical Analysis & Environmental Heavy Metal Detection.",
+      ]}
+      faqs={[
+        {
+          question: "Why do different elements produce distinct flame colors?",
+          answer:
+            "Each element has a distinct number of protons in its nucleus, which establishes unique quantized orbital energy levels. The energy differences (ΔE) between excited and ground states correspond to specific photon wavelengths (λ = hc/ΔE) within the visible spectrum.",
+        },
+        {
+          question: "Why is a cobalt blue glass filter used during potassium flame tests?",
+          answer:
+            "Sodium is a common contaminant that produces an intense, persistent yellow flame (589 nm) that masks other colors. Cobalt blue glass absorbs yellow sodium wavelengths while transmitting lilac/violet light, allowing the characteristic violet potassium flame (766 nm) to be observed.",
+        },
+        {
+          question: "What is the difference between an emission spectrum and an absorption spectrum?",
+          answer:
+            "An emission spectrum consists of bright colored lines produced when excited electrons drop to lower energy states, emitting light. An absorption spectrum consists of dark lines superimposed on a continuous spectrum, created when cool gas atoms absorb specific wavelengths from passing white light.",
+        },
+      ]}
     />
   );
 }

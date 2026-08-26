@@ -114,7 +114,7 @@ const HUB_KNOWLEDGE: Record<string, PageKnowledge> = {
   },
 };
 
-// ── 2. COMPREHENSIVE LAB KNOWLEDGE DIRECTORY (ALL 53 LABS) ────────────────────
+// ── 2. COMPREHENSIVE LAB KNOWLEDGE DIRECTORY (ALL 94 LABS) ────────────────────
 
 const LAB_KNOWLEDGE: Record<string, PageKnowledge> = {
   // ────────────────── PHYSICS LABS ──────────────────
@@ -578,6 +578,72 @@ const LAB_KNOWLEDGE: Record<string, PageKnowledge> = {
     ],
     whatToTry: [
       "Increase T_H while keeping T_C constant and observe how the enclosed area of the P-V curve increases (greater net work).",
+    ],
+  },
+
+  "physics/kepler-orbit": {
+    title: "Kepler Orbit & Gravitational Mechanics Studio",
+    overview:
+      "Interactive celestial mechanics simulation exploring Kepler's 3 laws of planetary motion, elliptical orbital trajectories, Vis-Viva velocity equation, swept area conservation, and gravitational acceleration vector dynamics.",
+    howToUse: [
+      "Adjust the Semi-Major Axis slider (a in AU) and Eccentricity (e from 0 to 0.92) to reshape the planetary ellipse.",
+      "Switch display modes to inspect Kepler's 1st Law (Focus & Axes), 2nd Law (Equal Areas in Equal Times with shaded sectors), 3rd Law (Harmonic T² vs a³ plot), and Vector Dynamics.",
+      "Toggle velocity (v) and gravitational acceleration (a) vectors to visualize velocity vector direction changes at perihelion vs aphelion.",
+      "Load presets such as Earth-Sun Standard, Halley's Comet, or Mercury's high-eccentricity orbit.",
+    ],
+    controls: [
+      "Semi-Major Axis slider: 0.4 AU to 5.0 AU",
+      "Eccentricity slider: 0.00 (circular) to 0.92 (highly elliptical)",
+      "Central Star Mass slider: 0.2 M☉ to 3.5 M☉",
+      "Display Mode: Standard Trajectory, Equal Areas Sweeps, Vector Dynamics, Harmonic Line",
+      "Simulation Speed multiplier: 0.5x, 1.0x, 2.5x",
+      "Vector & Grid overlay toggles",
+    ],
+    keyConcepts: [
+      "Kepler's 1st Law (Law of Ellipses): Planet orbits are ellipses with the central star located at one focus: r = a(1 - e²) / (1 + e·cos ν).",
+      "Kepler's 2nd Law (Law of Equal Areas): The radius vector joining the planet to the star sweeps out equal areas in equal intervals of time (dA/dt = L / 2m = constant), proving angular momentum conservation.",
+      "Kepler's 3rd Law (Harmonic Law): The square of the orbital period T is directly proportional to the cube of the semi-major axis a: T² = (4π² / GM)·a³.",
+      "Vis-Viva Equation: v = √[GM(2/r - 1/a)], demonstrating maximum orbital speed at perihelion and minimum speed at aphelion.",
+      "Specific Orbital Energy: ℰ = -GM / (2a), which remains constant everywhere along the bound elliptical trajectory.",
+    ],
+    whatToTry: [
+      "Set eccentricity e = 0.88 for Halley's Comet: observe the dramatic speedup at perihelion and slow coasting at aphelion.",
+      "Double the semi-major axis from 1.0 AU to 2.0 AU: verify the period increases from 1.0 year to ~2.83 years (2^(1.5)).",
+      "Double the central star mass to 2.0 M☉: observe the orbital period shortening by 1/√2 (~0.71x).",
+      "Switch to 'Equal Areas Sweep' mode: inspect the 6 sector wedges and confirm they have identical geometric areas despite differing arc lengths.",
+    ],
+  },
+
+  "physics/doppler-effect": {
+    title: "Doppler Effect & Sonic Boom Physics Studio",
+    overview:
+      "Interactive 2D acoustic and optical wave propagation laboratory simulating frequency pitch shifts, leading wavefront compression, sound barrier shock waves, and supersonic Mach cone envelopes.",
+    howToUse: [
+      "Adjust the Source Velocity slider (v_s in m/s) and Source Frequency (f₀ in Hz) to see moving wavefront distributions.",
+      "Switch propagation media (Earth Air c = 343 m/s, Mars Atmosphere c = 240 m/s, Water c = 1482 m/s).",
+      "Drag or reposition the Observer to hear and measure instantaneous pitch changes as the sound source approaches and recedes.",
+      "Enable the Audio Synthesizer to listen to real-time Doppler pitch drops (classic sirens drive-by effect).",
+      "Exceed Mach 1 (v_s ≥ c) to visualize the supersonic shock envelope and Mach cone half-angle sin(μ) = 1/M.",
+    ],
+    controls: [
+      "Source Velocity slider: 0 to 650 m/s (Subsonic to Mach 1.9)",
+      "Source Frequency slider: 100 Hz to 800 Hz",
+      "Propagation Medium: Air (343 m/s), Mars (240 m/s), Water (1482 m/s)",
+      "Observer Perpendicular Offset (y_o): 10 m to 110 m",
+      "Live Audio Synthesizer toggle with Web Audio API pitch modulator",
+      "Display Modes: Wavefront Propagation, Sonic Boom Mach Cone, Spectral Shift, Audio Pitch Scope",
+    ],
+    keyConcepts: [
+      "Classical Doppler Equation: f' = f₀ · [c / (c ∓ v_s·cos θ)], producing higher pitch during approach and lower pitch during recession.",
+      "Leading Wavelength Compression: λ_front = (c - v_s) / f₀ (wavelength shortens ahead of the moving source).",
+      "Sound Barrier (Mach 1.0): When v_s = c, wavefronts accumulate constructively into a localized high-pressure wall.",
+      "Supersonic Mach Cone: When v_s > c (Mach M > 1), wavefront tangents form a conical shock wave with half-angle sin(μ) = 1/M = c / v_s.",
+      "Optical Relativistic Doppler Shift: Light from approaching cosmic sources blueshifts to higher frequencies, while receding sources redshift.",
+    ],
+    whatToTry: [
+      "Turn on Audio and set v_s = 60 m/s: listen to the abrupt pitch drop as the source sweeps past the observer (x = 0).",
+      "Set medium to Mars (c = 240 m/s) and velocity to 300 m/s: observe supersonic Mach cone formation at speeds that would be subsonic on Earth.",
+      "Increase velocity to Mach 1.8 and measure the Mach cone half-angle: verify μ = arcsin(1/1.8) ≈ 33.7°.",
     ],
   },
 

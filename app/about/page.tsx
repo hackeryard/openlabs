@@ -29,7 +29,7 @@ import {
 export const metadata: Metadata = {
   title: "About OpenLabs - Free Interactive STEM Virtual Labs",
   description:
-    "Learn about OpenLabs, a free in-browser STEM virtual lab platform with 50+ interactive simulations across Physics, Chemistry, Biology, Mathematics, and Computer Science.",
+    "Learn about OpenLabs, a free in-browser STEM virtual lab platform with 94 interactive simulations across Physics, Chemistry, Biology, Mathematics, and Computer Science.",
   alternates: {
     canonical: "/about",
   },
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "About OpenLabs - Free Virtual Labs for STEM Education",
-    description: "Learn about the OpenLabs mission, 50+ interactive simulations, roadmap, and team.",
+    description: "Learn about the OpenLabs mission, 94 interactive simulations, roadmap, and team.",
     images: ["/images/twitter-image.svg"],
   },
   robots: {
@@ -344,7 +344,7 @@ export default function AboutPage() {
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-xs sm:text-sm shadow-sm hover:bg-primary/90 transition-all hover:scale-[1.02]"
             >
               <Beaker size={15} />
-              <span>Explore 50+ Virtual Labs</span>
+              <span>Explore 94 Virtual Labs</span>
             </Link>
             <Link
               href="/leaderboard"
@@ -588,7 +588,7 @@ export default function AboutPage() {
                 Ready to Start Experimenting?
               </h2>
               <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                Dive into 50+ free interactive STEM simulations today. No credit card, no sign-up barrier, no limits.
+                Dive into 94 free interactive STEM simulations today. No credit card, no sign-up barrier, no limits.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
                 <Link

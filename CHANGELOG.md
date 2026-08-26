@@ -2,6 +2,52 @@
 
 All notable changes to OpenLabs are documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/); since the project has no version tags yet, entries are grouped by date instead of version number. Generated from git history; merge commits and duplicate/typo commits are omitted.
 
+- **Universal STEM Landing Page Architecture & Design System Elevation (`components/STEMExperimentLanding.tsx`, Chemistry, Biology, Mathematics)**:
+  - **Unified Multi-Discipline Landing Template (`components/STEMExperimentLanding.tsx`)**:
+    - Standardized all 36 STEM experiment landing pages across Chemistry, Biology, and Mathematics to match the premium Physics design standard.
+    - Discipline-specific dynamic CSS variable color themes:
+      - **Chemistry**: Emerald (`#059669`), Teal (`#0d9488`), Amber (`#d97706`)
+      - **Biology**: Ruby Rose (`#e11d48`), Purple (`#9333ea`), Amber (`#f59e0b`)
+      - **Mathematics**: Amber (`#d97706`), Indigo (`#4f46e5`), Sky (`#0284c7`)
+    - Interactive hero cards with breadcrumbs, gradient typography, kicker pill tags, dual CTAs, Fast Facts telemetry bars, Theory & Background (01), Experiment Execution & Mathematical Foundations (02), and single-open FAQ accordions (03).
+    - Structured Schema.org JSON-LD data (`LearningResource`, `FAQPage`, `BreadcrumbList`) across every landing page.
+    - Integrated with dynamic `FormulaSection` LaTeX renderer and `EducationalGraphSection` knowledge graphs.
+  - **Complete STEM Hero Asset Library (`public/images/`)**:
+    - **10 Chemistry Labs**: `periodictable`, `chemicalbonds`, `electronic-configuration`, `reaction-simulation`, `water-quality`, `titration`, `flame-test`, `vsepr-geometry`, `electrochemistry`, `gas-laws`.
+    - **13 Biology Labs**: `blood`, `brainNeuron`, `cell/animal`, `cell/plant`, `human`, `photosynthesis`, `monohybrid`, `dihybrid`, `transcription-translation`, `pedigree`, `enzyme-kinetics`, `cellular-respiration`, `osmosis-tonicity`.
+    - **13 Mathematics Labs**: `functiongrapher`, `trigonometry`, `polynomials`, `calculus`, `linear-algebra`, `statistics`, `complex-numbers`, `set-theory`, `geometry`, `vector-algebra`, `combinatorics`, `number-theory`, `differential-equations`.
+
+  - **Acoustic & Relativistic Wave Mechanics Engine**:
+    - Real-time 2D Doppler frequency pitch calculation $f' = f_0 [c / (c \mp v_s \cos\theta)]$.
+    - Frontal wavelength compression ($\lambda_f = (c - v_s)/f_0$) and trailing expansion.
+    - Supersonic shock wave **Mach cone** geometry with half-angle $\sin\mu = 1/M = c/v_s$.
+  - **Interactive 4-Mode Vector SVG Acoustic Workbench**:
+    - *Mode 1: Wavefront Propagation* with expanding concentric wave rings and moving vehicle craft.
+    - *Mode 2: Sonic Boom & Mach Cone* with high-pressure shock envelope lines ($M \ge 1.0$).
+    - *Mode 3: Redshift / Blueshift* optical and relativistic Doppler shift spectrum.
+    - *Mode 4: Audio Oscilloscope* with live Web Audio API tone pitch synthesizer.
+  - **4 Bottom Telemetry Readout Cards**: Observed Frequency ($f'$), Mach Number ($M$), Mach Cone Angle ($\mu$), and Frequency Shift ($\Delta f / f_0$).
+  - **Multi-Medium Atmosphere Selector**: Earth Air ($343\text{ m/s}$), Martian $\text{CO}_2$ Atmosphere ($240\text{ m/s}$), Freshwater ($1482\text{ m/s}$).
+
+
+- **Kepler Orbit & Gravitational Mechanics Physics Simulation Studio (`app/components/physics/kepler-orbit/KeplerOrbitLab.tsx`, `engine.ts`, `types.ts`, `/labs/physics/kepler-orbit`, `/physics/kepler-orbit`)**:
+  - **Analytical Celestial Mechanics Engine**:
+    - High-order Newton-Raphson transcendental Kepler equation solver ($M = E - e\sin E$).
+    - Exact Vis-Viva orbital speed calculation ($v = \sqrt{GM(2/r - 1/a)}$) and true anomaly tracking ($\nu$).
+    - Specific mechanical orbital energy ($\mathcal{E} = -GM / 2a$) and Kepler harmonic ratio ($T^2/a^3 = 4\pi^2 / GM$).
+  - **Interactive 4-Mode Vector SVG Orbital Workbench**:
+    - *Mode 1: Elliptical Trajectory* with glowing central star at Focus 1, empty secondary Focus 2, major/minor axes, and perihelion/aphelion markers.
+    - *Mode 2: Equal Areas Sweep* with 6 dynamically shaded geometric sector wedges demonstrating Kepler's 2nd Law ($\Delta A_1 = \Delta A_2$).
+    - *Mode 3: Vector Dynamics* with live tangent velocity vector $\vec{v}(t)$ and central gravitational acceleration vector $\vec{a}(t)$.
+    - *Mode 4: Harmonic Ratio Validator* displaying live $T^2 \text{ vs } a^3$ scaling curves.
+  - **4 Bottom Telemetry Readout Cards**: Orbital Period ($T$), Orbital Speed ($v$), Specific Energy ($\mathcal{E}$), and Kepler Ratio ($T^2/a^3$).
+  - **Presets & CSV Logger**: Instant configurations for Earth-Sun, Halley's Extreme Comet, and Mercury Precession, with CSV snapshot export.
+
+
+- **Global Lab Inventory & Navigation Synchronization**:
+  - Updated all platform-wide lab counts, hero banners, navbar navigations, and curriculum track headers to reflect the accurate total of **94 interactive labs** (CS: 42, Physics: 14, Math: 13, Biology: 13, Chemistry: 12).
+
+
 - **Thermodynamic Heat Engines & Carnot Cycle Physics Simulation Studio Upgrade (`app/components/physics/thermodynamics/ThermodynamicsLab.tsx`, `engine.ts`, `types.ts`)**:
   - **4 Classic Heat Engine Cycles**:
     - *Carnot Cycle (Ideal Reversible Limit)* with isothermal expansion/compression and isentropic adiabats.

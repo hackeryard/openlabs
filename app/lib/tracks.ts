@@ -36,7 +36,7 @@ export interface TrackProgress {
   status: "not_started" | "in_progress" | "completed";
 }
 
-// ── 13 GUIDED CURRICULUM TRACKS (MAPPING ALL 53 LABS) ─────────────────────────
+// ── GUIDED CURRICULUM TRACKS (MAPPING 94 LABS) ─────────────────────────
 
 export const CURRICULUM_TRACKS: CurriculumTrack[] = [
   // ─── PHYSICS TRACKS ─────────────────────────────────────────────────────────
@@ -98,6 +98,14 @@ export const CURRICULUM_TRACKS: CurriculumTrack[] = [
         estimatedMinutes: 15,
         simRoute: "/labs/physics/simplependulum",
         landingRoute: "/physics/simplependulum",
+      },
+      {
+        labId: "physics/kepler-orbit",
+        title: "Kepler Orbit & Gravitational Mechanics",
+        description: "Elliptical planetary orbits, Kepler's 3 laws, Vis-Viva velocity equations, and equal swept area conservation.",
+        estimatedMinutes: 18,
+        simRoute: "/labs/physics/kepler-orbit",
+        landingRoute: "/physics/kepler-orbit",
       },
     ],
   },
@@ -188,6 +196,14 @@ export const CURRICULUM_TRACKS: CurriculumTrack[] = [
         estimatedMinutes: 20,
         simRoute: "/labs/physics/thermodynamics",
         landingRoute: "/physics/thermodynamics",
+      },
+      {
+        labId: "physics/doppler-effect",
+        title: "Doppler Effect & Sonic Boom",
+        description: "Moving wave sources, wavefront compression, sonic barrier shock waves, and supersonic Mach cone envelopes.",
+        estimatedMinutes: 16,
+        simRoute: "/labs/physics/doppler-effect",
+        landingRoute: "/physics/doppler-effect",
       },
     ],
   },

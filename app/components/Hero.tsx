@@ -19,20 +19,20 @@ import AnimatedCard from "@/components/ui/AnimatedCard";
 
 const labsData = {
   Physics: {
-    count: "14 Labs",
+    count: "16 Labs",
     color: "from-blue-600 to-cyan-500",
     badge: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
     icon: <Atom className="w-5 h-5" aria-hidden="true" />,
     path: "/physics",
     items: [
+      { name: "Doppler Effect & Sonic Boom", path: "/physics/doppler-effect" },
+      { name: "Kepler Orbit Dynamics", path: "/physics/kepler-orbit" },
       { name: "Free Fall Motion", path: "/physics/freefall" },
-      { name: "Projectile Motion", path: "/physics/projectilemotion" },
-      { name: "Ohm's Law & Circuit", path: "/physics/ohmslaw" },
-      { name: "Wave Optics & Slits", path: "/physics/waveoptics" },
+      { name: "Faraday's Law", path: "/physics/faradays-law" },
     ],
   },
   Chemistry: {
-    count: "4 Labs",
+    count: "12 Labs",
     color: "from-emerald-600 to-teal-400",
     badge: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
     icon: <Flame className="w-5 h-5" aria-hidden="true" />,
@@ -45,7 +45,7 @@ const labsData = {
     ],
   },
   Biology: {
-    count: "3 Labs",
+    count: "13 Labs",
     color: "from-rose-600 to-pink-500",
     badge: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20",
     icon: <Dna className="w-5 h-5" aria-hidden="true" />,
@@ -53,12 +53,12 @@ const labsData = {
     items: [
       { name: "Genetics & Inheritance", path: "/biology/genetics" },
       { name: "3D Animal Cell", path: "/biology/cell/animal" },
-      { name: "3D Plant Cell", path: "/biology/cell/plant" },
+      { name: "Photosynthesis", path: "/biology/photosynthesis" },
       { name: "Human Anatomy Lab", path: "/biology/human" },
     ],
   },
   Mathematics: {
-    count: "12 Labs",
+    count: "13 Labs",
     color: "from-amber-600 to-orange-500",
     badge: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
     icon: <Calculator className="w-5 h-5" aria-hidden="true" />,
@@ -71,7 +71,7 @@ const labsData = {
     ],
   },
   "Computer Science": {
-    count: "19+ Labs",
+    count: "42 Labs",
     color: "from-purple-600 to-indigo-500",
     badge: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20",
     icon: <Binary className="w-5 h-5" aria-hidden="true" />,
@@ -79,18 +79,18 @@ const labsData = {
     items: [
       { name: "HTML/CSS/JS Sandbox", path: "/computer-science/code-lab/html-css-js" },
       { name: "Logic Gates Studio", path: "/computer-science/logic-gates" },
-      { name: "Sorting Visualizer", path: "/computer-science/dsa/sorting-algorithms" },
+      { name: "DSA Algorithms", path: "/computer-science/dsa" },
       { name: "Network Topologies", path: "/computer-science/networking" },
     ],
   },
 };
 
 const quickSubjects = [
-  { label: "Physics (14)", path: "/physics", bg: "bg-blue-600 hover:bg-blue-500" },
-  { label: "Chemistry (4)", path: "/chemistry", bg: "bg-emerald-600 hover:bg-emerald-500" },
-  { label: "Biology (3)", path: "/biology", bg: "bg-rose-600 hover:bg-rose-500" },
-  { label: "Mathematics (12)", path: "/mathematics", bg: "bg-amber-600 hover:bg-amber-500" },
-  { label: "Computer Science (19+)", path: "/computer-science", bg: "bg-purple-600 hover:bg-purple-500" },
+  { label: "Physics (16)", path: "/physics", bg: "bg-blue-600 hover:bg-blue-500" },
+  { label: "Chemistry (12)", path: "/chemistry", bg: "bg-emerald-600 hover:bg-emerald-500" },
+  { label: "Biology (13)", path: "/biology", bg: "bg-rose-600 hover:bg-rose-500" },
+  { label: "Mathematics (13)", path: "/mathematics", bg: "bg-amber-600 hover:bg-amber-500" },
+  { label: "Computer Science (42)", path: "/computer-science", bg: "bg-purple-600 hover:bg-purple-500" },
 ];
 
 export default function Hero() {
@@ -109,7 +109,7 @@ export default function Hero() {
           <div className="text-center lg:text-left order-2 lg:order-1 lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-black uppercase tracking-widest shadow-xs">
               <Sparkles size={13} className="text-primary" />
-              <span>50+ Interactive Science Simulations</span>
+              <span>96 Interactive Science Simulations</span>
             </div>
 
             <h1
@@ -154,7 +154,7 @@ export default function Hero() {
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-bold text-xs sm:text-sm shadow-md hover:bg-primary/90 transition-all hover:scale-[1.02]"
               >
                 <Beaker size={16} />
-                <span>Explore All 50+ Labs</span>
+                <span>Explore All 96 Labs</span>
               </Link>
               <Link
                 href="/leaderboard"

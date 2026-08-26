@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import EducationalLandingLayout from "@/components/EducationalLandingLayout";
+import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
 export const metadata: Metadata = {
   title: "Enzyme Kinetics & Catalysis Simulation Virtual Lab | OpenLabs",
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     "competitive noncompetitive inhibition",
     "enzyme substrate induced fit",
     "vmax and km calculation",
-    "biology virtual lab"
+    "biology virtual lab",
   ],
   alternates: {
     canonical: "https://www.openlabs.org.in/biology/enzyme-kinetics",
@@ -40,67 +40,51 @@ export const metadata: Metadata = {
   },
 };
 
-const enzymeContent = {
-  slug: "enzyme-kinetics",
-  subject: "Biology",
-  title: "Enzyme Kinetics & Catalysis",
-  description: "An interactive biochemistry simulation modeling enzyme-substrate collisions, induced-fit catalytic active sites, competitive and allosteric inhibition, denaturation, and Michaelis-Menten / Lineweaver-Burk plots.",
-  difficulty: "Intermediate" as const,
-  estimatedTime: "25 minutes",
-  heroDescription: "Explore biochemical catalysis at the molecular scale. Control substrate and inhibitor concentrations, adjust environmental temperature and pH, watch induced-fit conformational binding in real time, and trace live Michaelis-Menten saturation and Lineweaver-Burk double-reciprocal graphs.",
-  theory: {
-    content: `
-      <p><strong>Enzymes</strong> are biological protein catalysts that accelerate the rates of metabolic biochemical reactions by lowering activation energy ($E_a$) without being consumed. Catalysis occurs in a specialized three-dimensional pocket called the <strong>active site</strong>. According to the <em>induced-fit model</em>, substrate binding triggers subtle conformational changes in the enzyme that orient catalytic residues and stabilize the high-energy transition state ($[ES]^\\ddagger$), accelerating product formation.</p>
-      <p>The rate of an enzyme-catalyzed reaction ($V$) as a function of substrate concentration ($[S]$) is modeled by the <strong>Michaelis-Menten Equation</strong>:</p>
-      <p style="text-align: center; font-weight: bold;">V = \\frac{V_{\\text{max}} [S]}{K_m + [S]}</p>
-      <p>where $V_{\\text{max}}$ is the maximum theoretical reaction rate at complete enzyme saturation, and $K_m$ (the Michaelis constant) is the substrate concentration at which the reaction velocity reaches half of $V_{\\text{max}}$ ($V = \\frac{1}{2} V_{\\text{max}}$), serving as an inverse measure of enzyme-substrate binding affinity.</p>
-      <p>Enzyme function is regulated by <strong>inhibitors</strong> (competitive, non-competitive, and uncompetitive) and is bounded by optimal temperature and pH ranges, beyond which tertiary hydrogen bonds rupture, causing irreversible <strong>denaturation</strong>.</p>
-    `
-  },
-  learningObjectives: [
-    "Define V_max, K_m, and explain their biochemical significance on a saturation curve.",
-    "Differentiate the kinetic signatures of Competitive (K_m increases, V_max constant), Non-Competitive (V_max decreases, K_m constant), and Uncompetitive (both decrease) inhibitors.",
-    "Transform hyperbolic saturation data into linear Lineweaver-Burk (1/V vs 1/[S]) and Eadie-Hofstee plots.",
-    "Explain how extreme temperature (>55°C) and pH disrupt non-covalent tertiary folding, causing enzyme denaturation."
-  ],
-  mathematicalFoundations: {
-    equations: [
-      "V = \\frac{V_{\\text{max}} [S]}{K_m + [S]} \\text{ (Michaelis-Menten)}",
-      "\\frac{1}{V} = \\left(\\frac{K_m}{V_{\\text{max}}}\\right) \\frac{1}{[S]} + \\frac{1}{V_{\\text{max}}} \\text{ (Lineweaver-Burk)}",
-      "V = -K_m \\left(\\frac{V}{[S]}\\right) + V_{\\text{max}} \\text{ (Eadie-Hofstee)}",
-      "k_{\\text{cat}} = \\frac{V_{\\text{max}}}{[E]_{\\text{total}}} \\text{ (Catalytic Turnover Rate)}"
-    ],
-    explanation: "On a Lineweaver-Burk double-reciprocal plot, the y-intercept represents 1/V_max, the x-intercept represents -1/K_m, and the slope equals K_m/V_max. Competitive inhibitors alter only the slope and x-intercept; non-competitive inhibitors increase both the slope and y-intercept."
-  },
-  realWorldApplications: [
-    "Pharmaceutical Drug Design: Developing competitive enzyme inhibitors like statins (HMG-CoA reductase inhibitors for cholesterol) and penicillin (transpeptidase inhibitor).",
-    "Clinical Diagnostics: Measuring elevated serum enzymes (e.g. lactate dehydrogenase, troponin, amylase) to diagnose myocardial infarction and acute pancreatitis.",
-    "Industrial Biotechnology: Optimizing immobilized enzymes for biofuel production, high-fructose corn syrup synthesis, and detergent formulations.",
-    "Toxicology & Nerve Agents: Organophosphate pesticides irreversibly inhibiting acetylcholinesterase at neural synapses."
-  ],
-  howItWorks: "Adjust substrate concentration [S] and watch the real-time Brownian collisions between substrates and the central enzyme molecule. Toggle between inhibitor modes (Competitive, Non-Competitive, Uncompetitive) and adjust inhibitor concentration [I]. Modify temperature and pH sliders to observe denaturation. Switch plot modes between Michaelis-Menten, Lineweaver-Burk, and Eadie-Hofstee to watch kinetic curves update dynamically.",
-  faqs: [
-    {
-      question: "Why does a lower Km value indicate higher enzyme-substrate affinity?",
-      answer: "Km is the substrate concentration required to occupy 50% of the active sites. If an enzyme achieves half-maximum velocity at a very low substrate concentration, it means the enzyme binds its substrate very tightly (high affinity). Conversely, a high Km means high substrate concentrations are necessary to drive binding (low affinity)."
-    },
-    {
-      question: "How can you tell the difference between competitive and non-competitive inhibition on a Lineweaver-Burk plot?",
-      answer: "In competitive inhibition, adding excess substrate overcomes the inhibitor, so Vmax is unchanged; on the plot, lines with and without inhibitor share the exact same y-intercept (1/Vmax) but cross the x-axis at different points (-1/Km). In non-competitive inhibition, the inhibitor binds an allosteric site and permanently lowers Vmax without altering substrate binding affinity (Km); on the plot, lines share the same x-intercept (-1/Km) but have different y-intercepts."
-    },
-    {
-      question: "What happens to enzyme structure during thermal denaturation?",
-      answer: "As temperature exceeds the physiological optimum (~40-50°C), increased thermal vibrations break the delicate non-covalent interactions (hydrogen bonds, ionic salt bridges, hydrophobic interactions) that maintain the enzyme's specific 3D tertiary and quaternary folding. The protein unfolds into an inactive random polypeptide coil, destroying the catalytic active site."
-    }
-  ],
-  relatedExperiments: []
-};
-
 export default function EnzymeKineticsLandingPage() {
   return (
-    <EducationalLandingLayout 
-      content={enzymeContent} 
-      launchUrl="/labs/biology/enzyme-kinetics" 
+    <STEMExperimentLanding
+      subject="biology"
+      slug="enzyme-kinetics"
+      title="Enzyme Kinetics & Catalysis"
+      description="Interactive biochemistry laboratory simulating enzyme-substrate binding, induced fit active sites, competitive/non-competitive inhibition, and Lineweaver-Burk plots."
+      heroDescription="Explore biochemical catalysis at the molecular scale. Control substrate and inhibitor concentrations, adjust environmental temperature and pH, watch induced-fit conformational binding in real time, and trace live Michaelis-Menten saturation and Lineweaver-Burk graphs."
+      theory="Enzymes are specialized protein catalysts that accelerate biochemical reaction rates by stabilizing high-energy transition states and lowering activation energy (E_a). The reaction velocity (v) as a function of substrate concentration [S] follows the hyperbolic Michaelis-Menten equation. The Lineweaver-Burk double reciprocal transformation (1/v vs 1/[S]) yields a linear relationship that clearly distinguishes competitive inhibition (increased apparent K_m, unchanged V_max) from non-competitive allosteric inhibition (decreased V_max, unchanged K_m)."
+      formula="v = \frac{V_{\max}[S]}{K_m + [S]} \quad \text{and} \quad \frac{1}{v} = \left(\frac{K_m}{V_{\max}}\right)\frac{1}{[S]} + \frac{1}{V_{\max}}"
+      formulaLabel="Michaelis-Menten Equation & Lineweaver-Burk Double Reciprocal"
+      launchUrl="/labs/biology/enzyme-kinetics"
+      heroImageUrl="/images/biology/enzyme-kinetics-hero.png"
+      visualLabel="Enzymatic Active Site & Kinetic Grapher"
+      visualDetail="Induced Fit Substrate Docking • Competitive/Allosteric Modes • Live Lineweaver-Burk Linear Fit"
+      accent={{ primary: "#e11d48", secondary: "#059669", warm: "#f59e0b" }}
+      learningObjectives={[
+        "Calculate maximum reaction velocity (V_max), Michaelis constant (K_m), and catalytic turnover number (k_cat).",
+        "Differentiate competitive vs non-competitive vs uncompetitive inhibition using Lineweaver-Burk slope and intercept shifts.",
+        "Model thermal and extreme pH protein denaturation resulting from the disruption of tertiary hydrogen and ionic bonds.",
+        "Explain how the induced-fit model optimizes active site catalytic geometry.",
+      ]}
+      applications={[
+        "Pharmaceutical Drug Discovery (designing competitive protease and kinase inhibitors).",
+        "Clinical Diagnostic Enzymology (serum LDH, ALT, and cardiac troponin biomarker assays).",
+        "Industrial Food & Beverage Bioprocessing (pectinases, lactases, and amylases).",
+        "Bioremediation & Enzymatic Plastic Degradation (engineered PETase enzymes).",
+      ]}
+      faqs={[
+        {
+          question: "What does the Michaelis constant (K_m) represent physically?",
+          answer:
+            "K_m is the substrate concentration at which the reaction velocity reaches half of its maximum value (v = 1/2 V_max). A low K_m indicates high enzyme-substrate binding affinity (little substrate needed for half-saturation), whereas a high K_m indicates lower affinity.",
+        },
+        {
+          question: "How does competitive inhibition differ from non-competitive inhibition on a Lineweaver-Burk plot?",
+          answer:
+            "In competitive inhibition (where the inhibitor binds the active site), V_max remains unchanged but apparent K_m increases; lines on the plot share the same y-intercept (1/V_max) but have different x-intercepts. In non-competitive inhibition (allosteric binding), K_m is unchanged but V_max decreases; lines share the same x-intercept (-1/K_m) but have higher y-intercepts.",
+        },
+        {
+          question: "Why does enzyme activity drop sharply beyond its optimum temperature?",
+          answer:
+            "Excess thermal kinetic energy breaks the non-covalent interactions (hydrogen bonds, ionic interactions, hydrophobic packing) that stabilize the enzyme's specific 3D tertiary and quaternary structure, permanently denaturing the active site.",
+        },
+      ]}
     />
   );
 }
