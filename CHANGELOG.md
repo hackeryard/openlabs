@@ -2,6 +2,36 @@
 
 All notable changes to OpenLabs are documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/); since the project has no version tags yet, entries are grouped by date instead of version number. Generated from git history; merge commits and duplicate/typo commits are omitted.
 
+- **Thermodynamic Heat Engines & Carnot Cycle Physics Simulation Studio Upgrade (`app/components/physics/thermodynamics/ThermodynamicsLab.tsx`, `engine.ts`, `types.ts`)**:
+  - **4 Classic Heat Engine Cycles**:
+    - *Carnot Cycle (Ideal Reversible Limit)* with isothermal expansion/compression and isentropic adiabats.
+    - *Otto Cycle (4-Stroke Gasoline ICE)* with adiabatic compression, isochoric spark ignition, and exhaust blowdown.
+    - *Diesel Cycle (Compression Ignition)* with isobaric fuel injection and high compression ratios ($r = 4 - 24$).
+    - *Stirling Closed-Cycle Engine* with isothermal heat exchange and internal regenerator matrix.
+  - **Interactive Cylinder-Piston Engine & Flywheel**:
+    - Moving piston head, connecting rod, and rotating heavy flywheel with live RPM counter.
+    - Gas kinetic particles inside chamber with thermal velocities scaling as $\sqrt{T}$.
+    - Thermal reservoir switching at base ($T_H$ hot source flame vs $T_C$ cold sink ice crystal).
+  - **Synchronized Real-Time Indicator Diagrams**:
+    - Toggle between *P-V Indicator Loop ($W_{net} = \oint P\,dV$)* and *T-S Temperature-Entropy Diagram*.
+    - Shaded enclosed loop area, corner state points ($1, 2, 3, 4$), and real-time state tracer dot.
+  - **Right-Column Telemetry Dock & Controls**:
+    - 4 live cards placed at the bottom of the right column: *Thermal Efficiency ($\eta$)*, *Carnot Limit ($\eta_{max}$)*, *Net Work Output ($W_{net}$)*, and *Heat Input ($Q_{in}$)*.
+    - Full parameter controls for $T_H$, $T_C$, compression ratio $r$, working gas mixture (monatomic, diatomic, polyatomic), and RPM.
+
+
+- **Electromagnetic Induction & Faraday's Law Physics Simulation Studio Upgrade (`app/components/physics/faradays-law/FaradaysLawLab.tsx`, `InductionCanvas.tsx`, `ControlPanel.tsx`, `OscilloscopePanel.tsx`, `TheoryPanel.tsx`, `DataTable.tsx`, `engine.ts`, `types.ts`)**:
+  - **4 Dedicated Simulation Modes**:
+    - *Mode 1: Solenoid & Bar Magnet Plunger* with manual drag, harmonic plunger oscillator ($f = 0.2 - 4\text{ Hz}$), magnetic field streamlines, permeable cores (Air, Ferrite, Soft Iron), Lenz's Law opposing field vector ($\mathbf{B}_{ind}$), and load devices (Incandescent bulb, Galvanometer, Buzzer).
+    - *Mode 2: AC Dynamo & DC Generator* with turbine rotor, adjustable RPM ($0 - 3000\text{ RPM}$), slip rings vs split-ring commutator (sinusoidal vs full-wave rectified DC), and peak/RMS telemetry.
+    - *Mode 3: Mutual Induction & Iron-Core Transformer* with primary ($N_p$) and secondary ($N_s$) windings on a laminated ferromagnetic core, voltage transformation ($\frac{V_s}{V_p} = \frac{N_s}{N_p}$), core coupling factor $k$, and efficiency metrics.
+    - *Mode 4: Lenz's Law Eddy Current Tube Drop* comparing Neodymium magnet vs Brass slug in Copper, Aluminum, and Acrylic tubes with live eddy current magnetic braking force and terminal velocity.
+  - **Multi-Channel Virtual Oscilloscope**: Live plotting of Induced EMF $\mathcal{E}(t)$, Magnetic Flux $\Phi_B(t)$, and Current $I(t)$ with voltage/time scaling, pause/freeze triggers, and RMS readouts.
+  - **Web Audio Hum Synthesizer**: Interactive inductive acoustic hum whose frequency and volume scale dynamically with rotational speed, AC frequency, and induced EMF.
+  - **Comprehensive Theory Matrix & Data Logger**: Maxwell-Faraday differential equation, Lenz's conservation rule, transformer ratio derivations, experiment trial recorder, and CSV export.
+  - **Full 9-Step Integration**: Connected to `useLab()` XP gamification, `<DailyChallengeCard />`, AI Tutor page knowledge context, and curriculum tracks.
+
+
 - **Uniform Motion & Multi-Body Kinematics Physics Simulation Studio Upgrade (`app/components/physics/uniformmotion/UniformMotionStudio.tsx`, `app/components/physics/UniformMotionLab.jsx`, `app/labs/physics/uniformmotionlab/page.tsx`, `app/physics/uniformmotionlab/page.tsx`, `app/lib/pageKnowledge.ts`, `app/lib/labs.ts`, `app/lib/tracks.ts`, `app/physics/page.tsx`)**:
   - **1D Kinematics & Analytical Solver Engine**: Real-time integration of the Big 4 Kinematic Equations ($x(t) = x_0 + v_0 t + \frac{1}{2}at^2$, $v(t) = v_0 + at$, $v^2 = v_0^2 + 2a\Delta x$), stopping distance formulas ($d_{\text{stop}} = \frac{v_0^2}{2|a|}$), and two-body overtaking interception mathematics ($x_A(t) = x_B(t)$).
   - **Interactive Multi-Mode Kinematics Stage**:
