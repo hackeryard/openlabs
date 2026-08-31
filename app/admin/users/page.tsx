@@ -28,6 +28,9 @@ import {
   TrendingUp,
   ArrowUp,
   ExternalLink,
+  Globe,
+  MapPin,
+  Clock,
 } from "lucide-react";
 
 interface UserListItem {
@@ -44,15 +47,48 @@ interface UserListItem {
   xp: number;
   level: number;
   streak: number;
+  highestStreak?: number;
   lastActiveDate?: string;
+
   aiQueriesCount: number;
   completedExperimentsCount: number;
   badgesCount: number;
   subjectCount: number;
+  location?: {
+    ip?: string;
+    city?: string;
+    region?: string;
+    country?: string;
+    countryCode?: string;
+    timezone?: string;
+    lastUpdated?: string;
+  } | null;
+  loginHistoryCount?: number;
 }
 
 interface FullUserDetail extends UserListItem {
+  location?: {
+    ip?: string;
+    city?: string;
+    region?: string;
+    country?: string;
+    countryCode?: string;
+    timezone?: string;
+    latitude?: number;
+    longitude?: number;
+    lastUpdated?: string;
+  } | null;
+  loginHistory?: Array<{
+    ip?: string;
+    city?: string;
+    region?: string;
+    country?: string;
+    countryCode?: string;
+    userAgent?: string;
+    timestamp?: string;
+  }>;
   badges?: Array<{ id: string; name: string; earnedAt?: string; pinned?: boolean }>;
+
   completedExperiments?: Array<{
     experimentId: string;
     subject: string;
@@ -640,41 +676,41 @@ export default function AdminUsersDashboard() {
         </div>
 
         {/* Data Table */}
-        <div className="bg-card rounded-3xl border border-border overflow-hidden shadow-sm">
+        <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-muted/70 border-b border-border text-xs font-extrabold text-muted-foreground uppercase tracking-wider select-none">
+                <tr className="bg-muted/70 border-b border-border text-[11px] font-extrabold text-muted-foreground uppercase tracking-wider select-none">
 
                   {/* Name Sort Header */}
                   <th
                     onClick={() => handleSortToggle("name")}
-                    className="px-6 py-4 cursor-pointer hover:text-foreground transition"
+                    className="px-4 py-2.5 cursor-pointer hover:text-foreground transition"
                   >
                     <div className="flex items-center gap-1.5">
                       <span>User</span>
                       {sortField === "name" ? (
-                        sortDirection === "asc" ? <ArrowUp size={13} /> : <ArrowDown size={13} />
+                        sortDirection === "asc" ? <ArrowUp size={12} /> : <ArrowDown size={12} />
                       ) : (
-                        <ArrowUpDown size={13} className="opacity-40" />
+                        <ArrowUpDown size={12} className="opacity-40" />
                       )}
                     </div>
                   </th>
 
                   {/* Verification Status */}
-                  <th className="px-6 py-4">Status</th>
+                  <th className="px-4 py-2.5">Status</th>
 
                   {/* XP & Level Sort Header */}
                   <th
                     onClick={() => handleSortToggle("xp")}
-                    className="px-6 py-4 cursor-pointer hover:text-foreground transition"
+                    className="px-4 py-2.5 cursor-pointer hover:text-foreground transition"
                   >
                     <div className="flex items-center gap-1.5">
-                      <span>Gamification (XP / Level)</span>
+                      <span>XP / Level</span>
                       {sortField === "xp" ? (
-                        sortDirection === "asc" ? <ArrowUp size={13} /> : <ArrowDown size={13} />
+                        sortDirection === "asc" ? <ArrowUp size={12} /> : <ArrowDown size={12} />
                       ) : (
-                        <ArrowUpDown size={13} className="opacity-40" />
+                        <ArrowUpDown size={12} className="opacity-40" />
                       )}
                     </div>
                   </th>
@@ -682,14 +718,14 @@ export default function AdminUsersDashboard() {
                   {/* Labs Completed Sort Header */}
                   <th
                     onClick={() => handleSortToggle("completedExperimentsCount")}
-                    className="px-6 py-4 cursor-pointer hover:text-foreground transition"
+                    className="px-4 py-2.5 cursor-pointer hover:text-foreground transition"
                   >
                     <div className="flex items-center gap-1.5">
-                      <span>Labs Completed</span>
+                      <span>Labs</span>
                       {sortField === "completedExperimentsCount" ? (
-                        sortDirection === "asc" ? <ArrowUp size={13} /> : <ArrowDown size={13} />
+                        sortDirection === "asc" ? <ArrowUp size={12} /> : <ArrowDown size={12} />
                       ) : (
-                        <ArrowUpDown size={13} className="opacity-40" />
+                        <ArrowUpDown size={12} className="opacity-40" />
                       )}
                     </div>
                   </th>
@@ -697,35 +733,43 @@ export default function AdminUsersDashboard() {
                   {/* AI Queries Sort Header */}
                   <th
                     onClick={() => handleSortToggle("aiQueriesCount")}
-                    className="px-6 py-4 cursor-pointer hover:text-foreground transition"
+                    className="px-4 py-2.5 cursor-pointer hover:text-foreground transition"
                   >
                     <div className="flex items-center gap-1.5">
                       <span>AI Queries</span>
                       {sortField === "aiQueriesCount" ? (
-                        sortDirection === "asc" ? <ArrowUp size={13} /> : <ArrowDown size={13} />
+                        sortDirection === "asc" ? <ArrowUp size={12} /> : <ArrowDown size={12} />
                       ) : (
-                        <ArrowUpDown size={13} className="opacity-40" />
+                        <ArrowUpDown size={12} className="opacity-40" />
                       )}
+                    </div>
+                  </th>
+
+                  {/* Location Header */}
+                  <th className="px-4 py-2.5">
+                    <div className="flex items-center gap-1.5">
+                      <Globe size={12} className="text-primary" />
+                      <span>Location</span>
                     </div>
                   </th>
 
                   {/* Joined Date Sort Header */}
                   <th
                     onClick={() => handleSortToggle("createdAt")}
-                    className="px-6 py-4 cursor-pointer hover:text-foreground transition"
+                    className="px-4 py-2.5 cursor-pointer hover:text-foreground transition"
                   >
                     <div className="flex items-center gap-1.5">
-                      <span>Joined Date</span>
+                      <span>Joined</span>
                       {sortField === "createdAt" ? (
-                        sortDirection === "asc" ? <ArrowUp size={13} /> : <ArrowDown size={13} />
+                        sortDirection === "asc" ? <ArrowUp size={12} /> : <ArrowDown size={12} />
                       ) : (
-                        <ArrowUpDown size={13} className="opacity-40" />
+                        <ArrowUpDown size={12} className="opacity-40" />
                       )}
                     </div>
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border text-sm">
+              <tbody className="divide-y divide-border text-xs">
                 {paginatedUsers.map((user) => (
                   <tr
                     key={user._id}
@@ -735,112 +779,152 @@ export default function AdminUsersDashboard() {
                   >
 
                     {/* User Profile Info */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-extrabold text-sm overflow-hidden flex-shrink-0 shadow-sm">
+                    <td className="px-4 py-2">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-extrabold text-xs overflow-hidden shrink-0 shadow-sm">
                           {user.avatar ? (
                             <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
                           ) : (
                             user.name.charAt(0).toUpperCase()
                           )}
                         </div>
-                        <div>
-                          <div className="font-extrabold text-foreground flex items-center gap-2 flex-wrap">
-                            <span className="group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{user.name}</span>
+                        <div className="min-w-0">
+                          <div className="font-bold text-foreground flex items-center gap-1.5 flex-wrap leading-tight">
+                            <span
+                              className="group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors max-w-[150px] sm:max-w-[190px] truncate inline-block"
+                              title={user.name}
+                            >
+                              {user.name}
+                            </span>
                             {user.role === "admin" && (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 text-[10px] font-black tracking-wide uppercase">
-                                <Shield size={10} /> Admin
+                              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 text-[9px] font-black uppercase shrink-0">
+                                <Shield size={9} /> Admin
                               </span>
                             )}
                             {user.role === "moderator" && (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 text-[10px] font-black tracking-wide uppercase">
-                                <Shield size={10} /> Mod
+                              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 text-[9px] font-black uppercase shrink-0">
+                                <Shield size={9} /> Mod
                               </span>
                             )}
                             {user.username && (
-                              <span className="text-xs font-medium text-indigo-600 bg-indigo-50 dark:bg-indigo-950/50 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800">
+                              <span
+                                className="text-[11px] font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50 px-1.5 py-0.2 rounded border border-indigo-200 dark:border-indigo-800 max-w-[120px] truncate inline-block"
+                                title={`@${user.username}`}
+                              >
                                 @{user.username}
                               </span>
                             )}
                           </div>
-                          <div className="text-xs text-muted-foreground font-mono flex items-center gap-1 mt-0.5">
-                            <Mail size={12} /> {user.email}
+                          <div
+                            className="text-[11px] text-muted-foreground font-mono flex items-center gap-1 max-w-[200px] truncate"
+                            title={user.email}
+                          >
+                            <Mail size={10} className="shrink-0" />
+                            <span className="truncate">{user.email}</span>
                           </div>
                         </div>
                       </div>
                     </td>
 
                     {/* Email Verification */}
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-2">
                       {user.emailVerified ? (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 text-xs font-extrabold border border-emerald-200 dark:border-emerald-800">
-                          <CheckCircle2 size={13} /> Verified
+                        <span
+                          className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-sm"
+                          title="Email Verified"
+                        >
+                          <CheckCircle2 size={12} />
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400 text-xs font-extrabold border border-amber-200 dark:border-amber-800">
-                          <XCircle size={13} /> Unverified
+                        <span
+                          className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 shadow-sm"
+                          title="Email Unverified / Pending"
+                        >
+                          <XCircle size={12} />
                         </span>
                       )}
                     </td>
 
+
                     {/* Gamification Stats */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1 text-amber-500 font-extrabold text-xs">
-                          <Zap size={14} /> {user.xp.toLocaleString()} XP
+                    <td className="px-4 py-2">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-0.5 text-amber-500 font-bold text-xs">
+                          <Zap size={12} /> {user.xp.toLocaleString()}
                         </div>
-                        <div className="text-xs font-bold text-muted-foreground">
-                          Lvl {user.level}
+                        <div className="text-[11px] font-bold text-muted-foreground">
+                          L{user.level}
                         </div>
                         {user.streak > 0 && (
-                          <div className="flex items-center gap-0.5 text-orange-500 font-extrabold text-xs">
-                            <Flame size={14} /> {user.streak}d
+                          <div className="flex items-center gap-0.5 text-orange-500 font-bold text-[11px]">
+                            <Flame size={12} /> {user.streak}d
                           </div>
                         )}
                       </div>
                     </td>
 
                     {/* Labs Completed */}
-                    <td className="px-6 py-4 text-xs font-bold text-foreground">
-                      <span className="px-2.5 py-1 rounded-lg bg-muted border border-border">
-                        {user.completedExperimentsCount} Labs
+                    <td className="px-4 py-2 text-xs font-bold text-foreground">
+                      <span
+                        className="px-2 py-0.5 rounded-md bg-muted border border-border text-[11px] font-mono"
+                        title={`${user.completedExperimentsCount} Completed Labs`}
+                      >
+                        {user.completedExperimentsCount}
                       </span>
                     </td>
 
+
                     {/* AI Queries */}
-                    <td className="px-6 py-4 text-xs font-bold text-pink-500 flex items-center gap-1 mt-2">
-                      <Bot size={14} /> {user.aiQueriesCount}
+                    <td className="px-4 py-2 text-xs font-bold text-pink-500">
+                      <div className="flex items-center gap-1 text-[11px]">
+                        <Bot size={12} /> {user.aiQueriesCount}
+                      </div>
                     </td>
 
-                    {/* Joined Date & Time */}
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {user.createdAt ? (
-                        <div className="space-y-0.5 font-mono">
-                          <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                    {/* Location Telemetry */}
+                    <td className="px-4 py-2 whitespace-nowrap">
+                      {user.location?.country ? (
+                        <div className="space-y-0.5 leading-tight">
+                          <div className="font-semibold text-foreground text-[11px] flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
                             <span>
-                              {new Date(user.createdAt).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                second: "2-digit",
-                                hour12: true,
-                              })}
+                              {user.location.city ? `${user.location.city}, ` : ""}{user.location.country}
                             </span>
                           </div>
-                          <div className="text-[11px] text-muted-foreground">
-                            <span>
-                              {new Date(user.createdAt).toLocaleDateString([], {
-                                month: "short",
-                                day: "numeric",
-                                year: "numeric",
-                              })}
-                            </span>
+                          <div className="text-[10px] text-muted-foreground font-mono flex items-center gap-1">
+                            <span>{user.location.ip || user.location.timezone || "IP Recorded"}</span>
                           </div>
                         </div>
                       ) : (
-                        <span className="text-xs text-muted-foreground font-mono">N/A</span>
+                        <span className="text-[11px] text-muted-foreground/60 italic flex items-center gap-1">
+                          <Clock size={10} /> Pending
+                        </span>
                       )}
                     </td>
 
+                    {/* Joined Date & Time */}
+                    <td className="px-4 py-2 whitespace-nowrap font-mono text-[11px] text-muted-foreground">
+                      {user.createdAt ? (
+                        <div className="space-y-0.5 leading-tight">
+                          <div className="font-bold text-foreground">
+                            {new Date(user.createdAt).toLocaleDateString([], {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            })}
+                          </div>
+                          <div className="text-[10px] text-muted-foreground">
+                            {new Date(user.createdAt).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            })}
+                          </div>
+                        </div>
+                      ) : (
+                        "N/A"
+                      )}
+                    </td>
                   </tr>
                 ))}
 
@@ -1020,6 +1104,80 @@ export default function AdminUsersDashboard() {
                   </div>
                 </div>
 
+                {/* Geolocation & Session Telemetry */}
+                <div className="space-y-3">
+                  <h3 className="text-sm font-extrabold text-foreground uppercase tracking-wider flex items-center gap-2">
+                    <Globe size={16} className="text-primary" /> Geolocation & Network Telemetry
+                  </h3>
+
+                  <div className="bg-card border border-border p-4 rounded-xl space-y-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+                      <div>
+                        <span className="text-muted-foreground font-bold uppercase tracking-wider block mb-0.5">Country</span>
+                        <span className="font-semibold text-foreground">
+                          {selectedUser.location?.country || "Unknown"}
+                          {selectedUser.location?.countryCode ? ` (${selectedUser.location.countryCode})` : ""}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground font-bold uppercase tracking-wider block mb-0.5">City / Region</span>
+                        <span className="font-semibold text-foreground">
+                          {selectedUser.location?.city || "Unresolved"}
+                          {selectedUser.location?.region ? `, ${selectedUser.location.region}` : ""}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground font-bold uppercase tracking-wider block mb-0.5">IP Address</span>
+                        <span className="font-mono text-foreground font-semibold">
+                          {selectedUser.location?.ip || "127.0.0.1"}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground font-bold uppercase tracking-wider block mb-0.5">Timezone</span>
+                        <span className="font-mono text-foreground font-semibold">
+                          {selectedUser.location?.timezone || "N/A"}
+                        </span>
+                      </div>
+                      <div className="col-span-2">
+                        <span className="text-muted-foreground font-bold uppercase tracking-wider block mb-0.5">Last Location Update</span>
+                        <span className="text-muted-foreground font-mono">
+                          {selectedUser.location?.lastUpdated
+                            ? new Date(selectedUser.location.lastUpdated).toLocaleString()
+                            : "Recorded on session"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Recent Login History */}
+                    {selectedUser.loginHistory && selectedUser.loginHistory.length > 0 && (
+                      <div className="pt-3 border-t border-border/50 space-y-2">
+                        <span className="text-[10px] font-extrabold uppercase text-muted-foreground tracking-wider block">
+                          Recent Login Sessions ({selectedUser.loginHistory.length})
+                        </span>
+                        <div className="space-y-1.5 max-h-32 overflow-y-auto">
+                          {selectedUser.loginHistory.slice().reverse().map((login, idx) => (
+                            <div
+                              key={idx}
+                              className="p-2 rounded-lg bg-muted/50 border border-border text-[11px] flex items-center justify-between font-mono"
+                            >
+                              <div className="flex items-center gap-2">
+                                <MapPin size={12} className="text-emerald-500 shrink-0" />
+                                <span className="font-semibold text-foreground">
+                                  {login.city ? `${login.city}, ` : ""}{login.country || "IP Session"}
+                                </span>
+                                <span className="text-muted-foreground">({login.ip})</span>
+                              </div>
+                              <span className="text-muted-foreground">
+                                {login.timestamp ? new Date(login.timestamp).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "Recent"}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 {/* Gamification Cockpit */}
                 <div className="space-y-3">
                   <h3 className="text-sm font-extrabold text-foreground uppercase tracking-wider flex items-center gap-2">
@@ -1036,9 +1194,15 @@ export default function AdminUsersDashboard() {
                       <p className="text-base font-black text-indigo-500">{selectedUser.level || 1}</p>
                     </div>
                     <div className="bg-card border border-border p-3 rounded-xl">
-                      <span className="text-[10px] text-muted-foreground font-bold uppercase">Streak</span>
-                      <p className="text-base font-black text-orange-500">{selectedUser.streak || 0}d</p>
+                      <span className="text-[10px] text-muted-foreground font-bold uppercase">Streak (Max)</span>
+                      <p className="text-base font-black text-orange-500">
+                        {selectedUser.streak || 0}d{" "}
+                        <span className="text-[10px] text-amber-500 font-semibold block">
+                          Best: {selectedUser.highestStreak || selectedUser.streak || 0}d
+                        </span>
+                      </p>
                     </div>
+
                     <div className="bg-card border border-border p-3 rounded-xl">
                       <span className="text-[10px] text-muted-foreground font-bold uppercase">AI Queries</span>
                       <p className="text-base font-black text-pink-500">{selectedUser.aiQueriesCount || 0}</p>

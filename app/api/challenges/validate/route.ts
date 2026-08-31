@@ -119,8 +119,10 @@ export async function POST(req: Request) {
       } else {
         user.streak = 1;
       }
+      user.highestStreak = Math.max(user.highestStreak || 0, user.streak || 0);
       user.lastActiveDate = new Date();
     }
+
 
     // Activity Log
     const dateStr = today.toISOString().split("T")[0];

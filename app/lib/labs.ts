@@ -373,6 +373,15 @@ export const LABS: Lab[] = [
     challengeEnabled: true,
     description: "Semi-permeable membrane pore filtering, osmotic pressure gradients, RBC hemolysis/crenation, and plant turgor",
   },
+  {
+    id: "biology/heart-cardiac-cycle",
+    name: "Cardiac Cycle, ECG & Heart Hemodynamics",
+    subject: "biology",
+    type: "simulation",
+    challengeParams: ["heartRate", "cardiacOutput", "ejectionFraction", "strokeVolume", "murmursDiagnosed"],
+    challengeEnabled: true,
+    description: "4-chamber anatomical heart pump, Lead II ECG waveforms, Wiggers pressure diagram, heart sounds, and clinical hemodynamics",
+  },
 
 
   // ─── COMPUTER SCIENCE ──────────────────────────────────

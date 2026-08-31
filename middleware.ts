@@ -15,7 +15,9 @@ const publicPaths = [
   '/robots.txt',
   '/llms.txt',
   '/llms-full.txt',
+  '/labs/biology/heart-cardiac-cycle',
 ];
+
 
 const publicPrefixes = [
   '/blog',

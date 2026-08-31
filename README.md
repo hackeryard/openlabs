@@ -93,6 +93,7 @@ yarn start
 - **Electronics** — RC Circuit simulator with interactive component controls and analysis
 
 ### Biology Labs
+- **Cardiac Cycle, ECG & Heart Hemodynamics** — 4-chamber anatomical pump simulator, mechanical valve dynamics, Lead II ECG waveforms, Wiggers pressure diagram, and stethoscope auscultation
 - **3D Cell Visualization** — Interactive animal and plant cell models with organelle details
 - **Human Anatomy** — Anatomical structure explorer with biological information
 - **Photosynthesis Simulator** — Interactive Light/CO₂/Water/Temperature controls demonstrating Blackman's Law of Limiting Factors

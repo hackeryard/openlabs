@@ -122,16 +122,16 @@ const labCategories: LabCategory[] = [
   {
     label: "Biology",
     path: "/biology",
-    count: "13 Labs",
+    count: "14 Labs",
     description: "Cell biology, 3D anatomy & genetics",
     icon: Dna,
     colorClass: "text-rose-600 dark:text-rose-400 group-hover/cat:text-rose-700 dark:group-hover/cat:text-rose-300",
     iconBgClass: "bg-rose-500/10 text-rose-600 dark:text-rose-400 group-hover/cat:bg-rose-500 group-hover/cat:text-white",
     highlights: [
+      { name: "Cardiac Cycle", path: "/biology/heart-cardiac-cycle" },
       { name: "Genetics Lab", path: "/biology/genetics" },
       { name: "Animal Cell", path: "/biology/cell/animal" },
       { name: "Photosynthesis", path: "/biology/photosynthesis" },
-      { name: "Human Anatomy", path: "/biology/human" },
     ],
   },
   {

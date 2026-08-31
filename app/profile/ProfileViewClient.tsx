@@ -462,21 +462,38 @@ export default function ProfileViewClient() {
                 </div>
 
                 {/* Streak Card */}
-                <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-xs space-y-2">
+                <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-xs space-y-2.5">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
-                      Active Streak
+                      Activity Streaks
                     </span>
                     <div className="w-7 h-7 rounded-lg bg-orange-500/10 text-orange-500 flex items-center justify-center">
                       <Flame size={14} />
                     </div>
                   </div>
-                  <div className="text-2xl sm:text-3xl font-black text-foreground">
-                    {user.streak || 0}{" "}
-                    <span className="text-xs text-muted-foreground font-normal">Days</span>
+                  <div className="flex items-baseline justify-between pt-0.5">
+                    <div>
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase block leading-none mb-1">Daily Streak</span>
+                      <div className="text-2xl sm:text-3xl font-black text-foreground">
+                        {user.streak || 0}{" "}
+                        <span className="text-xs text-muted-foreground font-normal">Days</span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase block leading-none mb-1">Highest Streak</span>
+                      <div className="text-sm sm:text-base font-black text-amber-500 flex items-center justify-end gap-1">
+                        <Trophy size={13} className="text-amber-500 shrink-0" />
+                        <span>{user.highestStreak || user.streak || 0}d</span>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-[11px] text-muted-foreground">Keep learning daily to level up.</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {user.streak > 0
+                      ? "Daily streak active! Complete simulations to keep it alive."
+                      : "Start a simulation today to build your streak."}
+                  </p>
                 </div>
+
 
                 {/* Completed Labs Card */}
                 <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-xs space-y-2">

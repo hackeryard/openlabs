@@ -346,6 +346,28 @@ const biologyImages = {
       <path d="M 85 -20 L 115 -25 L 125 0 L 115 25 L 85 20 L 75 0 Z" fill="#f43f5e" fill-opacity="0.6" stroke="#e11d48" stroke-width="3"/>
       <text x="100" y="5" fill="#fff" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle">Hypertonic</text>
     `
+  },
+  "heart-cardiac-cycle-hero.svg": {
+    title: "Cardiac Cycle, ECG & Heart Hemodynamics",
+    subtitle: "4-Chamber Pump, Lead II ECG, Wiggers Diagram & S1/S2 Auscultation",
+    formula: "CO = HR × SV • EF = (SV / EDV) × 100%",
+    tags: ["Biology", "Physiology", "Cardiology"],
+    primaryColor: "#e11d48",
+    secondaryColor: "#0284c7",
+    warmColor: "#f59e0b",
+    diagramSvg: `
+      <!-- 4-Chamber Heart Outline -->
+      <path d="M 0 -80 C 40 -110, 90 -60, 80 20 C 70 80, 10 110, 0 120 C -10 110, -70 80, -80 20 C -90 -60, -40 -110, 0 -80 Z" fill="#881337" fill-opacity="0.8" stroke="#f43f5e" stroke-width="4" filter="url(#glow)"/>
+      <!-- Right Atrium & Ventricle (Deox Blue) -->
+      <path d="M -60 -40 C -60 -10, -40 0, -10 0 L -10 -40 Z" fill="#1e40af" fill-opacity="0.85"/>
+      <path d="M -60 10 C -60 60, -30 90, -10 100 L -10 10 Z" fill="#1d4ed8" fill-opacity="0.85"/>
+      <!-- Left Atrium & Ventricle (Ox Red) -->
+      <path d="M 10 -40 L 10 0 C 40 0, 60 -10, 60 -40 Z" fill="#991b1b" fill-opacity="0.85"/>
+      <path d="M 10 10 L 10 100 C 30 90, 60 60, 60 10 Z" fill="#b91c1c" fill-opacity="0.85"/>
+      <!-- ECG Wave Trace Overlaid -->
+      <path d="M -160 30 L -120 30 L -110 15 L -100 30 L -90 30 L -80 45 L -65 -60 L -50 50 L -40 30 L 10 30 Q 35 -10 60 30 L 160 30" fill="none" stroke="#10b981" stroke-width="3.5" filter="url(#glow)"/>
+      <text x="0" y="145" fill="#facc15" font-family="monospace" font-size="12" font-weight="bold" text-anchor="middle">Lead II ECG • 72 BPM</text>
+    `
   }
 };
 

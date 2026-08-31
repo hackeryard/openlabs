@@ -438,6 +438,14 @@ export const CURRICULUM_TRACKS: CurriculumTrack[] = [
         landingRoute: "/biology/blood",
       },
       {
+        labId: "biology/heart-cardiac-cycle",
+        title: "Cardiac Cycle, ECG & Hemodynamics",
+        description: "4-chamber heart pump, Lead II ECG waves, Wiggers pressure diagram, and heart sounds.",
+        estimatedMinutes: 20,
+        simRoute: "/labs/biology/heart-cardiac-cycle",
+        landingRoute: "/biology/heart-cardiac-cycle",
+      },
+      {
         labId: "biology/human",
         title: "3D Human Anatomy Systems",
         description: "Cardiovascular, respiratory, digestive, and skeletal organ physiology.",

@@ -119,6 +119,15 @@ const experiments: BiologyExperiment[] = [
     difficulty: "Intermediate",
     duration: "15 min",
   },
+  {
+    href: "/biology/heart-cardiac-cycle",
+    title: "Cardiac Cycle, ECG & Hemodynamics",
+    desc: "Simulate 4-chamber heart pumping, valve kinematics, Lead II ECG waveforms, Wiggers diagram, and stethoscope heart sound auscultation.",
+    formula: "CO = HR × SV, EF = (SV/EDV) × 100%",
+    category: "Physiology",
+    difficulty: "Intermediate",
+    duration: "15 min",
+  },
 ];
 
 const faqs = [

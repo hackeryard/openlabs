@@ -2,6 +2,22 @@
 
 All notable changes to OpenLabs are documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/); since the project has no version tags yet, entries are grouped by date instead of version number. Generated from git history; merge commits and duplicate/typo commits are omitted.
 
+- **Cardiac Cycle, ECG & Heart Hemodynamics Virtual Lab (`app/components/biology/heart-cardiac-cycle/`, `/labs/biology/heart-cardiac-cycle`, `/biology/heart-cardiac-cycle`)**:
+  - **4-Chamber Anatomical Heart Engine**:
+    - Real-time animated vector cardiac cross-section with Right Atrium, Right Ventricle, Left Atrium, Left Ventricle, Vena Cava, Pulmonary Artery/Veins, and Systemic Aorta.
+    - Synchronized mechanical valve kinematics (Tricuspid, Mitral/Bicuspid, Aortic, and Pulmonic valves) reacting dynamically to chamber pressure differentials.
+    - SA Node, AV Node, and Purkinje electrical conduction network visualization with traveling excitation glow.
+  - **Synchronized Multi-Channel Curves & Wiggers Diagram**:
+    - Real-time Lead II ECG waveform generator ($P, Q, R, S, T$ waves) synchronized to cardiac phase fraction.
+    - Wiggers pressure diagram mapping Left Ventricular and Aortic pressures with dicrotic notch (incisura).
+    - Calculated hemodynamic telemetry: Cardiac Output ($CO = HR \times SV$), Stroke Volume ($SV = EDV - ESV$), Ejection Fraction ($EF$), and Mean Arterial Pressure ($MAP$).
+  - **Interactive Stethoscope Auscultation & Heart Sounds**:
+    - Anterior chest wall auscultation landmarks (Aortic, Pulmonic, Tricuspid, Mitral).
+    - Synthesized Web Audio heart sounds (S1 "Lub" and S2 "Dub") and pathological murmurs.
+  - **Clinical Pathology & Diagnostics Sandbox**:
+    - Presets for Normal Sinus Rhythm, Exercise Tachycardia, Aortic Valve Stenosis, Mitral Regurgitation, Systolic Heart Failure (HFrEF), and Complete AV Block.
+    - Diagnostic challenge quiz and full gamification integration with `useLab()`.
+
 - **Universal STEM Landing Page Architecture & Design System Elevation (`components/STEMExperimentLanding.tsx`, Chemistry, Biology, Mathematics)**:
   - **Unified Multi-Discipline Landing Template (`components/STEMExperimentLanding.tsx`)**:
     - Standardized all 36 STEM experiment landing pages across Chemistry, Biology, and Mathematics to match the premium Physics design standard.

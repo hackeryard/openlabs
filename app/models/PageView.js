@@ -105,7 +105,17 @@ const PageViewSchema = new mongoose.Schema(
             index: true,
         },
 
+        region: {
+            type: String,
+            default: "",
+        },
+
         city: {
+            type: String,
+            default: "",
+        },
+
+        ip: {
             type: String,
             default: "",
         },

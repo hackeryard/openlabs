@@ -1057,6 +1057,39 @@ const LAB_KNOWLEDGE: Record<string, PageKnowledge> = {
     ],
   },
 
+  "biology/heart-cardiac-cycle": {
+    title: "Cardiac Cycle, ECG & Heart Hemodynamics Lab",
+    overview:
+      "Simulates 4-chamber human heart pumping, mechanical valve opening/closing, SA/AV node conduction, synchronized Wiggers diagram, Lead II ECG waveforms, heart sounds (S1/S2), and Frank-Starling hemodynamics.",
+    howToUse: [
+      "Adjust Heart Rate (BPM), Preload (EDV), Contractility, and Afterload sliders to observe real-time hemodynamic changes.",
+      "Switch between Live ECG, Wiggers Diagram, Stethoscope Auscultation, and Clinical Pathology tabs.",
+      "Step through the 6 cardiac cycle phases to observe synchronized mechanical and electrical transitions.",
+      "Listen to heart sounds (S1 'Lub' and S2 'Dub') and identify pathological systolic/diastolic murmurs.",
+    ],
+    controls: [
+      "Heart Rate slider (35 to 180 BPM)",
+      "Preload / End-Diastolic Volume slider (70 to 180 mL)",
+      "Contractility / Inotropy slider (0.5x to 1.8x)",
+      "Afterload / Diastolic Pressure slider (50 to 140 mmHg)",
+      "Clinical Pathology presets: Normal, Exercise, Aortic Stenosis, Mitral Regurgitation, Heart Failure, 3rd Degree AV Block",
+      "Interactive Stethoscope anterior chest wall landmark picker (Aortic, Pulmonic, Tricuspid, Mitral)",
+    ],
+    keyConcepts: [
+      "Cardiac Output Formula: CO = HR × SV (Normal resting: ~5.0 L/min)",
+      "Ejection Fraction Formula: EF = (SV / EDV) × 100% (Normal: 55-70%)",
+      "Mean Arterial Pressure Formula: MAP = DBP + 1/3(SBP - DBP)",
+      "Wiggers Diagram: Synchronizes Ventricular Pressure, Aortic Pressure, ECG, and Ventricular Volume",
+      "First Heart Sound (S1): AV valve closure at onset of isovolumetric ventricular contraction",
+      "Second Heart Sound (S2): Semilunar valve closure at onset of isovolumetric ventricular relaxation",
+      "Frank-Starling Law: Increased end-diastolic volume increases myocardial sarcomere stretch and stroke volume",
+    ],
+    whatToTry: [
+      "Select 'Aortic Valve Stenosis' preset to observe high left-ventricular systolic pressure gradient and harsh systolic murmur in the 2nd Right Intercostal Space.",
+      "Increase Preload from 100 mL to 160 mL and verify that Stroke Volume increases according to the Frank-Starling mechanism.",
+    ],
+  },
+
   "biology/genetics/monohybrid": {
     title: "Monohybrid Punnett Square & Mendel's Law Lab",
     overview:
