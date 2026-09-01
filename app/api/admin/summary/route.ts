@@ -173,7 +173,7 @@ export async function GET(request: Request) {
           recent: recentContacts,
         },
         seo: {
-          totalLabs: 53,
+          totalLabs: 94,
           coverage: "100%",
           sitemapStatus: "healthy",
           schemaStatus: "valid",

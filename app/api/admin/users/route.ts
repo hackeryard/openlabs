@@ -75,7 +75,7 @@ export async function GET(request: Request) {
     // High-performance lean projection: fetch only what is needed for the dashboard listing
     const rawUsers = await (User as any)
       .find(filterObj)
-      .select("name email role username avatar bio emailVerified profileSetupComplete createdAt xp level streak lastActiveDate aiQueriesCount completedExperiments badges subjectProgress")
+      .select("name email role username avatar bio emailVerified profileSetupComplete createdAt xp level streak highestStreak lastActiveDate aiQueriesCount completedExperiments badges subjectProgress location loginHistory")
       .sort(sortObj)
       .lean();
 
@@ -94,12 +94,17 @@ export async function GET(request: Request) {
       xp: u.xp || 0,
       level: u.level || 1,
       streak: u.streak || 0,
+      highestStreak: u.highestStreak || u.streak || 0,
       lastActiveDate: u.lastActiveDate || null,
       aiQueriesCount: u.aiQueriesCount || 0,
       completedExperimentsCount: u.completedExperiments?.length || 0,
       badgesCount: u.badges?.length || 0,
       subjectCount: u.subjectProgress?.length || 0,
+      location: u.location || null,
+      loginHistoryCount: u.loginHistory?.length || 0,
     }));
+
+
 
     // Compute aggregated platform statistics in a single pass
     const stats = {

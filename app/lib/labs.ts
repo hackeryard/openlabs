@@ -141,6 +141,24 @@ export const LABS: Lab[] = [
     challengeEnabled: true,
     description: "4-stroke Carnot cycle, isothermal/adiabatic expansion & compression, and live P-V indicator loops",
   },
+  {
+    id: "physics/kepler-orbit",
+    name: "Kepler Orbit & Gravitational Mechanics",
+    subject: "physics",
+    type: "simulation",
+    challengeParams: ["semiMajorAxis", "eccentricity", "periodMeasured", "speedMeasured"],
+    challengeEnabled: true,
+    description: "Elliptical planetary orbits, Kepler's 3 laws, Vis-Viva velocity equations, and equal swept area conservation",
+  },
+  {
+    id: "physics/doppler-effect",
+    name: "Doppler Effect & Sonic Boom",
+    subject: "physics",
+    type: "simulation",
+    challengeParams: ["sourceSpeed", "sourceFrequency", "observedFrequency", "machNumber"],
+    challengeEnabled: true,
+    description: "Moving wave sources, wavefront compression, sonic barrier shock waves, and supersonic Mach cone envelopes",
+  },
 
 
 
@@ -355,6 +373,15 @@ export const LABS: Lab[] = [
     challengeEnabled: true,
     description: "Semi-permeable membrane pore filtering, osmotic pressure gradients, RBC hemolysis/crenation, and plant turgor",
   },
+  {
+    id: "biology/heart-cardiac-cycle",
+    name: "Cardiac Cycle, ECG & Heart Hemodynamics",
+    subject: "biology",
+    type: "simulation",
+    challengeParams: ["heartRate", "cardiacOutput", "ejectionFraction", "strokeVolume", "murmursDiagnosed"],
+    challengeEnabled: true,
+    description: "4-chamber anatomical heart pump, Lead II ECG waveforms, Wiggers pressure diagram, heart sounds, and clinical hemodynamics",
+  },
 
 
   // ─── COMPUTER SCIENCE ──────────────────────────────────
@@ -565,6 +592,42 @@ export const LABS: Lab[] = [
     challengeParams: ["episodesRun", "successRate"],
     challengeEnabled: true,
     description: "RL Agent solving a maze",
+  },
+  {
+    id: "computer-science/ai-problem/constraint-satisfy",
+    name: "Constraint Satisfaction Solver",
+    subject: "computerScience",
+    type: "simulation",
+    challengeParams: ["variablesAssigned", "backtracks"],
+    challengeEnabled: true,
+    description: "Constraint satisfaction and map coloring solver",
+  },
+  {
+    id: "computer-science/ai-problem/forward-backward",
+    name: "Forward & Backward Chaining",
+    subject: "computerScience",
+    type: "simulation",
+    challengeParams: ["rulesFired", "goalsProven"],
+    challengeEnabled: true,
+    description: "Inference engine with rule-based reasoning",
+  },
+  {
+    id: "computer-science/ai-problem/monkey-banana",
+    name: "Monkey & Banana Planner",
+    subject: "computerScience",
+    type: "simulation",
+    challengeParams: ["stepsPlanned", "goalReached"],
+    challengeEnabled: true,
+    description: "Classical AI state-space planning problem",
+  },
+  {
+    id: "computer-science/ai-problem/water-jug",
+    name: "Water Jug State Search",
+    subject: "computerScience",
+    type: "simulation",
+    challengeParams: ["statesVisited", "optimalPathFound"],
+    challengeEnabled: true,
+    description: "Water jug production rules and state space search",
   },
   {
     id: "computer-science/blockchain",

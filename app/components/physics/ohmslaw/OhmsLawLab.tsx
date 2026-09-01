@@ -117,6 +117,7 @@ export default function OhmsLawLab() {
   // Keyboard Shortcuts Listener for Fast Circuit Building
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (!e.key) return;
       // Ignore if user is currently typing in an input box
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement) {
         return;

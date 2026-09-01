@@ -19,22 +19,23 @@ import {
   ArrowRight,
   Heart,
   Globe,
+  FlaskConical,
 } from "lucide-react";
 
 import AdminFooter from "./AdminFooter";
 import { useAuth } from "@/components/AuthProvider";
 
-const stemDisciplines = [
-  { label: "Physics Suite (14)", url: "/physics", icon: Atom, color: "text-blue-500" },
-  { label: "Chemistry Studio (4)", url: "/chemistry", icon: Flame, color: "text-emerald-500" },
-  { label: "Biology Explorer (3)", url: "/biology", icon: Dna, color: "text-rose-500" },
-  { label: "Mathematics Lab (12)", url: "/mathematics", icon: Calculator, color: "text-amber-500" },
-  { label: "Computer Science (19+)", url: "/computer-science", icon: Binary, color: "text-purple-500" },
+const disciplineLinks = [
+  { label: "Physics Suite (16)", url: "/physics", icon: Atom, color: "text-indigo-500" },
+  { label: "Chemistry Studio (12)", url: "/chemistry", icon: FlaskConical, color: "text-emerald-500" },
+  { label: "Biology Explorer (13)", url: "/biology", icon: Dna, color: "text-rose-500" },
+  { label: "Mathematics Lab (13)", url: "/mathematics", icon: Calculator, color: "text-amber-500" },
+  { label: "Computer Science (42)", url: "/computer-science", icon: Binary, color: "text-purple-500" },
 ];
 
 const platformLinks = [
   { label: "13 Guided Tracks", url: "/tracks" },
-  { label: "50+ Virtual Labs", url: "/#labs" },
+  { label: "96 Virtual Labs", url: "/#labs" },
   { label: "Global XP Leaderboard", url: "/leaderboard" },
   { label: "Research & Blog", url: "/blog" },
   { label: "About OpenLabs", url: "/about" },
@@ -112,7 +113,7 @@ export default function Footer() {
               <span>STEM Disciplines</span>
             </h3>
             <ul className="space-y-2 text-xs">
-              {stemDisciplines.map((item) => (
+              {disciplineLinks.map((item) => (
                 <li key={item.label}>
                   <Link
                     href={item.url}

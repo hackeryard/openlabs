@@ -64,7 +64,7 @@ const contactInfo = [
   {
     icon: Beaker,
     title: "Lab Feedback & Requests",
-    detail: "50+ Virtual Labs",
+    detail: "94 Virtual Labs",
     subtitle: "Suggest new Physics, Chem, Bio, Math & CS labs",
     gradient: "from-purple-500/10 via-pink-500/5 to-transparent",
     iconColor: "text-purple-600 dark:text-purple-400",
@@ -164,7 +164,7 @@ export default function ContactPage() {
 
           {/* Subtitle */}
           <p className="mx-auto max-w-2xl text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed font-normal">
-            Have questions about our 50+ STEM simulations, bug reports, feature requests, or collaboration opportunities? Send us a transmission.
+            Have questions about our 94 STEM simulations, bug reports, feature requests, or collaboration opportunities? Send us a transmission.
           </p>
         </div>
       </section>

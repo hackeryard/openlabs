@@ -4,6 +4,7 @@ import PageView from "@/app/models/PageView";
 import AnalyticsEvent from "@/app/models/AnalyticsEvent";
 import { getUserFromToken } from "@/app/lib/getUserFromToken";
 import { getFullCountryName } from "@/app/lib/countries";
+import { extractGeoLocation } from "@/app/lib/geolocation";
 
 /**
  * Extracts country code from Edge/CDN headers and resolves to full name
@@ -79,7 +80,7 @@ export async function POST(req: Request) {
       if (payload?.id) userId = payload.id;
     } catch {}
 
-    const country = getGeoCountry(req);
+    const geo = extractGeoLocation(req);
 
     // ── A. Handle Pageview Ingestion ──
     if (type === "pageview") {
@@ -102,8 +103,11 @@ export async function POST(req: Request) {
         os: body.os || "Unknown",
         screen: body.screen || "",
         language: body.language || "en",
-        timezone: body.timezone || "",
-        country,
+        timezone: body.timezone || geo.timezone || "",
+        country: geo.country,
+        region: geo.region,
+        city: geo.city,
+        ip: geo.ip,
         duration: 1,
         scrollDepth: 0,
       });

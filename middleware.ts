@@ -10,15 +10,19 @@ const publicPaths = [
   '/verify-email',
   '/about',
   '/contact',
+  '/tracks',
   '/403',
   '/sitemap.xml',
   '/robots.txt',
   '/llms.txt',
   '/llms-full.txt',
+  '/labs/biology/heart-cardiac-cycle',
 ];
+
 
 const publicPrefixes = [
   '/blog',
+  '/tracks',
   '/physics',
   '/chemistry',
   '/biology',

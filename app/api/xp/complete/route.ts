@@ -82,8 +82,10 @@ export async function POST(req: Request) {
       } else {
         user.streak = 1;
       }
+      user.highestStreak = Math.max(user.highestStreak || 0, user.streak || 0);
       user.lastActiveDate = new Date();
     }
+
 
     const dateStr = today.toISOString().split("T")[0];
     let log = user.activityLog.find((al: any) => al.date === dateStr);

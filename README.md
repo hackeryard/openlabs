@@ -93,6 +93,7 @@ yarn start
 - **Electronics** — RC Circuit simulator with interactive component controls and analysis
 
 ### Biology Labs
+- **Cardiac Cycle, ECG & Heart Hemodynamics** — 4-chamber anatomical pump simulator, mechanical valve dynamics, Lead II ECG waveforms, Wiggers pressure diagram, and stethoscope auscultation
 - **3D Cell Visualization** — Interactive animal and plant cell models with organelle details
 - **Human Anatomy** — Anatomical structure explorer with biological information
 - **Photosynthesis Simulator** — Interactive Light/CO₂/Water/Temperature controls demonstrating Blackman's Law of Limiting Factors
@@ -988,7 +989,7 @@ OpenLabs is fully optimized for search engines with comprehensive SEO implementa
 
 **Automated SEO Files**
 - ✅ `robots.txt` generation with allow/disallow rules for crawlers
-- ✅ XML sitemap with 50+ indexed pages and priority levels
+- ✅ XML sitemap with 94+ indexed pages and priority levels
 - ✅ `llms.txt` configuration for AI/LLM indexing (ChatGPT, Gemini, Claude)
 - ✅ Verification meta tags for Google, Bing, and Yandex Webmasters
 
@@ -1010,12 +1011,12 @@ OpenLabs is fully optimized for search engines with comprehensive SEO implementa
 |------|---------|
 | `app/layout.tsx` | Root metadata, structured data (JSON-LD), verification codes |
 | `app/robots.ts` | Robots.txt generation for search crawler directives |
-| `app/sitemap.ts` | XML sitemap with priority and changefreq for 50+ pages |
+| `app/sitemap.ts` | XML sitemap with priority and changefreq for 94+ pages |
 | `public/llms.txt` | AI/LLM indexing configuration and content guidelines |
 | `next.config.js` | X-Robots-Tag HTTP header configuration |
 | `public/images/og-image.svg` | Open Graph image template (1200x630px) |
 | `public/images/twitter-image.svg` | Twitter Card image template (1200x600px) |
-| **50+ layout.tsx files** | Per-page metadata for all category and subsection pages |
+| **94+ layout.tsx / page.tsx files** | Per-page metadata for all category, lab, and subsection pages |
 
 ### Metadata Structure Example
 
@@ -1086,13 +1087,13 @@ The root `app/layout.tsx` includes comprehensive structured data:
 ### Page Coverage 📑
 
 **Complete Metadata Implementation:**
-- ✅ **4 Category Pages** (Physics, Chemistry, Biology, Computer Science)
-- ✅ **50+ Experiment Pages** (Individual labs with unique metadata)
-- ✅ **20+ Subsection Pages** (Networking, DSA, Logic Gates, AI Problems, Sorting, etc.)
+- ✅ **5 STEM Category Hubs** (Physics, Chemistry, Biology, Computer Science, Mathematics)
+- ✅ **94 Experiment Lab Pages** (Individual simulations with unique metadata & schemas)
+- ✅ **25+ Subsection Pages** (Networking, DSA, Logic Gates, AI Problems, Sorting, etc.)
 - ✅ **5 Authentication Pages** (Login, Signup, Password Reset, Email Verification, Forgot Password)
 - ✅ **1 Root/Home Page** (Landing page with comprehensive metadata)
 
-**Total Pages Optimized:** 74+ pages with complete SEO metadata
+**Total Pages Optimized:** 120+ pages with complete SEO metadata
 
 ### Configuration & Setup
 

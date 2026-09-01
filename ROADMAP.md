@@ -33,7 +33,7 @@ This document outlines the product growth roadmap, user retention mechanics, int
   - Lightweight browser push notifications at 9:00 AM when the fresh daily challenge drops.
 
 ### B. 🗺️ Guided "Curriculum Tracks" & Skill Trees (Progression Hook)
-Transform the platform from an unstructured catalog of 53 separate labs into a guided mastery journey:
+Transform the platform from an unstructured catalog of 94 separate labs into a guided mastery journey:
 - **Structured Learning Tracks with Progress Bars**:
   - *High School Physics Track* (Free Fall $\rightarrow$ Projectile Motion $\rightarrow$ Hooke's Law $\rightarrow$ Energy Conservation) — `[=== 60% Complete ===]`
   - *AP Chemistry Mastery* (Titration $\rightarrow$ Periodic Table $\rightarrow$ Reaction Kinetics $\rightarrow$ Chemical Bonds)
@@ -196,7 +196,7 @@ Transform the platform from an unstructured catalog of 53 separate labs into a g
 ## 7. Administration & Operations Cockpit ⚡
 
 - **Daily Challenge Operations Hub (`/admin/challenges`)**:
-  - Inspect current active daily challenges across all 53 registered labs.
+  - Inspect current active daily challenges across all 94 registered labs.
   - Trigger manual AI regeneration or adjust target tolerance parameters.
 - **Audit & Moderation Activity Log (`/admin/audit-logs`)**:
   - Immutable timeline of administrative and moderator actions (role updates, feedback triage, blog publishing, deletions).

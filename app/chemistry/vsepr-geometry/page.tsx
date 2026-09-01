@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import EducationalLandingLayout from "@/components/EducationalLandingLayout";
+import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
 export const metadata: Metadata = {
   title: "3D Molecular Geometry & VSEPR Theory Virtual Lab | OpenLabs",
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     "orbital hybridization sp sp2 sp3",
     "bond angles tetrahedral octahedral",
     "molecular polarity dipole moment",
-    "chemistry virtual lab"
+    "chemistry virtual lab",
   ],
   alternates: {
     canonical: "https://www.openlabs.org.in/chemistry/vsepr-geometry",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://www.openlabs.org.in/images/chemistry/vsepr-hero.png",
+        url: "https://www.openlabs.org.in/images/chemistry/vsepr-geometry-hero.png",
         alt: "3D Molecular Geometry & VSEPR Theory | OpenLabs",
       },
     ],
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "3D Molecular Geometry & VSEPR Theory Virtual Lab | OpenLabs",
     description: "Explore VSEPR theory, 3D molecular shapes, bond angle distortions, and orbital hybridization in real time.",
-    images: ["https://www.openlabs.org.in/images/chemistry/vsepr-hero.png"],
+    images: ["https://www.openlabs.org.in/images/chemistry/vsepr-geometry-hero.png"],
   },
   robots: {
     index: true,
@@ -41,65 +41,51 @@ export const metadata: Metadata = {
   },
 };
 
-const vseprContent = {
-  slug: "vsepr-geometry",
-  subject: "Chemistry",
-  title: "3D Molecular Geometry & VSEPR Theory",
-  description: "An interactive molecular modeling laboratory calculating electrostatic electron domain repulsions, orbital hybridization, bond angle compressions, and net 3D dipole vectors.",
-  difficulty: "Intermediate" as const,
-  estimatedTime: "25 minutes",
-  heroDescription: "Rotate and manipulate 3D molecular structures in real time. Modify bonding electron pairs and unshared lone pairs to observe dynamic spatial reorientations across all steric numbers (AX₂ to AX₆), orbital hybridizations (sp to sp³d²), and polarity vectors.",
-  theory: {
-    content: `
-      <p><strong>Valence Shell Electron Pair Repulsion (VSEPR) theory</strong> is a foundational chemical model used to predict the three-dimensional geometry of individual molecules based on the number of electron pairs surrounding their central atoms. Because electrons are negatively charged particles, electron domains (bonding pairs and non-bonding lone pairs) exert mutual electrostatic repulsion and spontaneously adopt spatial arrangements that maximize angular separation and minimize repulsive potential energy.</p>
-      <p>The total number of electron domains defines the <strong>electron-pair geometry</strong> (Steric Number $SN = 2$ to $6$). However, the <strong>molecular geometry</strong> describes only the positions of the bonded atomic nuclei. Non-bonding lone pairs occupy greater spatial volume than bonding pairs because they are localized under the influence of only a single nucleus. Consequently, lone pairs exert greater repulsive force, following the hierarchy:</p>
-      <p style="text-align: center; font-weight: bold;">Lone Pair – Lone Pair > Lone Pair – Bonding Pair > Bonding Pair – Bonding Pair</p>
-      <p>This differential repulsion causes measurable compression of adjacent bond angles below ideal geometric values (for example, compressing the ideal $109.5^\\circ$ tetrahedral angle to $107.0^\\circ$ in ammonia and $104.5^\\circ$ in water).</p>
-    `
-  },
-  learningObjectives: [
-    "Determine the steric number (SN) of central atoms by counting bonding domains and lone pairs.",
-    "Predict electron domain geometry and molecular shape from AXₘEₙ notation (e.g. AX₂ Linear, AX₃ Trigonal Planar, AX₂E Bent, AX₄ Tetrahedral, AX₃E Trigonal Pyramidal, AX₂E₂ Bent, AX₅ Trigonal Bipyramidal, AX₆ Octahedral).",
-    "Explain bond angle compression caused by the greater spatial volume and repulsion of unshared lone pairs.",
-    "Correlate geometric symmetry with molecular polarity and calculate net 3D dipole moments (μ)."
-  ],
-  mathematicalFoundations: {
-    equations: [
-      "SN = \\text{Bonding Domains} + \\text{Non-bonding Lone Pairs}",
-      "\\cos(\\theta) = -\\frac{1}{n} \\text{ (for ideal } sp^n \\text{ hybrid orbitals)}",
-      "\\boldsymbol{\\mu}_{net} = \\sum_{i} q_i \\mathbf{r}_i \\text{ (3D Dipole Vector Sum)}"
-    ],
-    explanation: "Hybrid orbital angles arise from linear combinations of atomic wavefunctions. Ideal hybridization angles are 180° for sp (n=1), 120° for sp² (n=2), and arccos(-1/3) ≈ 109.47° for sp³ (n=3). Net molecular polarity equals the vector sum of individual polar bond dipoles."
-  },
-  realWorldApplications: [
-    "Rational Drug Discovery: Structure-based drug design relies on molecular geometry fitting tightly into enzyme active-site binding pockets.",
-    "Material Science & Polymers: Stereochemistry and molecular symmetry govern crystal packing, melting points, and polymer tensile strength.",
-    "Environmental Science: The bent geometry of water (104.5°) gives it a strong permanent dipole (1.85 D), enabling high boiling points and universal solvent properties essential for planetary life.",
-    "Atmospheric Greenhouse Modeling: Asymmetrical vibrational bending in greenhouse gases (CO₂, CH₄, H₂O) allows absorption of infrared terrestrial radiation."
-  ],
-  howItWorks: "Select a chemical molecule from the library (such as BeCl₂, BF₃, CH₄, NH₃, H₂O, PCl₅, or SF₆) or custom-build a steric domain using the bonding pair and lone pair counters. Drag on the 3D canvas with your mouse or touch screen to rotate the molecular orbital sphere. Observe the calculated bond angles, orbital hybridization label, and the yellow 3D net dipole vector arrow.",
-  faqs: [
-    {
-      question: "Why is water (H₂O) bent rather than linear if it has three atoms?",
-      answer: "Oxygen in water has four electron domains: two single covalent O-H bonds and two unshared lone pairs (AX₂E₂ notation, steric number 4). The electron geometry is tetrahedral. The two lone pairs repel the bonding pairs downward, compressing the H-O-H bond angle from the ideal 109.5° down to 104.5°, creating a bent molecular geometry."
-    },
-    {
-      question: "Why is CO₂ nonpolar while H₂O is highly polar?",
-      answer: "Although both carbon-oxygen bonds in CO₂ are polar, CO₂ has a linear molecular geometry (180° bond angle, AX₂). The two dipole vectors point in exactly opposite directions and cancel each other out (μ_net = 0). Water has a bent geometry (104.5°), so its bond dipole vectors add constructively, creating a strong net molecular dipole."
-    },
-    {
-      question: "What is the difference between electron domain geometry and molecular geometry?",
-      answer: "Electron domain geometry describes the spatial arrangement of all electron pairs (both bonding pairs and lone pairs) around the central atom. Molecular geometry describes only the spatial arrangement of the bonded atoms themselves, as observed experimentally via X-ray crystallography."
-    }
-  ],
-  relatedExperiments: []
-};
-
 export default function VSEPRLandingPage() {
   return (
-    <EducationalLandingLayout 
-      content={vseprContent} 
-      launchUrl="/labs/chemistry/vsepr-geometry" 
+    <STEMExperimentLanding
+      subject="chemistry"
+      slug="vsepr-geometry"
+      title="3D Molecular Geometry & VSEPR Theory"
+      description="Interactive 3D molecular modeling laboratory calculating electrostatic domain repulsions, orbital hybridization, bond angles, and net dipole vectors."
+      heroDescription="Rotate and manipulate 3D molecular geometries in real time. Adjust bonded atoms and lone electron pairs to observe dynamic spatial arrangements across all steric numbers (AX₂ to AX₆), orbital hybridizations (sp to sp³d²), and polarity vectors."
+      theory="Valence Shell Electron Pair Repulsion (VSEPR) theory states that electron domains around a central atom repel one another electrostatically, adopting spatial geometries that maximize angular separation. Because non-bonding lone pairs are localized on only one nucleus, they exert stronger repulsion than bonding pairs (Lone Pair-Lone Pair > Lone Pair-Bond Pair > Bond Pair-Bond Pair), causing predictable compression of adjacent bond angles below ideal values."
+      formula="AX_m E_n \quad \text{Steric Number } (SN) = m + n \quad (\text{Bond Angle Compression } \Delta\theta \approx 2.5^\circ / \text{lone pair})"
+      formulaLabel="VSEPR Notation & Steric Number"
+      launchUrl="/labs/chemistry/vsepr-geometry"
+      heroImageUrl="/images/chemistry/vsepr-geometry-hero.png"
+      visualLabel="3D Rotatable Ball-and-Stick Workbench"
+      visualDetail="Steric Numbers 2 to 6 • Lone Pair Cloud Isosurfaces • 3D Dipole Vector Sum"
+      accent={{ primary: "#059669", secondary: "#0d9488", warm: "#d97706" }}
+      learningObjectives={[
+        "Distinguish between electron-pair geometry and observable molecular geometry.",
+        "Correlate steric numbers 2, 3, 4, 5, and 6 with hybridizations sp, sp², sp³, sp³d, and sp³d².",
+        "Predict bond angle compressions in hydrides such as CH₄ (109.5°), NH₃ (107.0°), and H₂O (104.5°).",
+        "Calculate the 3D vector sum of bond dipole moments to determine overall molecular polarity.",
+      ]}
+      applications={[
+        "Structure-Based Drug Discovery & Enzyme Active Site Docking (conformation matching).",
+        "Polymer Chemistry & Crystal Lattice Packing (stereocenters and chirality).",
+        "Atmospheric Greenhouse Gas Modeling (infrared dipole absorption in CO₂ and CH₄).",
+        "Nanotechnology & Supramolecular Self-Assembly (coordination complexes).",
+      ]}
+      faqs={[
+        {
+          question: "What is the difference between electron geometry and molecular geometry?",
+          answer:
+            "Electron geometry describes the spatial arrangement of all electron domains (both bonding pairs and lone pairs) around the central atom. Molecular geometry describes only the spatial arrangement of the bonded atomic nuclei. For example, water has a tetrahedral electron geometry but a bent molecular geometry.",
+        },
+        {
+          question: "Why do lone pairs compress bond angles?",
+          answer:
+            "Lone pairs are held by only one positive nucleus, allowing their electron density clouds to spread out wider in space than bonding pairs held between two nuclei. This extra volume exerts greater repulsive force against neighboring bonding pairs, pushing them closer together.",
+        },
+        {
+          question: "How does VSEPR geometry determine whether a molecule is polar?",
+          answer:
+            "Molecular polarity depends on individual bond dipole moments and molecular symmetry. If polar bonds are arranged symmetrically (like the linear CO₂ or tetrahedral CCl₄), their dipole vectors cancel out to zero net dipole. If asymmetric (like bent H₂O), a permanent net dipole moment exists.",
+        },
+      ]}
     />
   );
 }

@@ -28,42 +28,42 @@ import Blog from "@/app/models/Blog";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "OpenLabs - 50+ Free Virtual STEM Labs for Interactive Learning",
+  title: "OpenLabs - 90+ Free Virtual STEM Labs for Interactive Learning",
   description:
-    "Explore 50+ interactive virtual labs across Physics, Chemistry, Biology, Mathematics, and Computer Science. 100% free browser-based STEM simulations with real-time numeric calculations.",
+    "Explore 90+ interactive virtual labs across Physics, Chemistry, Biology, Mathematics, and Computer Science. 100% free browser-based STEM simulations with real-time numeric calculations.",
   keywords: [
-    "science education",
-    "interactive learning",
-    "virtual labs",
-    "STEM education",
-    "physics labs",
-    "chemistry experiments",
-    "biology simulations",
-    "mathematics visualizer",
-    "computer science tools",
-    "online learning",
+    "virtual science labs",
+    "free STEM simulations",
+    "physics lab online",
+    "chemistry simulation",
+    "biology interactive lab",
+    "computer science visualizer",
+    "mathematics grapher online",
+    "free educational simulations",
+    "interactive science experiments",
   ],
   openGraph: {
-    title: "OpenLabs - 50+ Free Virtual STEM Labs for Interactive Learning",
+    title: "OpenLabs - 90+ Free Virtual STEM Labs for Interactive Learning",
     description:
-      "Explore 50+ interactive virtual labs in Physics, Chemistry, Biology, Mathematics, and Computer Science with guided simulations.",
-    url: "/",
+      "Explore 90+ interactive virtual labs in Physics, Chemistry, Biology, Mathematics, and Computer Science with guided simulations.",
+    url: "https://openlabs.co.in",
+    siteName: "OpenLabs",
+    locale: "en_US",
     type: "website",
     images: [
       {
-        url: "/images/og-image.svg",
+        url: "https://openlabs.co.in/og-home.png",
         width: 1200,
         height: 630,
-        alt: "OpenLabs interactive virtual lab learning platform",
+        alt: "OpenLabs - Interactive Science & STEM Simulations",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    images: ["/images/twitter-image.svg"],
-    title: "OpenLabs - 50+ Free Virtual STEM Labs for Interactive Learning",
+    title: "OpenLabs - 90+ Free Virtual STEM Labs for Interactive Learning",
     description:
-      "Explore 50+ interactive virtual labs in Physics, Chemistry, Biology, Mathematics, and Computer Science.",
+      "Explore 90+ interactive virtual labs in Physics, Chemistry, Biology, Mathematics, and Computer Science.",
   },
   alternates: {
     canonical: "/",
@@ -144,7 +144,7 @@ const faqsData = [
   },
   {
     q: "Do I need any special software or plugins to run the labs?",
-    a: "No special software or downloads are required. All 50+ simulations run directly in any modern web browser (Chrome, Firefox, Safari, Edge) on desktop, tablet, or smartphone.",
+    a: "No special software or downloads are required. All 90+ simulations run directly in any modern web browser (Chrome, Firefox, Safari, Edge) on desktop, tablet, or smartphone.",
   },
   {
     q: "How accurate are the scientific simulations?",

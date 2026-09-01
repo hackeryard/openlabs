@@ -1,19 +1,17 @@
-import EducationalLandingLayout from "@/components/EducationalLandingLayout";
-import { EducationalContent } from "@/types/education";
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
 export const metadata: Metadata = {
   title: "Chemical Bonds - Interactive Chemistry Lab | OpenLabs",
-  description: "Explore ionic, covalent, and metallic bonds in an interactive lab. Build molecules, compare bond types, and understand molecular geometry.",
+  description: "Explore ionic, covalent, and metallic bonds in an interactive lab. Build molecules, compare bond types, electronegativity differences, and molecular geometry.",
   keywords: [
-    "chemical bonds",
-    "covalent bond",
-    "ionic bond",
-    "metallic bond",
+    "chemical bonds simulation",
+    "covalent bond interactive",
+    "ionic bond crystal lattice",
+    "metallic bond delocalized electrons",
     "molecular geometry",
-    "chemistry lab",
-    "electron sharing",
-    "bond polarity"
+    "electronegativity difference",
+    "bond polarity dipole",
   ],
   alternates: {
     canonical: "https://www.openlabs.org.in/chemistry/chemicalbonds",
@@ -25,16 +23,16 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://www.openlabs.org.in/images/chemistry/chemical-bonds-hero.png",
-        alt: "OpenLabs Chemical Bonds Interactive Chemistry Lab"
-      }
-    ]
+        url: "https://www.openlabs.org.in/images/chemistry/chemicalbonds-hero.png",
+        alt: "OpenLabs Chemical Bonds Interactive Chemistry Lab",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Chemical Bonds - Interactive Chemistry Lab | OpenLabs",
     description: "Build molecules and compare bond types with our interactive chemistry bonding lab.",
-    images: ["https://www.openlabs.org.in/images/chemistry/chemical-bonds-hero.png"]
+    images: ["https://www.openlabs.org.in/images/chemistry/chemicalbonds-hero.png"],
   },
   robots: {
     index: true,
@@ -42,79 +40,51 @@ export const metadata: Metadata = {
   },
 };
 
-const content: EducationalContent = {
-  slug: "chemicalbonds",
-  subject: "Chemistry",
-  title: "Chemical Bonds",
-  description: "Visualize and build molecules to understand chemical bonding.",
-  difficulty: "Beginner",
-  estimatedTime: "20 mins",
-  heroDescription: "Dive into the microscopic world of atoms. Learn how elements share or transfer electrons to form the complex molecules that make up our universe.",
-  theory: {
-    content: `
-      <p>Chemical bonding is the fundamental process that holds atoms together in molecules and compounds. Atoms bond to achieve a more stable electron configuration, typically a full outer valence shell (the octet rule).</p>
-      <p>There are three primary types of chemical bonds:</p>
-      <ul>
-        <li><strong>Ionic Bonds:</strong> Formed when one atom completely transfers one or more electrons to another atom, creating oppositely charged ions that attract each other (e.g., NaCl).</li>
-        <li><strong>Covalent Bonds:</strong> Formed when two atoms share pairs of valence electrons to achieve stability (e.g., H₂O). These can be polar or nonpolar depending on electronegativity.</li>
-        <li><strong>Metallic Bonds:</strong> A lattice of positive ions in a "sea" of delocalized electrons, giving metals their conductivity and malleability.</li>
-      </ul>
-    `
-  },
-  learningObjectives: [
-    "Differentiate between ionic, covalent, and metallic bonds.",
-    "Predict the type of bond formed between two elements based on their position in the periodic table.",
-    "Understand the octet rule and how it drives chemical reactivity.",
-    "Visualize the 3D geometry of simple molecules."
-  ],
-  mathematicalFoundations: {
-    equations: [
-      "\\Delta EN = |EN_1 - EN_2|",
-      "\\Delta EN > 1.7 \\rightarrow Ionic",
-      "0.4 < \\Delta EN \\le 1.7 \\rightarrow Polar Covalent",
-      "\\Delta EN \\le 0.4 \\rightarrow Nonpolar Covalent"
-    ],
-    explanation: "The difference in electronegativity (ΔEN) between two bonding atoms determines the bond character. A large difference leads to ionic bonding, while a small difference leads to covalent bonding."
-  },
-  realWorldApplications: [
-    "Materials Science: Designing new polymers and alloys based on bond strength.",
-    "Pharmacology: Understanding how drug molecules bind to target receptors in the body.",
-    "Environmental Science: Analyzing the bonds in greenhouse gases like CO₂.",
-    "Energy Storage: Developing better lithium-ion batteries by studying ionic interactions."
-  ],
-  howItWorks: "Our interactive 3D laboratory allows you to drag and drop atoms from the periodic table onto a workspace. When you bring compatible atoms close together, the simulation will automatically form the appropriate bonds, calculate the electronegativity difference, and display the molecular geometry using the VSEPR model.",
-  faqs: [
-    {
-      question: "What is the octet rule?",
-      answer: "The octet rule is a chemical rule of thumb that reflects the observation that main group elements tend to bond in such a way that each atom has eight electrons in its valence shell, giving it the same electronic configuration as a noble gas."
-    },
-    {
-      question: "Why is water a polar molecule?",
-      answer: "Water (H₂O) is polar because oxygen is significantly more electronegative than hydrogen. This causes the shared electrons to spend more time near the oxygen atom, giving it a partial negative charge and the hydrogens a partial positive charge. The bent shape of the molecule prevents these dipoles from canceling out."
-    },
-    {
-      question: "Are metallic bonds stronger than ionic bonds?",
-      answer: "Bond strength varies widely within both categories. However, ionic bonds are generally very strong, resulting in high melting points for ionic compounds (like salt). Metallic bonds can also be very strong (like in tungsten) or quite weak (like in mercury, which is liquid at room temperature)."
-    },
-    {
-      question: "Can an atom form more than one covalent bond?",
-      answer: "Yes, atoms can form double or triple covalent bonds by sharing two or three pairs of electrons, respectively. For example, oxygen gas (O₂) has a double bond, and nitrogen gas (N₂) has a triple bond."
-    }
-  ],
-  relatedExperiments: [
-    {
-      title: "Periodic Table",
-      href: "/chemistry/periodictable",
-      description: "Explore element properties and trends."
-    },
-    {
-      title: "Reaction Simulation",
-      href: "/chemistry/reaction-simulation",
-      description: "Balance chemical equations and observe reaction kinetics."
-    }
-  ]
-};
-
-export default function ChemicalBondsPage() {
-  return <EducationalLandingLayout content={content} launchUrl="/labs/chemistry/chemicalbonds" />;
+export default function ChemicalBondsLandingPage() {
+  return (
+    <STEMExperimentLanding
+      subject="chemistry"
+      slug="chemicalbonds"
+      title="Chemical Bonds & Intermolecular Forces"
+      description="Interactive chemical bonding workbench simulating ionic transfer, covalent electron sharing, metallic electron seas, and dipole interactions."
+      heroDescription="Dive into the sub-atomic world. Build molecules, transfer valence electrons, and observe how electronegativity differences (Δχ) dictate ionic lattices, polar covalent bonds, and delocalized metallic matrices."
+      theory="Chemical bonds form to minimize the potential energy of interacting valence electrons and nuclei, driving atoms toward stable noble-gas electron configurations (the Octet Rule). Electronegativity differences (Δχ) determine bonding classification: Δχ > 1.7 yields ionic lattice attraction (Coulomb's Law), 0.4 < Δχ < 1.7 yields polar covalent sharing, and Δχ < 0.4 yields nonpolar covalent bonds."
+      formula="E_{\text{bond}} = \frac{k q_1 q_2}{r} - \frac{B}{r^n} \quad \text{and} \quad \Delta\chi = |\chi_A - \chi_B|"
+      formulaLabel="Coulombic Potential Energy & Electronegativity Difference"
+      launchUrl="/labs/chemistry/chemicalbonds"
+      heroImageUrl="/images/chemistry/chemicalbonds-hero.png"
+      visualLabel="3D Chemical Bonding & Molecular Builder"
+      visualDetail="Ionic NaCl Crystal • Polar Covalent H₂O • Delocalized Metallic Sea"
+      accent={{ primary: "#059669", secondary: "#0d9488", warm: "#d97706" }}
+      learningObjectives={[
+        "Classify bonds as nonpolar covalent, polar covalent, or ionic based on electronegativity differences (Δχ).",
+        "Explain the high melting points and brittleness of ionic crystal lattices vs the ductility of metallic bonding.",
+        "Model single, double, and triple covalent bonds and compare their respective bond lengths and dissociation energies.",
+        "Differentiate intramolecular chemical bonds from intermolecular forces (hydrogen bonding, dipole-dipole, London dispersion).",
+      ]}
+      applications={[
+        "Polymer Engineering & Synthetic Biomaterials (cross-linking and tensile strength).",
+        "Semiconductor Fabrication & Photovoltaic Cell Doping (silicon crystal covalent lattices).",
+        "Pharmaceutical Receptor Binding & Rational Drug Design (hydrogen bonding optimization).",
+        "Metallurgy & High-Performance Alloy Formulation.",
+      ]}
+      faqs={[
+        {
+          question: "What is the primary difference between ionic and covalent bonds?",
+          answer:
+            "Ionic bonds involve the complete transfer of valence electrons from a low-electronegativity metal to a high-electronegativity nonmetal, creating oppositely charged ions held together by electrostatic attraction. Covalent bonds involve the sharing of electron pairs between two nonmetal atoms.",
+        },
+        {
+          question: "How does electronegativity difference (Δχ) predict bond polarity?",
+          answer:
+            "When Δχ is near zero (0.0 to 0.4), electrons are shared equally in a nonpolar covalent bond. When Δχ is between 0.4 and 1.7, the more electronegative atom pulls electron density closer, creating a polar covalent bond with partial charges (δ⁺ and δ⁻). When Δχ exceeds ~1.7 to 2.0, complete electron transfer occurs, producing an ionic bond.",
+        },
+        {
+          question: "Why do metals conduct electricity in the solid state while ionic compounds do not?",
+          answer:
+            "Metals have delocalized valence electrons that form a freely flowing 'sea of electrons' across the entire metallic lattice. In solid ionic compounds, ions are locked into rigid crystalline lattice positions and cannot move; they only conduct electricity when molten or dissolved in water.",
+        },
+      ]}
+    />
+  );
 }

@@ -1,47 +1,38 @@
-import React from "react";
-import EducationalLandingLayout from "@/components/EducationalLandingLayout";
-import { EducationalContent } from "@/types/education";
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "Quadratic & Polynomial Explorer - Interactive Mathematics Lab | OpenLabs",
-  description:
-    "Master quadratic equations, parabolic geometry, discriminant analysis (Δ = b² - 4ac), higher-degree polynomials (degree 1–5), and synthetic division in our interactive mathematics laboratory.",
+  title: "Quadratic & Polynomial Explorer | OpenLabs",
+  description: "Master quadratic equations, parabolic geometry, discriminant analysis (Δ = b² - 4ac), higher-degree polynomials, and synthetic division online.",
   keywords: [
-    "quadratic equations",
-    "parabola visualizer",
-    "discriminant analysis",
-    "complex roots argand diagram",
-    "polynomial explorer",
-    "synthetic division calculator",
-    "factor theorem",
-    "remainder theorem",
-    "inflection points",
-    "interactive math lab",
-    "STEM mathematics",
+    "quadratic equations simulation",
+    "parabola vertex calculator",
+    "discriminant analysis delta",
+    "polynomial roots visualizer",
+    "synthetic division interactive",
+    "fundamental theorem of algebra",
+    "mathematics virtual lab",
   ],
   alternates: {
     canonical: "https://www.openlabs.org.in/mathematics/polynomials",
   },
   openGraph: {
-    title: "Quadratic & Polynomial Explorer - Interactive Mathematics Lab | OpenLabs",
-    description:
-      "Explore parabolic vertices, discriminant analysis (Δ = b² - 4ac), higher-degree polynomial turning points, and synthetic division in real time.",
+    title: "Quadratic & Polynomial Explorer | OpenLabs",
+    description: "Explore parabolic vertices, discriminant analysis, and higher-degree polynomials in real time.",
     url: "https://www.openlabs.org.in/mathematics/polynomials",
     type: "website",
     images: [
       {
-        url: "https://www.openlabs.org.in/images/og-image.svg",
+        url: "https://www.openlabs.org.in/images/mathematics/polynomials-hero.png",
         alt: "Quadratic & Polynomial Explorer Lab | OpenLabs",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Quadratic & Polynomial Explorer - Interactive Mathematics Lab | OpenLabs",
-    description:
-      "Explore parabolic vertices, discriminant analysis, higher-degree polynomials, and synthetic division.",
-    images: ["https://www.openlabs.org.in/images/twitter-image.svg"],
+    title: "Quadratic & Polynomial Explorer | OpenLabs",
+    description: "Explore parabolic vertices, discriminant analysis, and higher-degree polynomials.",
+    images: ["https://www.openlabs.org.in/images/mathematics/polynomials-hero.png"],
   },
   robots: {
     index: true,
@@ -49,86 +40,46 @@ export const metadata: Metadata = {
   },
 };
 
-const content: EducationalContent = {
-  slug: "polynomials",
-  subject: "Mathematics",
-  title: "Quadratic & Polynomial Explorer",
-  description:
-    "Parabolic geometry, discriminant analysis, higher-degree polynomial behavior, and synthetic division.",
-  difficulty: "Intermediate",
-  estimatedTime: "20 mins",
-  heroDescription:
-    "Deep dive into parabolic curves, quadratic roots, discriminant classification, turning points, and polynomial division with real-time interactive models.",
-  theory: {
-    content: `<p>A <strong>polynomial</strong> is an algebraic expression consisting of variables and coefficients combined using addition, subtraction, multiplication, and non-negative integer exponents.</p>
-    <h3>Quadratic Functions & Parabolas (Degree 2)</h3>
-    <p>A quadratic function has the standard form <code>y = ax² + bx + c</code> (where <code>a ≠ 0</code>). Its graph is a symmetrical curve known as a <strong>parabola</strong>.</p>
-    <ul>
-      <li><strong>Vertex:</strong> The turning point <code>(h, k)</code> where <code>h = -\\frac{b}{2a}</code> and <code>k = c - \\frac{b²}{4a}</code>.</li>
-      <li><strong>Axis of Symmetry:</strong> The vertical line <code>x = -\\frac{b}{2a}</code> passing through the vertex.</li>
-      <li><strong>Focus & Directrix:</strong> A parabola is the locus of points equidistant from a focal point <code>(h, k + \\frac{1}{4a})</code> and a directrix line <code>y = k - \\frac{1}{4a}</code>.</li>
-    </ul>
-    <h3>The Discriminant (Δ = b² - 4ac)</h3>
-    <p>The term under the square root in the Quadratic Formula determines the nature of the roots:</p>
-    <ul>
-      <li><strong>Δ > 0:</strong> Two distinct real roots (parabola crosses the x-axis twice).</li>
-      <li><strong>Δ = 0:</strong> One repeated real root (parabola vertex touches the x-axis).</li>
-      <li><strong>Δ < 0:</strong> Two complex conjugate roots <code>x = \\alpha \\pm \\beta i</code> (parabola does not intersect the real x-axis).</li>
-    </ul>
-    <h3>The Remainder & Factor Theorems</h3>
-    <p>When a polynomial <code>P(x)</code> is divided by a linear binomial <code>(x - c)</code>, the remainder equals <code>P(c)</code>. If <code>P(c) = 0</code>, then <code>(x - c)</code> is an exact factor of <code>P(x)</code>.</p>`,
-  },
-  mathematicalFoundations: {
-    equations: [
-      "y = ax^2 + bx + c",
-      "y = a(x - h)^2 + k",
-      "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}",
-      "\\Delta = b^2 - 4ac",
-      "P(x) = (x - c)Q(x) + R",
-    ],
-    explanation:
-      "Quadratic algebra bridges standard, vertex, and factored forms, while polynomial analysis identifies critical turning points (P'(x) = 0) and synthetic division evaluates polynomial remainders.",
-  },
-  learningObjectives: [
-    "Understand the geometric significance of parameters a, b, c in parabolic transformations.",
-    "Convert fluently between standard form y = ax² + bx + c and vertex form y = a(x - h)² + k.",
-    "Classify real versus complex roots using discriminant analysis (Δ = b² - 4ac).",
-    "Investigate end behavior and inflection points for cubic, quartic, and quintic polynomials.",
-    "Perform step-by-step synthetic division to find polynomial roots and verify the Factor Theorem.",
-  ],
-  realWorldApplications: [
-    "Projectile ballistics and satellite dish parabolic reflector design",
-    "Economic cost-benefit and profit optimization curves",
-    "Structural arch bridge engineering and suspension cable mechanics",
-    "Computer graphics, spline interpolation, and bezier curve modeling",
-  ],
-  howItWorks:
-    "Switch between the Quadratic, Polynomial, and Synthetic Division tabs. Drag coefficient sliders to observe instantaneous graph changes, inspect the live discriminant dial, and test factors using the synthetic tableau matrix.",
-  faqs: [
-    {
-      question: "What does the sign of 'a' indicate in a parabola?",
-      answer:
-        "If a > 0, the parabola opens upward with a global minimum at its vertex. If a < 0, the parabola opens downward with a global maximum at its vertex.",
-    },
-    {
-      question: "Why do complex roots occur in conjugate pairs?",
-      answer:
-        "By the Complex Conjugate Root Theorem, if a polynomial has real coefficients, any non-real complex root α + βi must have its conjugate α - βi as a root because the quadratic formula includes ±√(Δ).",
-    },
-    {
-      question: "What is the difference between synthetic division and long division?",
-      answer:
-        "Synthetic division is a streamlined shorthand method for dividing polynomials by linear binomials (x - c), focusing purely on coefficients without carrying variable powers.",
-    },
-  ],
-  relatedExperiments: [],
-};
-
 export default function PolynomialsLandingPage() {
   return (
-    <EducationalLandingLayout
-      content={content}
+    <STEMExperimentLanding
+      subject="mathematics"
+      slug="polynomials"
+      title="Polynomials & Discriminant Studio"
+      description="Algebraic mathematics laboratory exploring quadratic parabolas, discriminant root classifications (Δ > 0, Δ = 0, Δ < 0), synthetic division, and polynomial turning points."
+      heroDescription="Explore polynomial algebra from linear and quadratic equations up to degree-5 quintics. Adjust coefficients in real time to observe root bifurcations, vertex shifts, focus-directrix geometry, and polynomial factorizations."
+      theory="A polynomial function P(x) = a_n x^n + ... + a_1 x + a_0 has degree n. By the Fundamental Theorem of Algebra, every degree-n polynomial with complex coefficients has exactly n complex roots (counted with multiplicity). For quadratic equations (ax² + bx + c = 0), the discriminant Δ = b² - 4ac governs root nature: Δ > 0 yields two distinct real roots, Δ = 0 yields one repeated real root, and Δ < 0 yields a complex conjugate pair on the Argand plane."
+      formula="x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} \quad \text{and} \quad \Delta = b^2 - 4ac \quad \text{and} \quad \text{Vertex: } \left(-\frac{b}{2a}, c - \frac{b^2}{4a}\right)"
+      formulaLabel="Quadratic Formula, Discriminant & Parabolic Vertex"
       launchUrl="/labs/mathematics/polynomials"
+      heroImageUrl="/images/mathematics/polynomials-hero.png"
+      visualLabel="Dynamic Polynomial Curve & Root Analyzer"
+      visualDetail="Interactive Degree 1–5 Selector • Discriminant Root Classifier • Live Synthetic Division Steps"
+      accent={{ primary: "#d97706", secondary: "#9333ea", warm: "#f43f5e" }}
+      learningObjectives={[
+        "Calculate the vertex (h, k), axis of symmetry, focus, and directrix of any quadratic parabola.",
+        "Predict root nature (two real, one repeated, or two complex conjugate) using the discriminant Δ = b² - 4ac.",
+        "Perform synthetic polynomial division to test root candidates using the Remainder and Factor Theorems.",
+        "Relate polynomial degree n to the maximum number of turning points (n - 1) and inflection points (n - 2).",
+      ]}
+      applications={[
+        "Aerodynamics & Architectural Parabolic Arches (cables and satellite dish focal reflection).",
+        "Economic Profit Maximization & Revenue Parabolic Curves (finding vertex maximums).",
+        "Computer-Aided Design (CAD) & Spline Curve Interpolation (Bézier polynomials).",
+        "Signal Filtering & Control Systems Pole-Zero Root Locus Analysis.",
+      ]}
+      faqs={[
+        {
+          question: "What happens geometrically when the discriminant Δ < 0?",
+          answer:
+            "When Δ < 0, the parabola never crosses or touches the x-axis in the real Cartesian plane (it floats entirely above or below the axis). Its two roots are complex numbers with imaginary components: x = (-b ± i√|Δ|) / (2a).",
+        },
+        {
+          question: "How does the leading coefficient 'a' dictate polynomial end behavior?",
+          answer:
+            "For even-degree polynomials (quadratic, quartic), if a > 0, both ends rise to +∞; if a < 0, both ends fall to -∞. For odd-degree polynomials (cubic, quintic), if a > 0, the graph falls to the left and rises to the right; if a < 0, it rises to the left and falls to the right.",
+        },
+      ]}
     />
   );
 }

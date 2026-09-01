@@ -1,46 +1,39 @@
-import React from "react";
-import EducationalLandingLayout from "@/components/EducationalLandingLayout";
-import { EducationalContent } from "@/types/education";
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "Function Grapher - Interactive Mathematics Lab | OpenLabs",
-  description:
-    "Plot mathematical functions in real time, explore curve transformations, inspect roots and extrema, calculate tangents, and approximate definite integrals in our interactive D3 science sandbox.",
+  title: "Function Grapher & Curve Transformations | OpenLabs",
+  description: "Plot mathematical functions in real time, explore curve transformations, inspect roots and extrema, calculate tangents, and approximate integrals.",
   keywords: [
-    "function grapher",
+    "function grapher online",
     "math graphing calculator",
     "curve transformations",
     "roots of polynomials",
     "local extrema visualizer",
     "tangent line slope",
     "definite integral simpson rule",
-    "interactive math lab",
-    "calculus sandbox",
-    "STEM mathematics",
+    "mathematics virtual lab",
   ],
   alternates: {
     canonical: "https://www.openlabs.org.in/mathematics/functiongrapher",
   },
   openGraph: {
-    title: "Function Grapher - Interactive Mathematics Lab | OpenLabs",
-    description:
-      "Plot mathematical functions in real time, explore curve transformations, inspect roots and extrema, calculate tangents, and approximate definite integrals.",
+    title: "Function Grapher & Curve Transformations | OpenLabs",
+    description: "Plot mathematical functions in real time, explore curve transformations, inspect roots and extrema, and calculate tangents.",
     url: "https://www.openlabs.org.in/mathematics/functiongrapher",
     type: "website",
     images: [
       {
-        url: "https://www.openlabs.org.in/images/og-image.svg",
+        url: "https://www.openlabs.org.in/images/mathematics/functiongrapher-hero.png",
         alt: "Function Grapher Lab | OpenLabs",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Function Grapher - Interactive Mathematics Lab | OpenLabs",
-    description:
-      "Plot mathematical functions in real time, explore curve transformations, inspect roots and extrema, calculate tangents, and approximate definite integrals.",
-    images: ["https://www.openlabs.org.in/images/twitter-image.svg"],
+    title: "Function Grapher & Curve Transformations | OpenLabs",
+    description: "Plot mathematical functions in real time, explore curve transformations, and inspect roots.",
+    images: ["https://www.openlabs.org.in/images/mathematics/functiongrapher-hero.png"],
   },
   robots: {
     index: true,
@@ -48,77 +41,46 @@ export const metadata: Metadata = {
   },
 };
 
-const content: EducationalContent = {
-  slug: "functiongrapher",
-  subject: "Mathematics",
-  title: "Function Grapher",
-  description: "Interactive real-time function plotter with transformations, calculus analysis, and root-finding.",
-  difficulty: "Beginner",
-  estimatedTime: "15 mins",
-  heroDescription:
-    "Explore continuous functions, polynomial roots, amplitude and frequency transformations, and numerical derivatives in our GPU-accelerated mathematical sandbox.",
-  theory: {
-    content: `<p>A <strong>mathematical function</strong> is a relation that maps every input <code>x</code> from its domain to exactly one output <code>f(x)</code> in its range. Graphing functions visually represents this mapping on the Cartesian coordinate plane.</p>
-    <h3>Function Transformations</h3>
-    <p>Given a parent function <code>f(x)</code>, the general transformed function is represented as:</p>
-    <p><code>g(x) = a · f(b(x − h)) + k</code></p>
-    <ul>
-      <li><strong>a (Vertical Stretch / Compression & Reflection):</strong> If <code>|a| &gt; 1</code>, the curve stretches vertically; if <code>0 &lt; |a| &lt; 1</code>, it compresses. If <code>a &lt; 0</code>, the curve reflects across the x-axis.</li>
-      <li><strong>b (Horizontal Compression / Stretch & Reflection):</strong> If <code>|b| &gt; 1</code>, the curve compresses horizontally by a factor of <code>1/|b|</code>. If <code>b &lt; 0</code>, it reflects across the y-axis.</li>
-      <li><strong>h (Horizontal Phase Shift):</strong> Translates the curve horizontally by <code>h</code> units (right if <code>h &gt; 0</code>, left if <code>h &lt; 0</code>).</li>
-      <li><strong>k (Vertical Shift):</strong> Translates the curve vertically by <code>k</code> units (up if <code>k &gt; 0</code>, down if <code>k &lt; 0</code>).</li>
-    </ul>
-    <h3>Calculus & Analysis Foundations</h3>
-    <p>Key geometrical properties include <strong>Roots</strong> (where <code>f(x) = 0</code>), <strong>y-Intercept</strong> (value of <code>f(0)</code>), <strong>Local Extrema</strong> (points where the first derivative <code>f'(x) = 0</code> changes sign), and <strong>Definite Integrals</strong> representing the net signed area under the curve.</p>`,
-  },
-  mathematicalFoundations: {
-    equations: [
-      "g(x) = a · f(b(x - h)) + k",
-      "f'(x) = \\lim_{h \\to 0} \\frac{f(x+h) - f(x-h)}{2h}",
-      "\\int_a^b f(x) dx \\approx \\frac{\\Delta x}{3} [f(x_0) + 4\\sum f(x_{\\text{odd}}) + 2\\sum f(x_{\\text{even}}) + f(x_n)]",
-    ],
-    explanation:
-      "Transformations modify geometric scaling and translation, while numerical derivatives provide tangent slope m, and Simpson's composite rule approximates definite integrals.",
-  },
-  learningObjectives: [
-    "Visualize parent functions (polynomial, trigonometric, rational, and exponential).",
-    "Master the four transformation parameters (a, b, h, k) and predict curve shifts.",
-    "Identify roots (x-intercepts) and local turning points (minima and maxima).",
-    "Calculate instantaneous rates of change (tangent slopes) and net definite integral areas.",
-  ],
-  realWorldApplications: [
-    "Signal processing and acoustic wave modulation (sine, cosine, harmonics)",
-    "Trajectory mechanics and projectile motion (parabolic quadratic functions)",
-    "Population growth, epidemiology, and radioactive decay models (exponential curves)",
-    "Economics cost optimization and marginal revenue curves (calculus extrema)",
-  ],
-  howItWorks:
-    "Type any mathematical expression into the formula bar (e.g. x^3 - 3*x or sin(x)) or select a preset from the gallery. Use the Transformation sliders to dynamically stretch and shift the curve, toggle grid and roots overlays, hover to inspect tangent slopes, or compute definite integrals over chosen bounds.",
-  faqs: [
-    {
-      question: "What mathematical syntax is supported?",
-      answer:
-        "Standard mathematical notation is fully supported, including powers (x^2, x^3), trigonometry (sin, cos, tan), roots (sqrt, cbrt), logarithms (ln, log), exponentials (exp(x), e^x), absolute values (abs), and constants (pi, e).",
-    },
-    {
-      question: "How are roots and extrema calculated?",
-      answer:
-        "Roots are detected numerically by interval scanning and refined using the bisection method. Extrema are located by detecting sign changes in the numerical symmetric difference derivative f'(x).",
-    },
-    {
-      question: "Can I plot multiple functions at the same time?",
-      answer:
-        "Yes! You can add multiple functions to the canvas, customize their curve colors, toggle their visibility, and compare their values side-by-side in the Point Inspector table.",
-    },
-  ],
-  relatedExperiments: [],
-};
-
 export default function FunctionGrapherLandingPage() {
   return (
-    <EducationalLandingLayout
-      content={content}
+    <STEMExperimentLanding
+      subject="mathematics"
+      slug="functiongrapher"
+      title="Function Grapher & Curve Transformations"
+      description="Interactive real-time function plotter with geometric curve transformations, numerical root-finding, local extrema detection, and tangent slopes."
+      heroDescription="Explore continuous functions, polynomial roots, amplitude and frequency scalings, horizontal/vertical translations, and numerical tangents in a real-time vector mathematical sandbox."
+      theory="A function f: X → Y maps each input element x in domain X to a unique output f(x) in range Y. Geometric transformations of a base function f(x) are defined by g(x) = a · f(b(x - c)) + d, where 'a' represents vertical stretching/reflection, 'b' represents horizontal compression/reflection, 'c' controls horizontal phase shift, and 'd' dictates vertical translation. Stationary points occur where the first derivative equals zero (f'(x) = 0), and inflection points occur where concavity changes sign (f''(x) = 0)."
+      formula="g(x) = a \cdot f\big(b(x - c)\big) + d \quad \text{and} \quad f'(x_0) = \lim_{h \to 0}\frac{f(x_0+h) - f(x_0)}{h}"
+      formulaLabel="Universal Transformation Equation & Newton-Raphson Secant Limit"
       launchUrl="/labs/mathematics/functiongrapher"
+      heroImageUrl="/images/mathematics/functiongrapher-hero.png"
+      visualLabel="Real-Time D3 Function Plotter"
+      visualDetail="Polynomial, Trigonometric & Exponential Libraries • Roots & Extrema Markers • Dynamic Tangent Line"
+      accent={{ primary: "#d97706", secondary: "#0284c7", warm: "#f59e0b" }}
+      learningObjectives={[
+        "Apply parameter shifts a, b, c, d to predict the geometric transformation of parent algebraic and trigonometric curves.",
+        "Locate polynomial real roots (x-intercepts) using numerical Newton-Raphson iteration.",
+        "Classify local maxima, local minima, and stationary points of inflection using the Second Derivative Test.",
+        "Calculate the instantaneous slope of a secant line as Δx approaches zero.",
+      ]}
+      applications={[
+        "Aerospace Trajectory Optimization & Orbital Velocity Curves.",
+        "Signal Processing & Fourier Harmonic Decomposition (audio engineering and telecommunications).",
+        "Financial Quantitative Modeling (Black-Scholes option pricing curves and risk surfaces).",
+        "Machine Learning Loss Function Visualization and Gradient Descent Optimization.",
+      ]}
+      faqs={[
+        {
+          question: "How does the parameter 'c' inside f(x - c) shift a function horizontally?",
+          answer:
+            "When replacing x with (x - c), the input value must be 'c' units larger to evaluate the same output as the original f(x). Consequently, a positive 'c' shifts the curve to the right by c units, while a negative 'c' (as in f(x + c)) shifts it to the left.",
+        },
+        {
+          question: "How does the Second Derivative Test distinguish a local maximum from a local minimum?",
+          answer:
+            "At a stationary critical point where f'(c) = 0: if f''(c) > 0, the curve is concave up (smile shape), indicating a local minimum; if f''(c) < 0, the curve is concave down (frown shape), indicating a local maximum; if f''(c) = 0, the test is inconclusive.",
+        },
+      ]}
     />
   );
 }

@@ -1,12 +1,9 @@
-import React from "react";
-import EducationalLandingLayout from "@/components/EducationalLandingLayout";
-import { EducationalContent } from "@/types/education";
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
 export const metadata: Metadata = {
-  title: "Trigonometry Visualizer - Interactive Mathematics Lab | OpenLabs",
-  description:
-    "Master trigonometry with our interactive unit circle and wave unfolding sandbox. Explore sine, cosine, tangent geometric projections, verify Pythagorean identities, and manipulate wave harmonics.",
+  title: "Trigonometry & Unit Circle Dynamics | OpenLabs",
+  description: "Master trigonometry with our interactive unit circle and wave unfolding sandbox. Explore sine, cosine, tangent geometric projections, verify Pythagorean identities, and manipulate wave harmonics.",
   keywords: [
     "trigonometry visualizer",
     "unit circle simulator",
@@ -15,31 +12,28 @@ export const metadata: Metadata = {
     "tangent line slope",
     "pythagorean identities verification",
     "trigonometric wave harmonics",
-    "interactive math lab",
-    "STEM mathematics",
+    "mathematics virtual lab",
   ],
   alternates: {
     canonical: "https://www.openlabs.org.in/mathematics/trigonometry",
   },
   openGraph: {
-    title: "Trigonometry Visualizer - Interactive Mathematics Lab | OpenLabs",
-    description:
-      "Explore unit circle geometry, dynamic sine/cosine wave unfolding, and Pythagorean trigonometric identities in real time.",
+    title: "Trigonometry & Unit Circle Dynamics | OpenLabs",
+    description: "Explore unit circle geometry, dynamic sine/cosine wave unfolding, and Pythagorean trigonometric identities in real time.",
     url: "https://www.openlabs.org.in/mathematics/trigonometry",
     type: "website",
     images: [
       {
-        url: "https://www.openlabs.org.in/images/og-image.svg",
+        url: "https://www.openlabs.org.in/images/mathematics/trigonometry-hero.png",
         alt: "Trigonometry Visualizer Lab | OpenLabs",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Trigonometry Visualizer - Interactive Mathematics Lab | OpenLabs",
-    description:
-      "Explore unit circle geometry, dynamic sine/cosine wave unfolding, and Pythagorean trigonometric identities in real time.",
-    images: ["https://www.openlabs.org.in/images/twitter-image.svg"],
+    title: "Trigonometry & Unit Circle Dynamics | OpenLabs",
+    description: "Explore unit circle geometry, dynamic sine/cosine wave unfolding, and Pythagorean trigonometric identities in real time.",
+    images: ["https://www.openlabs.org.in/images/mathematics/trigonometry-hero.png"],
   },
   robots: {
     index: true,
@@ -47,80 +41,46 @@ export const metadata: Metadata = {
   },
 };
 
-const content: EducationalContent = {
-  slug: "trigonometry",
-  subject: "Mathematics",
-  title: "Trigonometry Visualizer",
-  description: "Interactive unit circle geometry, continuous sinusoidal wave unfolding, and identity proofs.",
-  difficulty: "Beginner",
-  estimatedTime: "15 mins",
-  heroDescription:
-    "Bridge right-triangle definitions, circular motion, and periodic wave functions in our interactive trigonometric laboratory.",
-  theory: {
-    content: `<p><strong>Trigonometry</strong> is the branch of mathematics that studies relationships between side lengths and angles of triangles, extended to periodic circular functions on the Cartesian coordinate plane.</p>
-    <h3>The Unit Circle Definition (r = 1)</h3>
-    <p>On a Cartesian coordinate system with a circle of radius <code>r = 1</code> centered at the origin <code>(0, 0)</code>, any angle <code>θ</code> in standard position defines a coordinate <code>(x, y)</code> on the circle where:</p>
-    <ul>
-      <li><strong>Cosine:</strong> <code>x = \\cos(θ)</code> (horizontal projection base)</li>
-      <li><strong>Sine:</strong> <code>y = \\sin(θ)</code> (vertical projection height)</li>
-      <li><strong>Tangent:</strong> <code>\\tan(θ) = \\frac{y}{x} = \\frac{\\sin(θ)}{\\cos(θ)}</code> (slope of the terminal ray / tangent line segment)</li>
-    </ul>
-    <h3>From Circular Motion to Continuous Waves</h3>
-    <p>As an object traverses the unit circle counter-clockwise at constant angular velocity <code>ω</code>, its vertical height unfolds into a continuous <strong>Sine Wave</strong> <code>y = \\sin(θ)</code>, and its horizontal displacement forms a <strong>Cosine Wave</strong> <code>x = \\cos(θ)</code> with period <code>T = 2π</code> radians (360°).</p>
-    <h3>Fundamental Pythagorean Identities</h3>
-    <p>Applying the Pythagorean theorem <code>x² + y² = r²</code> to the right triangle inside the unit circle yields:</p>
-    <p><code>\\sin²(θ) + \\cos²(θ) = 1</code></p>
-    <p>Dividing by <code>\\cos²(θ)</code> and <code>\\sin²(θ)</code> provides the secondary identities <code>1 + \\tan²(θ) = \\sec²(θ)</code> and <code>1 + \\cot²(θ) = \\csc²(θ)</code>.</p>`,
-  },
-  mathematicalFoundations: {
-    equations: [
-      "\\sin^2(\\theta) + \\cos^2(\\theta) = 1",
-      "\\tan(\\theta) = \\frac{\\sin(\\theta)}{\\cos(\\theta)}",
-      "y = A \\sin(B(x - C)) + D",
-      "\\sin(2\\theta) = 2\\sin(\\theta)\\cos(\\theta)",
-    ],
-    explanation:
-      "Trigonometric functions map angles to coordinate ratios on the unit circle, while wave transformations scale amplitude (A), frequency/period (B), phase shift (C), and vertical offset (D).",
-  },
-  learningObjectives: [
-    "Visualize the geometric right-triangle decomposition of sine, cosine, and tangent on the unit circle.",
-    "Observe how circular rotation unrolls directly into periodic sine and cosine waves.",
-    "Master the 16 exact standard angles (multiples of π/6 and π/4) and their radical values.",
-    "Verify fundamental Pythagorean and double-angle trigonometric identities in real time.",
-  ],
-  realWorldApplications: [
-    "Audio engineering and acoustic sound synthesis (Fourier harmonics and sinusoidal tones)",
-    "Alternating current (AC) electrical circuits, voltage phases, and impedance oscillations",
-    "Computer graphics, 3D rotations, ray-casting, and procedural animation loops",
-    "Astronomy, celestial navigation, and orbital planetary mechanics",
-  ],
-  howItWorks:
-    "Drag the interactive handle on the unit circle or click any standard angle from the reference matrix. Watch the synchronized projection ray trace the live wave in real time. Use the Wave Sandbox to tweak amplitude, frequency, and phase, or explore identity verifications.",
-  faqs: [
-    {
-      question: "Why is the unit circle radius set to 1?",
-      answer:
-        "Setting r = 1 simplifies the trigonometric ratios: sin(θ) = opposite/hypotenuse = y/1 = y, and cos(θ) = adjacent/hypotenuse = x/1 = x. The circle coordinates directly equal the sine and cosine values.",
-    },
-    {
-      question: "What does ASTC stand for?",
-      answer:
-        "ASTC is a mnemonic ('All Students Take Calculus' or 'All Silver Tea Cups') for determining which trigonometric functions are positive in each quadrant: Q1 = All, Q2 = Sine, Q3 = Tangent, Q4 = Cosine.",
-    },
-    {
-      question: "Why does tan(90°) not exist?",
-      answer:
-        "At θ = 90° (π/2 rad), cos(90°) = 0. Since tan(θ) = sin(θ)/cos(θ), computing tan(90°) involves division by zero (1/0), resulting in an infinite vertical asymptote.",
-    },
-  ],
-  relatedExperiments: [],
-};
-
 export default function TrigonometryLandingPage() {
   return (
-    <EducationalLandingLayout
-      content={content}
+    <STEMExperimentLanding
+      subject="mathematics"
+      slug="trigonometry"
+      title="Trigonometry & Unit Circle Dynamics"
+      description="Interactive trigonometry laboratory demonstrating unit circle coordinates (cos θ, sin θ), dynamic sinusoidal wave unfolding, and geometric Pythagorean identity proofs."
+      heroDescription="Bridge right-triangle ratios (SOH-CAH-TOA), circular rotational kinematics, and continuous periodic sinusoidal waves. Drag the angle radial arm on the Unit Circle (r = 1) to observe real-time trigonometric projections."
+      theory="Trigonometry extends right-triangle geometry to continuous periodic functions on the Cartesian plane via the Unit Circle (x² + y² = 1). For any angle θ measured counterclockwise from the positive x-axis, the coordinates of the terminal point on the circle are x = cos θ and y = sin θ, while the tangent is the slope of the radial line (tan θ = sin θ / cos θ). Projecting y(θ) continuously onto a moving time axis unfolds the fundamental sinusoidal wave."
+      formula="\sin^2\theta + \cos^2\theta = 1 \quad \text{and} \quad e^{i\theta} = \cos\theta + i\sin\theta \quad \text{and} \quad \tan\theta = \frac{\sin\theta}{\cos\theta}"
+      formulaLabel="Pythagorean Identity & Euler's Formula"
       launchUrl="/labs/mathematics/trigonometry"
+      heroImageUrl="/images/mathematics/trigonometry-hero.png"
+      visualLabel="Interactive Unit Circle & Wave Projector"
+      visualDetail="Radians & Degrees Selector • Real-time (x, y) = (cos θ, sin θ) Coordinate HUD • Live Sine & Cosine Wave Unfolding"
+      accent={{ primary: "#0284c7", secondary: "#f59e0b", warm: "#10b981" }}
+      learningObjectives={[
+        "Locate exact coordinates (cos θ, sin θ) on the Unit Circle for special angles (0°, 30°, 45°, 60°, 90°).",
+        "Explain how the vertical y-projection of rotating circular motion generates a continuous sine wave.",
+        "Verify fundamental trigonometric identities geometrically: sin²θ + cos²θ = 1 and 1 + tan²θ = sec²θ.",
+        "Analyze the periodic amplitude, frequency, and phase shift parameters in y(t) = A · sin(ωt + φ).",
+      ]}
+      applications={[
+        "Acoustic Audio Engineering & Musical Synthesizer Harmonic Synthesis.",
+        "AC Electrical Engineering & Phasor Circuit Analysis (voltage and current phase angles).",
+        "3D Computer Graphics, Video Game Shaders & Euler Rotation Matrices.",
+        "Celestial Navigation, GPS Triangulation, and Geodetic Surveying.",
+      ]}
+      faqs={[
+        {
+          question: "Why does the Pythagorean identity sin²θ + cos²θ = 1 hold for all angles?",
+          answer:
+            "On a unit circle of radius r = 1, any angle θ defines a right triangle with adjacent side x = cos θ, opposite side y = sin θ, and hypotenuse r = 1. Applying the Pythagorean theorem (a² + b² = c²) gives (cos θ)² + (sin θ)² = 1².",
+        },
+        {
+          question: "What is a radian and why is it preferred over degrees in higher mathematics?",
+          answer:
+            "One radian is the angle subtended at the center of a circle by an arc equal in length to the circle's radius (1 rad = 180°/π ≈ 57.3°). Radians are a dimensionless natural measure that allows simple calculus derivatives without conversion constants (d/dx [sin x] = cos x).",
+        },
+      ]}
     />
   );
 }

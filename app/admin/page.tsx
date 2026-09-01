@@ -676,7 +676,7 @@ export default function AdminPortalHomePage() {
                   </div>
                 </div>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-500/10 text-teal-500 border border-teal-500/20">
-                  {data?.seo.totalLabs || 53} Labs
+                  {data?.seo.totalLabs || 94} Labs
                 </span>
               </div>
 

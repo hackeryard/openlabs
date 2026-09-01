@@ -554,7 +554,7 @@ export default function BlogPostInteractive({
                   Experience The Science Live In Your Browser
                 </h3>
                 <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                  Put this theory into practice. Explore 50+ free virtual STEM simulations with real-time numerical graphs.
+                  Put this theory into practice. Explore 94 free virtual STEM simulations with real-time numerical graphs.
                 </p>
                 <div className="pt-2">
                   <Link
