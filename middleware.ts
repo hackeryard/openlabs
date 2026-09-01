@@ -10,6 +10,7 @@ const publicPaths = [
   '/verify-email',
   '/about',
   '/contact',
+  '/tracks',
   '/403',
   '/sitemap.xml',
   '/robots.txt',
@@ -21,6 +22,7 @@ const publicPaths = [
 
 const publicPrefixes = [
   '/blog',
+  '/tracks',
   '/physics',
   '/chemistry',
   '/biology',

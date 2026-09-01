@@ -49,6 +49,7 @@ export default function FloatingLabFeedback() {
   const [selectedRating, setSelectedRating] = useState<number>(0);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [comment, setComment] = useState("");
+  const [showValidationErrors, setShowValidationErrors] = useState(false);
   const [submittedSuccess, setSubmittedSuccess] = useState(false);
   const [pendingUrl, setPendingUrl] = useState<string | null>(null);
 
@@ -73,6 +74,7 @@ export default function FloatingLabFeedback() {
   // Global 'F' keyboard shortcut to toggle feedback
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (!e.key) return;
       if (
         e.key.toLowerCase() === "f" &&
         !e.metaKey &&
@@ -86,6 +88,7 @@ export default function FloatingLabFeedback() {
         setIsExitTriggered(false);
         setPulseChoice(null);
         setIsManualExpanded(false);
+        setShowValidationErrors(false);
         setIsOpen((prev) => !prev);
       }
     };
@@ -101,6 +104,7 @@ export default function FloatingLabFeedback() {
     setIsExitTriggered(false);
     setPulseChoice(null);
     setIsManualExpanded(false);
+    setShowValidationErrors(false);
     setSubmittedSuccess(false);
     setSelectedRating(0);
     setSelectedTag(null);
@@ -195,16 +199,23 @@ export default function FloatingLabFeedback() {
     submitPulse(false);
   };
 
-  // Handler 3: Submit Helpful Flow (Mandatory Star Rating)
+  // Handler 3: Submit Helpful Flow (Mandatory Star Rating; Feedback Text ONLY mandatory if below 3 stars)
   const handleHelpfulStarSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (selectedRating < 1) return; // Mandatory rating check
+
+    const isMissingRating = selectedRating < 1;
+    const isMissingComment = selectedRating > 0 && selectedRating < 3 && !comment.trim();
+
+    if (isMissingRating || isMissingComment) {
+      setShowValidationErrors(true);
+      return;
+    }
 
     await submitDeep({
       rating: selectedRating,
-      category: selectedTag || (selectedRating >= 4 ? "praise" : "helpful"),
+      category: selectedTag || (selectedRating < 3 ? "confusing" : selectedRating >= 4 ? "praise" : "helpful"),
       comment: comment.trim() || undefined,
-      helpful: true,
+      helpful: selectedRating >= 3,
     });
 
     setSubmittedSuccess(true);
@@ -217,18 +228,20 @@ export default function FloatingLabFeedback() {
     }, 700);
   };
 
-  // Handler 4: Submit Not-Helpful Flow (Optional Details)
+  // Handler 4: Submit Not-Helpful Flow (Mandatory Feedback Text)
   const handleNotHelpfulDetailsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (selectedTag || comment.trim() || selectedRating > 0) {
-      await submitDeep({
-        rating: selectedRating > 0 ? selectedRating : undefined,
-        category: selectedTag || "confusing",
-        comment: comment.trim() || undefined,
-        helpful: false,
-      });
+    if (!comment.trim()) {
+      setShowValidationErrors(true);
+      return;
     }
+
+    await submitDeep({
+      rating: selectedRating > 0 ? selectedRating : 1,
+      category: selectedTag || "confusing",
+      comment: comment.trim(),
+      helpful: false,
+    });
 
     setSubmittedSuccess(true);
     markDismissedInSession();
@@ -251,6 +264,8 @@ export default function FloatingLabFeedback() {
   if (!mounted || !isLabPage || !labId) {
     return null;
   }
+
+  const isUnder3Stars = selectedRating > 0 && selectedRating < 3;
 
   return (
     <>
@@ -327,17 +342,19 @@ export default function FloatingLabFeedback() {
                   <span>{isExitTriggered ? "Before you leave…" : "Lab Feedback"}</span>
                 </div>
                 <h3 className="text-base sm:text-lg font-black text-foreground tracking-tight">
-                  {pulseChoice === "helpful"
-                    ? "Great! How would you rate this experiment?"
-                    : pulseChoice === "not_helpful"
+                  {pulseChoice === "not_helpful" || isUnder3Stars
                     ? "What went wrong with this experiment?"
+                    : pulseChoice === "helpful"
+                    ? "Great! How would you rate this experiment?"
+                    : isManualExpanded
+                    ? "Share Your Lab Feedback"
                     : `Was ${labTitle} helpful?`}
                 </h3>
               </div>
 
               <button
                 onClick={handleCloseOrSkip}
-                className="p-1.5 text-muted-foreground hover:text-foreground rounded-xl hover:bg-muted transition shrink-0"
+                className="p-1.5 text-muted-foreground hover:text-foreground rounded-xl hover:bg-muted transition shrink-0 cursor-pointer"
                 title="Close"
               >
                 <X size={18} />
@@ -355,7 +372,7 @@ export default function FloatingLabFeedback() {
                     Thank You for Your Feedback! 🎉
                   </h4>
                   <p className="text-xs text-muted-foreground">
-                    Your rating helps us continuously refine STEM simulations for students worldwide.
+                    Your response helps us continuously refine STEM simulations for students worldwide.
                   </p>
                 </div>
 
@@ -367,7 +384,7 @@ export default function FloatingLabFeedback() {
                 <div className="pt-2">
                   <button
                     onClick={handleCloseOrSkip}
-                    className="px-5 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl text-xs font-black transition shadow-sm inline-flex items-center gap-1.5"
+                    className="px-5 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl text-xs font-black transition shadow-sm inline-flex items-center gap-1.5 cursor-pointer"
                   >
                     <span>{pendingUrl ? "Proceed to Next Page" : "Done"}</span>
                     <ArrowRight size={13} />
@@ -386,7 +403,7 @@ export default function FloatingLabFeedback() {
                     type="button"
                     onClick={handleFoundHelpful}
                     disabled={submitting}
-                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 hover:border-emerald-500 text-emerald-600 dark:text-emerald-400 font-black text-sm transition-all active:scale-95 shadow-sm group"
+                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 hover:border-emerald-500 text-emerald-600 dark:text-emerald-400 font-black text-sm transition-all active:scale-95 shadow-sm group cursor-pointer"
                   >
                     <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                       <ThumbsUp size={20} />
@@ -398,7 +415,7 @@ export default function FloatingLabFeedback() {
                     type="button"
                     onClick={handleNotHelpful}
                     disabled={submitting}
-                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 hover:border-rose-500 text-rose-600 dark:text-rose-400 font-black text-sm transition-all active:scale-95 shadow-sm group"
+                    className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 hover:border-rose-500 text-rose-600 dark:text-rose-400 font-black text-sm transition-all active:scale-95 shadow-sm group cursor-pointer"
                   >
                     <div className="w-10 h-10 rounded-xl bg-rose-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                       <ThumbsDown size={20} />
@@ -410,8 +427,11 @@ export default function FloatingLabFeedback() {
                 <div className="flex items-center justify-between pt-2 border-t border-border/70">
                   <button
                     type="button"
-                    onClick={() => setIsManualExpanded(true)}
-                    className="text-[11px] font-bold text-primary hover:underline"
+                    onClick={() => {
+                      setIsManualExpanded(true);
+                      if (selectedRating === 0) setSelectedRating(5);
+                    }}
+                    className="text-[11px] font-bold text-primary hover:underline cursor-pointer"
                   >
                     Give detailed feedback ▾
                   </button>
@@ -419,19 +439,31 @@ export default function FloatingLabFeedback() {
                   <button
                     type="button"
                     onClick={handleCloseOrSkip}
-                    className="text-xs font-bold text-muted-foreground hover:text-foreground transition"
+                    className="text-xs font-bold text-muted-foreground hover:text-foreground transition cursor-pointer"
                   >
                     Skip
                   </button>
                 </div>
               </div>
-            ) : pulseChoice === "helpful" ? (
-              /* ── State 3: Helpful Flow -> Mandatory Star Rating Required ── */
+            ) : pulseChoice === "helpful" || isManualExpanded ? (
+              /* ── State 3: Helpful / Manual Flow -> Mandatory Star Rating & Mandatory Feedback ── */
               <form onSubmit={handleHelpfulStarSubmit} className="space-y-4">
-                <div className="bg-muted/20 border border-border/70 rounded-2xl p-4 text-center space-y-2">
-                  <div className="flex items-center justify-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-xs font-black">
-                    <ThumbsUp size={14} />
-                    <span>Glad it was helpful! Please rate to submit:</span>
+                <div
+                  className={`rounded-2xl p-4 text-center space-y-2 transition-all ${
+                    showValidationErrors && selectedRating < 1
+                      ? "bg-rose-500/10 border-2 border-rose-500 shadow-xs"
+                      : "bg-muted/20 border border-border/70"
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-1.5 text-xs font-black">
+                    {showValidationErrors && selectedRating < 1 ? (
+                      <span className="text-rose-600 dark:text-rose-400">⚠️ Star rating is required</span>
+                    ) : (
+                      <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+                        <ThumbsUp size={14} />
+                        <span>Rate this experiment (Required):</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* 5 Stars — MANDATORY */}
@@ -444,8 +476,16 @@ export default function FloatingLabFeedback() {
                           type="button"
                           onMouseEnter={() => setHoverRating(star)}
                           onMouseLeave={() => setHoverRating(0)}
-                          onClick={() => setSelectedRating(star)}
-                          className="p-1 transition-transform hover:scale-125 active:scale-95"
+                          onClick={() => {
+                            setSelectedRating(star);
+                            setShowValidationErrors(false);
+                            if (star < 3 && !selectedTag) {
+                              setSelectedTag("confusing");
+                            } else if (star >= 4 && (!selectedTag || selectedTag === "confusing" || selectedTag === "bug")) {
+                              setSelectedTag("helpful");
+                            }
+                          }}
+                          className="p-1 transition-transform hover:scale-125 active:scale-95 cursor-pointer"
                           title={`Rate ${star} star${star > 1 ? "s" : ""}`}
                         >
                           <Star
@@ -461,51 +501,134 @@ export default function FloatingLabFeedback() {
                     })}
                   </div>
 
-                  <span className={`text-xs font-bold block min-h-[18px] ${selectedRating > 0 ? "text-foreground" : "text-amber-600 dark:text-amber-400 font-black"}`}>
+                  <span
+                    className={`text-xs font-bold block min-h-[18px] ${
+                      showValidationErrors && selectedRating < 1
+                        ? "text-rose-600 dark:text-rose-400 font-black animate-pulse"
+                        : selectedRating > 0
+                        ? "text-foreground"
+                        : "text-amber-600 dark:text-amber-400 font-black"
+                    }`}
+                  >
                     {selectedRating > 0
                       ? RATING_DESCRIPTIONS[hoverRating || selectedRating]
-                      : "★ Select a star rating (required to submit)"}
+                      : showValidationErrors
+                      ? "★ Please select a star rating (Required)"
+                      : "★ Select a star rating (Required)"}
                   </span>
                 </div>
 
-                {/* Optional Note */}
-                <div className="space-y-1.5">
-                  <textarea
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value.slice(0, 500))}
-                    placeholder="Anything specific you loved about this simulation? (optional)"
-                    rows={2}
-                    className="w-full rounded-2xl border border-border bg-background text-foreground text-xs p-3 resize-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-muted-foreground"
-                  />
+                {/* Conditional Sub-Prompt: If < 3 stars, explicitly ask what went wrong */}
+                {isUnder3Stars && (
+                  <div className="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-bold flex items-start gap-2">
+                    <HelpCircle size={15} className="shrink-0 mt-0.5" />
+                    <span>What went wrong? Please describe what was confusing, broken, or didn't work as expected.</span>
+                  </div>
+                )}
+
+                {/* Category Chips */}
+                <div className="space-y-1">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground block">
+                    {isUnder3Stars ? "Issue category (optional)" : "Category (optional)"}
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {FEEDBACK_TAGS.map((tag) => (
+                      <button
+                        key={tag.id}
+                        type="button"
+                        onClick={() => setSelectedTag(selectedTag === tag.id ? null : tag.id)}
+                        className={`px-2.5 py-1 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                          selectedTag === tag.id
+                            ? "bg-primary text-primary-foreground border-primary shadow-xs"
+                            : "bg-muted/40 text-muted-foreground border-border hover:bg-muted hover:text-foreground"
+                        }`}
+                      >
+                        <span className="mr-1">{tag.emoji}</span>
+                        {tag.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                {/* Submit Action (Disabled until >= 1 star selected) */}
+                {/* Feedback Input (Mandatory ONLY when rating < 3 stars; Optional for >= 3 stars) */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] font-bold text-foreground">
+                      {isUnder3Stars
+                        ? "What went wrong? (Required)"
+                        : "Your Feedback (Optional)"}
+                    </label>
+                    <span
+                      className={`text-[10px] font-mono ${
+                        showValidationErrors && isUnder3Stars && !comment.trim()
+                          ? "text-rose-600 dark:text-rose-400 font-bold"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      {showValidationErrors && isUnder3Stars && !comment.trim()
+                        ? "⚠️ Required"
+                        : isUnder3Stars
+                        ? "Required"
+                        : comment.trim().length > 0
+                        ? `${comment.length}/500`
+                        : "Optional"}
+                    </span>
+                  </div>
+                  <textarea
+                    value={comment}
+                    onChange={(e) => {
+                      setComment(e.target.value.slice(0, 500));
+                      if (e.target.value.trim()) setShowValidationErrors(false);
+                    }}
+                    placeholder={
+                      isUnder3Stars
+                        ? "Please tell us what went wrong, what was confusing, or what didn't work... (Required)"
+                        : "Tell us what you liked or anything we can improve... (Optional)"
+                    }
+                    rows={3}
+                    className={`w-full rounded-2xl border text-foreground text-xs p-3 resize-none focus:outline-none focus:ring-2 placeholder:text-muted-foreground transition-colors ${
+                      showValidationErrors && isUnder3Stars && !comment.trim()
+                        ? "border-rose-500 bg-rose-500/5 focus:border-rose-500 focus:ring-rose-500/30"
+                        : "border-border bg-background focus:border-primary focus:ring-primary/30"
+                    }`}
+                  />
+                  {showValidationErrors && isUnder3Stars && !comment.trim() && (
+                    <p className="text-[11px] text-rose-600 dark:text-rose-400 font-bold flex items-center gap-1">
+                      ⚠️ Please describe what went wrong before submitting.
+                    </p>
+                  )}
+                </div>
+
+                {/* Submit Action (Always Clickable, validates on click) */}
                 <div className="flex items-center justify-between pt-1">
                   <button
                     type="button"
-                    onClick={() => setPulseChoice(null)}
-                    className="text-xs font-bold text-muted-foreground hover:text-foreground transition px-2 py-1"
+                    onClick={() => {
+                      setPulseChoice(null);
+                      setIsManualExpanded(false);
+                      setShowValidationErrors(false);
+                    }}
+                    className="text-xs font-bold text-muted-foreground hover:text-foreground transition px-2 py-1 cursor-pointer"
                   >
                     ← Back
                   </button>
 
                   <button
                     type="submit"
-                    disabled={submitting || selectedRating < 1}
-                    className="flex items-center gap-1.5 px-5 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl text-xs font-black transition-all shadow-md active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+                    disabled={submitting}
+                    className="flex items-center gap-1.5 px-5 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl text-xs font-black transition-all shadow-md active:scale-95 disabled:opacity-50 cursor-pointer"
                   >
                     <Send size={13} />
-                    <span>{submitting ? "Submitting…" : selectedRating < 1 ? "Select Star Rating" : "Submit Feedback"}</span>
+                    <span>{submitting ? "Submitting…" : "Submit Feedback"}</span>
                   </button>
                 </div>
               </form>
             ) : (
-              /* ── State 4: Not Helpful / Expanded Flow -> Optional Feedback (NOT mandatory) ── */
+              /* ── State 4: Not Helpful Flow -> Mandatory Feedback Text ── */
               <form onSubmit={handleNotHelpfulDetailsSubmit} className="space-y-4">
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">
-                    Your feedback is completely optional. Tell us what went wrong so we can fix it:
-                  </p>
+                <div className="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-bold flex items-start gap-2">
+                  <HelpCircle size={15} className="shrink-0 mt-0.5" />
+                  <span>We're sorry this lab didn't meet expectations. Please describe what went wrong so we can fix it:</span>
                 </div>
 
                 {/* Category Chips */}
@@ -519,7 +642,7 @@ export default function FloatingLabFeedback() {
                         key={tag.id}
                         type="button"
                         onClick={() => setSelectedTag(selectedTag === tag.id ? null : tag.id)}
-                        className={`px-3 py-1 rounded-xl border text-xs font-bold transition-all ${
+                        className={`px-3 py-1 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                           selectedTag === tag.id
                             ? "bg-primary text-primary-foreground border-primary shadow-xs"
                             : "bg-muted/40 text-muted-foreground border-border hover:bg-muted hover:text-foreground"
@@ -532,34 +655,67 @@ export default function FloatingLabFeedback() {
                   </div>
                 </div>
 
-                {/* Optional Comment Box */}
+                {/* Mandatory Comment Box */}
                 <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] font-bold text-foreground">
+                      What went wrong? (Required)
+                    </label>
+                    <span
+                      className={`text-[10px] font-mono ${
+                        showValidationErrors && !comment.trim()
+                          ? "text-rose-600 dark:text-rose-400 font-bold"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      {showValidationErrors && !comment.trim()
+                        ? "⚠️ Feedback Required"
+                        : comment.trim().length > 0
+                        ? `${comment.length}/500`
+                        : "Required"}
+                    </span>
+                  </div>
                   <textarea
                     value={comment}
-                    onChange={(e) => setComment(e.target.value.slice(0, 500))}
-                    placeholder="Tell us what didn't work or what was confusing… (optional)"
+                    onChange={(e) => {
+                      setComment(e.target.value.slice(0, 500));
+                      if (e.target.value.trim()) setShowValidationErrors(false);
+                    }}
+                    placeholder="Please tell us what went wrong, what was confusing, or what bug you ran into... (Required)"
                     rows={3}
-                    className="w-full rounded-2xl border border-border bg-background text-foreground text-xs p-3 resize-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-muted-foreground"
+                    className={`w-full rounded-2xl border text-foreground text-xs p-3 resize-none focus:outline-none focus:ring-2 placeholder:text-muted-foreground transition-colors ${
+                      showValidationErrors && !comment.trim()
+                        ? "border-rose-500 bg-rose-500/5 focus:border-rose-500 focus:ring-rose-500/30"
+                        : "border-border bg-background focus:border-primary focus:ring-primary/30"
+                    }`}
                   />
+                  {showValidationErrors && !comment.trim() && (
+                    <p className="text-[11px] text-rose-600 dark:text-rose-400 font-bold flex items-center gap-1">
+                      ⚠️ Please enter what went wrong before submitting.
+                    </p>
+                  )}
                 </div>
 
-                {/* Non-Mandatory Buttons: Skip or Submit Details */}
+                {/* Submit Buttons (Always Clickable, validates on click) */}
                 <div className="flex items-center justify-between pt-1">
                   <button
                     type="button"
-                    onClick={handleCloseOrSkip}
-                    className="text-xs font-bold text-muted-foreground hover:text-foreground transition px-2 py-1"
+                    onClick={() => {
+                      setPulseChoice(null);
+                      setShowValidationErrors(false);
+                    }}
+                    className="text-xs font-bold text-muted-foreground hover:text-foreground transition px-2 py-1 cursor-pointer"
                   >
-                    Skip &amp; Exit
+                    ← Back
                   </button>
 
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="flex items-center gap-1.5 px-5 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl text-xs font-black transition-all shadow-md active:scale-95"
+                    className="flex items-center gap-1.5 px-5 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl text-xs font-black transition-all shadow-md active:scale-95 disabled:opacity-50 cursor-pointer"
                   >
                     <Send size={13} />
-                    <span>{submitting ? "Submitting…" : "Submit Details"}</span>
+                    <span>{submitting ? "Submitting…" : "Submit Feedback"}</span>
                   </button>
                 </div>
               </form>

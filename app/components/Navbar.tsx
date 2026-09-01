@@ -180,7 +180,7 @@ export default function Navbar() {
 
   const topLinks = [
     { label: "Tracks", path: "/tracks" },
-    { label: "Leaderboard", path: "/leaderboard" },
+    ...(user ? [{ label: "Leaderboard", path: "/leaderboard" }] : []),
     { label: "Blog", path: "/blog" },
     { label: "About", path: "/about" },
     { label: "Contact", path: "/contact" },
@@ -441,24 +441,26 @@ export default function Navbar() {
                         );
                       })}
 
-                      {/* 6th Slot: Quests & Leaderboard */}
+                      {/* 6th Slot: Quests & Leaderboard / Tracks */}
                       <div className="p-2.5 rounded-xl border border-border bg-gradient-to-br from-indigo-500/10 via-sky-500/5 to-transparent flex flex-col justify-between">
                         <div>
                           <div className="flex items-center gap-2 mb-1">
                             <div className="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-                              <Trophy className="w-3.5 h-3.5" />
+                              {user ? <Trophy className="w-3.5 h-3.5" /> : <Compass className="w-3.5 h-3.5 text-primary" />}
                             </div>
                             <h4 className="text-xs font-bold text-foreground">
-                              Quests & XP Hub
+                              {user ? "Quests & XP Hub" : "Curriculum Tracks"}
                             </h4>
                           </div>
                           <p className="text-[10px] text-muted-foreground leading-relaxed">
-                            Solve daily challenges, earn experiment badges & level up.
+                            {user
+                              ? "Solve daily challenges, earn experiment badges & level up."
+                              : "13 structured step-by-step pathways across all STEM disciplines."}
                           </p>
                         </div>
                         <div className="mt-2 flex items-center gap-2">
                           <Link
-                            href="/leaderboard"
+                            href={user ? "/leaderboard" : "/tracks"}
                             onClick={() => setLabsOpen(false)}
                             className="
                               inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg
@@ -466,7 +468,7 @@ export default function Navbar() {
                             "
                           >
                             <Sparkles className="w-3 h-3" />
-                            <span>Leaderboard</span>
+                            <span>{user ? "Leaderboard" : "Explore Tracks"}</span>
                           </Link>
                         </div>
                       </div>
