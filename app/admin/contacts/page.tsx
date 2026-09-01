@@ -66,12 +66,6 @@ interface ContactStats {
   emailsFailed: number;
 }
 
-// ── Admin Secret Helper ────────────────────────────────────────────────
-function getAdminSecret(): string {
-  if (typeof window === "undefined") return "";
-  return localStorage.getItem("openlabs-admin-secret") || "";
-}
-
 // ── User Agent Parser ──────────────────────────────────────────────────
 function parseUserAgent(ua?: string | null): { device: "mobile" | "desktop"; browser: string } {
   if (!ua) return { device: "desktop", browser: "Browser" };
@@ -85,7 +79,7 @@ function parseUserAgent(ua?: string | null): { device: "mobile" | "desktop"; bro
 }
 
 export default function AdminContactsDashboard() {
-  const { adminSecret, isUnlocked, isAdmin, unlock, lock } = useAdminSecret();
+  const { isUnlocked, isAdmin } = useAdminSecret();
   const [loading, setLoading] = useState(false);
 
   const [stats, setStats] = useState<ContactStats | null>(null);
@@ -99,8 +93,8 @@ export default function AdminContactsDashboard() {
 
   // Fetch contacts
   const fetchContacts = useCallback(
-    async (secretOverride?: string) => {
-      if (!isUnlocked && !secretOverride) return;
+    async () => {
+      if (!isUnlocked) return;
       setLoading(true);
 
       try {
@@ -109,41 +103,22 @@ export default function AdminContactsDashboard() {
         if (sortBy) params.set("sortBy", sortBy);
         if (searchQuery.trim()) params.set("query", searchQuery.trim());
 
-        const activeSecret =
-          secretOverride ||
-          adminSecret ||
-          (typeof window !== "undefined"
-            ? localStorage.getItem("openlabs-admin-secret") ||
-              sessionStorage.getItem("adminSecret") ||
-              ""
-            : "");
-
-        const headers: Record<string, string> = {};
-        if (activeSecret) headers["x-admin-secret"] = activeSecret;
-
-        const res = await fetch(`/api/admin/contacts?${params.toString()}`, {
-          headers,
-        });
+        const res = await fetch(`/api/admin/contacts?${params.toString()}`);
 
         if (!res.ok) {
-          if (res.status === 401) {
-            lock();
-            return;
-          }
           throw new Error("Fetch failed");
         }
 
         const data = await res.json();
         setStats(data.stats);
         setContacts(data.contacts || []);
-        if (secretOverride) unlock(secretOverride);
       } catch (err) {
         console.error("Admin contacts fetch error:", err);
       } finally {
         setLoading(false);
       }
     },
-    [isUnlocked, adminSecret, statusFilter, sortBy, searchQuery, lock, unlock]
+    [isUnlocked, statusFilter, sortBy, searchQuery]
   );
 
   useEffect(() => {
@@ -155,14 +130,11 @@ export default function AdminContactsDashboard() {
   // Status update
   const handleStatusUpdate = async (contactId: string, newStatus: string) => {
     try {
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-      };
-      if (adminSecret) headers["x-admin-secret"] = adminSecret;
-
       const res = await fetch(`/api/admin/contacts/${contactId}`, {
         method: "PATCH",
-        headers,
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ status: newStatus }),
       });
 
@@ -192,12 +164,8 @@ export default function AdminContactsDashboard() {
     }
 
     try {
-      const headers: Record<string, string> = {};
-      if (adminSecret) headers["x-admin-secret"] = adminSecret;
-
       const res = await fetch(`/api/admin/contacts/${contactId}`, {
         method: "DELETE",
-        headers,
       });
 
       if (res.ok) {
@@ -220,27 +188,7 @@ export default function AdminContactsDashboard() {
 
   // ─── Login Screen ────────────────────────────────────────────────────
   if (!isUnlocked) {
-    return (
-      <AdminLockScreen
-        title="Admin Contacts & Inquiries"
-        description="Enter your shared Admin Secret to access incoming student inquiries, contact messages, and partnership requests."
-        onUnlock={async (secret) => {
-          try {
-            const res = await fetch("/api/admin/contacts?sortBy=recent", {
-              headers: { "x-admin-secret": secret },
-            });
-            if (!res.ok) return false;
-            const data = await res.json();
-            setContacts(data.contacts || []);
-            setStats(data.stats || null);
-            unlock(secret);
-            return true;
-          } catch {
-            return false;
-          }
-        }}
-      />
-    );
+    return <AdminLockScreen />;
   }
 
   // ─── Main Contacts Dashboard ─────────────────────────────────────────

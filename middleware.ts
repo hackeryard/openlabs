@@ -106,11 +106,6 @@ export function middleware(request: NextRequest) {
 
   // ── 0. ADMIN API RBAC CHECK (/api/admin/*) ───────────────────────────
   if (pathname.startsWith('/api/admin')) {
-    // If request has standalone x-admin-secret header matching server secret, let backend verify
-    const secretHeader = request.headers.get('x-admin-secret');
-    if (secretHeader) {
-      return NextResponse.next();
-    }
     // If logged in with admin or moderator role, allow to API handler
     if (hasValidAuthToken && hasAdminOrModRole) {
       return NextResponse.next();

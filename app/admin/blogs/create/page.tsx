@@ -10,7 +10,7 @@ import { getAdminHref } from '@/app/lib/adminUrl';
 
 export default function CreateBlogPage() {
   const router = useRouter();
-  const { adminSecret, isUnlocked, unlock } = useAdminSecret();
+  const { isUnlocked } = useAdminSecret();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -26,7 +26,6 @@ export default function CreateBlogPage() {
     readTime: '5 min read',
     gradient: 'from-blue-100 to-cyan-50',
     border: 'group-hover:border-blue-200',
-    adminSecret: '',
     metaTitle: '',
     metaDescription: '',
     faqs: [] as { question: string, answer: string }[],
@@ -72,7 +71,6 @@ export default function CreateBlogPage() {
 
         const uploadRes = await fetch('/api/admin/blogs/upload', {
           method: 'POST',
-          headers: { 'x-admin-secret': formData.adminSecret },
           body: uploadData
         });
 
@@ -91,7 +89,6 @@ export default function CreateBlogPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-admin-secret': formData.adminSecret
         },
         body: JSON.stringify(payload)
       });
@@ -127,17 +124,7 @@ export default function CreateBlogPage() {
   };
 
   if (!isUnlocked) {
-    return (
-      <AdminLockScreen
-        title="Create Blog Clearance"
-        description="Enter your shared Admin Secret to create and publish articles to the OpenLabs Journal."
-        error={error}
-        loading={loading}
-        onUnlock={async (secret) => {
-          unlock(secret);
-        }}
-      />
-    );
+    return <AdminLockScreen />;
   }
 
   return (

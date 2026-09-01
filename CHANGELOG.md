@@ -2,6 +2,11 @@
 
 All notable changes to OpenLabs are documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/); since the project has no version tags yet, entries are grouped by date instead of version number. Generated from git history; merge commits and duplicate/typo commits are omitted.
 
+- **Streamlined Role-Based Admin Access (RBAC) & Admin Secret Removal**:
+  - Removed secondary `ADMIN_SECRET` passcode requirement and `x-admin-secret` headers across all administrative routes (`/admin/*`) and APIs (`/api/admin/*`).
+  - Streamlined authorization directly to standard JWT session verification: users with `role: "admin"` or `role: "moderator"` access the admin console automatically upon signing in.
+  - Removed secret passkey lockscreens and replaced with clean staff authentication gateways and 403 access restriction screens for non-staff accounts.
+
 - **Cardiac Cycle, ECG & Heart Hemodynamics Virtual Lab (`app/components/biology/heart-cardiac-cycle/`, `/labs/biology/heart-cardiac-cycle`, `/biology/heart-cardiac-cycle`)**:
   - **4-Chamber Anatomical Heart Engine**:
     - Real-time animated vector cardiac cross-section with Right Atrium, Right Ventricle, Left Atrium, Left Ventricle, Vena Cava, Pulmonary Artery/Veins, and Systemic Aorta.

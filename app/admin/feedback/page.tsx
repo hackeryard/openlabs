@@ -89,12 +89,6 @@ interface GlobalStats {
   uniqueLabsCount: number;
 }
 
-// ── Admin Secret Helper ────────────────────────────────────────────────
-function getAdminSecret(): string {
-  if (typeof window === "undefined") return "";
-  return localStorage.getItem("openlabs-admin-secret") || "";
-}
-
 // ── Browser / OS Parser ────────────────────────────────────────────────
 function parseUserAgent(ua?: string): { device: "mobile" | "desktop"; browser: string } {
   if (!ua) return { device: "desktop", browser: "Unknown" };
@@ -108,7 +102,7 @@ function parseUserAgent(ua?: string): { device: "mobile" | "desktop"; browser: s
 }
 
 export default function AdminFeedbackPage() {
-  const { adminSecret, isUnlocked, unlock, lock } = useAdminSecret();
+  const { isUnlocked } = useAdminSecret();
   const [loading, setLoading] = useState(false);
 
   const [globalStats, setGlobalStats] = useState<GlobalStats | null>(null);
@@ -137,26 +131,9 @@ export default function AdminFeedbackPage() {
         if (sortBy) params.set("sortBy", sortBy);
         if (expandLabId) params.set("expand", expandLabId);
 
-        const activeSecret =
-          adminSecret ||
-          (typeof window !== "undefined"
-            ? localStorage.getItem("openlabs-admin-secret") ||
-              sessionStorage.getItem("adminSecret") ||
-              ""
-            : "");
-
-        const headers: Record<string, string> = {};
-        if (activeSecret) headers["x-admin-secret"] = activeSecret;
-
-        const res = await fetch(`/api/admin/feedback?${params.toString()}`, {
-          headers,
-        });
+        const res = await fetch(`/api/admin/feedback?${params.toString()}`);
 
         if (!res.ok) {
-          if (res.status === 401) {
-            lock();
-            return;
-          }
           throw new Error("Fetch failed");
         }
 
@@ -173,7 +150,7 @@ export default function AdminFeedbackPage() {
         setLoading(false);
       }
     },
-    [isUnlocked, adminSecret, statusFilter, sortBy, lock]
+    [isUnlocked, statusFilter, sortBy]
   );
 
   useEffect(() => {
@@ -200,7 +177,6 @@ export default function AdminFeedbackPage() {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          "x-admin-secret": adminSecret,
         },
         body: JSON.stringify({ status: newStatus }),
       });
@@ -237,28 +213,7 @@ export default function AdminFeedbackPage() {
 
   // ─── Login Screen ────────────────────────────────────────────────────
   if (!isUnlocked) {
-    return (
-      <AdminLockScreen
-        title="Admin Feedback & Ratings"
-        description="Enter your shared Admin Secret to review lab ratings, student feedback, and issue reports."
-        onUnlock={async (secret) => {
-          try {
-            const res = await fetch("/api/admin/feedback?sortBy=recent", {
-              headers: { "x-admin-secret": secret },
-            });
-            if (!res.ok) return false;
-            const data = await res.json();
-            setGlobalStats(data.stats);
-            setRows(data.summary || data.rows || []);
-            setRecentFeedbacks(data.recentFeedbacks || []);
-            unlock(secret);
-            return true;
-          } catch {
-            return false;
-          }
-        }}
-      />
-    );
+    return <AdminLockScreen />;
   }
 
   // ─── Helper to render a single detailed Feedback Card ────────────────

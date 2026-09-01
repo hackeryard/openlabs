@@ -9,7 +9,7 @@ import { getAdminHref } from '@/app/lib/adminUrl';
 
 export default function EditBlogPage({ params }: { params: { slug: string } }) {
   const router = useRouter();
-  const { adminSecret, isUnlocked, unlock } = useAdminSecret();
+  const { isUnlocked } = useAdminSecret();
 
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
@@ -29,7 +29,6 @@ export default function EditBlogPage({ params }: { params: { slug: string } }) {
     border: 'group-hover:border-blue-200',
     published: false,
     coverImage: '',
-    adminSecret: '',
     metaTitle: '',
     metaDescription: '',
     faqs: [] as { question: string, answer: string }[],
@@ -58,7 +57,6 @@ export default function EditBlogPage({ params }: { params: { slug: string } }) {
           border: post.border || 'group-hover:border-blue-200',
           published: post.published || false,
           coverImage: post.coverImage || '',
-          adminSecret: adminSecret || '',
           metaTitle: post.metaTitle || '',
           metaDescription: post.metaDescription || '',
           faqs: post.faqs || [],
@@ -73,7 +71,7 @@ export default function EditBlogPage({ params }: { params: { slug: string } }) {
     if (isUnlocked) {
       loadBlog();
     }
-  }, [params.slug, isUnlocked, adminSecret]);
+  }, [params.slug, isUnlocked]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
@@ -116,7 +114,6 @@ export default function EditBlogPage({ params }: { params: { slug: string } }) {
 
         const uploadRes = await fetch('/api/admin/blogs/upload', {
           method: 'POST',
-          headers: { 'x-admin-secret': formData.adminSecret },
           body: uploadData
         });
 
@@ -134,7 +131,6 @@ export default function EditBlogPage({ params }: { params: { slug: string } }) {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'x-admin-secret': formData.adminSecret
         },
         body: JSON.stringify(payload)
       });
@@ -159,17 +155,7 @@ export default function EditBlogPage({ params }: { params: { slug: string } }) {
   };
 
   if (!isUnlocked) {
-    return (
-      <AdminLockScreen
-        title="Edit Blog Clearance"
-        description="Enter your shared Admin Secret to update existing publications in the OpenLabs Journal."
-        error={error}
-        loading={loading}
-        onUnlock={async (secret) => {
-          unlock(secret);
-        }}
-      />
-    );
+    return <AdminLockScreen />;
   }
 
   if (fetching) {

@@ -122,25 +122,19 @@ interface AdminSummaryData {
 }
 
 export default function AdminPortalHomePage() {
-  const { isUnlocked, isHydrated, adminSecret, unlock } = useAdminSecret();
+  const { isUnlocked, isHydrated } = useAdminSecret();
   const [data, setData] = useState<AdminSummaryData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
 
   const fetchSummary = useCallback(async () => {
-    if (!isUnlocked && !adminSecret) return;
+    if (!isUnlocked) return;
     setLoading(true);
     setError(null);
 
     try {
-      const headers: Record<string, string> = {};
-      if (adminSecret) {
-        headers["x-admin-secret"] = adminSecret;
-      }
-
       const res = await fetch("/api/admin/summary", {
-        headers,
         cache: "no-store",
       });
 
@@ -158,7 +152,7 @@ export default function AdminPortalHomePage() {
     } finally {
       setLoading(false);
     }
-  }, [isUnlocked, adminSecret]);
+  }, [isUnlocked]);
 
   useEffect(() => {
     if (isHydrated && isUnlocked) {
@@ -176,13 +170,7 @@ export default function AdminPortalHomePage() {
   }
 
   if (!isUnlocked) {
-    return (
-      <AdminLockScreen
-        title="Admin Portal Master Clearance"
-        description="Authenticate your administrator clearance or enter your admin secret key to access the central operations dashboard."
-        onUnlock={unlock}
-      />
-    );
+    return <AdminLockScreen />;
   }
 
   const getRoute = getAdminHref;

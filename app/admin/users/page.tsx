@@ -131,7 +131,7 @@ type SortField =
   | "email";
 
 export default function AdminUsersDashboard() {
-  const { adminSecret, isUnlocked, isAdmin, isModerator, unlock, lock } = useAdminSecret();
+  const { isUnlocked, isAdmin } = useAdminSecret();
   const [rawUsers, setRawUsers] = useState<UserListItem[]>([]);
   const [stats, setStats] = useState<StatsData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -158,29 +158,19 @@ export default function AdminUsersDashboard() {
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [updatingRole, setUpdatingRole] = useState(false);
 
-  const fetchUsers = async (secret?: string) => {
+  const fetchUsers = async () => {
     setLoading(true);
     setError(null);
     try {
-      const headers: Record<string, string> = {};
-      const activeSecret = secret || adminSecret;
-      if (activeSecret) headers["x-admin-secret"] = activeSecret;
-
-      const res = await fetch("/api/admin/users", {
-        headers,
-      });
+      const res = await fetch("/api/admin/users");
       const data = await res.json();
 
       if (!res.ok) {
-        if (res.status === 401) {
-          lock();
-        }
         throw new Error(data.error || "Failed to fetch users");
       }
 
       setRawUsers(data.users || []);
       setStats(data.stats || null);
-      if (activeSecret) unlock(activeSecret);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -190,19 +180,14 @@ export default function AdminUsersDashboard() {
 
   useEffect(() => {
     if (isUnlocked) {
-      fetchUsers(adminSecret);
+      fetchUsers();
     }
   }, [isUnlocked]);
 
   const fetchUserDetail = async (userId: string) => {
     setLoadingDetail(true);
     try {
-      const headers: Record<string, string> = {};
-      if (adminSecret) headers["x-admin-secret"] = adminSecret;
-
-      const res = await fetch(`/api/admin/users/${userId}`, {
-        headers,
-      });
+      const res = await fetch(`/api/admin/users/${userId}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to fetch user details");
       setSelectedUser(data.user);
@@ -220,12 +205,9 @@ export default function AdminUsersDashboard() {
     }
     setUpdatingRole(true);
     try {
-      const headers: Record<string, string> = { "Content-Type": "application/json" };
-      if (adminSecret) headers["x-admin-secret"] = adminSecret;
-
       const res = await fetch(`/api/admin/users/${userId}`, {
         method: "PATCH",
-        headers,
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: newRole }),
       });
       const data = await res.json();
@@ -255,12 +237,8 @@ export default function AdminUsersDashboard() {
     }
 
     try {
-      const headers: Record<string, string> = {};
-      if (adminSecret) headers["x-admin-secret"] = adminSecret;
-
       const res = await fetch(`/api/admin/users/${userId}`, {
         method: "DELETE",
-        headers,
       });
 
       const data = await res.json();
@@ -444,15 +422,7 @@ export default function AdminUsersDashboard() {
   };
 
   if (!isUnlocked) {
-    return (
-      <AdminLockScreen
-        title="Admin Users Management"
-        description="Enter your shared Admin Secret to unlock student accounts, telemetry history, and role management controls."
-        error={error}
-        loading={loading}
-        onUnlock={fetchUsers}
-      />
-    );
+    return <AdminLockScreen />;
   }
 
   return (
@@ -476,7 +446,7 @@ export default function AdminUsersDashboard() {
               <Download size={14} /> Export CSV
             </button>
             <button
-              onClick={() => fetchUsers(adminSecret)}
+              onClick={() => fetchUsers()}
               disabled={loading}
               className="inline-flex items-center gap-2 px-4 py-2.5 bg-card hover:bg-accent border border-border text-foreground text-xs font-extrabold rounded-xl transition shadow-sm"
             >
