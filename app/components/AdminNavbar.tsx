@@ -24,7 +24,6 @@ import {
 } from "lucide-react";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import { useAuth } from "@/components/AuthProvider";
-import { useAdminSecret } from "@/app/components/AdminSecretContext";
 import { getAdminHref, getMainSiteHref } from "@/app/lib/adminUrl";
 
 interface AdminNavItem {
@@ -47,7 +46,6 @@ export default function AdminNavbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuth();
-  const { lock } = useAdminSecret();
 
   const [profileOpen, setProfileOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -246,17 +244,6 @@ export default function AdminNavbar() {
                     </Link>
 
                     <div className="border-t border-border/70 my-1 pt-1 space-y-0.5">
-                      <button
-                        onClick={() => {
-                          setProfileOpen(false);
-                          lock();
-                        }}
-                        className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-xs font-medium text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 transition"
-                      >
-                        <Lock className="w-3.5 h-3.5" />
-                        <span>Lock Admin Console</span>
-                      </button>
-
                       <button
                         onClick={handleLogout}
                         className="flex items-center gap-2 w-full px-3 py-2 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-500/10 transition"

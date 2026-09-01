@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 
 export default function AdminSeoDashboardPage() {
-  const { isUnlocked, isAdmin, unlock } = useAdminSecret();
+  const { isUnlocked, isAdmin } = useAdminSecret();
 
   const graphValidation = validateKnowledgeGraph();
   const labCount = LABS.length;
@@ -29,24 +29,7 @@ export default function AdminSeoDashboardPage() {
   const csConcepts = ALL_CONCEPTS.filter((c) => c.subject === "computerScience").length;
 
   if (!isUnlocked) {
-    return (
-      <AdminLockScreen
-        title="SEO & Knowledge Graph Clearance"
-        description="Enter your shared Admin Secret to inspect internal SEO telemetry, indexation audits, and Concept Knowledge Graph integrity."
-        onUnlock={async (secret) => {
-          try {
-            const res = await fetch("/api/admin/users", {
-              headers: { "x-admin-secret": secret },
-            });
-            if (!res.ok) return false;
-            unlock(secret);
-            return true;
-          } catch {
-            return false;
-          }
-        }}
-      />
-    );
+    return <AdminLockScreen />;
   }
 
   return (

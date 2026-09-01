@@ -697,7 +697,6 @@ Total Tracked Errors: ${errorsToCopy.length}
     try {
       const res = await fetch(`/api/admin/analytics/errors?purge=${purgeMode}`, {
         method: "DELETE",
-        headers: { "x-admin-secret": adminSecret },
       });
       if (res.ok) {
         setData((prev) => {
@@ -722,7 +721,6 @@ Total Tracked Errors: ${errorsToCopy.length}
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          "x-admin-secret": adminSecret,
         },
         body: JSON.stringify({ status: newStatus }),
       });
@@ -749,7 +747,6 @@ Total Tracked Errors: ${errorsToCopy.length}
     try {
       const res = await fetch(`/api/admin/analytics/errors/${errorId}`, {
         method: "DELETE",
-        headers: { "x-admin-secret": adminSecret },
       });
 
       if (res.ok) {
@@ -772,11 +769,8 @@ Total Tracked Errors: ${errorsToCopy.length}
       if (!isBackground) setLoading(true);
 
       try {
-        const activeSecret = adminSecret || (typeof window !== "undefined" ? localStorage.getItem("openlabs-admin-secret") || sessionStorage.getItem("adminSecret") || "" : "");
-        const headers: Record<string, string> = {};
-        if (activeSecret) headers["x-admin-secret"] = activeSecret;
-        const res = await fetch(`/api/admin/analytics?timeRange=${range}`, { headers });
-        if (!res.ok) { if (res.status === 401) lock(); return; }
+        const res = await fetch(`/api/admin/analytics?timeRange=${range}`);
+        if (!res.ok) return;
         const json = await res.json();
         setData(json);
       } catch (err) {
@@ -785,7 +779,7 @@ Total Tracked Errors: ${errorsToCopy.length}
         if (!isBackground) setLoading(false);
       }
     },
-    [isUnlocked, adminSecret, timeRange, lock]
+    [isUnlocked, timeRange]
   );
 
   const fetchPaginatedPageviews = useCallback(
@@ -793,9 +787,6 @@ Total Tracked Errors: ${errorsToCopy.length}
       if (!isUnlocked) return;
       if (!isBackground) setPvLoading(true);
       try {
-        const activeSecret = adminSecret || (typeof window !== "undefined" ? localStorage.getItem("openlabs-admin-secret") || sessionStorage.getItem("adminSecret") || "" : "");
-        const headers: Record<string, string> = {};
-        if (activeSecret) headers["x-admin-secret"] = activeSecret;
         const params = new URLSearchParams({
           page: pvPage.toString(),
           limit: pvLimit.toString(),
@@ -805,7 +796,7 @@ Total Tracked Errors: ${errorsToCopy.length}
           device: pvDevice,
           sortBy: pvSort,
         });
-        const res = await fetch(`/api/admin/analytics/pageviews?${params.toString()}`, { headers });
+        const res = await fetch(`/api/admin/analytics/pageviews?${params.toString()}`);
         if (res.ok) {
           const json = await res.json();
           setPaginatedPageviews(json.pageviews || []);
@@ -817,7 +808,7 @@ Total Tracked Errors: ${errorsToCopy.length}
         if (!isBackground) setPvLoading(false);
       }
     },
-    [isUnlocked, adminSecret, pvPage, pvLimit, pvTimeRange, pvUserType, pvQuery, pvDevice, pvSort]
+    [isUnlocked, pvPage, pvLimit, pvTimeRange, pvUserType, pvQuery, pvDevice, pvSort]
   );
 
   useEffect(() => { if (isUnlocked) fetchData(timeRange); }, [isUnlocked, timeRange, fetchData]);
@@ -866,24 +857,7 @@ Total Tracked Errors: ${errorsToCopy.length}
   };
 
   if (!isUnlocked) {
-    return (
-      <AdminLockScreen
-        title="Admin Telemetry Analytics"
-        description="Enter your shared Admin Secret to unlock real-time visitor telemetry, error streams, and engagement matrices."
-        onUnlock={async (secret) => {
-          try {
-            const res = await fetch(`/api/admin/analytics?timeRange=${timeRange}`, {
-              headers: { "x-admin-secret": secret },
-            });
-            if (!res.ok) return false;
-            const json = await res.json();
-            setData(json);
-            unlock(secret);
-            return true;
-          } catch { return false; }
-        }}
-      />
-    );
+    return <AdminLockScreen />;
   }
 
   const maxTimeseriesViews = data?.timeseries?.reduce((max, item) => Math.max(max, item.views), 1) || 1;

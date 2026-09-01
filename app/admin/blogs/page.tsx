@@ -8,33 +8,23 @@ import { getAdminHref, getMainSiteHref } from "@/app/lib/adminUrl";
 import { Plus, Edit2, Trash2, Eye, Globe, FileEdit, RefreshCw } from 'lucide-react';
 
 export default function AdminBlogsPage() {
-  const { adminSecret, isUnlocked, isAdmin, unlock, lock } = useAdminSecret();
+  const { isUnlocked, isAdmin } = useAdminSecret();
   const [blogs, setBlogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchBlogs = async (secret?: string) => {
+  const fetchBlogs = async () => {
     setLoading(true);
     setError(null);
     try {
-      const headers: Record<string, string> = {};
-      const activeSecret = secret || adminSecret;
-      if (activeSecret) headers['x-admin-secret'] = activeSecret;
-
-      const res = await fetch('/api/admin/blogs', {
-        headers,
-      });
+      const res = await fetch('/api/admin/blogs');
       const data = await res.json();
       
       if (!res.ok) {
-        if (res.status === 401) {
-          lock();
-        }
         throw new Error(data.error || 'Failed to fetch blogs');
       }
       
       setBlogs(data.posts || []);
-      if (activeSecret) unlock(activeSecret);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -56,12 +46,8 @@ export default function AdminBlogsPage() {
     if (!confirm(`Are you sure you want to delete post "${slug}"?`)) return;
 
     try {
-      const headers: Record<string, string> = {};
-      if (adminSecret) headers['x-admin-secret'] = adminSecret;
-
       const res = await fetch(`/api/admin/blogs/${slug}`, {
         method: 'DELETE',
-        headers,
       });
 
       if (!res.ok) {
@@ -76,13 +62,7 @@ export default function AdminBlogsPage() {
   };
 
   if (!isUnlocked) {
-    return (
-      <AdminLockScreen
-        title="Admin Blog Management"
-        description="Enter your shared Admin Secret to access editorial tools, publish posts, or manage articles."
-        onUnlock={fetchBlogs}
-      />
-    );
+    return <AdminLockScreen />;
   }
 
   return (
