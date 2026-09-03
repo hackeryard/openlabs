@@ -188,15 +188,13 @@ export default function FloatingLabFeedback() {
   // Handler 1: When user clicks "👍 Yes, Helpful"
   const handleFoundHelpful = () => {
     setPulseChoice("helpful");
-    // Also record helpful pulse
-    submitPulse(true);
+    setShowValidationErrors(false);
   };
 
   // Handler 2: When user clicks "👎 No, Not Helpful"
   const handleNotHelpful = () => {
     setPulseChoice("not_helpful");
-    // Automatically record helpful=false pulse in background
-    submitPulse(false);
+    setShowValidationErrors(false);
   };
 
   // Handler 3: Submit Helpful Flow (Mandatory Star Rating; Feedback Text ONLY mandatory if below 3 stars)
@@ -211,21 +209,23 @@ export default function FloatingLabFeedback() {
       return;
     }
 
-    await submitDeep({
+    const success = await submitDeep({
       rating: selectedRating,
       category: selectedTag || (selectedRating < 3 ? "confusing" : selectedRating >= 4 ? "praise" : "helpful"),
       comment: comment.trim() || undefined,
-      helpful: selectedRating >= 3,
+      helpful: true,
     });
 
-    setSubmittedSuccess(true);
-    markDismissedInSession();
+    if (success) {
+      setSubmittedSuccess(true);
+      markDismissedInSession();
 
-    setTimeout(() => {
-      if (pendingUrl) {
-        router.push(pendingUrl);
-      }
-    }, 700);
+      setTimeout(() => {
+        if (pendingUrl) {
+          router.push(pendingUrl);
+        }
+      }, 700);
+    }
   };
 
   // Handler 4: Submit Not-Helpful Flow (Mandatory Feedback Text)
@@ -236,21 +236,23 @@ export default function FloatingLabFeedback() {
       return;
     }
 
-    await submitDeep({
-      rating: selectedRating > 0 ? selectedRating : 1,
+    const success = await submitDeep({
+      rating: selectedRating > 0 ? selectedRating : undefined,
       category: selectedTag || "confusing",
       comment: comment.trim(),
       helpful: false,
     });
 
-    setSubmittedSuccess(true);
-    markDismissedInSession();
+    if (success) {
+      setSubmittedSuccess(true);
+      markDismissedInSession();
 
-    setTimeout(() => {
-      if (pendingUrl) {
-        router.push(pendingUrl);
-      }
-    }, 700);
+      setTimeout(() => {
+        if (pendingUrl) {
+          router.push(pendingUrl);
+        }
+      }, 700);
+    }
   };
 
   const handleCloseOrSkip = () => {
@@ -629,6 +631,43 @@ export default function FloatingLabFeedback() {
                 <div className="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-bold flex items-start gap-2">
                   <HelpCircle size={15} className="shrink-0 mt-0.5" />
                   <span>We're sorry this lab didn't meet expectations. Please describe what went wrong so we can fix it:</span>
+                </div>
+
+                {/* Optional Star Rating in Not-Helpful flow */}
+                <div className="rounded-2xl p-3 bg-muted/20 border border-border/70 text-center space-y-1.5">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground block">
+                    Rating (optional)
+                  </span>
+                  <div className="flex items-center justify-center gap-1.5">
+                    {[1, 2, 3, 4, 5].map((star) => {
+                      const active = star <= (hoverRating || selectedRating);
+                      return (
+                        <button
+                          key={star}
+                          type="button"
+                          onMouseEnter={() => setHoverRating(star)}
+                          onMouseLeave={() => setHoverRating(0)}
+                          onClick={() => setSelectedRating(selectedRating === star ? 0 : star)}
+                          className="p-1 transition-transform hover:scale-110 active:scale-95 cursor-pointer"
+                          title={`Rate ${star} star${star > 1 ? "s" : ""}`}
+                        >
+                          <Star
+                            size={24}
+                            className={`transition-colors ${
+                              active
+                                ? "text-amber-400 fill-amber-400 drop-shadow-xs"
+                                : "text-muted-foreground/30 hover:text-amber-400"
+                            }`}
+                          />
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {selectedRating > 0 && (
+                    <span className="text-[11px] font-bold text-foreground block">
+                      {RATING_DESCRIPTIONS[selectedRating] || `${selectedRating} stars`}
+                    </span>
+                  )}
                 </div>
 
                 {/* Category Chips */}

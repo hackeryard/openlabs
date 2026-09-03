@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Plus, Trash2, Save, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import AdminLockScreen from '@/app/components/AdminLockScreen';
 import { useAdminSecret } from '@/app/components/AdminSecretContext';
+import { useFormDirtyWarning } from '@/app/hooks/useFormDirtyWarning';
 import { getAdminHref } from '@/app/lib/adminUrl';
 
 export default function EditBlogPage({ params }: { params: { slug: string } }) {
@@ -16,6 +17,8 @@ export default function EditBlogPage({ params }: { params: { slug: string } }) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [initialSnapshot, setInitialSnapshot] = useState<string>('');
+  const [isSaved, setIsSaved] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -45,7 +48,7 @@ export default function EditBlogPage({ params }: { params: { slug: string } }) {
         }
 
         const post = data.post;
-        setFormData({
+        const postData = {
           title: post.title || '',
           slug: post.slug || '',
           excerpt: post.excerpt || '',
@@ -60,7 +63,9 @@ export default function EditBlogPage({ params }: { params: { slug: string } }) {
           metaTitle: post.metaTitle || '',
           metaDescription: post.metaDescription || '',
           faqs: post.faqs || [],
-        });
+        };
+        setFormData(postData);
+        setInitialSnapshot(JSON.stringify(postData));
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -72,6 +77,14 @@ export default function EditBlogPage({ params }: { params: { slug: string } }) {
       loadBlog();
     }
   }, [params.slug, isUnlocked]);
+
+  const isDirty = useMemo(() => {
+    if (isSaved || fetching || !initialSnapshot) return false;
+    if (imageFile !== null) return true;
+    return JSON.stringify(formData) !== initialSnapshot;
+  }, [formData, imageFile, initialSnapshot, isSaved, fetching]);
+
+  useFormDirtyWarning(isDirty);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
@@ -141,6 +154,7 @@ export default function EditBlogPage({ params }: { params: { slug: string } }) {
         throw new Error(data.error || 'Failed to update blog');
       }
 
+      setIsSaved(true);
       setSuccess(`Blog post "${data.post.title}" updated successfully!`);
 
       setTimeout(() => {

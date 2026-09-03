@@ -501,12 +501,19 @@ export default function AdminAnalyticsDashboard() {
   // Error Tab State & Filters
   const [errorStatusFilter, setErrorStatusFilter] = useState<string>("all");
   const [errorTypeFilter, setErrorTypeFilter] = useState<string>("all");
-  const [errorSearchQuery, setErrorSearchQuery] = useState<string>("");
+  const [errorSearchQuery, setErrorSearchQuery] = useState<string>("" );
   const [copiedErrorId, setCopiedErrorId] = useState<string | null>(null);
   const [copiedAllErrors, setCopiedAllErrors] = useState<boolean>(false);
   const [showExportDropdown, setShowExportDropdown] = useState<boolean>(false);
   const [showBulkActionDropdown, setShowBulkActionDropdown] = useState<boolean>(false);
   const [errorBulkLoading, setErrorBulkLoading] = useState<boolean>(false);
+  const [errorPage, setErrorPage] = useState<number>(1);
+  const [errorPageSize, setErrorPageSize] = useState<number>(20);
+  const [errorJumpPageInput, setErrorJumpPageInput] = useState<string>("");
+
+  useEffect(() => {
+    setErrorPage(1);
+  }, [errorStatusFilter, errorTypeFilter, errorSearchQuery, timeRange]);
 
   const generateAiFixPrompt = (err: ErrorLogItem) => {
     return `# 🐛 Bug Diagnostic & Fix Report
@@ -897,6 +904,36 @@ Total Tracked Errors: ${errorsToCopy.length}
       (err.device || "").toLowerCase().includes(q)
     );
   });
+
+  const totalErrorPages = Math.max(1, Math.ceil(filteredErrors.length / errorPageSize));
+  const paginatedErrors = filteredErrors.slice(
+    (errorPage - 1) * errorPageSize,
+    errorPage * errorPageSize
+  );
+
+  const getErrorPageNumbers = () => {
+    const total = totalErrorPages;
+    const current = errorPage;
+    const delta = 2;
+    const range: (number | string)[] = [];
+    for (let i = 1; i <= total; i++) {
+      if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+        range.push(i);
+      } else if (range[range.length - 1] !== "...") {
+        range.push("...");
+      }
+    }
+    return range;
+  };
+
+  const handleJumpErrorPage = (e: React.FormEvent) => {
+    e.preventDefault();
+    const target = parseInt(errorJumpPageInput, 10);
+    if (!isNaN(target) && target >= 1 && target <= totalErrorPages) {
+      setErrorPage(target);
+      setErrorJumpPageInput("");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground p-4 sm:p-6 lg:p-8 space-y-6">
@@ -2015,7 +2052,7 @@ Total Tracked Errors: ${errorsToCopy.length}
                 </p>
               </div>
             ) : (
-              filteredErrors.map((err) => (
+              paginatedErrors.map((err) => (
                 <div
                   key={err._id}
                   className={`p-4 sm:p-5 bg-card border rounded-3xl space-y-3.5 shadow-sm transition-all ${
@@ -2227,6 +2264,128 @@ Total Tracked Errors: ${errorsToCopy.length}
               ))
             )}
           </div>
+
+          {/* ── Error Diagnostics Pagination Navigation Bar ── */}
+          {filteredErrors.length > 0 && (
+            <div className="p-4 bg-card border border-border rounded-3xl shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3 flex-wrap text-xs text-muted-foreground">
+                <span>
+                  Showing <strong className="text-foreground">{Math.min((errorPage - 1) * errorPageSize + 1, filteredErrors.length)}</strong>–<strong className="text-foreground">{Math.min(errorPage * errorPageSize, filteredErrors.length)}</strong> of <strong className="text-foreground">{filteredErrors.length}</strong> {filteredErrors.length === 1 ? "error" : "errors"} (Page <strong className="text-foreground">{errorPage}</strong> of <strong className="text-foreground">{totalErrorPages}</strong>)
+                </span>
+
+                <div className="flex items-center gap-1.5 pl-2 border-l border-border">
+                  <span className="text-[11px]">Per page:</span>
+                  <select
+                    value={errorPageSize}
+                    onChange={(e) => {
+                      setErrorPageSize(Number(e.target.value));
+                      setErrorPage(1);
+                    }}
+                    aria-label="Errors per page"
+                    className="px-2 py-1 bg-muted border border-border rounded-lg text-xs font-bold text-foreground focus:outline-none focus:border-primary cursor-pointer"
+                  >
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Pagination Controls */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {/* First Page */}
+                <button
+                  type="button"
+                  onClick={() => setErrorPage(1)}
+                  disabled={errorPage <= 1}
+                  className="p-1.5 rounded-lg bg-card border border-border text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition cursor-pointer"
+                  title="First Page"
+                >
+                  <ChevronsLeft size={14} />
+                </button>
+
+                {/* Prev Page */}
+                <button
+                  type="button"
+                  onClick={() => setErrorPage((p) => Math.max(1, p - 1))}
+                  disabled={errorPage <= 1}
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-card border border-border text-xs font-bold text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition cursor-pointer"
+                >
+                  <ChevronLeft size={14} />
+                  <span>Prev</span>
+                </button>
+
+                {/* Numbered Pills */}
+                <div className="hidden sm:flex items-center gap-1">
+                  {getErrorPageNumbers().map((num, idx) =>
+                    typeof num === "number" ? (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setErrorPage(num)}
+                        className={`w-7 h-7 rounded-lg text-xs font-bold transition cursor-pointer ${
+                          errorPage === num
+                            ? "bg-primary text-primary-foreground shadow-xs"
+                            : "bg-card border border-border hover:bg-muted text-foreground"
+                        }`}
+                      >
+                        {num}
+                      </button>
+                    ) : (
+                      <span key={idx} className="px-1 text-muted-foreground text-xs">
+                        {num}
+                      </span>
+                    )
+                  )}
+                </div>
+
+                {/* Next Page */}
+                <button
+                  type="button"
+                  onClick={() => setErrorPage((p) => Math.min(totalErrorPages, p + 1))}
+                  disabled={errorPage >= totalErrorPages}
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-card border border-border text-xs font-bold text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition cursor-pointer"
+                >
+                  <span>Next</span>
+                  <ChevronRight size={14} />
+                </button>
+
+                {/* Last Page */}
+                <button
+                  type="button"
+                  onClick={() => setErrorPage(totalErrorPages)}
+                  disabled={errorPage >= totalErrorPages}
+                  className="p-1.5 rounded-lg bg-card border border-border text-foreground hover:bg-muted disabled:opacity-40 disabled:pointer-events-none transition cursor-pointer"
+                  title="Last Page"
+                >
+                  <ChevronsRight size={14} />
+                </button>
+
+                {/* Jump to Page form */}
+                {totalErrorPages > 1 && (
+                  <form onSubmit={handleJumpErrorPage} className="hidden md:flex items-center gap-1 pl-2 border-l border-border">
+                    <input
+                      type="number"
+                      min={1}
+                      max={totalErrorPages}
+                      value={errorJumpPageInput}
+                      onChange={(e) => setErrorJumpPageInput(e.target.value)}
+                      placeholder="#"
+                      className="w-12 px-2 py-1 bg-card border border-border rounded-lg text-xs text-center font-mono text-foreground focus:outline-none focus:border-primary"
+                    />
+                    <button
+                      type="submit"
+                      disabled={!errorJumpPageInput}
+                      className="px-2 py-1 bg-muted hover:bg-accent border border-border text-foreground rounded-lg text-xs font-bold disabled:opacity-40 transition cursor-pointer"
+                    >
+                      Go
+                    </button>
+                  </form>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

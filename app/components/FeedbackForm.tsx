@@ -44,6 +44,7 @@ export default function FeedbackForm({
   const [category, setCategory] = useState<string | null>(null);
   const [comment, setComment] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   const handleClose = () => {
     if (onClose) onClose();
@@ -51,6 +52,7 @@ export default function FeedbackForm({
     // Reset after close
     setTimeout(() => {
       setSubmitted(false);
+      setShowError(false);
       setRating(0);
       setCategory(null);
       setComment("");
@@ -61,17 +63,24 @@ export default function FeedbackForm({
     e.preventDefault();
     if (submitting || (!rating && !category && !comment.trim())) return;
 
-    await submitDeep({
+    if (rating > 0 && rating < 3 && !comment.trim()) {
+      setShowError(true);
+      return;
+    }
+
+    const success = await submitDeep({
       rating: rating > 0 ? rating : undefined,
       category: category || undefined,
       comment: comment.trim() || undefined,
       labStep: labStep || undefined,
     });
 
-    setSubmitted(true);
-    setTimeout(() => {
-      handleClose();
-    }, 2000);
+    if (success) {
+      setSubmitted(true);
+      setTimeout(() => {
+        handleClose();
+      }, 2000);
+    }
   };
 
   return (
@@ -181,15 +190,31 @@ export default function FeedbackForm({
 
                 {/* Comments */}
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                    Detailed Comments
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                      {rating > 0 && rating < 3 ? "Detailed Comments (Required)" : "Detailed Comments"}
+                    </label>
+                    {showError && (
+                      <span className="text-[10px] text-rose-500 font-bold">
+                        ⚠️ Comment is required for ratings below 3 stars
+                      </span>
+                    )}
+                  </div>
                   <textarea
                     value={comment}
-                    onChange={(e) => setComment(e.target.value.slice(0, 500))}
-                    placeholder="What worked well? What was confusing or broken?"
+                    onChange={(e) => {
+                      setComment(e.target.value.slice(0, 500));
+                      if (e.target.value.trim()) setShowError(false);
+                    }}
+                    placeholder={
+                      rating > 0 && rating < 3
+                        ? "Please describe what was confusing or broken... (Required)"
+                        : "What worked well? What was confusing or broken?"
+                    }
                     rows={3}
-                    className="w-full rounded-2xl border border-border bg-background text-foreground text-xs p-3.5 resize-none focus:outline-none focus:ring-2 focus:ring-primary/30 placeholder:text-muted-foreground"
+                    className={`w-full rounded-2xl border bg-background text-foreground text-xs p-3.5 resize-none focus:outline-none focus:ring-2 placeholder:text-muted-foreground ${
+                      showError ? "border-rose-500 ring-1 ring-rose-500/30" : "border-border focus:ring-primary/30"
+                    }`}
                   />
                   <div className="text-[10px] text-muted-foreground text-right">
                     {comment.length}/500

@@ -1,775 +1,976 @@
 "use client";
-// src/components/computer-science/ai-problem/Hangman.jsx
-import React, { useState, useEffect } from "react";
-import DailyChallengeCard from "@/app/components/DailyChallengeCard";
+
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Brain,
+  Play,
+  Pause,
+  RotateCcw,
+  Zap,
+  Layers,
+  Sparkles,
+  ChevronRight,
+  HelpCircle,
+  BarChart3,
+  Sliders,
+  CheckCircle2,
+  Trophy,
+  ArrowRight,
+  Info,
+  Maximize2,
+  RefreshCw,
+  Eye,
+  Crosshair,
+  TrendingDown,
+  TrendingUp,
+  Gauge,
+  CircleDot,
+  Compass,
+  Activity,
+  Calculator,
+  Binary,
+  Cpu,
+  Flame,
+  AlertTriangle,
+  FileCode,
+  Grid,
+  ShieldCheck,
+  BookOpen,
+  Split,
+  Network,
+  GitFork,
+  FastForward,
+  Type,
+  Hash,
+  Search,
+  Check,
+  Skull,
+  Award,
+} from "lucide-react";
 import { useLab } from "@/app/hooks/useXP";
+import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
-// Word database with categories and hints
-const WORD_DATABASE = {
-  easy: [
-    { word: "CAT", hint: "🐱 A furry pet that meows" },
-    { word: "DOG", hint: "🐕 Man's best friend" },
-    { word: "FISH", hint: "🐠 Swims in water" },
-    { word: "BIRD", hint: "🦜 Animal with wings" },
-    { word: "BOOK", hint: "📖 You read this" },
-    { word: "SUN", hint: "☀️ Shines in the sky" },
-    { word: "CAR", hint: "🚗 Vehicle with wheels" },
-    { word: "HOUSE", hint: "🏠 Place where you live" }
-  ],
-  medium: [
-    { word: "PYTHON", hint: "🐍 Programming language or snake" },
-    { word: "JAVA", hint: "☕ Coffee or programming language" },
-    { word: "REACT", hint: "⚛️ JavaScript library for UI" },
-    { word: "APPLE", hint: "🍎 Fruit or tech company" },
-    { word: "BRAIN", hint: "🧠 Organ in your head" },
-    { word: "TIGER", hint: "🐯 Large striped cat" },
-    { word: "OCEAN", hint: "🌊 Large body of water" },
-    { word: "PIANO", hint: "🎹 Musical instrument" }
-  ],
-  hard: [
-    { word: "ALGORITHM", hint: "📊 Step-by-step procedure" },
-    { word: "FUNCTION", hint: "🔄 Reusable code block" },
-    { word: "VARIABLE", hint: "📦 Stores data in programming" },
-    { word: "DATABASE", hint: "💾 Stores organized data" },
-    { word: "COMPILER", hint: "⚙️ Translates code to machine language" },
-    { word: "KEYBOARD", hint: "⌨️ Device for typing" },
-    { word: "MONITOR", hint: "🖥️ Computer screen" },
-    { word: "PROCESSOR", hint: "⚡ Brain of computer" }
-  ]
-};
+// ── Types & Information-Theoretic Structures ──────────────────────────
+type GameMode = "ai_solver" | "human_assisted" | "evil_hangman";
+type WordCategory = "computer_science" | "ai_robotics" | "mathematics" | "biology";
 
-export default function Hangman() {
-  const [activeTab, setActiveTab] = useState("demo");
-  const [difficulty, setDifficulty] = useState("medium");
-  const { completeExperiment } = useLab("computer-science/ai-problem/hangman", "computerScience", "simulation");
-
-  return (
-    <div className="max-w-6xl mx-auto p-4">
-      <DailyChallengeCard labId="computer-science/ai-problem/hangman" currentParams={{ gamesPlayed: 1, wordsGuessed: 1 }} />
-      {/* Header */}
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 rounded-t-xl shadow-lg">
-        <h1 className="text-3xl font-bold">🎮 Hangman Visual Learning Lab</h1>
-        <p className="text-indigo-100 mt-1">Watch the code execute as you play with dynamic words!</p>
-      </div>
-
-      {/* Navigation Tabs */}
-      <div className="flex bg-card border-x border-t rounded-b-lg shadow overflow-hidden">
-        <button
-          onClick={() => setActiveTab("demo")}
-          className={`flex-1 py-3 px-4 font-medium text-center transition ${
-            activeTab === "demo" 
-              ? "bg-indigo-600 text-white" 
-              : "bg-muted text-muted-foreground hover:bg-gray-100"
-          }`}
-        >
-          📸 Photo Demo
-        </button>
-        <button
-          onClick={() => setActiveTab("experiment")}
-          className={`flex-1 py-3 px-4 font-medium text-center transition ${
-            activeTab === "experiment" 
-              ? "bg-indigo-600 text-white" 
-              : "bg-muted text-muted-foreground hover:bg-gray-100"
-          }`}
-        >
-          🔬 Code Experiments
-        </button>
-        <button
-          onClick={() => setActiveTab("play")}
-          className={`flex-1 py-3 px-4 font-medium text-center transition ${
-            activeTab === "play" 
-              ? "bg-indigo-600 text-white" 
-              : "bg-muted text-muted-foreground hover:bg-gray-100"
-          }`}
-        >
-          🎮 Play Game
-        </button>
-      </div>
-
-      {/* Content Area */}
-      <div className="bg-card p-6 rounded-b-lg shadow-lg min-h-[600px]">
-        {activeTab === "demo" && <DemoTab />}
-        {activeTab === "experiment" && <ExperimentTab />}
-        {activeTab === "play" && (
-          <div className="space-y-4">
-            {/* Difficulty & Controls */}
-            <div className="flex justify-between items-center bg-muted p-4 rounded-lg">
-              <div className="flex items-center gap-3">
-                <span className="font-medium text-muted-foreground">Difficulty:</span>
-                <select 
-                  value={difficulty}
-                  onChange={(e) => setDifficulty(e.target.value)}
-                  className="px-3 py-2 border rounded-lg bg-card shadow-sm focus:ring-2 focus:ring-indigo-500"
-                >
-                  <option value="easy">🌟 Easy (3-4 letters)</option>
-                  <option value="medium">⭐⭐ Medium (5-6 letters)</option>
-                  <option value="hard">⭐⭐⭐ Hard (7-9 letters)</option>
-                </select>
-              </div>
-              <div className="text-sm text-muted-foreground">
-                Total words: {WORD_DATABASE[difficulty].length}
-              </div>
-            </div>
-            
-            {/* Game Area with key to force re-render on difficulty change */}
-            <GameArea key={difficulty} difficulty={difficulty} onComplete={completeExperiment} />
-          </div>
-        )}
-      </div>
-    </div>
-  );
+interface WordItem {
+  word: string;
+  category: WordCategory;
+  hint: string;
 }
 
-// ==========================================
-// DEMO TAB - Visual Step by Step
-// ==========================================
-function DemoTab() {
-  const [activeStep, setActiveStep] = useState(0);
-  
-  const steps = [
-    {
-      step: 1,
-      title: "Game Initialization",
-      visual: {
-        word: "_ _ _ _ _ _",
-        guesses: "[]"
-      },
-      code: `% Word = [p, r, o, l, o, g]
-% length(Word, 6)
-% play(Word, [])`,
-      drawing: `   ┌─────┐
-   │     │
-         │
-         │
-         │
-         │
-   ═══════`,
-      explanation: "Computer selects secret word 'PROLOG' (6 letters)"
-    },
-    {
-      step: 2,
-      title: "Player guesses 'P'",
-      visual: {
-        word: "P _ _ _ _ _",
-        guesses: "[p]"
-      },
-      code: `% read(p)
-% member(p, []) → false
-% play(Word, [p])`,
-      drawing: `   ┌─────┐
-   │     │
-         │
-         │
-         │
-         │
-   ═══════`,
-      explanation: "✓ 'P' is correct! First letter revealed"
-    },
-    {
-      step: 3,
-      title: "Player guesses 'R'",
-      visual: {
-        word: "P R _ _ _ _",
-        guesses: "[r, p]"
-      },
-      code: `% read(r)
-% member(r, [p]) → false
-% play(Word, [r, p])`,
-      drawing: `   ┌─────┐
-   │     │
-         │
-         │
-         │
-         │
-   ═══════`,
-      explanation: "✓ 'R' is correct! Second letter revealed"
-    },
-    {
-      step: 4,
-      title: "Player guesses 'O'",
-      visual: {
-        word: "P R O _ O _",
-        guesses: "[o, r, p]"
-      },
-      code: `% read(o)
-% member(o, [r, p]) → false
-% 'O' appears at positions 3 and 5`,
-      drawing: `   ┌─────┐
-   │     │
-         │
-         │
-         │
-         │
-   ═══════`,
-      explanation: "✓ 'O' appears twice! Both positions revealed"
-    },
-    {
-      step: 5,
-      title: "Player guesses 'L'",
-      visual: {
-        word: "P R O L O _",
-        guesses: "[l, o, r, p]"
-      },
-      code: `% read(l)
-% member(l, [o, r, p]) → false
-% play(Word, [l, o, r, p])`,
-      drawing: `   ┌─────┐
-   │     │
-         │
-         │
-         │
-         │
-   ═══════`,
-      explanation: "✓ 'L' is correct! Only one letter left"
-    },
-    {
-      step: 6,
-      title: "Player guesses 'G' - WIN!",
-      visual: {
-        word: "P R O L O G 🏆",
-        guesses: "[g, l, o, r, p]"
-      },
-      code: `% read(g)
-% member(g, [l, o, r, p]) → false
-% all_guessed(Word, [g,l,o,r,p]) → true
-% writeln('You won!')`,
-      drawing: `   ┌─────┐
-   │     │
-         │
-         │
-         │
-         │
-   ═══════ 🎉`,
-      explanation: "✓ GAME WON! All letters guessed correctly!"
-    }
-  ];
-
-  return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-bold text-indigo-800 mb-4">📸 Visual Step-by-Step Demo</h2>
-      
-      {/* Step Navigation */}
-      <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
-        {steps.map((step, idx) => (
-          <button
-            key={idx}
-            onClick={() => setActiveStep(idx)}
-            className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap ${
-              activeStep === idx 
-                ? 'bg-indigo-600 text-white' 
-                : 'bg-gray-200 text-muted-foreground hover:bg-gray-300'
-            }`}
-          >
-            Step {step.step}
-          </button>
-        ))}
-      </div>
-
-      {/* Active Step Display */}
-      <div className="border-2 rounded-xl overflow-hidden shadow-md">
-        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-3 border-b">
-          <span className="inline-block bg-indigo-600 text-white px-3 py-1 rounded-full text-sm font-bold">
-            Step {steps[activeStep].step}
-          </span>
-          <span className="ml-3 font-semibold text-indigo-900">{steps[activeStep].title}</span>
-        </div>
-        
-        <div className="grid md:grid-cols-3 gap-4 p-4">
-          {/* Visual Column */}
-          <div className="bg-card p-3 rounded-lg border-2 border-indigo-200">
-            <div className="text-center mb-3">
-              <div className="text-3xl font-mono tracking-widest bg-indigo-50 p-3 rounded">
-                {steps[activeStep].visual.word}
-              </div>
-              <div className="text-sm text-muted-foreground mt-2">
-                Guesses: {steps[activeStep].visual.guesses}
-              </div>
-            </div>
-            <div className="text-xs text-muted-foreground bg-muted p-2 rounded">
-              {steps[activeStep].explanation}
-            </div>
-          </div>
-          
-          {/* Code Column */}
-          <div className="bg-gray-900 p-3 rounded-lg">
-            <div className="text-gray-400 text-xs mb-1">Prolog Code:</div>
-            <pre className="text-green-400 text-xs font-mono whitespace-pre-wrap">
-              {steps[activeStep].code}
-            </pre>
-          </div>
-          
-          {/* Hangman Column */}
-          <div className="bg-gray-800 p-3 rounded-lg flex items-center justify-center">
-            <pre className="text-indigo-300 font-mono text-sm">
-              {steps[activeStep].drawing}
-            </pre>
-          </div>
-        </div>
-      </div>
-
-      {/* Progress Bar */}
-      <div className="w-full bg-gray-200 rounded-full h-2.5">
-        <div 
-          className="bg-indigo-600 h-2.5 rounded-full transition-all duration-300"
-          style={{ width: `${((activeStep + 1) / steps.length) * 100}%` }}
-        ></div>
-      </div>
-    </div>
-  );
+interface LetterProb {
+  letter: string;
+  prob: number;
+  entropy: number;
+  wordCount: number;
 }
 
-// ==========================================
-// EXPERIMENT TAB - Interactive Code Testing
-// ==========================================
-function ExperimentTab() {
-  const [activeExperiment, setActiveExperiment] = useState(0);
-  
-  const experiments = [
-    {
-      id: 1,
-      title: "Duplicate Detection",
-      icon: "🧪",
-      color: "purple",
-      before: "Guesses = [p, r]",
-      guess: "p",
-      result: "member(p, [p,r]) → true",
-      code: `% Prolog executes:
-member(p, [p,r]) → true
-writeln('Already guessed!')
-play(Word, [p,r])  % No change in guesses`,
-      explanation: "✅ Program prevents duplicate guesses!"
-    },
-    {
-      id: 2,
-      title: "Wrong Guesses Tracking",
-      icon: "⚠️",
-      color: "red",
-      before: "Wrong count = 5",
-      guess: "x",
-      result: "member(x, [p,r,o,l]) → false → wrong++",
-      code: `% After 6 wrong guesses:
-Wrong 1-5: O with parts
-Wrong 6:   O
-          /|\\
-          / \\`,
-      explanation: "⚠️ After 6 wrong guesses - GAME OVER!"
-    },
-    {
-      id: 3,
-      title: "Win Condition",
-      icon: "🏆",
-      color: "green",
-      before: "Word = [p,r,o,l,o,g]",
-      guess: "Guesses = [g,l,o,r,p]",
-      result: "all_guessed(Word, Guesses) → true",
-      code: `% all_guessed checks each letter:
-member(p)? ✓  member(r)? ✓
-member(o)? ✓  member(l)? ✓
-member(g)? ✓  → WINNER! 🎉`,
-      explanation: "✅ All letters guessed - YOU WIN!"
-    },
-    {
-      id: 4,
-      title: "List Construction",
-      icon: "📋",
-      color: "orange",
-      before: "Guesses = [r, p]",
-      guess: "o",
-      result: "[o | [r, p]] = [o, r, p]",
-      code: `% Prolog list construction:
-[X | Rest] creates new list
-[o | [r,p]] = [o, r, p]
+// ── Built-in Lexicon Corpus for Bayesian Inference ────────────────────
+const DICTIONARY_CORPUS: WordItem[] = [
+  // Computer Science & Algorithms
+  { word: "ALGORITHM", category: "computer_science", hint: "Step-by-step computational procedure" },
+  { word: "RECURSION", category: "computer_science", hint: "Function that calls itself directly or indirectly" },
+  { word: "DATABASE", category: "computer_science", hint: "Structured set of data stored in a computer" },
+  { word: "COMPILER", category: "computer_science", hint: "Translates high-level source code into machine instructions" },
+  { word: "HEURISTIC", category: "computer_science", hint: "Problem-solving shortcut that produces good-enough solutions" },
+  { word: "PIPELINE", category: "computer_science", hint: "Chain of processing elements arranged in series" },
+  { word: "COMPLEXITY", category: "computer_science", hint: "Asymptotic time and space bound analysis" },
+  { word: "BANDWIDTH", category: "computer_science", hint: "Maximum rate of data transfer across a network" },
+  { word: "POLYNOMIAL", category: "computer_science", hint: "Tractable computational complexity class (P)" },
+  { word: "SEMAPHORE", category: "computer_science", hint: "Variable used for controlling access to common resources" },
 
-play(Word, [o | [r,p]]) → play(Word, [o,r,p])`,
-      explanation: "✅ New list created with prepended element"
-    }
-  ];
+  // AI & Robotics
+  { word: "BACKPROPAGATION", category: "ai_robotics", hint: "Gradient computation algorithm in deep neural networks" },
+  { word: "PERCEPTRON", category: "ai_robotics", hint: "Fundamental mathematical building block of neural models" },
+  { word: "REINFORCEMENT", category: "ai_robotics", hint: "Learning paradigm based on rewards and state penalties" },
+  { word: "CONVERGENCE", category: "ai_robotics", hint: "State where model loss stabilizes at optimal minima" },
+  { word: "TRANSFORMER", category: "ai_robotics", hint: "Attention-based sequence architecture powering modern LLMs" },
+  { word: "PROBABILISTIC", category: "ai_robotics", hint: "Reasoning under uncertainty using Bayesian inference" },
+  { word: "CLASSIFIER", category: "ai_robotics", hint: "Predictive model that maps input features to categorical labels" },
+  { word: "OPTIMIZATION", category: "ai_robotics", hint: "Maximizing or minimizing an objective objective function" },
+  { word: "EMBEDDING", category: "ai_robotics", hint: "Dense continuous vector representation of discrete tokens" },
 
-  return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-indigo-800 mb-4">🔬 Code Experiments</h2>
-      
-      <div className="grid md:grid-cols-4 gap-2 mb-4">
-        {experiments.map((exp, idx) => (
-          <button
-            key={idx}
-            onClick={() => setActiveExperiment(idx)}
-            className={`p-3 rounded-lg text-center font-bold transition ${
-              activeExperiment === idx 
-                ? `bg-${exp.color}-600 text-white` 
-                : `bg-${exp.color}-50 text-${exp.color}-800 hover:bg-${exp.color}-100`
-            }`}
-          >
-            {exp.icon} {exp.title}
-          </button>
-        ))}
-      </div>
+  // Mathematics & Cryptography
+  { word: "DIOPHANTINE", category: "mathematics", hint: "Polynomial equation seeking integer-only solutions" },
+  { word: "ASYMPTOTIC", category: "mathematics", hint: "Limiting behavior of a function as input approaches infinity" },
+  { word: "DETERMINANT", category: "mathematics", hint: "Scalar value computed from a square matrix" },
+  { word: "EIGENVALUE", category: "mathematics", hint: "Scalar multiplier associated with a linear transformation" },
+  { word: "COMBINATORICS", category: "mathematics", hint: "Branch of mathematics concerning counting structures" },
+  { word: "CRYPTOGRAPHY", category: "mathematics", hint: "Art of protecting information through encryption algorithms" },
+  { word: "LOGARITHMIC", category: "mathematics", hint: "Inverse function to exponentiation" },
 
-      <div className={`bg-gradient-to-br from-${experiments[activeExperiment].color}-50 to-pink-50 p-5 rounded-xl border-2 border-${experiments[activeExperiment].color}-200 shadow-md`}>
-        <h3 className={`text-lg font-bold text-${experiments[activeExperiment].color}-800 mb-3`}>
-          {experiments[activeExperiment].icon} Experiment {experiments[activeExperiment].id}: {experiments[activeExperiment].title}
-        </h3>
-        <div className="space-y-3">
-          <div className="bg-card p-3 rounded-lg">
-            <div className="font-mono text-sm">Before: {experiments[activeExperiment].before}</div>
-            <div className="font-mono text-sm mt-2">Player guesses: <span className="bg-yellow-100 px-2 py-1 rounded">{experiments[activeExperiment].guess}</span></div>
-            <div className="font-mono text-sm mt-2 bg-gray-100 p-2 rounded">
-              {experiments[activeExperiment].result}
-            </div>
-          </div>
-          <div className="bg-gray-900 p-3 rounded-lg">
-            <pre className="text-green-400 text-xs">
-              {experiments[activeExperiment].code}
-            </pre>
-          </div>
-          <p className="text-sm text-muted-foreground">{experiments[activeExperiment].explanation}</p>
-        </div>
-      </div>
-    </div>
+  // Biology & Genetics
+  { word: "CHROMOSOME", category: "biology", hint: "Thread-like structure of nucleic acids carrying genetic info" },
+  { word: "MUTATION", category: "biology", hint: "Alteration in the nucleotide sequence of the genome" },
+  { word: "MITOCHONDRIA", category: "biology", hint: "Powerhouse of the eukaryotic cell producing ATP" },
+  { word: "PHOTOSYNTHESIS", category: "biology", hint: "Process by which green plants synthesize nutrients from sunlight" },
+  { word: "NUCLEOTIDE", category: "biology", hint: "Basic structural unit of DNA and RNA" },
+];
+
+const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+const MAX_INCORRECT_GUESSES = 6;
+
+export default function HangmanAILab() {
+  const { completeExperiment } = useLab(
+    "computer-science/ai-problem/hangman",
+    "computerScience",
+    "simulation"
   );
-}
 
-// ==========================================
-// GAME AREA - Fully Dynamic with Word Changes
-// ==========================================
-function GameArea({ difficulty, onComplete }) {
-  // Function to get random word
-  const getRandomWord = () => {
-    const words = WORD_DATABASE[difficulty];
-    const randomIndex = Math.floor(Math.random() * words.length);
-    return words[randomIndex];
-  };
+  // ── Game Configuration & Mode ────────────────────────────────────────
+  const [gameMode, setGameMode] = useState<GameMode>("ai_solver");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [selectedWordObj, setSelectedWordObj] = useState<WordItem>(DICTIONARY_CORPUS[0]);
 
-  // State for current word
-  const [currentWordData, setCurrentWordData] = useState(getRandomWord());
-  const [secretWord, setSecretWord] = useState(currentWordData.word.split(''));
-  const [hint, setHint] = useState(currentWordData.hint);
-  
-  // Game state
-  const [guesses, setGuesses] = useState([]);
-  const [input, setInput] = useState('');
-  const [message, setMessage] = useState('');
-  const [wrongCount, setWrongCount] = useState(0);
-  const [gameWon, setGameWon] = useState(false);
-  const [gameLost, setGameLost] = useState(false);
-  const [showHint, setShowHint] = useState(false);
+  // ── Active Gameplay State ────────────────────────────────────────────
+  const [guessedLetters, setGuessedLetters] = useState<Set<string>>(new Set());
+  const [incorrectGuesses, setIncorrectGuesses] = useState<number>(0);
+  const [wrongLetters, setWrongLetters] = useState<string[]>([]);
+  const [isGameOver, setIsGameOver] = useState<boolean>(false);
+  const [isWon, setIsWon] = useState<boolean>(false);
+  const [stepCount, setStepCount] = useState<number>(0);
 
-  // Update when difficulty changes or new game starts
+  // AI Solver Loop
+  const [isRunningAI, setIsRunningAI] = useState<boolean>(false);
+  const [aiSpeedMs, setAiSpeedMs] = useState<number>(500);
+
+  // UI Tabs & Milestones
+  const [activeTab, setActiveTab] = useState<"game_arena" | "bayesian_tensor" | "theory" | "diagnostics">("game_arena");
+  const [milestones, setMilestones] = useState({
+    executedAISolver: false,
+    zeroErrorSolve: false,
+    inspectedShannonEntropy: false,
+    analyzedTheory: false,
+  });
+
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  // ── Active Dictionary Filter ─────────────────────────────────────────
+  const activeLexicon = useMemo(() => {
+    if (categoryFilter === "all") return DICTIONARY_CORPUS;
+    return DICTIONARY_CORPUS.filter((w) => w.category === categoryFilter);
+  }, [categoryFilter]);
+
+  // ── Target Word Mask ─────────────────────────────────────────────────
+  const wordMask = useMemo(() => {
+    return selectedWordObj.word
+      .split("")
+      .map((char) => (guessedLetters.has(char) ? char : "_"));
+  }, [selectedWordObj, guessedLetters]);
+
+  const isWordFullyRevealed = useMemo(() => {
+    return selectedWordObj.word.split("").every((char) => guessedLetters.has(char));
+  }, [selectedWordObj, guessedLetters]);
+
+  // ── Matching Candidate Words in Corpus ────────────────────────────────
+  const matchingCandidates = useMemo(() => {
+    const targetLen = selectedWordObj.word.length;
+    return DICTIONARY_CORPUS.filter((item) => {
+      const w = item.word;
+      if (w.length !== targetLen) return false;
+
+      // Check if word matches current mask and contains no guessed wrong letters
+      for (let i = 0; i < targetLen; i++) {
+        const maskChar = wordMask[i];
+        if (maskChar !== "_" && maskChar !== w[i]) return false;
+        if (maskChar === "_" && guessedLetters.has(w[i])) return false;
+      }
+      return true;
+    });
+  }, [selectedWordObj, wordMask, guessedLetters]);
+
+  // ── Information-Theoretic Letter Probability & Shannon Entropy ────────
+  const letterDistributions = useMemo((): LetterProb[] => {
+    const unrevealed = ALPHABET.filter((c) => !guessedLetters.has(c));
+    const totalMatching = Math.max(1, matchingCandidates.length);
+
+    const distributions: LetterProb[] = unrevealed.map((char) => {
+      // Count words containing this letter
+      const count = matchingCandidates.filter((item) => item.word.includes(char)).length;
+      const p = count / totalMatching;
+
+      // Shannon Entropy: H(c) = -p*log2(p) - (1-p)*log2(1-p)
+      let entropy = 0;
+      if (p > 0 && p < 1) {
+        entropy = -(p * Math.log2(p) + (1 - p) * Math.log2(1 - p));
+      }
+
+      return {
+        letter: char,
+        prob: p,
+        entropy,
+        wordCount: count,
+      };
+    });
+
+    // Sort by Information Gain / Entropy (descending)
+    return distributions.sort((a, b) => b.entropy - a.entropy || b.prob - a.prob);
+  }, [matchingCandidates, guessedLetters]);
+
+  // ── Reset & Initialize Game ──────────────────────────────────────────
+  const startNewGame = useCallback(() => {
+    const available = activeLexicon;
+    const randomWord = available[Math.floor(Math.random() * available.length)];
+    setSelectedWordObj(randomWord);
+    setGuessedLetters(new Set());
+    setIncorrectGuesses(0);
+    setWrongLetters([]);
+    setIsGameOver(false);
+    setIsWon(false);
+    setIsRunningAI(false);
+    setStepCount(0);
+  }, [activeLexicon]);
+
   useEffect(() => {
-    const newWordData = getRandomWord();
-    setCurrentWordData(newWordData);
-    setSecretWord(newWordData.word.split(''));
-    setHint(newWordData.hint);
-    resetGame();
-  }, [difficulty]);
+    startNewGame();
+  }, [startNewGame]);
 
-  // Hangman stages with better visuals
-  const hangmanStages = [
-    `    ┌─────┐
-    │     │
-          │
-          │
-          │
-          │
-    ═══════`,
-    `    ┌─────┐
-    │     │
-    O     │
-          │
-          │
-          │
-    ═══════`,
-    `    ┌─────┐
-    │     │
-    O     │
-    │     │
-          │
-          │
-    ═══════`,
-    `    ┌─────┐
-    │     │
-    O     │
-   /│     │
-          │
-          │
-    ═══════`,
-    `    ┌─────┐
-    │     │
-    O     │
-   /│\\    │
-          │
-          │
-    ═══════`,
-    `    ┌─────┐
-    │     │
-    O     │
-   /│\\    │
-   /      │
-          │
-    ═══════`,
-    `    ┌─────┐
-    │     │
-    O     │
-   /│\\    │
-   / \\    │
-          │
-    ═══════`
-  ];
+  // ── Handle Single Letter Guess ───────────────────────────────────────
+  const handleLetterGuess = useCallback(
+    (letter: string) => {
+      if (isGameOver || guessedLetters.has(letter)) return;
 
-  const displayWord = secretWord.map(letter => 
-    guesses.includes(letter) ? letter : '_'
-  ).join(' ');
+      const newGuessed = new Set(guessedLetters);
+      newGuessed.add(letter);
+      setGuessedLetters(newGuessed);
+      setStepCount((p) => p + 1);
 
-  const handleGuess = () => {
-    const letter = input.toUpperCase();
-    
-    if (!letter.match(/^[A-Z]$/)) {
-      setMessage('❌ Please enter a single letter!');
-      setInput('');
+      // Check if letter exists in target word
+      if (!selectedWordObj.word.includes(letter)) {
+        const newIncorrect = incorrectGuesses + 1;
+        setIncorrectGuesses(newIncorrect);
+        setWrongLetters((prev) => [...prev, letter]);
+
+        if (newIncorrect >= MAX_INCORRECT_GUESSES) {
+          setIsGameOver(true);
+          setIsWon(false);
+          setIsRunningAI(false);
+        }
+      } else {
+        // Check if word is now solved
+        const allRevealed = selectedWordObj.word.split("").every((c) => newGuessed.has(c));
+        if (allRevealed) {
+          setIsGameOver(true);
+          setIsWon(true);
+          setIsRunningAI(false);
+          if (incorrectGuesses === 0) {
+            setMilestones((p) => ({ ...p, zeroErrorSolve: true }));
+          }
+          completeExperiment();
+        }
+      }
+    },
+    [isGameOver, guessedLetters, selectedWordObj, incorrectGuesses, completeExperiment]
+  );
+
+  // ── AI Solver: Optimal Letter Selection (Max Entropy / Prob) ─────────
+  const stepAISolver = useCallback(() => {
+    if (isGameOver || letterDistributions.length === 0) {
+      setIsRunningAI(false);
       return;
     }
 
-    if (guesses.includes(letter)) {
-      setMessage(`⚠️ "${letter}" already guessed!`);
-      setInput('');
-      return;
+    const bestPick = letterDistributions[0].letter;
+    handleLetterGuess(bestPick);
+    setMilestones((p) => ({ ...p, executedAISolver: true, inspectedShannonEntropy: true }));
+  }, [isGameOver, letterDistributions, handleLetterGuess]);
+
+  // AI Simulation Loop
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (isRunningAI && !isGameOver) {
+      interval = setInterval(() => {
+        stepAISolver();
+      }, aiSpeedMs);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isRunningAI, isGameOver, aiSpeedMs, stepAISolver]);
+
+  // ── High-DPI Vector Gallows & Character Canvas Renderer ──────────────
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+
+    const displayW = Math.round(rect.width * dpr);
+    const displayH = Math.round(rect.height * dpr);
+
+    if (canvas.width !== displayW || canvas.height !== displayH) {
+      canvas.width = displayW;
+      canvas.height = displayH;
     }
 
-    const newGuesses = [...guesses, letter];
-    setGuesses(newGuesses);
+    const width = rect.width;
+    const height = rect.height;
 
-    if (secretWord.includes(letter)) {
-      setMessage(`✅ "${letter}" is correct!`);
-      
-      if (secretWord.every(l => newGuesses.includes(l))) {
-        setGameWon(true);
-        setMessage('🎉 CONGRATULATIONS! YOU WON! 🎉');
-        if (onComplete) onComplete();
-      }
-    } else {
-      const newWrong = wrongCount + 1;
-      setWrongCount(newWrong);
-      setMessage(`❌ "${letter}" is wrong! (${newWrong}/6)`);
-      
-      if (newWrong >= 6) {
-        setGameLost(true);
-        setMessage('💀 GAME OVER! The hangman is complete!');
+    ctx.save();
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, width, height);
+
+    // 1. Draw Wooden Gallows Scaffold
+    ctx.strokeStyle = "#94a3b8";
+    ctx.lineWidth = 3.5;
+    ctx.lineCap = "round";
+
+    // Base beam
+    ctx.beginPath();
+    ctx.moveTo(width * 0.15, height * 0.88);
+    ctx.lineTo(width * 0.55, height * 0.88);
+    ctx.stroke();
+
+    // Vertical post
+    ctx.beginPath();
+    ctx.moveTo(width * 0.28, height * 0.88);
+    ctx.lineTo(width * 0.28, height * 0.15);
+    ctx.stroke();
+
+    // Top horizontal beam
+    ctx.beginPath();
+    ctx.moveTo(width * 0.28, height * 0.15);
+    ctx.lineTo(width * 0.65, height * 0.15);
+    ctx.stroke();
+
+    // Diagonal corner brace
+    ctx.beginPath();
+    ctx.moveTo(width * 0.28, height * 0.3);
+    ctx.lineTo(width * 0.42, height * 0.15);
+    ctx.stroke();
+
+    // Rope Drop
+    ctx.strokeStyle = "#f59e0b";
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(width * 0.65, height * 0.15);
+    ctx.lineTo(width * 0.65, height * 0.28);
+    ctx.stroke();
+
+    // 2. Progressive Stick Figure Rendering Based on Incorrect Guesses (0 - 6)
+    const centerX = width * 0.65;
+    const headRadius = 18;
+    const headCenterY = height * 0.28 + headRadius;
+
+    ctx.strokeStyle = isGameOver && !isWon ? "#ef4444" : isWon ? "#10b981" : "#e2e8f0";
+    ctx.lineWidth = 3;
+
+    // Error 1: Head
+    if (incorrectGuesses >= 1) {
+      ctx.beginPath();
+      ctx.arc(centerX, headCenterY, headRadius, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Face expressions
+      if (isGameOver && !isWon) {
+        // X eyes
+        ctx.fillStyle = "#ef4444";
+        ctx.font = "bold 9px monospace";
+        ctx.textAlign = "center";
+        ctx.fillText("X  X", centerX, headCenterY - 1);
+        ctx.fillText("︵", centerX, headCenterY + 10);
+      } else if (isWon) {
+        // Happy face
+        ctx.fillStyle = "#10b981";
+        ctx.font = "bold 9px monospace";
+        ctx.textAlign = "center";
+        ctx.fillText("^  ^", centerX, headCenterY - 1);
+        ctx.fillText("‿", centerX, headCenterY + 8);
       }
     }
-    
-    setInput('');
-  };
 
-  // Function to start new game with different word
-  const startNewGame = () => {
-    const newWordData = getRandomWord();
-    setCurrentWordData(newWordData);
-    setSecretWord(newWordData.word.split(''));
-    setHint(newWordData.hint);
-    resetGame();
-  };
+    // Error 2: Torso Body
+    const torsoTopY = headCenterY + headRadius;
+    const torsoBottomY = torsoTopY + 45;
+    if (incorrectGuesses >= 2) {
+      ctx.beginPath();
+      ctx.moveTo(centerX, torsoTopY);
+      ctx.lineTo(centerX, torsoBottomY);
+      ctx.stroke();
+    }
 
-  // Function to reset same word
-  const resetGame = () => {
-    setGuesses([]);
-    setWrongCount(0);
-    setGameWon(false);
-    setGameLost(false);
-    setMessage('');
-    setShowHint(false);
-    setInput('');
-  };
+    // Error 3: Left Arm
+    if (incorrectGuesses >= 3) {
+      ctx.beginPath();
+      ctx.moveTo(centerX, torsoTopY + 15);
+      ctx.lineTo(centerX - 24, torsoTopY + 32);
+      ctx.stroke();
+    }
+
+    // Error 4: Right Arm
+    if (incorrectGuesses >= 4) {
+      ctx.beginPath();
+      ctx.moveTo(centerX, torsoTopY + 15);
+      ctx.lineTo(centerX + 24, torsoTopY + 32);
+      ctx.stroke();
+    }
+
+    // Error 5: Left Leg
+    if (incorrectGuesses >= 5) {
+      ctx.beginPath();
+      ctx.moveTo(centerX, torsoBottomY);
+      ctx.lineTo(centerX - 22, torsoBottomY + 42);
+      ctx.stroke();
+    }
+
+    // Error 6: Right Leg (Full Gallows)
+    if (incorrectGuesses >= 6) {
+      ctx.beginPath();
+      ctx.moveTo(centerX, torsoBottomY);
+      ctx.lineTo(centerX + 22, torsoBottomY + 42);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }, [incorrectGuesses, isGameOver, isWon]);
 
   return (
-    <div className="space-y-6">
-      {/* Game Header with Word Info */}
-      <div className="flex justify-between items-center bg-indigo-50 p-3 rounded-lg">
-        <div>
-          <span className="font-bold text-indigo-800">Current Word: </span>
-          <span className="text-muted-foreground">{secretWord.length} letters</span>
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={resetGame}
-            className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+    <div className="min-h-screen bg-background text-foreground selection:bg-purple-500/20">
+      {/* ── Top Engineering Header ── */}
+      <header className="sticky top-0 z-40 border-b border-border bg-card/80 backdrop-blur-md px-4 sm:px-8 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/computer-science/ai-problem"
+            className="p-2 rounded-xl bg-muted hover:bg-accent text-muted-foreground hover:text-foreground transition cursor-pointer"
+            title="Back to AI Problems"
           >
-            🔄 Reset Same Word
-          </button>
-          <button
-            onClick={startNewGame}
-            className="px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 text-sm"
-          >
-            🎲 Random New Word
-          </button>
-        </div>
-      </div>
-
-      {/* Main Game Grid */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* Left Column - Game Visuals */}
-        <div className="space-y-4">
-          {/* Hangman Drawing */}
-          <div className="bg-gray-900 p-4 rounded-xl flex justify-center">
-            <pre className="text-indigo-300 font-mono text-sm">
-              {gameLost ? hangmanStages[6] : hangmanStages[wrongCount]}
-            </pre>
-          </div>
-
-          {/* Word Display */}
-          <div className="bg-gradient-to-r from-indigo-100 to-purple-100 p-6 rounded-xl text-center border-2 border-indigo-300">
-            <div className="text-4xl font-mono tracking-widest mb-2">
-              {displayWord}
+            <ArrowRight className="rotate-180" size={16} />
+          </Link>
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-500 shadow-sm">
+              <Type size={20} />
             </div>
-            <div className="text-sm text-muted-foreground">
-              Wrong guesses: {wrongCount}/6
-            </div>
-          </div>
-
-          {/* Input Area */}
-          {!gameWon && !gameLost ? (
-            <div className="flex gap-2">
-              <input
-                type="text"
-             
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleGuess()}
-                className="w-20 h-14 text-center text-2xl font-bold border-2 border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500 uppercase"
-                placeholder="?"
-              />
-              <button
-                onClick={handleGuess}
-                className="flex-1 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-bold text-lg"
-              >
-                Guess Letter
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={resetGame}
-                className="py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-bold"
-              >
-                🔄 Play Again (Same Word)
-              </button>
-              <button
-                onClick={startNewGame}
-                className="py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-bold"
-              >
-                🎲 New Random Word
-              </button>
-            </div>
-          )}
-
-          {/* Message Display */}
-          {message && (
-            <div className={`p-3 rounded-lg text-center font-bold ${
-              message.includes('✅') ? 'bg-green-100 text-green-800 border-2 border-green-300' :
-              message.includes('❌') ? 'bg-red-100 text-red-800 border-2 border-red-300' :
-              message.includes('🎉') ? 'bg-yellow-100 text-yellow-800 border-2 border-yellow-300 animate-pulse' :
-              message.includes('💀') ? 'bg-gray-800 text-white border-2 border-gray-900' :
-              'bg-blue-100 text-blue-800 border-2 border-blue-300'
-            }`}>
-              {message}
-            </div>
-          )}
-        </div>
-
-        {/* Right Column - Information */}
-        <div className="space-y-4">
-          {/* Hint Section */}
-          <div className="bg-yellow-50 p-4 rounded-xl border-2 border-yellow-300">
-            <button
-              onClick={() => setShowHint(!showHint)}
-              className="w-full bg-yellow-500 text-white py-2 rounded-lg hover:bg-yellow-600 font-bold"
-            >
-              {showHint ? '🔒 Hide Hint' : '💡 Show Hint'}
-            </button>
-            {showHint && (
-              <div className="mt-3 p-3 bg-card rounded-lg border border-yellow-300">
-                <span className="font-bold text-yellow-800">Hint:</span>
-                <p className="text-muted-foreground mt-1">{hint}</p>
-              </div>
-            )}
-          </div>
-
-          {/* Guessed Letters */}
-          <div className="bg-muted p-4 rounded-xl border-2 border-gray-300">
-            <h3 className="font-bold text-muted-foreground mb-2">📝 Guessed Letters:</h3>
-            <div className="bg-card p-3 rounded-lg min-h-[60px] font-mono">
-              {guesses.length > 0 ? (
-                <div className="flex flex-wrap gap-1">
-                  {guesses.map((letter, idx) => (
-                    <span key={idx} className={`px-2 py-1 rounded ${
-                      secretWord.includes(letter) 
-                        ? 'bg-green-100 text-green-700' 
-                        : 'bg-red-100 text-red-700'
-                    }`}>
-                      {letter}
-                    </span>
-                  ))}
-                </div>
-              ) : '— No guesses yet —'}
-            </div>
-          </div>
-
-          {/* Code Visualization */}
-          <div className="bg-gray-900 p-4 rounded-xl">
-            <h3 className="text-white font-bold mb-3">💻 Prolog Code Execution:</h3>
-            <pre className="text-green-400 text-xs font-mono whitespace-pre-wrap">
-{`play(Word, Guesses) :-
-    show_progress(Word, Guesses),
-    ( all_guessed(Word, Guesses)
-    -> writeln('You won!')
-    ; write('Enter letter: '),
-      read(X),
-      ( member(X, Guesses)
-      -> writeln('Already guessed!'),
-         play(Word, Guesses)
-      ; play(Word, [X|Guesses])
-      )
-    ).`}
-            </pre>
-          </div>
-
-          {/* Current State */}
-          <div className="bg-indigo-50 p-4 rounded-xl border-2 border-indigo-300">
-            <h3 className="font-bold text-indigo-800 mb-2">📊 Current Program State:</h3>
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <div className="bg-card p-2 rounded">
-                <span className="font-mono">Word:</span>
-                <span className="float-right font-mono">[{secretWord.join(',')}]</span>
-              </div>
-              <div className="bg-card p-2 rounded">
-                <span className="font-mono">Guesses:</span>
-                <span className="float-right font-mono">[{guesses.join(',')}]</span>
-              </div>
-              <div className="bg-card p-2 rounded col-span-2">
-                <span className="font-mono">all_guessed:</span>
-                <span className={`float-right font-bold ${secretWord.every(l => guesses.includes(l)) ? 'text-green-600' : 'text-red-600'}`}>
-                  {secretWord.every(l => guesses.includes(l)) ? 'true' : 'false'}
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-sm sm:text-base font-black tracking-tight text-foreground">
+                  Information-Theoretic Hangman AI Studio
+                </h1>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-black uppercase tracking-wider bg-purple-500/15 text-purple-600 dark:text-purple-400 border border-purple-500/30">
+                  Shannon Entropy &amp; Bayesian Pruning
                 </span>
               </div>
-            </div>
-          </div>
-
-          {/* Statistics */}
-          <div className="bg-muted p-4 rounded-xl border-2 border-gray-300">
-            <h3 className="font-bold text-muted-foreground mb-2">📈 Statistics:</h3>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="bg-card p-2 rounded">
-                Correct: {guesses.filter(g => secretWord.includes(g)).length}
-              </div>
-              <div className="bg-card p-2 rounded">
-                Wrong: {guesses.filter(g => !secretWord.includes(g)).length}
-              </div>
-              <div className="bg-card p-2 rounded col-span-2">
-                Progress: {secretWord.filter(l => guesses.includes(l)).length}/{secretWord.length} letters
-              </div>
+              <p className="text-[11px] text-muted-foreground hidden sm:block">
+                Letter frequency distributions, entropy minimization $H(c)$, and candidate word-space partitioning
+              </p>
             </div>
           </div>
         </div>
-      </div>
+
+        {/* Global Action Controls */}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setIsRunningAI(!isRunningAI)}
+            disabled={isGameOver}
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer disabled:opacity-40 ${
+              isRunningAI
+                ? "bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/25"
+                : "bg-purple-600 hover:bg-purple-700 text-white shadow-purple-600/25"
+            }`}
+          >
+            {isRunningAI ? <Pause size={14} /> : <Play size={14} />}
+            <span>{isRunningAI ? "Pause AI" : "Run AI Solver"}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={stepAISolver}
+            disabled={isRunningAI || isGameOver}
+            className="px-3 py-2 rounded-xl bg-card border border-border text-xs font-bold text-foreground hover:bg-muted transition shadow-2xs cursor-pointer disabled:opacity-40"
+            title="Step 1 Optimal AI Letter Guess"
+          >
+            Step AI
+          </button>
+
+          <button
+            type="button"
+            onClick={startNewGame}
+            className="p-2 rounded-xl bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition shadow-2xs cursor-pointer"
+            title="New Random Word Game"
+          >
+            <RotateCcw size={15} />
+          </button>
+        </div>
+      </header>
+
+      {/* ── Main Studio Container ── */}
+      <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        {/* Navigation Tabs */}
+        <div className="flex items-center gap-2 border-b border-border pb-3 overflow-x-auto no-scrollbar">
+          {[
+            { id: "game_arena", label: "Game Arena & Shannon Entropy Visualizer", icon: Type },
+            { id: "bayesian_tensor", label: "Letter Probability Distribution Matrix", icon: Layers },
+            { id: "theory", label: "Information Theory & Entropy Formulary", icon: Calculator },
+            { id: "diagnostics", label: "Solver Performance & Lexicon Pruning", icon: Activity },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => {
+                  setActiveTab(tab.id as any);
+                  if (tab.id === "theory") setMilestones((p) => ({ ...p, analyzedTheory: true }));
+                }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${
+                  activeTab === tab.id
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-muted"
+                }`}
+              >
+                <Icon size={14} />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* ── Hyperparameter Controls Bar ── */}
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 sm:p-5 bg-card border border-border rounded-3xl shadow-sm">
+          {/* 1. Category Filter */}
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+              Lexicon Domain Category
+            </label>
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="w-full px-3 py-2 bg-muted/60 border border-border rounded-xl text-xs font-bold text-foreground focus:outline-none cursor-pointer"
+            >
+              <option value="all">All Domains (Computer Science, AI, Math, Bio)</option>
+              <option value="computer_science">Computer Science &amp; Algorithms</option>
+              <option value="ai_robotics">AI, Deep Learning &amp; Robotics</option>
+              <option value="mathematics">Mathematics &amp; Cryptography</option>
+              <option value="biology">Biology &amp; Genetics</option>
+            </select>
+          </div>
+
+          {/* 2. Target Word Length */}
+          <div className="space-y-1">
+            <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+              <span>Target Word Length</span>
+              <span className="font-mono text-purple-400 font-bold">{selectedWordObj.word.length} Characters</span>
+            </div>
+            <div className="p-2 bg-muted/60 border border-border rounded-xl text-xs font-mono text-muted-foreground truncate">
+              Hint: {selectedWordObj.hint}
+            </div>
+          </div>
+
+          {/* 3. Matching Words Remaining */}
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+              Candidate Words in Corpus
+            </label>
+            <div className="p-2 bg-muted/60 border border-border rounded-xl text-xs font-mono font-black text-cyan-400 flex items-center justify-between">
+              <span>{matchingCandidates.length} Matching Words</span>
+              <span className="text-[10px] text-muted-foreground">|W| = {DICTIONARY_CORPUS.length}</span>
+            </div>
+          </div>
+
+          {/* 4. AI Step Speed */}
+          <div className="space-y-1">
+            <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+              <span>AI Solver Step Delay</span>
+              <span className="font-mono text-foreground font-bold">{aiSpeedMs}ms</span>
+            </div>
+            <input
+              type="range"
+              min={100}
+              max={1000}
+              step={100}
+              value={aiSpeedMs}
+              onChange={(e) => setAiSpeedMs(parseInt(e.target.value, 10))}
+              className="w-full accent-purple-500 cursor-pointer"
+            />
+          </div>
+        </section>
+
+        {/* ── TAB 1: Game Arena ── */}
+        {activeTab === "game_arena" && (
+          <div className="space-y-6">
+            <section className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* Left: High-DPI Gallows Canvas (5 Cols) */}
+              <div className="lg:col-span-5 bg-card border border-border rounded-3xl p-5 shadow-md flex flex-col justify-between space-y-4">
+                <div className="flex items-center justify-between border-b border-border pb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-purple-500 animate-pulse" />
+                    <h3 className="text-sm font-bold text-foreground">
+                      Physical Gallows State ({incorrectGuesses} / {MAX_INCORRECT_GUESSES} Errors)
+                    </h3>
+                  </div>
+                  <span className="text-[10px] font-mono text-muted-foreground">
+                    Remaining: {MAX_INCORRECT_GUESSES - incorrectGuesses}
+                  </span>
+                </div>
+
+                {/* Canvas Arena */}
+                <div className="relative w-full aspect-[4/3] bg-slate-950 rounded-2xl overflow-hidden border border-border flex items-center justify-center">
+                  <canvas
+                    ref={canvasRef}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+
+                {/* Status Indicator Bar */}
+                <div className="flex items-center justify-between gap-3 p-3 bg-muted/30 border border-border rounded-2xl flex-wrap">
+                  <span
+                    className={`px-2.5 py-1 rounded-full text-xs font-mono font-black uppercase border ${
+                      isWon
+                        ? "bg-emerald-500/15 text-emerald-500 border-emerald-500/30"
+                        : isGameOver
+                        ? "bg-rose-500/15 text-rose-500 border-rose-500/30"
+                        : isRunningAI
+                        ? "bg-cyan-500/15 text-cyan-400 border-cyan-500/30"
+                        : "bg-purple-500/15 text-purple-400 border-purple-500/30"
+                    }`}
+                  >
+                    {isWon
+                      ? "WORD SOLVED SUCCESSFULLY"
+                      : isGameOver
+                      ? `GAME OVER! WORD: ${selectedWordObj.word}`
+                      : isRunningAI
+                      ? "AI MAX-ENTROPY SEARCHING"
+                      : "READY FOR GUESS"}
+                  </span>
+
+                  <span className="text-xs font-mono text-muted-foreground">
+                    Wrong: <strong className="text-rose-400">{wrongLetters.join(", ") || "None"}</strong>
+                  </span>
+                </div>
+              </div>
+
+              {/* Right: Word Mask Display & Interactive Virtual Keyboard (7 Cols) */}
+              <div className="lg:col-span-7 bg-card border border-border rounded-3xl p-5 shadow-md flex flex-col justify-between space-y-5">
+                {/* 1. Word Mask Letters Display */}
+                <div className="p-6 bg-slate-950 rounded-2xl border border-border flex flex-col items-center justify-center space-y-3">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                    Current Pattern Mask
+                  </span>
+                  <div className="flex flex-wrap gap-2 sm:gap-3 justify-center">
+                    {wordMask.map((char, idx) => (
+                      <div
+                        key={idx}
+                        className={`w-10 sm:w-12 h-12 sm:h-14 rounded-xl border flex items-center justify-center font-mono text-xl sm:text-2xl font-black transition ${
+                          char !== "_"
+                            ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-400 shadow-sm"
+                            : "bg-muted/30 border-border text-transparent"
+                        }`}
+                      >
+                        {char}
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground text-center italic mt-1">
+                    &ldquo;{selectedWordObj.hint}&rdquo;
+                  </p>
+                </div>
+
+                {/* 2. Top Entropy Recommendations from AI Engine */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                    <span>AI Maximum Information-Gain Letters ($H(c)$)</span>
+                    <span className="text-purple-400">Entropy Metric</span>
+                  </div>
+                  <div className="grid grid-cols-5 gap-2">
+                    {letterDistributions.slice(0, 5).map((lp) => (
+                      <button
+                        key={lp.letter}
+                        type="button"
+                        onClick={() => handleLetterGuess(lp.letter)}
+                        disabled={isGameOver || guessedLetters.has(lp.letter)}
+                        className="p-2 rounded-xl bg-purple-500/10 border border-purple-500/25 hover:bg-purple-500/20 text-center transition cursor-pointer disabled:opacity-40"
+                      >
+                        <span className="text-sm font-black font-mono text-purple-400 block">{lp.letter}</span>
+                        <span className="text-[9px] font-mono text-muted-foreground block">
+                          H = {lp.entropy.toFixed(2)}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. Interactive Virtual Keyboard */}
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground block">
+                    Alphabet Keypad (Click to Guess)
+                  </span>
+                  <div className="grid grid-cols-9 gap-1.5">
+                    {ALPHABET.map((char) => {
+                      const isGuessed = guessedLetters.has(char);
+                      const isCorrect = isGuessed && selectedWordObj.word.includes(char);
+                      const isWrong = isGuessed && !selectedWordObj.word.includes(char);
+
+                      return (
+                        <button
+                          key={char}
+                          type="button"
+                          onClick={() => handleLetterGuess(char)}
+                          disabled={isGuessed || isGameOver}
+                          className={`h-9 rounded-lg font-mono text-xs font-black transition cursor-pointer ${
+                            isCorrect
+                              ? "bg-emerald-500 text-white font-black shadow-sm"
+                              : isWrong
+                              ? "bg-rose-500/20 text-rose-400 border border-rose-500/30 opacity-40 cursor-not-allowed"
+                              : "bg-muted/60 text-foreground hover:bg-muted border border-border"
+                          }`}
+                        >
+                          {char}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        )}
+
+        {/* ── TAB 2: Bayesian Probability Distribution Matrix ── */}
+        {activeTab === "bayesian_tensor" && (
+          <section className="bg-card border border-border rounded-3xl p-6 shadow-sm space-y-5">
+            <div>
+              <h3 className="text-base font-black text-foreground">
+                Letter Probability &amp; Shannon Entropy Tensor
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Distribution of candidate letters across matching words in the lexicon.
+              </p>
+            </div>
+
+            <div className="overflow-x-auto p-4 bg-slate-950 rounded-2xl border border-border">
+              <table className="w-full text-left font-mono text-xs text-slate-200">
+                <thead>
+                  <tr className="border-b border-white/10 text-muted-foreground text-[10px] font-black uppercase">
+                    <th className="p-2.5">Letter ($c$)</th>
+                    <th className="p-2.5">Candidate Occurrences</th>
+                    <th className="p-2.5">Probability $P(c)$</th>
+                    <th className="p-2.5 text-purple-400">Shannon Entropy $H(c)$</th>
+                    <th className="p-2.5">Information Gain Bar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {letterDistributions.map((lp) => (
+                    <tr key={lp.letter} className="border-b border-white/5 hover:bg-white/[0.02]">
+                      <td className="p-2.5 font-bold text-cyan-400 text-sm">{lp.letter}</td>
+                      <td className="p-2.5">{lp.wordCount} / {matchingCandidates.length} words</td>
+                      <td className="p-2.5 font-bold text-white">{(lp.prob * 100).toFixed(1)}%</td>
+                      <td className="p-2.5 font-black text-purple-400">{lp.entropy.toFixed(3)} bits</td>
+                      <td className="p-2.5 w-48">
+                        <div className="w-full bg-muted/40 h-2 rounded-full overflow-hidden">
+                          <div
+                            className="bg-purple-500 h-full rounded-full"
+                            style={{ width: `${Math.min(100, lp.entropy * 100)}%` }}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {/* ── TAB 3: Mathematical Theory & Entropy Formulary ── */}
+        {activeTab === "theory" && (
+          <section className="bg-card border border-border rounded-3xl p-6 shadow-sm space-y-6">
+            <div>
+              <h3 className="text-lg font-black text-foreground">
+                Mathematical Foundations: Shannon Entropy &amp; Bayesian Search Optimization
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                Formal mathematical formulation of information theory, letter probability distributions, and equivalence class partitioning.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* 1. Shannon Entropy Formula */}
+              <div className="p-5 bg-muted/40 border border-border rounded-2xl space-y-3">
+                <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 font-bold text-sm">
+                  <Calculator size={16} />
+                  <span>1. Shannon Information Entropy</span>
+                </div>
+                <div className="p-3 bg-slate-950 rounded-xl font-mono text-xs text-purple-300 space-y-1.5 border border-border">
+                  <div>{"H(c) = - ∑ P(p | c) · log_2 P(p | c)"}</div>
+                  <div>{"P(p | c) = |W_p| / |W_matching|"}</div>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Quantifies the expected uncertainty reduction obtained by guessing candidate letter $c$.
+                </p>
+              </div>
+
+              {/* 2. Equivalence Class Partitioning */}
+              <div className="p-5 bg-muted/40 border border-border rounded-2xl space-y-3">
+                <div className="flex items-center gap-2 text-cyan-500 font-bold text-sm">
+                  <Split size={16} />
+                  <span>2. Equivalence Class Partitioning</span>
+                </div>
+                <div className="p-3 bg-slate-950 rounded-xl font-mono text-xs text-cyan-300 space-y-1.5 border border-border">
+                  <div>{"W_matching = ⋃ W_p   (Disjoint Partition)"}</div>
+                  <div>{"Optimal Guess: c* = argmax_{c} H(c)"}</div>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Partitions the search space into the most balanced subset sizes, ensuring logarithmic tree convergence.
+                </p>
+              </div>
+
+              {/* 3. Positional n-Gram Language Modeling */}
+              <div className="p-5 bg-muted/40 border border-border rounded-2xl space-y-3">
+                <div className="flex items-center gap-2 text-amber-500 font-bold text-sm">
+                  <Network size={16} />
+                  <span>3. Positional Letter Transition Probabilities</span>
+                </div>
+                <div className="p-3 bg-slate-950 rounded-xl font-mono text-xs text-amber-300 space-y-1.5 border border-border">
+                  <div>{"P(c @ pos i) = Count(w[i] == c) / |W_matching|"}</div>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Leverages character position conditioning to disambiguate vowel-consonant phonetic structures.
+                </p>
+              </div>
+
+              {/* 4. Adversarial Equivalence Selection */}
+              <div className="p-5 bg-muted/40 border border-border rounded-2xl space-y-3">
+                <div className="flex items-center gap-2 text-emerald-500 font-bold text-sm">
+                  <ShieldCheck size={16} />
+                  <span>4. Adversarial &ldquo;Evil Hangman&rdquo; Formulation</span>
+                </div>
+                <div className="p-3 bg-slate-950 rounded-xl font-mono text-xs text-emerald-300 space-y-1.5 border border-border">
+                  <div>{"Target Class: p* = argmax_p |W_p|"}</div>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Adversarial strategy delaying target word commitment by selecting the partition with the maximum number of remaining words.
+                </p>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── TAB 4: Diagnostics ── */}
+        {activeTab === "diagnostics" && (
+          <section className="bg-card border border-border rounded-3xl p-6 shadow-sm space-y-6">
+            <div>
+              <h3 className="text-base font-black text-foreground">
+                Inference &amp; Search Space Reduction Diagnostics
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Examine candidate space pruning velocity, error rates, and information gain.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="p-5 bg-muted/40 border border-border rounded-2xl text-center space-y-2">
+                <span className="text-xs uppercase font-bold text-muted-foreground block">Search Space Pruning</span>
+                <span className="text-2xl font-black font-mono text-purple-400">
+                  {matchingCandidates.length} / {DICTIONARY_CORPUS.length}
+                </span>
+                <p className="text-[10px] text-muted-foreground">
+                  Remaining candidate words in lexicon matching current mask.
+                </p>
+              </div>
+
+              <div className="p-5 bg-muted/40 border border-border rounded-2xl text-center space-y-2">
+                <span className="text-xs uppercase font-bold text-muted-foreground block">Error Rate</span>
+                <span className="text-2xl font-black font-mono text-emerald-400">
+                  {incorrectGuesses} / {MAX_INCORRECT_GUESSES}
+                </span>
+                <p className="text-[10px] text-muted-foreground">
+                  Incorrect letter hypotheses incurred during game.
+                </p>
+              </div>
+
+              <div className="p-5 bg-muted/40 border border-border rounded-2xl text-center space-y-2">
+                <span className="text-xs uppercase font-bold text-muted-foreground block">Search Cycles</span>
+                <span className="text-2xl font-black font-mono text-cyan-400">
+                  {stepCount} Guesses
+                </span>
+                <p className="text-[10px] text-muted-foreground">
+                  Total letter evaluations executed.
+                </p>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── Student Mastery Milestones ── */}
+        <section className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-border pb-2.5">
+            <div className="flex items-center gap-2">
+              <Trophy size={16} className="text-amber-500" />
+              <h4 className="text-sm font-bold text-foreground">
+                Information Theory &amp; NLP Search Mastery Objectives
+              </h4>
+            </div>
+            <span className="text-xs font-bold font-mono text-emerald-500">+50 XP Per Milestone</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {[
+              {
+                id: "executedAISolver",
+                label: "Deploy Entropy AI Solver",
+                desc: "Run the autonomous information-theoretic solver to maximize information gain.",
+                done: milestones.executedAISolver,
+              },
+              {
+                id: "zeroErrorSolve",
+                label: "Zero-Error Perfect Solve",
+                desc: "Solve a target word with 0 incorrect letter penalties.",
+                done: milestones.zeroErrorSolve,
+              },
+              {
+                id: "inspectedShannonEntropy",
+                label: "Inspect Shannon Entropy Ranking",
+                desc: "Examine letter entropy values $H(c)$ and probability distributions.",
+                done: milestones.inspectedShannonEntropy,
+              },
+              {
+                id: "analyzedTheory",
+                label: "Study Information Theory Proofs",
+                desc: "Review formal mathematical derivations of Shannon entropy and equivalence classes.",
+                done: milestones.analyzedTheory,
+              },
+            ].map((m) => (
+              <div
+                key={m.id}
+                className={`p-3.5 rounded-2xl border transition ${
+                  m.done
+                    ? "bg-emerald-500/10 border-emerald-500/30 text-foreground"
+                    : "bg-muted/30 border-border text-muted-foreground"
+                }`}
+              >
+                <div className="flex items-center gap-2 font-bold text-xs">
+                  <CheckCircle2
+                    size={14}
+                    className={m.done ? "text-emerald-500" : "text-muted-foreground/40"}
+                  />
+                  <span className={m.done ? "text-emerald-600 dark:text-emerald-400" : ""}>
+                    {m.label}
+                  </span>
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-1 leading-snug">{m.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Floating Daily Challenge Integration */}
+        <DailyChallengeCard
+          labId="computer-science/ai-problem/hangman"
+          currentParams={{
+            incorrectGuesses,
+            stepCount,
+            isWon,
+          }}
+        />
+      </main>
     </div>
   );
 }

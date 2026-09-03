@@ -30,17 +30,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Validate rating range if provided
-    if (rating !== undefined && rating !== null) {
-      const r = Number(rating);
-      if (isNaN(r) || r < 1 || r > 5) {
-        return NextResponse.json(
-          { error: "Rating must be between 1 and 5" },
-          { status: 400 }
-        );
-      }
-    }
-
     // Sanitize comment: strip HTML tags, trim whitespace, cap at 500 chars
     let sanitizedComment = "";
     if (comment) {
@@ -48,6 +37,62 @@ export async function POST(req: Request) {
         .replace(/<[^>]*>/g, "")
         .trim()
         .slice(0, 500);
+    }
+
+    // Validate rating range if provided
+    const parsedRating =
+      rating !== undefined && rating !== null && rating !== ""
+        ? Number(rating)
+        : null;
+
+    if (parsedRating !== null && (isNaN(parsedRating) || parsedRating < 1 || parsedRating > 5)) {
+      return NextResponse.json(
+        { error: "Rating must be between 1 and 5" },
+        { status: 400 }
+      );
+    }
+
+    // Business Rules Enforcement:
+    // 1. If helpful === true: rating is mandatory (1-5). If rating < 3, comment is mandatory too.
+    if (helpful === true) {
+      if (!parsedRating) {
+        return NextResponse.json(
+          { error: "Rating is mandatory when feedback is marked helpful" },
+          { status: 400 }
+        );
+      }
+      if (parsedRating < 3 && !sanitizedComment) {
+        return NextResponse.json(
+          { error: "Comment is mandatory for ratings below 3 stars" },
+          { status: 400 }
+        );
+      }
+    }
+
+    // 2. If helpful === false: comment is mandatory.
+    if (helpful === false) {
+      if (!sanitizedComment) {
+        return NextResponse.json(
+          { error: "Comment is mandatory when feedback is marked not helpful" },
+          { status: 400 }
+        );
+      }
+    }
+
+    // 3. If helpful is not specified (e.g. general modal feedback): at least rating or comment must be provided
+    if (helpful === undefined || helpful === null) {
+      if (!parsedRating && !sanitizedComment) {
+        return NextResponse.json(
+          { error: "Either a rating or comment is required" },
+          { status: 400 }
+        );
+      }
+      if (parsedRating && parsedRating < 3 && !sanitizedComment) {
+        return NextResponse.json(
+          { error: "Comment is mandatory for ratings below 3 stars" },
+          { status: 400 }
+        );
+      }
     }
 
     // Rate-limit: check for existing submission from this session+lab in last 24h
@@ -72,7 +117,7 @@ export async function POST(req: Request) {
     if (existingFeedback) {
       // PATCH: upgrade existing pulse into deep feedback (or update fields)
       if (helpful !== undefined) existingFeedback.helpful = helpful;
-      if (rating !== undefined && rating !== null) existingFeedback.rating = Number(rating);
+      if (parsedRating !== null) existingFeedback.rating = parsedRating;
       if (category) existingFeedback.category = category;
       if (sanitizedComment) existingFeedback.comment = sanitizedComment;
       if (labStep) existingFeedback.labStep = labStep;
@@ -92,7 +137,7 @@ export async function POST(req: Request) {
       userId,
       sessionId,
       helpful: helpful !== undefined ? helpful : null,
-      rating: rating !== undefined && rating !== null ? Number(rating) : null,
+      rating: parsedRating,
       category: category || null,
       comment: sanitizedComment,
       labStep: labStep || null,

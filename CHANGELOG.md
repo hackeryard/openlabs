@@ -2,6 +2,89 @@
 
 All notable changes to OpenLabs are documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/); since the project has no version tags yet, entries are grouped by date instead of version number. Generated from git history; merge commits and duplicate/typo commits are omitted.
 
+- **Lab Feedback System Business Rules & Data Integrity Fix (`app/components/FloatingLabFeedback.tsx`, `app/components/FeedbackPulse.tsx`, `app/hooks/useFeedback.ts`, `app/api/feedback/route.ts`)**:
+  - **Eliminated Premature Pulse Submissions**: Removed premature `submitPulse()` background calls on initial "Yes, Helpful" / "Not Helpful" button clicks in `FloatingLabFeedback` and `FeedbackPulse`. Choices now purely advance the modal state without creating premature, unrated, or unannotated records in MongoDB.
+  - **Helpful Flow Enforcement**: Star rating (1–5) is strictly mandatory. If rating is $< 3$ stars, detailed comment is mandatory. If $\ge 3$ stars, comment is optional.
+  - **Not Helpful Flow Enforcement**: Detailed comment describing what went wrong is strictly mandatory. Added optional star rating (1–5) in the not-helpful view.
+  - **Backend API Validation (`/api/feedback`)**: Enforced server-side validation rejecting requests missing mandatory ratings or comments with clear 400 Bad Request responses.
+  - **Race Condition & Concurrency Guard**: Replaced state-only tracking with `isSubmittingRef` in `useFeedback.ts` and made `submitDeep` return boolean completion status to prevent silent drop of user submissions.
+  - **Admin Feedback Triage Enhancement (`app/admin/feedback/page.tsx`, `app/api/admin/feedback/[id]/route.ts`)**: Added a `DELETE` endpoint and UI button to allow administrators to permanently purge invalid/test feedback entries.
+
+- **Information-Theoretic Hangman AI Studio (`app/labs/computer-science/ai-problem/hangman/page.tsx`)**:
+  - Rebuilt the Hangman laboratory into an Information-Theoretic AI and NLP search engine leveraging Shannon Entropy and Bayesian lexicon candidate pruning.
+  - **Optimal AI Solver Engine**: Computes exact letter probability distributions $P(c)$ and Shannon Information Gain $H(c) = -\sum P(p \mid c) \log_2 P(p \mid c)$ over the candidate lexicon to partition search space logarithmically.
+  - **Interactive High-DPI Vector Gallows Canvas**: Progressive stick figure rendering with dynamic error tracking, scaffold structure, and end-of-game victory/loss face states.
+  - **Live Letter Probability & Entropy Tensor Matrix**: Real-time ranking of candidate letters by expected entropy reduction and candidate word count.
+  - **Information Theory & Equivalence Class Formulary**: Mathematical derivations of mutual information, Shannon entropy, and adversarial "Evil Hangman" partition selection.
+
+- **STRIPS Classical Planning & State-Space Studio (`app/labs/computer-science/ai-problem/monkey-banana/page.tsx`)**:
+  - Rebuilt the classic Monkey & Banana problem laboratory with automated STRIPS planning, Means-Ends Analysis (MEA), and 2D physics animation.
+  - **Automated STRIPS Planning Engine**: Implemented state transition operators (`Walk(X, Y)`, `Push(Box, X, Y)`, `ClimbUp(Box, X)`, `GraspBanana(Center)`) with formal Preconditions, Add-Lists, and Delete-Lists.
+  - **Interactive High-DPI 2D Environment Canvas**: Visualized room anchors (Door, Window, Center ceiling hook), moveable wooden crate, procedural walking/pushing/climbing animations, and banana grasping effects.
+  - **Means-Ends Goal Stack Synthesizer**: Animated decomposition of master goals into sub-goals and precondition alignment.
+  - **STRIPS Theory & Frame Problem Formulary**: Mathematical formulations of state transition functions $\text{Result}(S, a) = (S \setminus \text{Del}(a)) \cup \text{Add}(a)$ and frame problem resolutions.
+
+- **Inference Engines & Rule-Based Reasoning Studio (`app/labs/computer-science/ai-problem/forward-backward/page.tsx`)**:
+  - Rebuilt the Forward and Backward Chaining laboratory with dual inference paradigms, conflict resolution strategies, and dynamic DAG knowledge graph visualization.
+  - **Multiple Expert System Domains**: Integrated Medical Diagnostic Expert System (MYCIN-style clinical inference), Zoological Taxonomy (Russell & Norvig animal classification), and Cybersecurity Threat Response (SIEM/SOC incident detection).
+  - **Dual Inference Paradigms**: Implemented Forward Chaining (data-driven Generalized Modus Ponens with fixed-point $\Delta WM = \emptyset$) and Backward Chaining (goal-directed top-down AND-OR tree search).
+  - **Conflict Resolution Engine**: Added Specificity (most antecedents first), Recency, and Rule Index priorities.
+  - **High-DPI Directed Acyclic Knowledge Graph**: Rendered DAG with glowing rule hyperedges, color-coded fact nodes (cyan observed, green derived, purple hypothesis), and real-time step deduction traces.
+  - **Horn Clause & Linear Tractability Formulary**: Formal mathematical proofs of definite Horn clause tractability ($\mathcal{O}(n)$ time) and sound Modus Ponens derivations.
+
+- **Water Jug State-Space Search & Production Rules Studio (`app/labs/computer-science/ai-problem/water-jug/page.tsx`)**:
+  - Rebuilt the Water Jug problem laboratory with realistic fluid dynamics, production rule systems (R1–R8), and state-space graph search.
+  - **Multi-Algorithm Search Engine**: Integrated BFS (shortest-path minimal decanting sequence), DFS, and A* Heuristic Search ($h(s) = \min(|j_1 - T|, |j_2 - T|) / \gcd(a, b)$).
+  - **Interactive High-DPI Fluid Decanting Canvas**: Realistic glass containers with liquid wave meniscus, graduation measurement marks, and pouring animations.
+  - **2D State Lattice $(J_1, J_2) \in \mathbb{Z}^2$ Visualizer**: Graph visualizer displaying visited nodes, solution trajectory paths, and unvisited state boundaries.
+  - **Bézout's Identity & Diophantine Solvability Formulary**: Formal mathematical proof via Extended Euclidean Algorithm verifying $T \le \max(a, b)$ and $T \equiv 0 \pmod{\gcd(a, b)}$.
+
+- **Constraint Satisfaction Problems (CSP) & AC-3 Studio (`app/labs/computer-science/ai-problem/constraint-satisfy/page.tsx`)**:
+  - Completely reworked the Constraint Satisfaction Laboratory with AC-3 Arc Consistency, MRV, Degree, and LCV heuristics.
+  - **Multiple Canonical AI Benchmarks**: Integrated Australia 7-Region Map Coloring (Russell & Norvig), 5-Node Wheel Graph, 4-Queens Column Allocation, and K4 Complete Graph unsolvable trap.
+  - **Heuristic Search & Inference Engine**: Implemented Backtracking with MRV (Fail-First) and Degree tie-breaking, Forward Checking (FC) domain pruning, and AC-3 Arc Consistency queue reduction ($\mathcal{O}(cd^3)$).
+  - **Interactive High-DPI Topological Graph Canvas**: Crisp Retina canvas rendering with dynamic constraint edges (red conflicts, green consistent links), glowing variable nodes, domain size badges, and real-time backtracking animation.
+  - **Domain Tensor Matrix & Formulary**: Detailed inspector showing active variable domains, constraint neighbors, and mathematical formulations of CSP triples $\langle X, D, C \rangle$.
+
+- **Retina / High-DPI Canvas Rendering Engine Upgrade (`app/labs/computer-science/ai-problem/`)**:
+  - Implemented dynamic `window.devicePixelRatio` buffer scaling across all AI Problem lab canvases (`hill-climb`, `maze-qlearn`, and `neural-network`).
+  - Completely eliminated browser bitmap interpolation blurriness on Retina, 2K/4K, and high-density displays by syncing internal canvas buffer resolutions to physical hardware pixels.
+
+- **B.Tech Level Hill Climbing & Simulated Annealing Lab (`app/labs/computer-science/ai-problem/hill-climb/page.tsx`)**:
+  - Rebuilt the Local Search & Optimization laboratory to undergraduate B.Tech Computer Science curriculum standard.
+  - **Multi-Strategy Optimization Engine**: Added Steepest-Ascent Greedy, Stochastic Hill Climbing, Multi-Seed Random Restarts, and Simulated Annealing with the Metropolis-Hastings acceptance criterion ($P = \exp(\Delta E / T)$).
+  - **Continuous Benchmark Landscapes**: Multi-modal Ackley benchmark, Asymmetric Foothills, Saddle/Shoulder Plateaus, Rastrigin high-frequency landscape, and Convex Paraboloid.
+  - **Interactive High-DPI Landscape Studio**: Canvas visualization with continuous Bezier curves, illuminated agent beacon, trajectory breadcrumbs, candidate neighbor evaluation brackets, and interactive canvas seed clicker.
+  - **State Transition Tensor Inspector & Formulary**: Detailed step-by-step tensor table recording candidate energy deltas, Metropolis acceptance probabilities, cooling schedules, and asymptotic completeness proofs.
+
+- **B.Tech Level Reinforcement Learning Lab (`app/labs/computer-science/ai-problem/maze-qlearn/page.tsx`)**:
+  - Completely reworked the Q-Learning and SARSA Reinforcement Learning simulation to undergraduate B.Tech Computer Science curriculum standard.
+  - **Multi-Algorithm TD Engine**: Added support for Off-Policy Q-Learning, On-Policy SARSA, and Expected SARSA with $\epsilon$-Greedy and Boltzmann Softmax ($\tau$) exploration policies.
+  - **Interactive GridWorld Surface**: High-DPI GridWorld with directional Q-value triangles for each action $(s, a)$, real-time derived optimal policy $\pi^*(s)$ vector arrows, step costs, and trap penalties.
+  - **Classic Benchmarks**: Integrated Sutton & Barto's Cliff Walking (4x8), Obstacle Course (6x6), Frozen Lake (4x4), and Deep Multi-Room Maze (7x7).
+  - **Q-Table Tensor Inspector & Bellman Formulary**: Tabbed matrix explorer showing complete discrete state-action parameters and mathematical derivations of the Bellman Optimality Equation.
+
+- **B.Tech Level Multilayer Perceptron Neural Network Lab (`app/labs/computer-science/ai-problem/neural-network/page.tsx`)**:
+  - Elevated the Neural Network interactive laboratory to undergraduate B.Tech Computer Science / Deep Learning standard.
+  - **Vector Calculus & Backpropagation Formulation**: Complete derivations for forward tensor propagation ($\mathbf{z}^{[l]} = \mathbf{W}^{[l]}\mathbf{a}^{[l-1]} + \mathbf{b}$), Binary Cross-Entropy loss ($J$), and recursive error deltas ($\boldsymbol{\delta}^{[l]} = (\mathbf{W}^{[l+1]T}\boldsymbol{\delta}^{[l+1]}) \odot \sigma'$).
+  - **Multi-Optimizer Engine**: Implemented Mini-Batch SGD, Momentum ($\beta=0.9$), RMSprop, and Adam with adaptive bias-corrected moments ($m_t, v_t$).
+  - **Synaptic Weight Matrix & Gradient Tensor Inspector**: Interactive matrix table visualizing raw weight tensors $\mathbf{W}^{[l]}$ and backpropagated Jacobian gradients $\nabla_\mathbf{W} \mathcal{L}$.
+  - **Vanishing / Exploding Gradient Diagnostics**: Real-time gradient L2 norm gauge tracking saturation across deep Sigmoid vs. non-saturating ReLU/Leaky ReLU layers.
+  - **Statistical Metrics & Confusion Matrix**: Real-time 80/20 train-test evaluation with Precision, Recall, F1 Score, and dual train-vs-test loss convergence curves.
+
+- **Neural Network AI Problem Landing Page (`app/computer-science/ai-problem/neural-network/`)**:
+  - Added the dedicated SEO landing page and Schema.org structured metadata for the Multilayer Perceptron Neural Network visualizer.
+  - Resolved broken subtopic hub link and connected the landing page directly to `/labs/computer-science/ai-problem/neural-network`.
+
+- **Error Diagnostics Pagination & Telemetry Noise Filtering (`app/admin/analytics/page.tsx`, `app/components/OpenLabsTracker.tsx`)**:
+  - Added full pagination controls (10, 20, 50, 100 per page, dynamic jump, and filter reset) to the Error Diagnostics tab in the Admin Analytics portal.
+  - Cleaned telemetry ingest filters to ignore ad-blocker blocked scripts (`_vercel/insights`, `_vercel/speed-insights`, `clarity.ms`) and third-party extension DOM mutations.
+
+- **Admin Blog Editor Unsaved Changes Protection (`app/admin/blogs/`, `app/hooks/useFormDirtyWarning.ts`)**:
+  - Implemented dirty-state tracking for New Blog Post creation and Blog Post editing forms.
+  - Prevents accidental navigation away, route switching (internal Next.js links / browser back-forward), tab close, and hard reloads when there are unsaved edits.
+  - Automatically clears warnings upon successful publication or update.
+
 - **Streamlined Role-Based Admin Access (RBAC) & Admin Secret Removal**:
   - Removed secondary `ADMIN_SECRET` passcode requirement and `x-admin-secret` headers across all administrative routes (`/admin/*`) and APIs (`/api/admin/*`).
   - Streamlined authorization directly to standard JWT session verification: users with `role: "admin"` or `role: "moderator"` access the admin console automatically upon signing in.

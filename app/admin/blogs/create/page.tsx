@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Trash2, Save, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import AdminLockScreen from '@/app/components/AdminLockScreen';
 import { useAdminSecret } from '@/app/components/AdminSecretContext';
+import { useFormDirtyWarning } from '@/app/hooks/useFormDirtyWarning';
 import { getAdminHref } from '@/app/lib/adminUrl';
 
 export default function CreateBlogPage() {
@@ -15,6 +16,7 @@ export default function CreateBlogPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isSaved, setIsSaved] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -30,6 +32,23 @@ export default function CreateBlogPage() {
     metaDescription: '',
     faqs: [] as { question: string, answer: string }[],
   });
+
+  const isDirty = useMemo(() => {
+    if (isSaved) return false;
+    if (imageFile !== null) return true;
+    return (
+      formData.title.trim() !== '' ||
+      formData.slug.trim() !== '' ||
+      formData.excerpt.trim() !== '' ||
+      formData.content.trim() !== '' ||
+      formData.category.trim() !== '' ||
+      formData.metaTitle.trim() !== '' ||
+      formData.metaDescription.trim() !== '' ||
+      formData.faqs.some(f => f.question.trim() !== '' || f.answer.trim() !== '')
+    );
+  }, [formData, imageFile, isSaved]);
+
+  useFormDirtyWarning(isDirty);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -99,6 +118,7 @@ export default function CreateBlogPage() {
         throw new Error(data.error || 'Failed to create blog');
       }
 
+      setIsSaved(true);
       setSuccess(`Blog post "${data.post.title}" created successfully!`);
 
       // Reset form partially
