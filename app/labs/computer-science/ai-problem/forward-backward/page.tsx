@@ -1,741 +1,1185 @@
 "use client";
-// src/components/computer-science/ai-problem/RuleChaining.jsx
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  Brain,
+  Play,
+  Pause,
+  RotateCcw,
+  Zap,
+  Layers,
+  Sparkles,
+  ChevronRight,
+  HelpCircle,
+  BarChart3,
+  Sliders,
+  CheckCircle2,
+  Trophy,
+  ArrowRight,
+  Info,
+  Maximize2,
+  RefreshCw,
+  Eye,
+  Crosshair,
+  TrendingDown,
+  TrendingUp,
+  Gauge,
+  CircleDot,
+  Compass,
+  Activity,
+  Calculator,
+  Binary,
+  Cpu,
+  Flame,
+  AlertTriangle,
+  FileCode,
+  Grid,
+  ShieldCheck,
+  BookOpen,
+  Split,
+  Network,
+  GitFork,
+  FastForward,
+  Search,
+  Check,
+  Plus,
+  Trash2,
+  ShieldAlert,
+  Stethoscope,
+  Radio,
+} from "lucide-react";
 import { useLab } from "@/app/hooks/useXP";
 import DailyChallengeCard from "@/app/components/DailyChallengeCard";
 
-export default function RuleChaining() {
-  const [activeTab, setActiveTab] = useState("forward");
-  const [animationSpeed, setAnimationSpeed] = useState(1000);
+// ── Types & First-Order Logic Formulations ────────────────────────────
+type InferenceEngineMode = "forward" | "backward";
+type KnowledgeDomain = "medical" | "zoology" | "cybersecurity";
+type ConflictResolution = "specificity" | "recency" | "first_rule";
 
-  const { completeExperiment } = useLab("computer-science/ai-problem/forward-backward", "computerScience", "exploration");
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white p-6">
-      <div className="max-w-7xl mx-auto">
-        <DailyChallengeCard labId="computer-science/ai-problem/forward-backward" currentParams={{ chainsExplored: 1 }} />
-        {/* Header with light/dark gradient */}
-        <motion.div 
-          initial={{ y: -50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="bg-gradient-to-r from-indigo-900 via-purple-800 to-pink-900 rounded-2xl p-8 mb-8 shadow-xl border border-white/10"
-        >
-          <h1 className="text-4xl font-bold text-white mb-2 drop-shadow-lg">
-            🔍 Forward & Backward Chaining
-          </h1>
-          <p className="text-purple-200 text-lg">
-            Interactive visualization of rule-based reasoning in AI
-          </p>
-          
-          {/* Speed Control */}
-          <div className="mt-4 flex items-center gap-4 bg-black/30 backdrop-blur-sm p-3 rounded-xl w-fit">
-            <span className="text-white font-medium">Animation Speed:</span>
-            <input 
-              type="range" 
-              min="500" 
-              max="2000" 
-              value={animationSpeed}
-              onChange={(e) => setAnimationSpeed(Number(e.target.value))}
-              className="w-48 accent-purple-500"
-            />
-            <span className="text-white bg-purple-800/50 px-3 py-1 rounded-full">{animationSpeed}ms</span>
-          </div>
-        </motion.div>
-
-          {/* Tab Navigation */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          {[
-            { id: "forward", label: "Forward Chaining", icon: "⬆️", color: "indigo", light: "bg-indigo-900/50", dark: "bg-purple-600" },
-            { id: "backward", label: "Backward Chaining", icon: "⬇️", color: "purple", light: "bg-purple-900/50", dark: "bg-pink-600" },
-            { id: "compare", label: "Compare Both", icon: "🔄", color: "pink", light: "bg-pink-900/50", dark: "bg-cyan-600" }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`p-4 rounded-xl font-bold transition-all ${
-                activeTab === tab.id
-                  ? `${tab.dark} text-white shadow-lg shadow-purple-500/30 scale-105`
-                  : 'bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10'
-              }`}
-            >
-              <span className="text-2xl mr-2">{tab.icon}</span>
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Content Area */}
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Left Sidebar - Always visible */}
-          <div className="lg:col-span-1">
-            <RuleBase />
-          </div>
-
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            {activeTab === "forward" && <ForwardChainingDemo speed={animationSpeed} />}
-            {activeTab === "backward" && <BackwardChainingDemo speed={animationSpeed} />}
-            {activeTab === "compare" && <ComparisonView speed={animationSpeed} />}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+interface HornRule {
+  id: string;
+  name: string;
+  premises: string[]; // Antecedents (AND)
+  conclusion: string; // Consequent
+  category?: string;
+  weight?: number;
 }
 
-// ==========================================
-// RULE BASE COMPONENT with diagrams
-// ==========================================
-function RuleBase() {
-  const [expandedCategory, setExpandedCategory] = useState(null);
+interface DomainKnowledgeBase {
+  name: string;
+  subtitle: string;
+  desc: string;
+  availableFacts: { id: string; label: string; category: string }[];
+  rules: HornRule[];
+  defaultFacts: string[];
+  defaultGoal: string;
+}
 
-  const categories = [
-    {
-      id: 1,
-      name: "Animal Rules",
-      icon: "🦁",
-      diagram: "🐾 → 🦁",
-      rules: [
-        { id: "R1", if: ["has hair", "gives milk"], then: "mammal" },
-        { id: "R2", if: ["mammal", "eats meat"], then: "carnivore" },
-        { id: "R3", if: ["carnivore", "tawny color", "stripes"], then: "tiger" }
-      ]
-    },
-    {
-      id: 2,
-      name: "Medical Rules",
-      icon: "🏥",
-      diagram: "🌡️ → 💊",
-      rules: [
-        { id: "M1", if: ["fever", "cough"], then: "flu" },
-        { id: "M2", if: ["fever", "rash"], then: "measles" },
-        { id: "M3", if: ["headache", "nausea"], then: "migraine" }
-      ]
+// ── Knowledge Base Benchmark Domains ──────────────────────────────────
+const KNOWLEDGE_DOMAINS: Record<KnowledgeDomain, DomainKnowledgeBase> = {
+  medical: {
+    name: "Medical Diagnostic Expert System",
+    subtitle: "Clinical Symptom & Pathology Inference Engine",
+    desc: "Infers clinical diagnoses and treatment protocols from observable patient symptoms and laboratory findings using Horn clause Modus Ponens.",
+    availableFacts: [
+      { id: "fever", label: "High Fever (>38.5°C)", category: "Vitals" },
+      { id: "cough", label: "Persistent Cough", category: "Respiratory" },
+      { id: "chills", label: "Severe Chills & Rigors", category: "Systemic" },
+      { id: "wheezing", label: "Bronchial Wheezing", category: "Respiratory" },
+      { id: "chest_pain", label: "Pleuritic Chest Pain", category: "Cardiovascular" },
+      { id: "rash", label: "Maculopapular Rash", category: "Dermatological" },
+      { id: "joint_pain", label: "Joint Pain & Arthralgia", category: "Musculoskeletal" },
+      { id: "fatigue", label: "Profound Fatigue", category: "Systemic" },
+    ],
+    rules: [
+      { id: "R1", name: "Acute Respiratory Syndrome", premises: ["fever", "cough"], conclusion: "respiratory_infection", category: "Pathology" },
+      { id: "R2", name: "Bronchial Inflammation", premises: ["cough", "wheezing"], conclusion: "bronchitis", category: "Diagnosis" },
+      { id: "R3", name: "Pneumonia Diagnosis", premises: ["respiratory_infection", "chills", "chest_pain"], conclusion: "pneumonia", category: "Diagnosis" },
+      { id: "R4", name: "Viral Exanthem", premises: ["fever", "rash"], conclusion: "measles", category: "Diagnosis" },
+      { id: "R5", name: "Viral Flu Syndrome", premises: ["fever", "fatigue", "joint_pain"], conclusion: "influenza", category: "Diagnosis" },
+      { id: "R6", name: "Hospitalization Protocol", premises: ["pneumonia"], conclusion: "admit_hospital", category: "Treatment" },
+      { id: "R7", name: "Antiviral Therapy", premises: ["influenza"], conclusion: "prescribe_oseltamivir", category: "Treatment" },
+      { id: "R8", name: "Antibiotic Protocol", premises: ["pneumonia"], conclusion: "prescribe_azithromycin", category: "Treatment" },
+    ],
+    defaultFacts: ["fever", "cough", "chills", "chest_pain"],
+    defaultGoal: "admit_hospital",
+  },
+  zoology: {
+    name: "Zoological Taxonomy & Species Identification",
+    subtitle: "Russell & Norvig Animal Classification System",
+    desc: "Classifies biological organisms through hierarchical taxonomic rules based on anatomical and behavioral attributes.",
+    availableFacts: [
+      { id: "has_hair", label: "Has Hair", category: "Anatomy" },
+      { id: "gives_milk", label: "Gives Milk", category: "Physiology" },
+      { id: "has_feathers", label: "Has Feathers", category: "Anatomy" },
+      { id: "flies", label: "Flies in Air", category: "Locomotion" },
+      { id: "lays_eggs", label: "Lays Eggs", category: "Reproduction" },
+      { id: "eats_meat", label: "Eats Meat", category: "Diet" },
+      { id: "has_pointed_teeth", label: "Has Pointed Canine Teeth", category: "Anatomy" },
+      { id: "has_claws", label: "Has Retractile Claws", category: "Anatomy" },
+      { id: "has_hooves", label: "Has Hooves", category: "Anatomy" },
+      { id: "tawny_color", label: "Tawny Coloration", category: "Color" },
+      { id: "dark_spots", label: "Dark Spots Pattern", category: "Color" },
+      { id: "black_stripes", label: "Black Stripes Pattern", category: "Color" },
+      { id: "long_neck", label: "Extremely Long Neck", category: "Anatomy" },
+      { id: "swims", label: "Swims Well in Water", category: "Locomotion" },
+    ],
+    rules: [
+      { id: "Z1", name: "Mammal Rule 1", premises: ["has_hair"], conclusion: "mammal", category: "Taxonomy" },
+      { id: "Z2", name: "Mammal Rule 2", premises: ["gives_milk"], conclusion: "mammal", category: "Taxonomy" },
+      { id: "Z3", name: "Bird Rule 1", premises: ["has_feathers"], conclusion: "bird", category: "Taxonomy" },
+      { id: "Z4", name: "Bird Rule 2", premises: ["flies", "lays_eggs"], conclusion: "bird", category: "Taxonomy" },
+      { id: "Z5", name: "Carnivore Rule 1", premises: ["mammal", "eats_meat"], conclusion: "carnivore", category: "Taxonomy" },
+      { id: "Z6", name: "Carnivore Rule 2", premises: ["mammal", "has_pointed_teeth", "has_claws"], conclusion: "carnivore", category: "Taxonomy" },
+      { id: "Z7", name: "Ungulate Rule", premises: ["mammal", "has_hooves"], conclusion: "ungulate", category: "Taxonomy" },
+      { id: "Z8", name: "Cheetah Identification", premises: ["carnivore", "tawny_color", "dark_spots"], conclusion: "cheetah", category: "Species" },
+      { id: "Z9", name: "Tiger Identification", premises: ["carnivore", "tawny_color", "black_stripes"], conclusion: "tiger", category: "Species" },
+      { id: "Z10", name: "Giraffe Identification", premises: ["ungulate", "long_neck", "dark_spots"], conclusion: "giraffe", category: "Species" },
+      { id: "Z11", name: "Penguin Identification", premises: ["bird", "swims", "black_stripes"], conclusion: "penguin", category: "Species" },
+    ],
+    defaultFacts: ["has_hair", "eats_meat", "tawny_color", "black_stripes"],
+    defaultGoal: "tiger",
+  },
+  cybersecurity: {
+    name: "Threat Detection & Incident Response",
+    subtitle: "SIEM & SOC Rule-Based Defense Engine",
+    desc: "Correlates low-level network log events into high-fidelity attack vectors and automated counter-response actions.",
+    availableFacts: [
+      { id: "failed_logins", label: "Multiple Failed SSH Logins (>10)", category: "Auth" },
+      { id: "port_scan", label: "Syn-Flood Port Scanning Detected", category: "Network" },
+      { id: "unknown_ip", label: "Origin IP in Threat Feed", category: "Network" },
+      { id: "powershell_enc", label: "Base64 Encoded PowerShell Process", category: "Host" },
+      { id: "lsass_dump", label: "LSASS Process Memory Dump Access", category: "Host" },
+      { id: "shadow_copy_del", label: "VSS Volume Shadow Copy Deletion", category: "Host" },
+      { id: "large_egress", label: "High Volume Outbound Data Transfer", category: "Network" },
+    ],
+    rules: [
+      { id: "C1", name: "Brute Force Recon", premises: ["failed_logins", "port_scan"], conclusion: "brute_force_attack", category: "Threat" },
+      { id: "C2", name: "Malicious Origin", premises: ["unknown_ip", "port_scan"], conclusion: "reconnaissance", category: "Threat" },
+      { id: "C3", name: "Credential Harvesting", premises: ["powershell_enc", "lsass_dump"], conclusion: "credential_theft", category: "Threat" },
+      { id: "C4", name: "Ransomware Precursor", premises: ["powershell_enc", "shadow_copy_del"], conclusion: "ransomware_execution", category: "Threat" },
+      { id: "C5", name: "APT Compromise", premises: ["credential_theft", "large_egress"], conclusion: "data_exfiltration", category: "Threat" },
+      { id: "C6", name: "Automated Host Isolation", premises: ["ransomware_execution"], conclusion: "isolate_endpoint", category: "Action" },
+      { id: "C7", name: "IP Firewall Block", premises: ["brute_force_attack"], conclusion: "block_ip_firewall", category: "Action" },
+      { id: "C8", name: "Revoke User Credentials", premises: ["credential_theft"], conclusion: "revoke_session_tokens", category: "Action" },
+    ],
+    defaultFacts: ["powershell_enc", "lsass_dump", "large_egress"],
+    defaultGoal: "revoke_session_tokens",
+  },
+};
+
+export default function ForwardBackwardChainingLab() {
+  const { completeExperiment } = useLab(
+    "computer-science/ai-problem/forward-backward",
+    "computerScience",
+    "exploration"
+  );
+
+  // ── Problem Domain & Engine Mode ─────────────────────────────────────
+  const [domain, setDomain] = useState<KnowledgeDomain>("medical");
+  const [engineMode, setEngineMode] = useState<InferenceEngineMode>("forward");
+  const [conflictStrategy, setConflictStrategy] = useState<ConflictResolution>("specificity");
+  const [speedMs, setSpeedMs] = useState<number>(300);
+
+  // ── Knowledge Base State ─────────────────────────────────────────────
+  const activeKB = KNOWLEDGE_DOMAINS[domain];
+  const [workingMemory, setWorkingMemory] = useState<Set<string>>(new Set(activeKB.defaultFacts));
+  const [targetGoal, setTargetGoal] = useState<string>(activeKB.defaultGoal);
+  const [firedRules, setFiredRules] = useState<string[]>([]);
+  const [activeFiredRule, setActiveFiredRule] = useState<HornRule | null>(null);
+
+  // Backward Chaining State
+  const [proofTree, setProofTree] = useState<{ node: string; status: "proven" | "failed" | "active" | "given"; depth: number; ruleId?: string }[]>([]);
+  const [subGoalStack, setSubGoalStack] = useState<string[]>([]);
+
+  // Simulation Telemetry
+  const [isRunning, setIsRunning] = useState<boolean>(false);
+  const [isGoalReached, setIsGoalReached] = useState<boolean>(false);
+  const [isFinished, setIsFinished] = useState<boolean>(false);
+  const [stepCount, setStepCount] = useState<number>(0);
+  const [inferenceLog, setInferenceLog] = useState<{ step: number; message: string; ruleId?: string; type: "fire" | "goal" | "info" | "fail" }[]>([]);
+
+  // UI Tabs & Milestones
+  const [activeTab, setActiveTab] = useState<"inference_studio" | "rule_tensor" | "theory" | "diagnostics">("inference_studio");
+  const [milestones, setMilestones] = useState({
+    forwardDerived: false,
+    backwardProven: false,
+    testedConflictResolution: false,
+    analyzedHornTheory: false,
+  });
+
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  // ── Reset Problem State ──────────────────────────────────────────────
+  const resetInference = useCallback(() => {
+    setWorkingMemory(new Set(activeKB.defaultFacts));
+    setTargetGoal(activeKB.defaultGoal);
+    setFiredRules([]);
+    setActiveFiredRule(null);
+    setProofTree([]);
+    setSubGoalStack([activeKB.defaultGoal]);
+    setIsRunning(false);
+    setIsGoalReached(false);
+    setIsFinished(false);
+    setStepCount(0);
+    setInferenceLog([
+      {
+        step: 0,
+        message: `Initialized ${activeKB.name}. Initial facts in Working Memory: [${activeKB.defaultFacts.join(", ")}]. Target goal: '${activeKB.defaultGoal}'.`,
+        type: "info",
+      },
+    ]);
+  }, [activeKB]);
+
+  useEffect(() => {
+    resetInference();
+  }, [domain, resetInference]);
+
+  // ── Toggle User Fact in Working Memory ───────────────────────────────
+  const toggleFact = (factId: string) => {
+    setWorkingMemory((prev) => {
+      const next = new Set(prev);
+      if (next.has(factId)) {
+        next.delete(factId);
+      } else {
+        next.add(factId);
+      }
+      return next;
+    });
+    setFiredRules([]);
+    setIsGoalReached(false);
+    setIsFinished(false);
+  };
+
+  // ── Forward Chaining Single Step (Data-Driven Modus Ponens) ───────────
+  const stepForwardChaining = useCallback(() => {
+    if (isFinished || isGoalReached) return;
+
+    // 1. Find all candidate Horn rules whose premises are completely satisfied in Working Memory
+    const candidateRules = activeKB.rules.filter((rule) => {
+      // Must not have already fired
+      if (firedRules.includes(rule.id)) return false;
+      // Conclusion must not already be in Working Memory
+      if (workingMemory.has(rule.conclusion)) return false;
+      // All premises must exist in working memory
+      return rule.premises.every((p) => workingMemory.has(p));
+    });
+
+    if (candidateRules.length === 0) {
+      setIsFinished(true);
+      setIsRunning(false);
+      setInferenceLog((prev) => [
+        {
+          step: stepCount + 1,
+          message: `Forward Chaining Fixed-Point Reached (ΔWM = ∅). No more rules can fire. Target goal '${targetGoal}' ${workingMemory.has(targetGoal) ? "was successfully proved!" : "could not be derived from initial facts."}`,
+          type: workingMemory.has(targetGoal) ? "goal" : "fail",
+        },
+        ...prev,
+      ]);
+      return;
     }
-  ];
 
-  return (
-    <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10 shadow-lg h-[600px] overflow-y-auto">
-      <h2 className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 text-transparent bg-clip-text mb-4">
-        📚 Knowledge Base
-      </h2>
-      
-      {categories.map((cat) => (
-        <div key={cat.id} className="mb-4">
-          <button
-            onClick={() => setExpandedCategory(expandedCategory === cat.id ? null : cat.id)}
-            className="w-full bg-white/5 p-4 rounded-xl text-left hover:bg-white/10 transition border border-white/10"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="text-2xl mr-2">{cat.icon}</span>
-                <span className="text-white font-bold">{cat.name}</span>
-              </div>
-              <span className="text-sm text-purple-400 bg-white/5 px-3 py-1 rounded-full">
-                {cat.diagram}
-              </span>
-            </div>
-          </button>
+    // 2. Conflict Resolution: Pick rule based on strategy
+    let chosenRule = candidateRules[0];
+    if (conflictStrategy === "specificity") {
+      // Rule with most premises (most specific)
+      chosenRule = candidateRules.reduce((best, curr) =>
+        curr.premises.length > best.premises.length ? curr : best
+      );
+    }
 
-          <AnimatePresence>
-            {expandedCategory === cat.id && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mt-2 space-y-2"
-              >
-                {cat.rules.map((rule) => (
-                  <div key={rule.id} className="bg-black/20 p-3 rounded-lg ml-2 border-l-4 border-purple-500">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-purple-400 font-bold">{rule.id}</span>
-                      <span className="text-xs bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full">Rule</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="text-amber-400">IF</span>
-                      <div className="flex gap-1">
-                        {rule.if.map((cond, i) => (
-                          <React.Fragment key={i}>
-                            <span className="bg-white/10 px-2 py-0.5 rounded border border-white/10 text-slate-300">
-                              {cond}
-                            </span>
-                            {i < rule.if.length - 1 && <span className="text-slate-500">∧</span>}
-                          </React.Fragment>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm mt-1">
-                      <span className="text-green-400">THEN</span>
-                      <span className="bg-green-500/20 px-2 py-0.5 rounded border border-green-500/30 text-green-400">
-                        {rule.then}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      ))}
+    // 3. Fire chosen Horn Rule (Modus Ponens)
+    setActiveFiredRule(chosenRule);
+    const newWM = new Set(workingMemory);
+    newWM.add(chosenRule.conclusion);
+    setWorkingMemory(newWM);
+    setFiredRules((prev) => [...prev, chosenRule.id]);
+    setStepCount((p) => p + 1);
 
-      {/* Rule Diagram */}
-      <div className="mt-6 p-4 bg-black/30 rounded-xl border border-white/10">
-        <h3 className="text-purple-400 font-bold mb-2">📊 Rule Structure</h3>
-        <div className="flex items-center justify-center gap-2 text-sm">
-          <span className="bg-white/10 px-3 py-1 rounded-lg border border-white/10">Condition 1</span>
-          <span className="text-purple-500">AND</span>
-          <span className="bg-white/10 px-3 py-1 rounded-lg border border-white/10">Condition 2</span>
-          <span className="text-purple-400 text-xl">→</span>
-          <span className="bg-purple-600 text-white px-3 py-1 rounded-lg">Conclusion</span>
-        </div>
-      </div>
-    </div>
-  );
-}
+    const isGoal = chosenRule.conclusion === targetGoal;
+    if (isGoal) {
+      setIsGoalReached(true);
+      setIsRunning(false);
+      setMilestones((p) => ({ ...p, forwardDerived: true }));
+      completeExperiment();
+    }
 
-// ==========================================
-// FORWARD CHAINING DEMO with diagrams
-// ==========================================
-function ForwardChainingDemo({ speed, onComplete = () => {} }: { speed: number; onComplete?: () => void }) {
-  const [facts, setFacts] = useState(["has hair", "gives milk", "eats meat", "tawny color", "stripes"]);
-  const [inferred, setInferred] = useState([]);
-  const [isRunning, setIsRunning] = useState(false);
-  const [currentRule, setCurrentRule] = useState(null);
+    setInferenceLog((prev) => [
+      {
+        step: stepCount + 1,
+        message: `Fired ${chosenRule.id} (${chosenRule.name}): [${chosenRule.premises.join(" ∧ ")}] ⟹ ${chosenRule.conclusion.toUpperCase()}`,
+        ruleId: chosenRule.id,
+        type: isGoal ? "goal" : "fire",
+      },
+      ...prev.slice(0, 30),
+    ]);
+  }, [
+    isFinished,
+    isGoalReached,
+    activeKB,
+    firedRules,
+    workingMemory,
+    targetGoal,
+    conflictStrategy,
+    stepCount,
+    completeExperiment,
+  ]);
 
-  const rules = [
-    { id: "R1", if: ["has hair", "gives milk"], then: "mammal" },
-    { id: "R2", if: ["mammal", "eats meat"], then: "carnivore" },
-    { id: "R3", if: ["carnivore", "tawny color", "stripes"], then: "tiger" }
-  ];
+  // ── Backward Chaining Single Step (Goal-Driven AND-OR Tree Search) ───
+  const stepBackwardChaining = useCallback(() => {
+    if (isFinished || isGoalReached) return;
 
-  const runForwardChain = async () => {
-    setIsRunning(true);
-    setInferred([]);
-    let currentFacts = [...facts];
-    let newInferred = [];
+    if (subGoalStack.length === 0) {
+      setIsFinished(true);
+      setIsRunning(false);
+      return;
+    }
 
+    const currentGoal = subGoalStack[subGoalStack.length - 1];
+
+    // Case 1: Sub-goal is already proven / in working memory
+    if (workingMemory.has(currentGoal)) {
+      setSubGoalStack((prev) => prev.slice(0, -1));
+      setProofTree((prev) => [
+        ...prev,
+        { node: currentGoal, status: "given", depth: subGoalStack.length },
+      ]);
+      setInferenceLog((prev) => [
+        {
+          step: stepCount + 1,
+          message: `Goal '${currentGoal}' is directly verified as a known FACT in Working Memory.`,
+          type: "info",
+        },
+        ...prev,
+      ]);
+
+      if (currentGoal === targetGoal) {
+        setIsGoalReached(true);
+        setIsRunning(false);
+        setMilestones((p) => ({ ...p, backwardProven: true }));
+        completeExperiment();
+      }
+      return;
+    }
+
+    // Case 2: Find Horn rule whose conclusion matches currentGoal
+    const matchingRule = activeKB.rules.find(
+      (r) => r.conclusion === currentGoal && !firedRules.includes(r.id)
+    );
+
+    if (matchingRule) {
+      setActiveFiredRule(matchingRule);
+      setFiredRules((prev) => [...prev, matchingRule.id]);
+      setProofTree((prev) => [
+        ...prev,
+        { node: currentGoal, status: "active", depth: subGoalStack.length, ruleId: matchingRule.id },
+      ]);
+
+      // Push unproven premises onto subGoalStack (AND nodes)
+      const unprovenPremises = matchingRule.premises.filter((p) => !workingMemory.has(p));
+
+      if (unprovenPremises.length === 0) {
+        // All premises proven! Add conclusion to working memory
+        const newWM = new Set(workingMemory);
+        newWM.add(currentGoal);
+        setWorkingMemory(newWM);
+        setSubGoalStack((prev) => prev.slice(0, -1));
+
+        setInferenceLog((prev) => [
+          {
+            step: stepCount + 1,
+            message: `Sub-goal '${currentGoal}' PROVED via Rule ${matchingRule.id} (${matchingRule.name})!`,
+            ruleId: matchingRule.id,
+            type: currentGoal === targetGoal ? "goal" : "fire",
+          },
+          ...prev,
+        ]);
+
+        if (currentGoal === targetGoal) {
+          setIsGoalReached(true);
+          setIsRunning(false);
+          setMilestones((p) => ({ ...p, backwardProven: true }));
+          completeExperiment();
+        }
+      } else {
+        setSubGoalStack((prev) => [...prev, ...unprovenPremises]);
+        setInferenceLog((prev) => [
+          {
+            step: stepCount + 1,
+            message: `Backward Chaining on '${currentGoal}': Rule ${matchingRule.id} requires verifying sub-goals: [${unprovenPremises.join(", ")}]`,
+            ruleId: matchingRule.id,
+            type: "info",
+          },
+          ...prev,
+        ]);
+      }
+      setStepCount((p) => p + 1);
+    } else {
+      // No rule can prove currentGoal -> Backtrack / Fail
+      setSubGoalStack((prev) => prev.slice(0, -1));
+      setProofTree((prev) => [
+        ...prev,
+        { node: currentGoal, status: "failed", depth: subGoalStack.length },
+      ]);
+      setInferenceLog((prev) => [
+        {
+          step: stepCount + 1,
+          message: `Branch Failed: No valid Horn rules available to deduce sub-goal '${currentGoal}'.`,
+          type: "fail",
+        },
+        ...prev,
+      ]);
+      setStepCount((p) => p + 1);
+    }
+  }, [
+    isFinished,
+    isGoalReached,
+    subGoalStack,
+    workingMemory,
+    targetGoal,
+    activeKB,
+    firedRules,
+    stepCount,
+    completeExperiment,
+  ]);
+
+  // Main step dispatcher
+  const stepInference = useCallback(() => {
+    if (engineMode === "forward") {
+      stepForwardChaining();
+    } else {
+      stepBackwardChaining();
+    }
+  }, [engineMode, stepForwardChaining, stepBackwardChaining]);
+
+  // Simulation Loop
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (isRunning) {
+      interval = setInterval(() => {
+        stepInference();
+      }, speedMs);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isRunning, speedMs, stepInference]);
+
+  // ── High-DPI Retina Knowledge Graph & Inference Canvas ────────────────
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+
+    const displayW = Math.round(rect.width * dpr);
+    const displayH = Math.round(rect.height * dpr);
+
+    if (canvas.width !== displayW || canvas.height !== displayH) {
+      canvas.width = displayW;
+      canvas.height = displayH;
+    }
+
+    const width = rect.width;
+    const height = rect.height;
+
+    ctx.save();
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, width, height);
+
+    // Dynamic Node Layout
+    const rules = activeKB.rules;
+    const allFacts = Array.from(
+      new Set([...activeKB.availableFacts.map((f) => f.id), ...rules.map((r) => r.conclusion)])
+    );
+
+    // Left Column: Initial Premise Facts, Right Column: Intermediate / Goal Conclusions
+    const premiseFacts = allFacts.filter((f) => !rules.some((r) => r.conclusion === f));
+    const derivedFacts = allFacts.filter((f) => rules.some((r) => r.conclusion === f));
+
+    const factPositions: Record<string, { x: number; y: number }> = {};
+
+    premiseFacts.forEach((fact, idx) => {
+      factPositions[fact] = {
+        x: 90,
+        y: 50 + (idx / Math.max(1, premiseFacts.length - 1)) * (height - 100),
+      };
+    });
+
+    derivedFacts.forEach((fact, idx) => {
+      factPositions[fact] = {
+        x: width - 110,
+        y: 60 + (idx / Math.max(1, derivedFacts.length - 1)) * (height - 120),
+      };
+    });
+
+    // 1. Draw Rule Hyperedges & Connectors
     for (const rule of rules) {
-      setCurrentRule(rule.id);
-      await new Promise(resolve => setTimeout(resolve, speed));
+      const targetPos = factPositions[rule.conclusion];
+      if (!targetPos) continue;
 
-      const canApply = rule.if.every(cond => currentFacts.includes(cond));
-      
-      if (canApply && !currentFacts.includes(rule.then)) {
-        currentFacts.push(rule.then);
-        newInferred.push({ rule: rule.id, fact: rule.then });
-        setInferred([...newInferred]);
-        setFacts([...currentFacts]);
-        await new Promise(resolve => setTimeout(resolve, speed));
+      const isFired = firedRules.includes(rule.id);
+      const isTarget = rule.conclusion === targetGoal;
+
+      for (const p of rule.premises) {
+        const sourcePos = factPositions[p];
+        if (!sourcePos) continue;
+
+        ctx.beginPath();
+        ctx.moveTo(sourcePos.x, sourcePos.y);
+        ctx.bezierCurveTo(
+          sourcePos.x + (targetPos.x - sourcePos.x) * 0.5,
+          sourcePos.y,
+          sourcePos.x + (targetPos.x - sourcePos.x) * 0.5,
+          targetPos.y,
+          targetPos.x,
+          targetPos.y
+        );
+
+        ctx.strokeStyle = isFired
+          ? isTarget
+            ? "#10b981"
+            : "rgba(168, 85, 247, 0.7)"
+          : "rgba(255, 255, 255, 0.08)";
+        ctx.lineWidth = isFired ? 2.5 : 1.2;
+        ctx.stroke();
       }
     }
-    
-    setCurrentRule(null);
-    setIsRunning(false);
-    if (onComplete) onComplete();
-  };
 
-  const reset = () => {
-    setFacts(["has hair", "gives milk", "eats meat", "tawny color", "stripes"]);
-    setInferred([]);
-    setCurrentRule(null);
-    setIsRunning(false);
-  };
+    // 2. Draw Fact Nodes
+    for (const fact of allFacts) {
+      const pos = factPositions[fact];
+      if (!pos) continue;
+
+      const isKnown = workingMemory.has(fact);
+      const isGoal = fact === targetGoal;
+
+      // Glow halo for proven goal
+      if (isGoal && isKnown) {
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, 22, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(16, 185, 129, 0.35)";
+        ctx.fill();
+      }
+
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, 14, 0, Math.PI * 2);
+      ctx.fillStyle = isGoal && isKnown
+        ? "#10b981"
+        : isGoal
+        ? "#a855f7"
+        : isKnown
+        ? "#06b6d4"
+        : "#1e293b";
+      ctx.fill();
+
+      ctx.strokeStyle = isGoal
+        ? "#c084fc"
+        : isKnown
+        ? "#22d3ee"
+        : "rgba(255, 255, 255, 0.25)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Node Label text
+      ctx.fillStyle = isKnown ? "#ffffff" : "rgba(255, 255, 255, 0.5)";
+      ctx.font = isGoal ? "bold 11px monospace" : "9.5px monospace";
+      ctx.textAlign = pos.x < width / 2 ? "right" : "left";
+      ctx.textBaseline = "middle";
+      const offsetX = pos.x < width / 2 ? -20 : 20;
+      ctx.fillText(fact.toUpperCase(), pos.x + offsetX, pos.y);
+    }
+
+    ctx.restore();
+  }, [activeKB, workingMemory, firedRules, targetGoal]);
 
   return (
-    <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-indigo-200 shadow-lg">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 text-transparent bg-clip-text">
-          ⬆️ Forward Chaining
-        </h2>
-        <div className="space-x-3">
-          <button
-            onClick={reset}
-            className="px-4 py-2 bg-white text-indigo-600 rounded-lg hover:bg-indigo-50 border border-indigo-200 transition"
+    <div className="min-h-screen bg-background text-foreground selection:bg-purple-500/20">
+      {/* ── Top Engineering Header ── */}
+      <header className="sticky top-0 z-40 border-b border-border bg-card/80 backdrop-blur-md px-4 sm:px-8 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/computer-science/ai-problem"
+            className="p-2 rounded-xl bg-muted hover:bg-accent text-muted-foreground hover:text-foreground transition cursor-pointer"
+            title="Back to AI Problems"
           >
-            Reset
-          </button>
-          <button
-            onClick={runForwardChain}
-            disabled={isRunning}
-            className="px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 shadow-md"
-          >
-            {isRunning ? "Running..." : "Start"}
-          </button>
-        </div>
-      </div>
-
-      {/* Flow Diagram */}
-      <div className="flex items-center justify-center gap-2 mb-6 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl">
-        <div className="flex items-center gap-1">
-          <span className="text-2xl">📦</span>
-          <span className="text-indigo-600 font-medium">Facts</span>
-        </div>
-        <span className="text-2xl text-indigo-400">→</span>
-        <div className="flex items-center gap-1">
-          <span className="text-2xl">⚙️</span>
-          <span className="text-purple-600 font-medium">Rules</span>
-        </div>
-        <span className="text-2xl text-indigo-400">→</span>
-        <div className="flex items-center gap-1">
-          <span className="text-2xl">✨</span>
-          <span className="text-pink-600 font-medium">Conclusions</span>
-        </div>
-      </div>
-
-      {/* Facts Display */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-200">
-          <h3 className="text-indigo-600 font-bold mb-3 flex items-center gap-2">
-            <span>📦</span> Initial Facts
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {facts.map((fact, i) => (
-              <motion.span
-                key={i}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="px-3 py-1.5 bg-white text-indigo-600 rounded-lg text-sm border border-indigo-200 shadow-sm"
-              >
-                {fact}
-              </motion.span>
-            ))}
+            <ArrowRight className="rotate-180" size={16} />
+          </Link>
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-500 shadow-sm">
+              <GitFork size={20} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-sm sm:text-base font-black tracking-tight text-foreground">
+                  Inference Engines &amp; Rule-Based Reasoning Studio
+                </h1>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-black uppercase tracking-wider bg-purple-500/15 text-purple-600 dark:text-purple-400 border border-purple-500/30">
+                  Modus Ponens &amp; AND-OR Search
+                </span>
+              </div>
+              <p className="text-[11px] text-muted-foreground hidden sm:block">
+                Forward data-driven deduction, backward goal-directed search, conflict resolution, and Horn clauses
+              </p>
+            </div>
           </div>
         </div>
 
-        <div className="bg-green-50 p-4 rounded-xl border border-green-200">
-          <h3 className="text-green-600 font-bold mb-3 flex items-center gap-2">
-            <span>✨</span> Inferred Facts
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {inferred.map((inf, i) => (
-              <motion.span
-                key={i}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="px-3 py-1.5 bg-white text-green-600 rounded-lg text-sm border border-green-200 shadow-sm"
-              >
-                {inf.fact}
-              </motion.span>
-            ))}
-            {inferred.length === 0 && (
-              <span className="text-gray-400 text-sm">No facts inferred yet</span>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Rules with visual diagrams */}
-      <div className="space-y-3">
-        {rules.map((rule, index) => (
-          <motion.div
-            key={rule.id}
-            animate={{
-              scale: currentRule === rule.id ? 1.02 : 1,
-            }}
-            className={`p-4 rounded-xl border-2 transition-all ${
-              currentRule === rule.id
-                ? 'border-indigo-400 bg-gradient-to-r from-indigo-50 to-purple-50 shadow-lg'
-                : 'border-gray-200 bg-white hover:border-indigo-200'
+        {/* Global Action Controls */}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setIsRunning(!isRunning)}
+            disabled={isGoalReached || isFinished}
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer disabled:opacity-40 ${
+              isRunning
+                ? "bg-amber-500 hover:bg-amber-600 text-white shadow-amber-500/25"
+                : "bg-purple-600 hover:bg-purple-700 text-white shadow-purple-600/25"
             }`}
           >
-            <div className="flex items-center gap-3">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
-                currentRule === rule.id ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-600'
-              }`}>
-                {rule.id}
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  {rule.if.map((cond, i) => (
-                    <React.Fragment key={i}>
-                      <span className="bg-amber-50 px-2 py-1 rounded border border-amber-200 text-amber-700 text-sm">
-                        {cond}
-                      </span>
-                      {i < rule.if.length - 1 && (
-                        <span className="text-gray-400 text-sm">AND</span>
-                      )}
-                    </React.Fragment>
-                  ))}
-                  <span className="text-indigo-400 text-xl mx-2">→</span>
-                  <span className="bg-green-50 px-3 py-1 rounded border border-green-200 text-green-700 font-medium">
-                    {rule.then}
+            {isRunning ? <Pause size={14} /> : <Play size={14} />}
+            <span>{isRunning ? "Pause" : "Run Engine"}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={stepInference}
+            disabled={isRunning || isGoalReached || isFinished}
+            className="px-3 py-2 rounded-xl bg-card border border-border text-xs font-bold text-foreground hover:bg-muted transition shadow-2xs cursor-pointer disabled:opacity-40"
+            title="Step 1 Inference Cycle"
+          >
+            Step
+          </button>
+
+          <button
+            type="button"
+            onClick={resetInference}
+            className="p-2 rounded-xl bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition shadow-2xs cursor-pointer"
+            title="Reset Working Memory"
+          >
+            <RotateCcw size={15} />
+          </button>
+        </div>
+      </header>
+
+      {/* ── Main Studio Container ── */}
+      <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        {/* Navigation Tabs */}
+        <div className="flex items-center gap-2 border-b border-border pb-3 overflow-x-auto no-scrollbar">
+          {[
+            { id: "inference_studio", label: "Inference Graph & Working Memory Studio", icon: GitFork },
+            { id: "rule_tensor", label: "Horn Clause Rule Base & Conflict Set", icon: Layers },
+            { id: "theory", label: "Modus Ponens & Horn Clause Formulary", icon: Calculator },
+            { id: "diagnostics", label: "Forward vs Backward Search Diagnostics", icon: Activity },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => {
+                  setActiveTab(tab.id as any);
+                  if (tab.id === "theory") setMilestones((p) => ({ ...p, analyzedHornTheory: true }));
+                }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${
+                  activeTab === tab.id
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-muted"
+                }`}
+              >
+                <Icon size={14} />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* ── Hyperparameter Controls Bar ── */}
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 sm:p-5 bg-card border border-border rounded-3xl shadow-sm">
+          {/* 1. Knowledge Domain */}
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+              Knowledge Base Domain
+            </label>
+            <select
+              value={domain}
+              onChange={(e) => setDomain(e.target.value as KnowledgeDomain)}
+              className="w-full px-3 py-2 bg-muted/60 border border-border rounded-xl text-xs font-bold text-foreground focus:outline-none cursor-pointer"
+            >
+              <option value="medical">Medical Diagnostic System (MYCIN)</option>
+              <option value="zoology">Zoological Taxonomy (Species ID)</option>
+              <option value="cybersecurity">Cybersecurity Threat Defense</option>
+            </select>
+          </div>
+
+          {/* 2. Inference Strategy */}
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+              Inference Paradigm
+            </label>
+            <select
+              value={engineMode}
+              onChange={(e) => {
+                setEngineMode(e.target.value as InferenceEngineMode);
+                resetInference();
+              }}
+              className="w-full px-3 py-2 bg-muted/60 border border-border rounded-xl text-xs font-bold text-foreground focus:outline-none cursor-pointer"
+            >
+              <option value="forward">Forward Chaining (Data-Driven / Modus Ponens)</option>
+              <option value="backward">Backward Chaining (Goal-Driven / AND-OR Tree)</option>
+            </select>
+          </div>
+
+          {/* 3. Conflict Resolution Strategy */}
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+              Conflict Resolution Rule
+            </label>
+            <select
+              value={conflictStrategy}
+              onChange={(e) => {
+                setConflictStrategy(e.target.value as ConflictResolution);
+                setMilestones((p) => ({ ...p, testedConflictResolution: true }));
+              }}
+              className="w-full px-3 py-2 bg-muted/60 border border-border rounded-xl text-xs font-bold text-foreground focus:outline-none cursor-pointer"
+            >
+              <option value="specificity">Specificity (Most Antecedents First)</option>
+              <option value="recency">Recency (Most Recently Added Facts)</option>
+              <option value="first_rule">First-Match Priority (Rule Index)</option>
+            </select>
+          </div>
+
+          {/* 4. Playback Speed */}
+          <div className="space-y-1">
+            <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+              <span>Inference Cycle Delay</span>
+              <span className="font-mono text-foreground font-bold">{speedMs}ms</span>
+            </div>
+            <input
+              type="range"
+              min={100}
+              max={800}
+              step={50}
+              value={speedMs}
+              onChange={(e) => setSpeedMs(parseInt(e.target.value, 10))}
+              className="w-full accent-purple-500 cursor-pointer"
+            />
+          </div>
+        </section>
+
+        {/* ── TAB 1: Inference Studio ── */}
+        {activeTab === "inference_studio" && (
+          <div className="space-y-6">
+            <section className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* Left Canvas: DAG Knowledge Graph Visualizer (7 Cols) */}
+              <div className="lg:col-span-7 bg-card border border-border rounded-3xl p-5 shadow-md flex flex-col justify-between space-y-4">
+                <div className="flex items-center justify-between border-b border-border pb-3 flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-purple-500 animate-pulse" />
+                    <div>
+                      <h3 className="text-sm font-bold text-foreground">
+                        {activeKB.name}
+                      </h3>
+                      <p className="text-[10px] text-muted-foreground">
+                        {activeKB.subtitle}
+                      </p>
+                    </div>
+                  </div>
+
+                  <span className="text-[10px] text-muted-foreground font-mono bg-muted/60 px-2 py-1 rounded-lg">
+                    Cyan = Initial Facts • Purple = Target Goal • Green = Derived Conclusion
+                  </span>
+                </div>
+
+                {/* Canvas Arena */}
+                <div className="relative w-full aspect-[16/10] bg-slate-950 rounded-2xl overflow-hidden border border-border flex items-center justify-center">
+                  <canvas
+                    ref={canvasRef}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+
+                {/* State Status Banner */}
+                <div className="flex items-center justify-between gap-3 p-3 bg-muted/30 border border-border rounded-2xl flex-wrap">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`px-2.5 py-1 rounded-full text-xs font-mono font-black uppercase border ${
+                        isGoalReached
+                          ? "bg-emerald-500/15 text-emerald-500 border-emerald-500/30"
+                          : isFinished
+                          ? "bg-amber-500/15 text-amber-500 border-amber-500/30"
+                          : isRunning
+                          ? "bg-cyan-500/15 text-cyan-400 border-cyan-500/30"
+                          : "bg-purple-500/15 text-purple-400 border-purple-500/30"
+                      }`}
+                    >
+                      {isGoalReached
+                        ? `GOAL PROVEN (${targetGoal.toUpperCase()})`
+                        : isFinished
+                        ? "FIXED-POINT REACHED (NO MORE RULES)"
+                        : isRunning
+                        ? `EXECUTING ${engineMode.toUpperCase()} INFERENCE`
+                        : "READY"}
+                    </span>
+                  </div>
+
+                  <span className="text-xs font-mono text-muted-foreground">
+                    Active Fired: <strong className="text-foreground">{activeFiredRule?.id || "None"}</strong>
                   </span>
                 </div>
               </div>
-              {currentRule === rule.id && (
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  className="text-indigo-600 text-xl"
-                >
-                  ⚡
-                </motion.div>
-              )}
-            </div>
-          </motion.div>
-        ))}
-      </div>
 
-      {/* Inference Chain Diagram */}
-      {inferred.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-6 p-4 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-xl border border-indigo-300"
-        >
-          <h3 className="text-indigo-700 font-bold mb-3">🔗 Inference Chain</h3>
-          <div className="flex items-center gap-2 flex-wrap justify-center">
-            {inferred.map((inf, i) => (
-              <React.Fragment key={i}>
-                <div className="bg-white px-4 py-2 rounded-lg shadow-sm border-l-4 border-indigo-400">
-                  <span className="text-indigo-600 font-bold">{inf.rule}</span>
-                  <span className="text-gray-400 mx-2">→</span>
-                  <span className="text-green-600">{inf.fact}</span>
+              {/* Right: Working Memory & Interactive Fact Toggles (5 Cols) */}
+              <div className="lg:col-span-5 bg-card border border-border rounded-3xl p-5 shadow-md flex flex-col justify-between space-y-4">
+                <div className="flex items-center justify-between border-b border-border pb-3">
+                  <div className="flex items-center gap-2">
+                    <Layers size={14} className="text-cyan-400" />
+                    <h3 className="text-sm font-bold text-foreground">
+                      Working Memory ($WM$) &amp; Fact Toggles
+                    </h3>
+                  </div>
+                  <span className="text-[10px] font-mono text-cyan-400">
+                    |WM| = {workingMemory.size} facts
+                  </span>
                 </div>
-                {i < inferred.length - 1 && (
-                  <span className="text-indigo-400 text-2xl">→</span>
-                )}
-              </React.Fragment>
-            ))}
+
+                {/* Available Facts Checkbox Pills */}
+                <div className="space-y-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground block">
+                    Observed Environmental Facts (Click to Toggle)
+                  </span>
+                  <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-1 bg-muted/20 rounded-xl border border-border">
+                    {activeKB.availableFacts.map((fact) => {
+                      const isActive = workingMemory.has(fact.id);
+                      return (
+                        <button
+                          key={fact.id}
+                          type="button"
+                          onClick={() => toggleFact(fact.id)}
+                          className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition cursor-pointer ${
+                            isActive
+                              ? "bg-cyan-500 text-slate-950 font-black shadow-sm"
+                              : "bg-muted/60 text-muted-foreground hover:text-foreground border border-border"
+                          }`}
+                        >
+                          {isActive && <Check size={12} />}
+                          <span>{fact.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Live Inference Stream Log */}
+                <div className="space-y-1.5 flex-1 flex flex-col justify-end">
+                  <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                    <span>Deduction Proof Trail</span>
+                    <span>Cycle #{stepCount}</span>
+                  </div>
+                  <div className="h-40 overflow-y-auto bg-slate-950 p-3 rounded-2xl border border-border space-y-1.5 font-mono text-xs">
+                    {inferenceLog.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className={`p-1.5 rounded-lg border flex items-start justify-between text-[11px] ${
+                          item.type === "goal"
+                            ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-300"
+                            : item.type === "fire"
+                            ? "bg-purple-500/15 border-purple-500/30 text-purple-300"
+                            : item.type === "fail"
+                            ? "bg-rose-500/15 border-rose-500/30 text-rose-300"
+                            : "bg-muted/40 border-border text-slate-300"
+                        }`}
+                      >
+                        <span>{item.message}</span>
+                        <span className="text-[9px] opacity-60">#{item.step}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
-        </motion.div>
-      )}
-    </div>
-  );
-}
+        )}
 
-// ==========================================
-// BACKWARD CHAINING DEMO with diagrams
-// ==========================================
-function BackwardChainingDemo({ speed, onComplete = () => {} }: { speed: number; onComplete?: () => void }) {
-  const [goal, setGoal] = useState("tiger");
-  const [steps, setSteps] = useState([]);
-  const [isRunning, setIsRunning] = useState(false);
-  const [found, setFound] = useState(false);
+        {/* ── TAB 2: Rule Tensor & Conflict Set ── */}
+        {activeTab === "rule_tensor" && (
+          <section className="bg-card border border-border rounded-3xl p-6 shadow-sm space-y-5">
+            <div className="flex items-center justify-between border-b border-border pb-3 flex-wrap gap-2">
+              <div>
+                <h3 className="text-base font-black text-foreground">
+                  Horn Clause Knowledge Base &amp; Conflict Set
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  Matrix of definite clauses $\bigwedge P_i \implies Q$ with satisfaction statuses in Working Memory.
+                </p>
+              </div>
 
-  const rules = [
-    { id: "R1", if: ["has hair", "gives milk"], then: "mammal" },
-    { id: "R2", if: ["mammal", "eats meat"], then: "carnivore" },
-    { id: "R3", if: ["carnivore", "tawny color", "stripes"], then: "tiger" }
-  ];
-
-  const facts = ["has hair", "gives milk", "eats meat", "tawny color", "stripes"];
-
-  const runBackwardChain = async () => {
-    setIsRunning(true);
-    setSteps([]);
-    setFound(false);
-
-    const prove = async (target, depth = 0) => {
-      setSteps(prev => [...prev, { text: `🎯 Trying to prove: ${target}`, depth }]);
-      await new Promise(resolve => setTimeout(resolve, speed));
-
-      // Check if target is a fact
-      if (facts.includes(target)) {
-        setSteps(prev => [...prev, { text: `✅ Found fact: ${target}`, depth, success: true }]);
-        return true;
-      }
-
-      // Find rules that conclude target
-      const applicableRules = rules.filter(r => r.then === target);
-      
-      for (const rule of applicableRules) {
-        setSteps(prev => [...prev, { text: `🔍 Trying rule ${rule.id} to prove ${target}`, depth }]);
-        await new Promise(resolve => setTimeout(resolve, speed));
-
-        let allTrue = true;
-        for (const premise of rule.if) {
-          const result = await prove(premise, depth + 1);
-          allTrue = allTrue && result;
-          if (!allTrue) break;
-        }
-
-        if (allTrue) {
-          setSteps(prev => [...prev, { text: `✨ Proved ${target} using rule ${rule.id}`, depth, success: true }]);
-          return true;
-        }
-      }
-
-      setSteps(prev => [...prev, { text: `❌ Failed to prove ${target}`, depth, failed: true }]);
-      return false;
-    };
-
-    const result = await prove(goal);
-    setFound(result);
-    setIsRunning(false);
-    if (onComplete) onComplete();
-  };
-
-  const reset = () => {
-    setSteps([]);
-    setFound(false);
-    setIsRunning(false);
-    setGoal("tiger");
-  };
-
-  // Goal tree diagram
-  const GoalTree = () => (
-    <div className="flex justify-center items-center gap-4 mb-4 text-sm">
-      <div className="flex flex-col items-center">
-        <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-2xl border-2 border-purple-400">
-          🎯
-        </div>
-        <span className="text-purple-600 mt-1">Goal</span>
-      </div>
-      <span className="text-2xl text-purple-400">⬇️</span>
-      <div className="flex flex-col items-center">
-        <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-2xl border-2 border-indigo-400">
-          🔍
-        </div>
-        <span className="text-indigo-600 mt-1">Rules</span>
-      </div>
-      <span className="text-2xl text-purple-400">⬇️</span>
-      <div className="flex flex-col items-center">
-        <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-2xl border-2 border-green-400">
-          ✅
-        </div>
-        <span className="text-green-600 mt-1">Facts</span>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-purple-200 shadow-lg">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
-          ⬇️ Backward Chaining
-        </h2>
-        <div className="space-x-3">
-          <input
-            type="text"
-            value={goal}
-            onChange={(e) => setGoal(e.target.value)}
-            className="px-3 py-2 bg-white rounded-lg text-gray-700 w-32 border border-purple-200 focus:border-purple-400 outline-none"
-            placeholder="Goal"
-          />
-          <button
-            onClick={reset}
-            className="px-4 py-2 bg-white text-purple-600 rounded-lg hover:bg-purple-50 border border-purple-200 transition"
-          >
-            Reset
-          </button>
-          <button
-            onClick={runBackwardChain}
-            disabled={isRunning}
-            className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 shadow-md"
-          >
-            {isRunning ? "Proving..." : "Start"}
-          </button>
-        </div>
-      </div>
-
-      {/* Goal Tree Diagram */}
-      <GoalTree />
-
-      {/* Goal Display */}
-      <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl mb-4 border border-purple-200">
-        <h3 className="text-purple-600 font-bold mb-2 flex items-center gap-2">
-          <span>🎯</span> Current Goal
-        </h3>
-        <div className="text-3xl text-purple-700 font-bold bg-white inline-block px-6 py-2 rounded-xl border-2 border-purple-300">
-          {goal}
-        </div>
-      </div>
-
-      {/* Proof Tree */}
-      <div className="bg-gradient-to-br from-gray-50 to-indigo-50 rounded-xl p-4 h-[300px] overflow-y-auto mb-4 border border-purple-200">
-        <h3 className="text-purple-600 font-bold mb-3 flex items-center gap-2">
-          <span>🌳</span> Proof Tree
-        </h3>
-        {steps.map((step, i) => (
-          <motion.div
-            key={i}
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            className="mb-2"
-            style={{ marginLeft: `${step.depth * 30}px` }}
-          >
-            <div className={`flex items-center gap-2 p-2 rounded-lg ${
-              step.success ? 'bg-green-50 border-l-4 border-green-400' :
-              step.failed ? 'bg-red-50 border-l-4 border-red-400' :
-              'bg-white border-l-4 border-purple-400'
-            }`}>
-              {step.success && <span className="text-green-500">✅</span>}
-              {step.failed && <span className="text-red-500">❌</span>}
-              {!step.success && !step.failed && <span className="text-purple-500">🔍</span>}
-              <span className={`text-sm ${
-                step.success ? 'text-green-700' :
-                step.failed ? 'text-red-700' :
-                'text-gray-700'
-              }`}>
-                {step.text}
+              <span className="text-xs font-mono text-purple-400 font-bold">
+                Conflict Strategy: {conflictStrategy.toUpperCase()}
               </span>
             </div>
-          </motion.div>
-        ))}
-        {steps.length === 0 && (
-          <div className="text-center py-8">
-            <div className="text-4xl mb-2">⬆️</div>
-            <p className="text-gray-400">Click Start to begin backward chaining</p>
-          </div>
+
+            <div className="overflow-x-auto p-4 bg-slate-950 rounded-2xl border border-border">
+              <table className="w-full text-left font-mono text-xs text-slate-200">
+                <thead>
+                  <tr className="border-b border-white/10 text-muted-foreground text-[10px] font-black uppercase">
+                    <th className="p-2.5">Rule ID</th>
+                    <th className="p-2.5">Rule Name</th>
+                    <th className="p-2.5">Premises ($\bigwedge P_i$)</th>
+                    <th className="p-2.5">Consequent ($Q$)</th>
+                    <th className="p-2.5 text-purple-400">Rule Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {activeKB.rules.map((rule) => {
+                    const isFired = firedRules.includes(rule.id);
+                    const isReady = rule.premises.every((p) => workingMemory.has(p)) && !workingMemory.has(rule.conclusion);
+
+                    return (
+                      <tr key={rule.id} className="border-b border-white/5 hover:bg-white/[0.02]">
+                        <td className="p-2.5 font-bold text-cyan-400">{rule.id}</td>
+                        <td className="p-2.5 font-bold text-white">{rule.name}</td>
+                        <td className="p-2.5">
+                          <div className="flex flex-wrap gap-1">
+                            {rule.premises.map((p) => (
+                              <span
+                                key={p}
+                                className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                                  workingMemory.has(p)
+                                    ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
+                                    : "bg-muted text-muted-foreground"
+                                }`}
+                              >
+                                {p}
+                              </span>
+                            ))}
+                          </div>
+                        </td>
+                        <td className="p-2.5 font-black text-emerald-400">{rule.conclusion}</td>
+                        <td className="p-2.5">
+                          <span
+                            className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
+                              isFired
+                                ? "bg-emerald-500/20 text-emerald-400"
+                                : isReady
+                                ? "bg-amber-500/20 text-amber-400 animate-pulse"
+                                : "bg-muted text-muted-foreground"
+                            }`}
+                          >
+                            {isFired ? "FIRED" : isReady ? "READY IN CONFLICT SET" : "UNSATISFIED"}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </section>
         )}
-      </div>
 
-      {/* Result */}
-      {found && (
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          className="p-4 bg-gradient-to-r from-green-100 to-emerald-100 rounded-xl border-2 border-green-400 text-center"
-        >
-          <span className="text-green-700 font-bold text-xl flex items-center justify-center gap-2">
-            <span>🎉</span> Goal Proved Successfully! <span>🎉</span>
-          </span>
-        </motion.div>
-      )}
-    </div>
-  );
-}
-
-// ==========================================
-// COMPARISON VIEW with diagrams
-// ==========================================
-function ComparisonView({ speed }) {
-  const [activeDemo, setActiveDemo] = useState("forward");
-
-  const comparisons = [
-    {
-      aspect: "Approach",
-      forward: "Data-Driven (Bottom-Up)",
-      backward: "Goal-Driven (Top-Down)",
-      forwardIcon: "⬆️",
-      backwardIcon: "⬇️"
-    },
-    {
-      aspect: "Start Point",
-      forward: "Start with known facts",
-      backward: "Start with hypothesis",
-      forwardIcon: "📦",
-      backwardIcon: "🎯"
-    },
-    {
-      aspect: "Direction",
-      forward: "Facts → Conclusions",
-      backward: "Goal → Facts",
-      forwardIcon: "📊→✨",
-      backwardIcon: "🎯→📦"
-    },
-    {
-      aspect: "When to Use",
-      forward: "All facts known, many conclusions",
-      backward: "Specific goal, many facts",
-      forwardIcon: "🔍",
-      backwardIcon: "💡"
-    }
-  ];
-
-  return (
-    <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-pink-200 shadow-lg">
-      <h2 className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-rose-600 text-transparent bg-clip-text mb-6 text-center">
-        🔄 Forward vs Backward Chaining
-      </h2>
-
-      {/* Visual Comparison Diagram */}
-      <div className="grid grid-cols-2 gap-6 mb-8">
-        <div className="bg-gradient-to-br from-indigo-100 to-blue-100 p-4 rounded-xl border-2 border-indigo-300">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white">⬆️</div>
-            <h3 className="font-bold text-indigo-700">Forward Chaining</h3>
-          </div>
-          <div className="flex items-center justify-center gap-1 text-sm">
-            <span className="bg-white px-2 py-1 rounded">F1</span>
-            <span className="bg-white px-2 py-1 rounded">F2</span>
-            <span className="text-indigo-400">→</span>
-            <span className="bg-indigo-600 text-white px-2 py-1 rounded">R1</span>
-            <span className="text-indigo-400">→</span>
-            <span className="bg-white px-2 py-1 rounded border-l-4 border-green-400">C1</span>
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-br from-purple-100 to-pink-100 p-4 rounded-xl border-2 border-purple-300">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white">⬇️</div>
-            <h3 className="font-bold text-purple-700">Backward Chaining</h3>
-          </div>
-          <div className="flex items-center justify-center gap-1 text-sm">
-            <span className="bg-purple-600 text-white px-2 py-1 rounded">G1</span>
-            <span className="text-purple-400">→</span>
-            <span className="bg-white px-2 py-1 rounded">R1</span>
-            <span className="text-purple-400">→</span>
-            <span className="bg-white px-2 py-1 rounded">F1</span>
-            <span className="bg-white px-2 py-1 rounded">F2</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Comparison Table */}
-      <div className="bg-gradient-to-br from-gray-50 to-indigo-50 rounded-xl overflow-hidden mb-8 border border-pink-200">
-        <div className="grid grid-cols-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-3 text-white font-bold">
-          <div>Aspect</div>
-          <div className="text-center">Forward Chaining</div>
-          <div className="text-center">Backward Chaining</div>
-        </div>
-        
-        {comparisons.map((comp, index) => (
-          <div
-            key={index}
-            className={`grid grid-cols-3 p-4 ${
-              index % 2 === 0 ? 'bg-white' : 'bg-indigo-50/50'
-            }`}
-          >
-            <div className="font-bold text-gray-700 flex items-center gap-2">
-              <span className="text-indigo-500">{comp.forwardIcon}</span>
-              {comp.aspect}
+        {/* ── TAB 3: Mathematical Theory & Horn Clauses ── */}
+        {activeTab === "theory" && (
+          <section className="bg-card border border-border rounded-3xl p-6 shadow-sm space-y-6">
+            <div>
+              <h3 className="text-lg font-black text-foreground">
+                Mathematical Foundations: Horn Clauses, Modus Ponens &amp; Deductive Tractability
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                Formal mathematical formulation of rule-based production systems, Generalized Modus Ponens, and linear-time inference.
+              </p>
             </div>
-            <div className="text-center text-gray-600 flex items-center justify-center gap-2">
-              <span className="text-indigo-600">{comp.forwardIcon}</span>
-              {comp.forward}
-            </div>
-            <div className="text-center text-gray-600 flex items-center justify-center gap-2">
-              <span className="text-purple-600">{comp.backwardIcon}</span>
-              {comp.backward}
-            </div>
-          </div>
-        ))}
-      </div>
 
-      {/* Demo Selector with Icons */}
-      <div className="flex gap-4 justify-center mb-6">
-        <button
-          onClick={() => setActiveDemo("forward")}
-          className={`px-8 py-3 rounded-xl font-bold transition flex items-center gap-2 ${
-            activeDemo === "forward"
-              ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
-              : 'bg-white text-gray-600 border border-indigo-200 hover:bg-indigo-50'
-          }`}
-        >
-          <span>⬆️</span> Try Forward
-        </button>
-        <button
-          onClick={() => setActiveDemo("backward")}
-          className={`px-8 py-3 rounded-xl font-bold transition flex items-center gap-2 ${
-            activeDemo === "backward"
-              ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-              : 'bg-white text-gray-600 border border-purple-200 hover:bg-purple-50'
-          }`}
-        >
-          <span>⬇️</span> Try Backward
-        </button>
-      </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* 1. Horn Clause Definition */}
+              <div className="p-5 bg-muted/40 border border-border rounded-2xl space-y-3">
+                <div className="flex items-center gap-2 text-cyan-500 font-bold text-sm">
+                  <Calculator size={16} />
+                  <span>1. Definite Horn Clauses</span>
+                </div>
+                <div className="p-3 bg-slate-950 rounded-xl font-mono text-xs text-cyan-300 space-y-1.5 border border-border">
+                  <div>{"Horn Clause: Disjunction with at most one positive literal"}</div>
+                  <div>{"(¬P_1 ∨ ¬P_2 ∨ ... ∨ ¬P_n ∨ Q)  ≡  (P_1 ∧ P_2 ∧ ... ∧ P_n ⇒ Q)"}</div>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Definite clauses enable linear-time forward and backward inference, avoiding exponential combinatorial explosion.
+                </p>
+              </div>
 
-      {/* Live Demo */}
-      <div className="mt-4">
-        {activeDemo === "forward" ? (
-          <ForwardChainingDemo speed={speed} />
-        ) : (
-          <BackwardChainingDemo speed={speed} />
+              {/* 2. Generalized Modus Ponens */}
+              <div className="p-5 bg-muted/40 border border-border rounded-2xl space-y-3">
+                <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 font-bold text-sm">
+                  <Split size={16} />
+                  <span>2. Generalized Modus Ponens (GMP)</span>
+                </div>
+                <div className="p-3 bg-slate-950 rounded-xl font-mono text-xs text-purple-300 space-y-1.5 border border-border">
+                  <div>{"Premise: P_1, P_2, ..., P_n"}</div>
+                  <div>{"Implication: P_1 ∧ P_2 ∧ ... ∧ P_n ⇒ Q"}</div>
+                  <div>{"Conclusion: Q (Added to Working Memory)"}</div>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Sound and complete inference rule for propositional and first-order definite clauses.
+                </p>
+              </div>
+
+              {/* 3. Linear Time Complexity Proof */}
+              <div className="p-5 bg-muted/40 border border-border rounded-2xl space-y-3">
+                <div className="flex items-center gap-2 text-amber-500 font-bold text-sm">
+                  <Zap size={16} />
+                  <span>3. Forward Chaining Complexity: O(n)</span>
+                </div>
+                <div className="p-3 bg-slate-950 rounded-xl font-mono text-xs text-amber-300 space-y-1.5 border border-border">
+                  <div>{"Time Complexity: O(size of KB)"}</div>
+                  <div>{"Every premise is evaluated at most once per fact assertion"}</div>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  By maintaining premise counters for each rule, forward chaining runs in deterministic linear time relative to KB size.
+                </p>
+              </div>
+
+              {/* 4. AND-OR Goal Tree Topology */}
+              <div className="p-5 bg-muted/40 border border-border rounded-2xl space-y-3">
+                <div className="flex items-center gap-2 text-emerald-500 font-bold text-sm">
+                  <GitFork size={16} />
+                  <span>4. Backward Chaining AND-OR Trees</span>
+                </div>
+                <div className="p-3 bg-slate-950 rounded-xl font-mono text-xs text-emerald-300 space-y-1.5 border border-border">
+                  <div>{"OR-Nodes: Alternative rules for same conclusion"}</div>
+                  <div>{"AND-Nodes: Simultaneous premises required by rule"}</div>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Avoids irrelevant inferences by only exploring sub-goals directly on the causal proof path.
+                </p>
+              </div>
+            </div>
+          </section>
         )}
-      </div>
+
+        {/* ── TAB 4: Diagnostics ── */}
+        {activeTab === "diagnostics" && (
+          <section className="bg-card border border-border rounded-3xl p-6 shadow-sm space-y-6">
+            <div>
+              <h3 className="text-base font-black text-foreground">
+                Inference Performance &amp; Paradigm Comparison
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Benchmark forward data-driven expansion against backward goal-directed search.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="p-5 bg-muted/40 border border-border rounded-2xl text-center space-y-2">
+                <span className="text-xs uppercase font-bold text-muted-foreground block">Rules Fired</span>
+                <span className="text-2xl font-black font-mono text-purple-500">
+                  {firedRules.length} / {activeKB.rules.length}
+                </span>
+                <p className="text-[10px] text-muted-foreground">
+                  Total Horn implications executed during inference session.
+                </p>
+              </div>
+
+              <div className="p-5 bg-muted/40 border border-border rounded-2xl text-center space-y-2">
+                <span className="text-xs uppercase font-bold text-muted-foreground block">Working Memory Growth</span>
+                <span className="text-2xl font-black font-mono text-cyan-400">
+                  +{workingMemory.size - activeKB.defaultFacts.length} Inferred
+                </span>
+                <p className="text-[10px] text-muted-foreground">
+                  New ground facts derived beyond the initial observation set.
+                </p>
+              </div>
+
+              <div className="p-5 bg-muted/40 border border-border rounded-2xl text-center space-y-2">
+                <span className="text-xs uppercase font-bold text-muted-foreground block">Proof Efficiency</span>
+                <span className="text-2xl font-black font-mono text-emerald-400">
+                  {isGoalReached ? "100% (PROVEN)" : isFinished ? "TERMINATED" : "IN PROGRESS"}
+                </span>
+                <p className="text-[10px] text-muted-foreground">
+                  Goal state deduction status in active domain.
+                </p>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── Student Mastery Milestones ── */}
+        <section className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-border pb-2.5">
+            <div className="flex items-center gap-2">
+              <Trophy size={16} className="text-amber-500" />
+              <h4 className="text-sm font-bold text-foreground">
+                Inference &amp; Knowledge Representation Mastery Objectives
+              </h4>
+            </div>
+            <span className="text-xs font-bold font-mono text-emerald-500">+50 XP Per Milestone</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {[
+              {
+                id: "forwardDerived",
+                label: "Forward Chaining Deduction",
+                desc: "Derive the target goal from environmental facts using Modus Ponens.",
+                done: milestones.forwardDerived,
+              },
+              {
+                id: "backwardProven",
+                label: "Backward AND-OR Proof",
+                desc: "Execute top-down goal reduction to prove hypothesis via sub-goals.",
+                done: milestones.backwardProven,
+              },
+              {
+                id: "testedConflictResolution",
+                label: "Tune Conflict Resolution",
+                desc: "Switch between Specificity, Recency, and First-Match priority rules.",
+                done: milestones.testedConflictResolution,
+              },
+              {
+                id: "analyzedHornTheory",
+                label: "Study Horn Clause Tractability",
+                desc: "Review formal mathematical proofs of linear-time $O(n)$ definite inference.",
+                done: milestones.analyzedHornTheory,
+              },
+            ].map((m) => (
+              <div
+                key={m.id}
+                className={`p-3.5 rounded-2xl border transition ${
+                  m.done
+                    ? "bg-emerald-500/10 border-emerald-500/30 text-foreground"
+                    : "bg-muted/30 border-border text-muted-foreground"
+                }`}
+              >
+                <div className="flex items-center gap-2 font-bold text-xs">
+                  <CheckCircle2
+                    size={14}
+                    className={m.done ? "text-emerald-500" : "text-muted-foreground/40"}
+                  />
+                  <span className={m.done ? "text-emerald-600 dark:text-emerald-400" : ""}>
+                    {m.label}
+                  </span>
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-1 leading-snug">{m.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Floating Daily Challenge Integration */}
+        <DailyChallengeCard
+          labId="computer-science/ai-problem/forward-backward"
+          currentParams={{
+            domain,
+            engineMode,
+            stepCount,
+            isGoalReached,
+          }}
+        />
+      </main>
     </div>
   );
 }

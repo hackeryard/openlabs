@@ -258,6 +258,47 @@ function ProblemVisual({ content }: Props) {
     );
   }
 
+  if (content.visualKind === "neural-network") {
+    return (
+      <div className="grid gap-4 md:grid-cols-[1.1fr_0.9fr]">
+        <div className="rounded-lg border border-white/10 bg-white/[0.03] p-4">
+          <div className="mb-4 flex items-center gap-2 text-xs font-bold text-slate-300">
+            <BrainCircuit className="h-3.5 w-3.5 text-cyan-300" />
+            Neural Architecture &amp; Synapses
+          </div>
+          <div className="flex h-40 items-center justify-between px-3">
+            {/* Input layer */}
+            <div className="flex flex-col gap-6">
+              {[1, 2].map((n) => (
+                <div key={`in-${n}`} className="h-8 w-8 rounded-full border-2 border-cyan-400 bg-cyan-500/20 flex items-center justify-center text-[10px] font-mono font-bold text-cyan-200">
+                  x{n}
+                </div>
+              ))}
+            </div>
+            {/* Hidden layer */}
+            <div className="flex flex-col gap-3">
+              {[1, 2, 3].map((n) => (
+                <div key={`h-${n}`} className="h-8 w-8 rounded-full border-2 border-indigo-400 bg-indigo-500/20 flex items-center justify-center text-[10px] font-mono font-bold text-indigo-200">
+                  h{n}
+                </div>
+              ))}
+            </div>
+            {/* Output layer */}
+            <div className="flex flex-col">
+              <div className="h-8 w-8 rounded-full border-2 border-emerald-400 bg-emerald-500/20 flex items-center justify-center text-[10px] font-mono font-bold text-emerald-200">
+                ŷ
+              </div>
+            </div>
+          </div>
+          <div className="mt-1 text-center font-mono text-[10px] text-slate-400">
+            Loss: 0.042 &bull; Acc: 98.4%
+          </div>
+        </div>
+        <VisualSteps content={content} />
+      </div>
+    );
+  }
+
   return (
     <div className="grid gap-4 md:grid-cols-[1.05fr_0.95fr]">
       <div className="rounded-lg border border-white/10 bg-white/[0.03] p-4">

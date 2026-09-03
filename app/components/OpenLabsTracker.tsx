@@ -91,15 +91,18 @@ export default function OpenLabsTracker() {
         const src = (el as any).src || (el as any).href || (el as any).currentSrc || "";
 
         if (src) {
-          // Ignore external 3rd-party adblocker blocks (Clarity, Google Analytics, GTM, DoubleClick)
+          // Ignore external 3rd-party adblocker blocks & extension resources
           const lowerSrc = src.toLowerCase();
           if (
             lowerSrc.includes("clarity.ms") ||
+            lowerSrc.includes("_vercel/insights") ||
+            lowerSrc.includes("_vercel/speed-insights") ||
             lowerSrc.includes("googletagmanager") ||
             lowerSrc.includes("google-analytics") ||
             lowerSrc.includes("doubleclick") ||
             lowerSrc.includes("googleads") ||
             lowerSrc.includes("chrome-extension://") ||
+            lowerSrc.includes("moz-extension://") ||
             lowerSrc.includes("safari-extension://")
           ) {
             return;
@@ -122,13 +125,20 @@ export default function OpenLabsTracker() {
       const message = errEvent.message || "Uncaught runtime error";
       if (message.includes("Script error") && !errEvent.filename) return;
 
-      // Ignore benign browser notifications & extension mutations
+      // Ignore benign browser notifications, extension mutations & third party injected scripts
       if (
         message.includes("ResizeObserver loop") ||
         message.includes("removeChild") ||
+        message.includes("insertBefore") ||
         message.includes("not a child of this node") ||
+        message.includes("MetaMask") ||
+        message.includes("metamask") ||
         message.includes("@context") ||
-        (errEvent.filename && (errEvent.filename.includes("extension://") || errEvent.filename.includes("clarity.ms")))
+        (errEvent.filename && (
+          errEvent.filename.includes("extension://") ||
+          errEvent.filename.includes("clarity.ms") ||
+          errEvent.filename.includes("_vercel")
+        ))
       ) {
         return;
       }
@@ -151,11 +161,14 @@ export default function OpenLabsTracker() {
           ? reason
           : reason?.message || "Unhandled Promise Rejection";
 
-      // Ignore benign / extension errors
+      // Ignore benign / extension errors / network aborts
       if (
         message.includes("ResizeObserver loop") ||
         message.includes("AbortError") ||
-        message.includes("cancelled")
+        message.includes("cancelled") ||
+        message.includes("MetaMask") ||
+        message.includes("metamask") ||
+        message.includes("Failed to connect to MetaMask")
       ) {
         return;
       }

@@ -52,6 +52,7 @@ export function useFeedback(labId: string) {
   const [stats, setStats] = useState<FeedbackStats | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const isSubmittingRef = useRef(false);
   const fetchedRef = useRef(false);
 
   // Load stats on mount
@@ -78,8 +79,9 @@ export function useFeedback(labId: string) {
 
   // Submit quick pulse (thumbs up / down)
   const submitPulse = useCallback(
-    async (helpful: boolean) => {
-      if (submitting) return;
+    async (helpful: boolean): Promise<boolean> => {
+      if (isSubmittingRef.current) return false;
+      isSubmittingRef.current = true;
       setSubmitting(true);
 
       try {
@@ -108,14 +110,17 @@ export function useFeedback(labId: string) {
                 }
               : prev
           );
+          return true;
         }
+        return false;
       } catch {
-        // Silent fail
+        return false;
       } finally {
+        isSubmittingRef.current = false;
         setSubmitting(false);
       }
     },
-    [labId, submitting]
+    [labId]
   );
 
   // Submit deep feedback (rating, category, comment)
@@ -126,8 +131,9 @@ export function useFeedback(labId: string) {
       comment?: string;
       labStep?: string;
       helpful?: boolean;
-    }) => {
-      if (submitting) return;
+    }): Promise<boolean> => {
+      if (isSubmittingRef.current) return false;
+      isSubmittingRef.current = true;
       setSubmitting(true);
 
       try {
@@ -152,14 +158,17 @@ export function useFeedback(labId: string) {
             data.rating || (data.helpful ? 5 : 1),
             data.category || "deep_feedback"
           );
+          return true;
         }
+        return false;
       } catch {
-        // Silent fail
+        return false;
       } finally {
+        isSubmittingRef.current = false;
         setSubmitting(false);
       }
     },
-    [labId, submitting]
+    [labId]
   );
 
   return { stats, submitted, submitting, submitPulse, submitDeep };

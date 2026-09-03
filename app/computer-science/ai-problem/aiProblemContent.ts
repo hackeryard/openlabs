@@ -7,6 +7,7 @@ export type AiVisualKind =
   | "hill-climb"
   | "maze-qlearn"
   | "monkey-banana"
+  | "neural-network"
   | "water-jug";
 
 export type AiProblemContent = {
@@ -357,6 +358,58 @@ export const aiProblemContent: Record<string, AiProblemContent> = {
         question: "What AI concept does it teach?",
         answer:
           "It teaches state-space search, state transitions, action modeling, and goal testing.",
+      },
+    ],
+  },
+  "neural-network": {
+    slug: "neural-network",
+    name: "Multilayer Perceptron Neural Network",
+    shortName: "Neural Network",
+    visualKind: "neural-network",
+    badge: "Deep learning & backpropagation",
+    pageTitle: "Multilayer Perceptron Neural Network Visualizer | OpenLabs",
+    metaDescription:
+      "Train multilayer perceptron neural networks interactively. Explore forward propagation, backpropagation gradient descent, activation functions, and decision boundary convergence.",
+    heroDescription:
+      "Interactive neural network simulator: configure layers, train on non-linear datasets, adjust learning rates, and visualize real-time decision boundary convergence.",
+    definition:
+      "A Multilayer Perceptron (MLP) is a class of feedforward artificial neural network consisting of input, hidden, and output layers trained via gradient-descent backpropagation.",
+    behavior:
+      "Input signals propagate forward through weighted layers and non-linear activations; error losses are computed against targets, and backpropagated gradients update weights.",
+    modelFocus: "Forward pass activations, loss gradients, and weight updates",
+    visualSteps: [
+      "Input feature vectors",
+      "Hidden layer activations (ReLU/Sigmoid)",
+      "Output prediction & loss calculation",
+      "Backpropagation weight updates",
+    ],
+    learningObjectives: [
+      "Understand artificial neuron mathematical models (weights, biases, activations).",
+      "Trace forward propagation and non-linear activation functions.",
+      "Visualize error backpropagation and gradient descent optimization.",
+      "Explore non-linear decision boundary classification and convergence.",
+    ],
+    useCases: [
+      "Binary and multi-class classification",
+      "Pattern and digit recognition",
+      "Function approximation and regression",
+      "Non-linear decision boundary mapping",
+    ],
+    faqs: [
+      {
+        question: "What is a Multilayer Perceptron (MLP)?",
+        answer:
+          "An MLP is a deep feedforward artificial neural network composed of multiple layers of nodes, capable of learning non-linear relationships via supervised backpropagation.",
+      },
+      {
+        question: "How does backpropagation work?",
+        answer:
+          "Backpropagation calculates the gradient of the loss function with respect to each weight using the chain rule of calculus, adjusting weights in the opposite direction of the gradient.",
+      },
+      {
+        question: "Why are activation functions necessary?",
+        answer:
+          "Without non-linear activation functions like ReLU or Sigmoid, stacking multiple linear layers would collapse mathematically into a single linear transformation.",
       },
     ],
   },

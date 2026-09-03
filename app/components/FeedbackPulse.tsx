@@ -38,25 +38,38 @@ export default function FeedbackPulse({ labId }: FeedbackPulseProps) {
   const [deepComment, setDeepComment] = useState("");
   const [deepSubmitted, setDeepSubmitted] = useState(false);
 
-  // Handle pulse submission
-  const handlePulse = async (helpful: boolean) => {
+  const [showValidationErrors, setShowValidationErrors] = useState(false);
+
+  // Handle pulse choice (open form, do not submit prematurely)
+  const handlePulse = (helpful: boolean) => {
     setPulseGiven(helpful);
-    await submitPulse(helpful);
-    // If thumbs down, auto-expand the "what went wrong?" deep form
-    if (!helpful) {
-      setShowDeepForm(true);
-    }
+    setShowValidationErrors(false);
+    setShowDeepForm(true);
   };
 
   // Handle deep feedback submission
   const handleDeepSubmit = async () => {
-    await submitDeep({
+    // 1. If helpful === true: rating is mandatory. If rating < 3: comment is mandatory.
+    const isMissingRating = pulseGiven === true && deepRating < 1;
+    const isMissingComment =
+      (pulseGiven === false && !deepComment.trim()) ||
+      (pulseGiven === true && deepRating > 0 && deepRating < 3 && !deepComment.trim());
+
+    if (isMissingRating || isMissingComment) {
+      setShowValidationErrors(true);
+      return;
+    }
+
+    const success = await submitDeep({
       rating: deepRating > 0 ? deepRating : undefined,
       category: deepCategory || undefined,
-      comment: deepComment || undefined,
+      comment: deepComment.trim() || undefined,
       helpful: pulseGiven !== null ? pulseGiven : undefined,
     });
-    setDeepSubmitted(true);
+
+    if (success) {
+      setDeepSubmitted(true);
+    }
   };
 
   // Already submitted within 24h — show thank-you state
@@ -157,15 +170,23 @@ export default function FeedbackPulse({ labId }: FeedbackPulseProps) {
         <div className="border-t border-border p-4 space-y-4 bg-muted/20">
           {/* Star Rating */}
           <div className="space-y-1.5">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-              Rate this lab (optional)
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                {pulseGiven === true ? "Rate this lab (Required)" : "Rate this lab (Optional)"}
+              </label>
+              {showValidationErrors && pulseGiven === true && deepRating < 1 && (
+                <span className="text-[10px] font-bold text-rose-500">★ Rating required</span>
+              )}
+            </div>
             <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((n) => (
                 <button
                   key={n}
-                  onClick={() => setDeepRating(n)}
-                  className="p-0.5 transition-transform hover:scale-110"
+                  onClick={() => {
+                    setDeepRating(n);
+                    setShowValidationErrors(false);
+                  }}
+                  className="p-0.5 transition-transform hover:scale-110 cursor-pointer"
                 >
                   <Star
                     size={22}
@@ -195,7 +216,7 @@ export default function FeedbackPulse({ labId }: FeedbackPulseProps) {
                 <button
                   key={cat.id}
                   onClick={() => setDeepCategory(deepCategory === cat.id ? null : cat.id)}
-                  className={`px-2.5 py-1 rounded-xl border text-xs font-bold transition-all ${
+                  className={`px-2.5 py-1 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                     deepCategory === cat.id
                       ? "bg-primary text-primary-foreground border-primary shadow-sm"
                       : "bg-muted/40 text-muted-foreground border-border hover:bg-accent hover:text-foreground"
@@ -210,15 +231,39 @@ export default function FeedbackPulse({ labId }: FeedbackPulseProps) {
 
           {/* Comment Box */}
           <div className="space-y-1.5">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-              {pulseGiven === false ? "What went wrong?" : "Anything else to share?"} (optional)
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                {pulseGiven === false
+                  ? "What went wrong? (Required)"
+                  : pulseGiven === true && deepRating > 0 && deepRating < 3
+                  ? "What went wrong? (Required)"
+                  : "Detailed Comments (Optional)"}
+              </label>
+              {showValidationErrors &&
+                ((pulseGiven === false && !deepComment.trim()) ||
+                  (pulseGiven === true && deepRating > 0 && deepRating < 3 && !deepComment.trim())) && (
+                  <span className="text-[10px] font-bold text-rose-500">⚠️ Comment required</span>
+                )}
+            </div>
             <textarea
               value={deepComment}
-              onChange={(e) => setDeepComment(e.target.value.slice(0, 500))}
-              placeholder="Tell us more…"
+              onChange={(e) => {
+                setDeepComment(e.target.value.slice(0, 500));
+                if (e.target.value.trim()) setShowValidationErrors(false);
+              }}
+              placeholder={
+                pulseGiven === false || (pulseGiven === true && deepRating > 0 && deepRating < 3)
+                  ? "Please describe what was confusing, broken, or didn't work... (Required)"
+                  : "Tell us more… (Optional)"
+              }
               rows={3}
-              className="w-full rounded-xl border border-border bg-card text-foreground text-xs p-3 resize-none focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary placeholder:text-muted-foreground"
+              className={`w-full rounded-xl border text-foreground text-xs p-3 resize-none focus:outline-none focus:ring-2 placeholder:text-muted-foreground transition-colors ${
+                showValidationErrors &&
+                ((pulseGiven === false && !deepComment.trim()) ||
+                  (pulseGiven === true && deepRating > 0 && deepRating < 3 && !deepComment.trim()))
+                  ? "border-rose-500 bg-rose-500/5 focus:border-rose-500 focus:ring-rose-500/30"
+                  : "border-border bg-card focus:border-primary focus:ring-primary/30"
+              }`}
             />
             <div className="text-[10px] text-muted-foreground text-right">
               {deepComment.length}/500
@@ -228,18 +273,21 @@ export default function FeedbackPulse({ labId }: FeedbackPulseProps) {
           {/* Submit Button */}
           <div className="flex items-center justify-between">
             <button
-              onClick={() => setShowDeepForm(false)}
-              className="text-xs text-muted-foreground hover:text-foreground transition"
+              onClick={() => {
+                setShowDeepForm(false);
+                setShowValidationErrors(false);
+              }}
+              className="text-xs text-muted-foreground hover:text-foreground transition cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={handleDeepSubmit}
-              disabled={submitting || (!deepRating && !deepCategory && !deepComment)}
-              className="flex items-center gap-1.5 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={submitting}
+              className="flex items-center gap-1.5 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95 disabled:opacity-50 cursor-pointer"
             >
               <Send size={13} />
-              Submit Feedback
+              {submitting ? "Submitting…" : "Submit Feedback"}
             </button>
           </div>
         </div>

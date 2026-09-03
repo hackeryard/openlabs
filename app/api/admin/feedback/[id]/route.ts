@@ -50,3 +50,37 @@ export async function PATCH(
     );
   }
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const auth = verifyAdminAccess(request);
+    if (!auth.authorized) {
+      return NextResponse.json({ error: auth.error || "Unauthorized" }, { status: auth.status });
+    }
+
+    await connectDB();
+
+    const deleted = await (Feedback as any).findByIdAndDelete(params.id);
+
+    if (!deleted) {
+      return NextResponse.json(
+        { error: "Feedback entry not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      deleted: true,
+      feedbackId: params.id,
+    });
+  } catch (err) {
+    console.error("Admin feedback DELETE error:", err);
+    return NextResponse.json(
+      { error: "Server error" },
+      { status: 500 }
+    );
+  }
+}

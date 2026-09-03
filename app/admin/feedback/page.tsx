@@ -38,6 +38,7 @@ import {
   Layers,
   LayoutGrid,
   ListFilter,
+  Trash2,
 } from "lucide-react";
 
 // ── Types ──────────────────────────────────────────────────────────────
@@ -195,6 +196,22 @@ export default function AdminFeedbackPage() {
     }
   };
 
+  // Handle feedback deletion
+  const handleDeleteFeedback = async (feedbackId: string) => {
+    if (!window.confirm("Are you sure you want to permanently delete this feedback entry?")) return;
+    try {
+      const res = await fetch(`/api/admin/feedback/${feedbackId}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setRecentFeedbacks((prev) => prev.filter((fb) => fb._id !== feedbackId));
+        setExpandedComments((prev) => prev.filter((fb) => fb._id !== feedbackId));
+      }
+    } catch (err) {
+      console.error("Delete feedback error:", err);
+    }
+  };
+
   // Filter rows & feed by search
   const filteredRows = searchQuery
     ? rows.filter((r) => r.labId.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -336,6 +353,13 @@ export default function AdminFeedbackPage() {
                 <span>Fixed</span>
               </button>
             </div>
+            <button
+              onClick={() => handleDeleteFeedback(fb._id)}
+              className="p-2 rounded-xl text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition cursor-pointer"
+              title="Delete feedback entry"
+            >
+              <Trash2 size={14} />
+            </button>
           </div>
         </div>
 

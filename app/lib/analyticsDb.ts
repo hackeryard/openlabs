@@ -389,7 +389,7 @@ export async function getAnalyticsDashboardData(
       select: "name email username avatar",
     })
     .sort({ lastOccurredAt: -1 })
-    .limit(60)
+    .limit(1000)
     .lean();
 
   const errorStatsPromise = (ErrorLog as any).aggregate([
