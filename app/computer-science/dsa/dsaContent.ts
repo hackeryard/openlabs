@@ -494,6 +494,61 @@ export const dsaContent: Record<string, DsaContent> = {
       },
     ],
   },
+
+  "pathfinding-astar": {
+    slug: "pathfinding-astar",
+    route: "pathfinding-astar",
+    name: "A* Pathfinding & Heuristic Search",
+    category: "Graph Algorithm",
+    badge: "Informed Search & Heuristic Routing Engine",
+    pageTitle: "A* Pathfinding Visualizer - Interactive Grid Search & Heuristics | OpenLabs",
+    metaDescription:
+      "Master A* Pathfinding and graph search algorithms with an interactive visualizer. Compare A*, Dijkstra, Greedy Best-First, BFS, and DFS on custom weighted grids with obstacle painting and procedural mazes.",
+    heroDescription:
+      "Paint custom walls and weighted terrain (mud, water), drag start and target pins, test Manhattan/Euclidean heuristics, and benchmark A* search efficiency against Dijkstra in real time.",
+    definition:
+      "A* Search is an informed graph traversal algorithm that evaluates nodes using f(n) = g(n) + h(n), where g(n) is the exact path cost from the start node and h(n) is an admissible heuristic estimate to the goal.",
+    behavior:
+      "A* maintains an open set priority queue ordered by f(n). By factoring in both historical travel cost and heuristic distance, it directs exploration toward the goal while guaranteeing the shortest path when h(n) is admissible.",
+    complexity: "Time: O((V + E) log V) with priority queue, Space: O(V) storing open and closed sets",
+    visualSteps: ["Place Start & Target", "Paint Obstacles & Weighted Terrain", "Select Heuristic", "Visualize Open/Closed Sets", "Trace Optimal Path"],
+    learningObjectives: [
+      "Understand the governing formula f(n) = g(n) + h(n) and the role of heuristic functions.",
+      "Evaluate admissible heuristics: Manhattan (4-directional), Euclidean (straight-line), and Octile (diagonal).",
+      "Observe how weighted terrain (mud, swamp) alters path routing compared to uniform grids.",
+      "Analyze the difference between Dijkstra (h=0) and Greedy Best-First (f=h) in concave dead-end traps.",
+      "Benchmark search efficiency: measure nodes visited, path cost, and compute duration in real time.",
+    ],
+    useCases: [
+      "Video game NPC navigation and tactical pathfinding",
+      "Autonomous vehicle and robotics motion planning",
+      "Logistics delivery routing and supply chain navigation",
+      "Network routing with quality-of-service (QoS) path metrics",
+      "Procedural puzzle and maze solving in computer vision",
+    ],
+    faqs: [
+      {
+        question: "What makes A* different from Dijkstra's algorithm?",
+        answer:
+          "Dijkstra's algorithm expands uniformly in all directions (h = 0). A* uses a heuristic h(n) to focus exploration toward the target, typically visiting 60% to 80% fewer nodes while still guaranteeing an optimal path.",
+      },
+      {
+        question: "What is an admissible heuristic?",
+        answer:
+          "A heuristic h(n) is admissible if it never overestimates the actual cost to reach the goal. If h(n) is admissible and consistent, A* is mathematically guaranteed to return the optimal (shortest) path.",
+      },
+      {
+        question: "Why does Greedy Best-First Search get stuck in dead ends?",
+        answer:
+          "Greedy Best-First only considers h(n) (distance to target) and ignores g(n) (cost traveled). When facing a concave wall (U-shape), it rushes inside toward the goal and must exhaust the entire chamber before backtracking.",
+      },
+      {
+        question: "How does weighted terrain affect A* pathfinding?",
+        answer:
+          "Each grid cell has a movement cost. Normal cells cost 1, mud costs 5, and water costs 10. A* will take a geometrically longer path around high-cost terrain if the total cumulative path cost is lower.",
+      },
+    ],
+  },
 };
 
 export function createDsaMetadata(content: DsaContent): Metadata {

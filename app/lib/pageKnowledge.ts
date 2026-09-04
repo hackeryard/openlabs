@@ -1090,6 +1090,48 @@ const LAB_KNOWLEDGE: Record<string, PageKnowledge> = {
     ],
   },
 
+  "biology/mitosis-meiosis": {
+    title: "Mitosis, Meiosis & Microscopic Cell Division Studio",
+    overview:
+      "Interactive cellular division and cytogenetics laboratory exploring somatic mitosis (2n -> 2n), gametic meiosis (2n -> 4 x n), crossing-over chiasmata recombination, spindle assembly checkpoint (SAC), and chromosomal nondisjunction aneuploidy mutations under brightfield and darkfield fluorescence microscopy.",
+    howToUse: [
+      "Select division mode: Mitosis (7 phases, somatic equational division) or Meiosis (10 phases across Meiosis I and II).",
+      "Use the Phase Timeline or Play/Pause controls to progress through Prophase, Metaphase, Anaphase, Telophase, and Cytokinesis.",
+      "Switch cell organism type between Animal (cleavage furrow actin ring) and Plant (phragmoplast cell plate synthesis).",
+      "Switch microscope objective lenses (100x scanning, 400x high-dry, 1000x oil immersion) and stain modes (Giemsa brightfield vs Tubulin/DAPI/Actin darkfield fluorescence).",
+      "During Meiosis Prophase I, enter the Crossing-Over Studio to click chiasmata loci and swap maternal/paternal chromosome alleles.",
+      "Enable Nondisjunction Mutation at Anaphase I or Anaphase II to simulate chromosome non-segregation and observe Trisomy (n+1) and Monosomy (n-1) aneuploid gametes.",
+    ],
+    controls: [
+      "Mode selector: Mitosis (2n -> 2n) vs Meiosis (2n -> 4 x n)",
+      "Phase timeline scrubber with Play/Pause, Step Forward, and Step Back buttons",
+      "Cell Type toggle: Animal Cell (Centrioles & Aster rays) vs Plant Cell (No centrioles, Cell Plate)",
+      "Microscope Optics: 100x / 400x / 1000x Oil Immersion lens, Fine Focus dial, Staining toggle (Brightfield vs Fluorescence)",
+      "Spindle Assembly Checkpoint (SAC) tension inspector",
+      "Interactive Crossing-Over allele recombinant matrix",
+      "Nondisjunction fault injection (Normal vs Anaphase I failure vs Anaphase II failure)",
+    ],
+    keyConcepts: [
+      "Mitosis: Equational division producing 2 genetically identical diploid (2n = 4) somatic daughter cells",
+      "Meiosis: Reductional division (Meiosis I) followed by equational division (Meiosis II), yielding 4 genetically distinct haploid (n = 2) gametes",
+      "Independent Assortment: Homologous pairs align randomly at Metaphase I, producing 2^n unique chromosome combinations (2^23 = 8,388,608 in humans)",
+      "Genetic Recombination: Synaptonemal complex facilitates homologous non-sister chromatid crossing-over at chiasmata during Pachytene stage of Prophase I",
+      "Spindle Assembly Checkpoint (M-Checkpoint): Ensures all kinetochores are under bipolar tension before Separase cleaves Cohesin rings",
+      "Nondisjunction: Failure of homologous chromosomes (Meiosis I) or sister chromatids (Meiosis II) to disjoin, causing aneuploidy (e.g. Trisomy 21 Down syndrome)",
+    ],
+    whatToTry: [
+      "Switch to Meiosis, advance to Prophase I, click chiasmata loci to create recombinant chromatids, and trace their inheritance to the final 4 gametes.",
+      "Toggle Nondisjunction at Anaphase I and observe that 100% of resulting gametes are abnormal (two n+1 and two n-1).",
+      "Toggle Nondisjunction at Anaphase II and observe that 50% of gametes are normal (n), 25% are n+1, and 25% are n-1.",
+      "Switch to Plant Cell mode and examine phragmoplast vesicles fusing into a pectin cell plate instead of an actin cleavage furrow.",
+    ],
+    commonMistakes: [
+      "Confusing sister chromatids (identical copies created during S-phase) with homologous chromosomes (one maternal, one paternal).",
+      "Believing DNA replication occurs between Meiosis I and Meiosis II — interkinesis has no S-phase, which is why Meiosis is reductional.",
+      "Assuming plant cells form cleavage furrows — rigid cellulose walls prevent pinching, requiring internal vesicle fusion into a cell plate.",
+    ],
+  },
+
   "biology/genetics/monohybrid": {
     title: "Monohybrid Punnett Square & Mendel's Law Lab",
     overview:
@@ -1615,6 +1657,42 @@ const LAB_KNOWLEDGE: Record<string, PageKnowledge> = {
     ],
     whatToTry: [
       "Load the complete bipartite graph K3,3 and verify its chromatic number is exactly 2.",
+    ],
+  },
+
+  "computer-science/dsa/pathfinding-astar": {
+    title: "A* Pathfinding & Heuristic Search Studio",
+    overview:
+      "Interactive informed graph search laboratory demonstrating A* Search, Dijkstra's algorithm, Greedy Best-First Search, BFS, and DFS. Features real-time grid obstacle painting, weighted terrain (mud, water), procedural recursive division mazes, sound synthesis, and heuristic metric comparisons.",
+    howToUse: [
+      "Select an algorithm (A*, Dijkstra, Greedy BFS, BFS, DFS) from the toolbar.",
+      "Choose a heuristic function (Manhattan, Euclidean, Chebyshev, Octile) and adjust the heuristic weight multiplier (ε).",
+      "Draw walls or paint weighted terrain (Mud cost 5, Water cost 10) on the grid canvas.",
+      "Drag the green rocket Start Pin and red target Goal Pin anywhere on the grid.",
+      "Click 'Visualize' to watch open set frontier expansions and path reconstruction, or toggle split-screen race mode.",
+    ],
+    controls: [
+      "Algorithm dropdown: A* (f = g + h), Dijkstra (h = 0), Greedy BFS (f = h), BFS, DFS",
+      "Heuristic dropdown: Manhattan, Euclidean, Chebyshev, Octile with Weight Slider (0x to 3x)",
+      "Terrain brushes: Wall (obstacle), Mud (weight 5), Water (weight 10), Eraser",
+      "Maze generator: Recursive Division, Muddy Swamp Pass, Concave U-Trap, Random Scatter",
+      "Animation speed selector (Slow, Normal, Fast, Instant) and Sound Mute toggle",
+      "Tile Inspector HUD: Hover over any cell to see coordinates, g(n), h(n), f(n), and queue status",
+    ],
+    keyConcepts: [
+      "A* Evaluation Function: f(n) = g(n) + h(n), balancing exact historical cost and estimated remaining distance",
+      "Admissibility: A heuristic h(n) is admissible if it never overestimates the true cost to reach the goal (h(n) <= h*(n))",
+      "Consistency / Monotonicity: h(n) <= c(n, p) + h(p) ensures path to any node is optimal when first expanded",
+      "Dijkstra vs A*: Dijkstra explores uniformly in concentric rings (h=0), while A* focuses exploration toward the goal",
+    ],
+    whatToTry: [
+      "Load the 'Muddy Swamp Pass' preset and observe A* taking a longer geometrical path to avoid high-cost mud tiles.",
+      "Set heuristic weight to 0 to watch A* degenerate into Dijkstra's uniform wavefront.",
+      "Load the 'Concave U-Trap' to see Greedy BFS get trapped inside the dead end while A* routes around it.",
+    ],
+    commonMistakes: [
+      "Assuming Greedy Best-First always finds the shortest path — it only minimizes estimated distance, not total cost.",
+      "Using Manhattan distance when diagonal moves are permitted, which can overestimate true Euclidean distance and break admissibility.",
     ],
   },
 

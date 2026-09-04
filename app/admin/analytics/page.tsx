@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import Link from "next/link";
 import AdminLockScreen from "@/app/components/AdminLockScreen";
 import { useAdminSecret } from "@/app/components/AdminSecretContext";
@@ -61,8 +61,11 @@ import {
   Bot,
   UserCheck,
   Repeat,
+  MapPin,
+  X,
 } from "lucide-react";
-import { getFullCountryName } from "@/app/lib/countries";
+import { getFullCountryName, getCountryFlag, getContinentForCountry } from "@/app/lib/countries";
+import WorldMapAnalytics from "@/app/components/admin/WorldMapAnalytics";
 
 // ── Types ──────────────────────────────────────────────────────────────
 interface UserSnippet {
@@ -239,7 +242,31 @@ interface AnalyticsData {
   browsers: { browser: string; count: number; percentage: number }[];
   operatingSystems: { os: string; count: number; percentage: number }[];
   screenResolutions: { screen: string; count: number; percentage: number }[];
-  countries: { country: string; count: number; percentage: number }[];
+  countries: {
+    country: string;
+    code: string;
+    count: number;
+    percentage: number;
+    continent?: string;
+  }[];
+  topCities?: {
+    city: string;
+    country: string;
+    countryCode?: string;
+    count: number;
+    percentage: number;
+  }[];
+  continents?: {
+    continent: string;
+    count: number;
+    percentage: number;
+  }[];
+  geoKpis?: {
+    nationsCount: number;
+    topCountry: { name: string; code: string; count: number; percentage: number } | null;
+    topCity: { name: string; country: string; countryCode?: string; count: number } | null;
+    internationalRatio: number;
+  };
   durationDistribution: { label: string; count: number }[];
   scrollDistribution: { label: string; count: number }[];
   recentPageViews?: PageViewItem[];
@@ -402,6 +429,20 @@ function formatDayLabel(dateStr: string): string {
   return date.toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
 }
 
+function formatRangeLabel(start: string, end: string): string {
+  try {
+    const [y1, m1, d1] = start.split("-").map(Number);
+    const [y2, m2, d2] = end.split("-").map(Number);
+    const dt1 = new Date(y1, m1 - 1, d1);
+    const dt2 = new Date(y2, m2 - 1, d2);
+    const s1 = dt1.toLocaleDateString([], { month: "short", day: "numeric" });
+    const s2 = dt2.toLocaleDateString([], { month: "short", day: "numeric" });
+    return `${s1} – ${s2}`;
+  } catch {
+    return `${start} to ${end}`;
+  }
+}
+
 function DateRangeNavigator({
   value,
   onChange,
@@ -427,14 +468,51 @@ function DateRangeNavigator({
 
   // Custom date range inputs
   const isCustomRange = value.startsWith("custom:");
-  const customParts = isCustomRange ? value.replace("custom:", "").split("_") : [today, today];
-  const [customStart, setCustomStart] = useState(customParts[0] || today);
+  const customParts = useMemo(
+    () => (isCustomRange ? value.replace("custom:", "").split("_") : [offsetDateString(today, -6), today]),
+    [isCustomRange, value, today]
+  );
+  const [customStart, setCustomStart] = useState(customParts[0] || offsetDateString(today, -6));
   const [customEnd, setCustomEnd] = useState(customParts[1] || today);
+
+  // Sync inputs whenever modal opens or value changes
+  useEffect(() => {
+    if (showCustomModal) {
+      setCustomStart(customParts[0] || offsetDateString(today, -6));
+      setCustomEnd(customParts[1] || today);
+    }
+  }, [showCustomModal, customParts, today]);
+
+  // Close custom modal on Escape
+  useEffect(() => {
+    if (!showCustomModal) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setShowCustomModal(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [showCustomModal]);
+
+  const daysCount = useMemo(() => {
+    if (!customStart || !customEnd) return 0;
+    const t1 = new Date(customStart).getTime();
+    const t2 = new Date(customEnd).getTime();
+    return Math.max(1, Math.round(Math.abs(t2 - t1) / (1000 * 60 * 60 * 24)) + 1);
+  }, [customStart, customEnd]);
 
   const isToday = activeSingleDate >= today;
   const isSingleDayMode = value.startsWith("date:") || value === "today" || value === "yesterday";
 
   const handlePrevDay = () => {
+    if (isCustomRange && customParts.length === 2) {
+      const t1 = new Date(customParts[0]).getTime();
+      const t2 = new Date(customParts[1]).getTime();
+      const spanDays = Math.max(1, Math.round(Math.abs(t2 - t1) / (1000 * 60 * 60 * 24)));
+      const newStart = offsetDateString(customParts[0], -spanDays);
+      const newEnd = offsetDateString(customParts[1], -spanDays);
+      onChange(`custom:${newStart}_${newEnd}`);
+      return;
+    }
     const prev = offsetDateString(activeSingleDate, -1);
     if (prev === yesterday) {
       onChange("yesterday");
@@ -444,7 +522,21 @@ function DateRangeNavigator({
   };
 
   const handleNextDay = () => {
-    if (isToday) return;
+    if (isToday && isSingleDayMode) return;
+    if (isCustomRange && customParts.length === 2) {
+      const t1 = new Date(customParts[0]).getTime();
+      const t2 = new Date(customParts[1]).getTime();
+      const spanDays = Math.max(1, Math.round(Math.abs(t2 - t1) / (1000 * 60 * 60 * 24)));
+      let newStart = offsetDateString(customParts[0], spanDays);
+      let newEnd = offsetDateString(customParts[1], spanDays);
+      if (newEnd > today) {
+        const diff = Math.round((new Date(newEnd).getTime() - new Date(today).getTime()) / (1000 * 60 * 60 * 24));
+        newStart = offsetDateString(newStart, -diff);
+        newEnd = today;
+      }
+      onChange(`custom:${newStart}_${newEnd}`);
+      return;
+    }
     const next = offsetDateString(activeSingleDate, 1);
     if (next >= today) {
       onChange("today");
@@ -458,12 +550,14 @@ function DateRangeNavigator({
   const handleApplyCustom = (e: React.FormEvent) => {
     e.preventDefault();
     if (!customStart || !customEnd) return;
-    if (customStart === customEnd) {
-      if (customStart === today) onChange("today");
-      else if (customStart === yesterday) onChange("yesterday");
-      else onChange(`date:${customStart}`);
+    const start = customStart <= customEnd ? customStart : customEnd;
+    const end = customStart <= customEnd ? customEnd : customStart;
+    if (start === end) {
+      if (start === today) onChange("today");
+      else if (start === yesterday) onChange("yesterday");
+      else onChange(`date:${start}`);
     } else {
-      onChange(`custom:${customStart}_${customEnd}`);
+      onChange(`custom:${start}_${end}`);
     }
     setShowCustomModal(false);
   };
@@ -486,8 +580,8 @@ function DateRangeNavigator({
               type="button"
               onClick={() => onChange(t.id)}
               className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${active
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
                 }`}
             >
               {t.label}
@@ -502,7 +596,7 @@ function DateRangeNavigator({
           type="button"
           onClick={handlePrevDay}
           className="p-1.5 rounded-lg hover:bg-card text-muted-foreground hover:text-foreground transition"
-          title="Previous Day"
+          title="Previous Window"
         >
           <ChevronLeft size={14} />
         </button>
@@ -511,7 +605,7 @@ function DateRangeNavigator({
           {isSingleDayMode
             ? formatDayLabel(activeSingleDate)
             : isCustomRange
-              ? `${customParts[0]} → ${customParts[1]}`
+              ? formatRangeLabel(customParts[0], customParts[1])
               : formatDayLabel(activeSingleDate)}
         </span>
 
@@ -520,7 +614,7 @@ function DateRangeNavigator({
           onClick={handleNextDay}
           disabled={isToday && isSingleDayMode}
           className="p-1.5 rounded-lg hover:bg-card text-muted-foreground hover:text-foreground transition disabled:opacity-30 disabled:cursor-not-allowed"
-          title="Next Day"
+          title="Next Window"
         >
           <ChevronRight size={14} />
         </button>
@@ -532,68 +626,188 @@ function DateRangeNavigator({
           type="button"
           onClick={() => setShowCustomModal(!showCustomModal)}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition shadow-xs ${isCustomRange
-              ? "bg-primary text-primary-foreground border-primary shadow-sm"
-              : "bg-card border-border text-foreground hover:bg-muted"
+            ? "bg-primary text-primary-foreground border-primary shadow-sm"
+            : "bg-card border-border text-foreground hover:bg-muted"
             }`}
           title="Custom Date Range"
         >
           <Calendar size={13} />
-          <span>{isCustomRange ? `${customParts[0]} to ${customParts[1]}` : "Custom Range"}</span>
+          <span className="truncate max-w-[130px] xs:max-w-[170px] sm:max-w-none">
+            {isCustomRange ? formatRangeLabel(customParts[0], customParts[1]) : "Custom Range"}
+          </span>
+          {isCustomRange && (
+            <span
+              role="button"
+              tabIndex={0}
+              onClick={(e) => {
+                e.stopPropagation();
+                onChange("7d");
+              }}
+              className="p-0.5 rounded-md hover:bg-primary-foreground/20 transition text-primary-foreground ml-0.5"
+              title="Reset to 7 Days"
+            >
+              <X size={12} />
+            </span>
+          )}
         </button>
 
-        {/* Custom Range Popover Dropdown */}
+        {/* Custom Range Modal: Bottom sheet on mobile (<640px), anchored popover on desktop */}
         {showCustomModal && (
-          <div className="absolute right-0 top-full mt-2 z-50 p-4 bg-card border border-border rounded-2xl shadow-2xl w-72 max-w-[calc(100vw-2rem)] space-y-3 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-border pb-2">
-              <span className="text-xs font-black text-foreground">Custom Date Range</span>
-              <button
-                type="button"
-                onClick={() => setShowCustomModal(false)}
-                className="text-muted-foreground hover:text-foreground text-xs font-bold"
-              >
-                ✕
-              </button>
-            </div>
+          <>
+            {/* Backdrop for 1-tap dismiss */}
+            <div
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity"
+              onClick={() => setShowCustomModal(false)}
+            />
+            <div className="fixed inset-x-3 bottom-3 sm:bottom-auto sm:inset-x-auto sm:right-0 sm:top-full sm:absolute mt-0 sm:mt-2 z-50 p-4 sm:p-5 bg-card border border-border rounded-3xl sm:rounded-2xl shadow-2xl w-auto sm:w-88 max-w-[calc(100vw-1.5rem)] sm:max-w-none space-y-3.5 animate-in fade-in slide-in-from-bottom-5 sm:slide-in-from-top-2 duration-200 max-h-[88vh] overflow-y-auto">
+              {/* Drag pill handle on mobile */}
+              <div className="w-12 h-1.5 rounded-full bg-muted-foreground/30 mx-auto sm:hidden -mt-1 mb-1" />
 
-            <form onSubmit={handleApplyCustom} className="space-y-2.5">
-              <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase text-muted-foreground block">
-                  From Date
-                </label>
-                <input
-                  type="date"
-                  value={customStart}
-                  max={today}
-                  onChange={(e) => setCustomStart(e.target.value)}
-                  className="w-full px-2.5 py-1.5 bg-background border border-border rounded-xl text-xs font-mono text-foreground focus:outline-none focus:border-primary"
-                  required
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase text-muted-foreground block">
-                  To Date
-                </label>
-                <input
-                  type="date"
-                  value={customEnd}
-                  max={today}
-                  onChange={(e) => setCustomEnd(e.target.value)}
-                  className="w-full px-2.5 py-1.5 bg-background border border-border rounded-xl text-xs font-mono text-foreground focus:outline-none focus:border-primary"
-                  required
-                />
-              </div>
-
-              <div className="flex items-center gap-2 pt-1">
+              <div className="flex items-center justify-between border-b border-border pb-2.5">
+                <div className="flex items-center gap-2">
+                  <Calendar size={15} className="text-primary" />
+                  <span className="text-sm sm:text-xs font-black text-foreground">Custom Date Range</span>
+                  <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-mono font-bold">
+                    {daysCount}d span
+                  </span>
+                </div>
                 <button
-                  type="submit"
-                  className="w-full py-2 bg-primary hover:bg-primary/90 text-primary-foreground font-black text-xs rounded-xl transition shadow-sm"
+                  type="button"
+                  onClick={() => setShowCustomModal(false)}
+                  className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground text-xs font-bold transition"
+                  title="Close"
                 >
-                  Apply Range
+                  <X size={15} />
                 </button>
               </div>
-            </form>
-          </div>
+
+              {/* Quick shortcut chips */}
+              <div className="space-y-1.5">
+                <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground block">
+                  Quick Presets
+                </span>
+                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCustomStart(offsetDateString(today, -2));
+                      setCustomEnd(today);
+                    }}
+                    className="px-2.5 py-1 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary text-[10px] font-bold text-muted-foreground shrink-0 transition"
+                  >
+                    Last 3 Days
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCustomStart(offsetDateString(today, -6));
+                      setCustomEnd(today);
+                    }}
+                    className="px-2.5 py-1 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary text-[10px] font-bold text-muted-foreground shrink-0 transition"
+                  >
+                    Last 7 Days
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCustomStart(offsetDateString(today, -13));
+                      setCustomEnd(today);
+                    }}
+                    className="px-2.5 py-1 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary text-[10px] font-bold text-muted-foreground shrink-0 transition"
+                  >
+                    Last 14 Days
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCustomStart(offsetDateString(today, -29));
+                      setCustomEnd(today);
+                    }}
+                    className="px-2.5 py-1 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary text-[10px] font-bold text-muted-foreground shrink-0 transition"
+                  >
+                    Last 30 Days
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const d = new Date();
+                      const year = d.getFullYear();
+                      const month = String(d.getMonth() + 1).padStart(2, "0");
+                      setCustomStart(`${year}-${month}-01`);
+                      setCustomEnd(today);
+                    }}
+                    className="px-2.5 py-1 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary text-[10px] font-bold text-muted-foreground shrink-0 transition"
+                  >
+                    This Month
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const d = new Date();
+                      d.setMonth(d.getMonth() - 1);
+                      const year = d.getFullYear();
+                      const month = String(d.getMonth() + 1).padStart(2, "0");
+                      const lastDay = new Date(year, d.getMonth() + 1, 0).getDate();
+                      setCustomStart(`${year}-${month}-01`);
+                      setCustomEnd(`${year}-${month}-${String(lastDay).padStart(2, "0")}`);
+                    }}
+                    className="px-2.5 py-1 rounded-lg bg-muted hover:bg-primary/10 hover:text-primary text-[10px] font-bold text-muted-foreground shrink-0 transition"
+                  >
+                    Last Month
+                  </button>
+                </div>
+              </div>
+
+              <form onSubmit={handleApplyCustom} className="space-y-3.5">
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase text-muted-foreground block">
+                      From Date
+                    </label>
+                    <input
+                      type="date"
+                      value={customStart}
+                      max={customEnd || today}
+                      onChange={(e) => setCustomStart(e.target.value)}
+                      className="w-full h-11 sm:h-9 px-3 bg-background border border-border rounded-xl text-xs font-mono text-foreground focus:outline-none focus:border-primary cursor-pointer dark:[color-scheme:dark] [color-scheme:light]"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase text-muted-foreground block">
+                      To Date
+                    </label>
+                    <input
+                      type="date"
+                      value={customEnd}
+                      min={customStart}
+                      max={today}
+                      onChange={(e) => setCustomEnd(e.target.value)}
+                      className="w-full h-11 sm:h-9 px-3 bg-background border border-border rounded-xl text-xs font-mono text-foreground focus:outline-none focus:border-primary cursor-pointer dark:[color-scheme:dark] [color-scheme:light]"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowCustomModal(false)}
+                    className="flex-1 py-3 sm:py-2 bg-muted hover:bg-muted/80 text-foreground font-bold text-xs rounded-xl transition"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 py-3 sm:py-2 bg-primary hover:bg-primary/90 text-primary-foreground font-black text-xs rounded-xl transition shadow-sm"
+                  >
+                    Apply Range ({daysCount}d)
+                  </button>
+                </div>
+              </form>
+            </div>
+          </>
         )}
       </div>
     </div>
@@ -650,6 +864,15 @@ export default function AdminAnalyticsDashboard() {
   const [pvTimeRange, setPvTimeRange] = useState("7d");
   const [liveStreamActive, setLiveStreamActive] = useState(true);
   const [jumpPageInput, setJumpPageInput] = useState("");
+  const [selectedCountryFilter, setSelectedCountryFilter] = useState<string | null>(null);
+
+  const tabsNavRef = useRef<HTMLDivElement>(null);
+  const navigateToTab = (tabId: typeof activeTab) => {
+    setActiveTab(tabId);
+    if (tabsNavRef.current) {
+      tabsNavRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   // Error Tab State & Filters
   const [errorStatusFilter, setErrorStatusFilter] = useState<string>("all");
@@ -1123,16 +1346,49 @@ Total Tracked Errors: ${errorsToCopy.length}
 
       {data && (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3 sm:gap-4">
-          <div className="p-3 sm:p-4 bg-card border border-border rounded-2xl shadow-sm space-y-1">
-            <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">Total Pageviews</span>
-            <span className="text-xl sm:text-2xl font-black text-foreground">{data.overview.totalViews.toLocaleString()}</span>
-          </div>
-          <div className="p-3 sm:p-4 bg-card border border-border rounded-2xl shadow-sm space-y-1">
-            <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">Unique Visitors</span>
-            <span className="text-xl sm:text-2xl font-black text-foreground">{data.overview.uniqueVisitors.toLocaleString()}</span>
-          </div>
+          {/* Card 1: Total Pageviews */}
           <div
-            onClick={() => setActiveTab("returning_users")}
+            onClick={() => navigateToTab("live_feed")}
+            className="p-3 sm:p-4 bg-card border border-border hover:border-primary/60 rounded-2xl shadow-sm space-y-1 cursor-pointer transition-all hover:bg-muted/30 group"
+            title="Click to view live pageview stream & all events"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-extrabold uppercase text-muted-foreground group-hover:text-primary transition-colors block">
+                Total Pageviews
+              </span>
+              <span className="text-[10px] font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5 font-mono">
+                View &rarr;
+              </span>
+            </div>
+            <span className="text-xl sm:text-2xl font-black text-foreground block">{data.overview.totalViews.toLocaleString()}</span>
+            <div className="text-[10px] font-mono text-muted-foreground truncate">
+              All recorded page hits
+            </div>
+          </div>
+
+          {/* Card 2: Unique Visitors */}
+          <div
+            onClick={() => navigateToTab("acquisition")}
+            className="p-3 sm:p-4 bg-card border border-border hover:border-primary/60 rounded-2xl shadow-sm space-y-1 cursor-pointer transition-all hover:bg-muted/30 group"
+            title="Click to view visitor acquisition, referrers & campaigns"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-extrabold uppercase text-muted-foreground group-hover:text-primary transition-colors block">
+                Unique Visitors
+              </span>
+              <span className="text-[10px] font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5 font-mono">
+                View &rarr;
+              </span>
+            </div>
+            <span className="text-xl sm:text-2xl font-black text-foreground block">{data.overview.uniqueVisitors.toLocaleString()}</span>
+            <div className="text-[10px] font-mono text-muted-foreground truncate">
+              Distinct client devices
+            </div>
+          </div>
+
+          {/* Card 3: Returning Users */}
+          <div
+            onClick={() => navigateToTab("returning_users")}
             className="p-3 sm:p-4 bg-card border border-border hover:border-primary/60 rounded-2xl shadow-sm space-y-1 cursor-pointer transition-all hover:bg-muted/30 group"
             title="Click to view full Returning Users directory & profiles"
           >
@@ -1156,28 +1412,87 @@ Total Tracked Errors: ${errorsToCopy.length}
               <span className="text-blue-600 dark:text-blue-400 font-bold">{data.retention?.returningVisitors ?? data.overview.returningVisitors ?? 0} return</span>
             </div>
           </div>
-          <div className="p-3 sm:p-4 bg-card border border-border rounded-2xl shadow-sm space-y-1">
+
+          {/* Card 4: Total Sessions */}
+          <div
+            onClick={() => navigateToTab("journeys")}
+            className="p-3 sm:p-4 bg-card border border-border hover:border-primary/60 rounded-2xl shadow-sm space-y-1 cursor-pointer transition-all hover:bg-muted/30 group"
+            title="Click to view session flows & user journeys"
+          >
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">Total Sessions</span>
+              <span className="text-[10px] font-extrabold uppercase text-muted-foreground group-hover:text-primary transition-colors block">Total Sessions</span>
+              <span className="text-[10px] font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5 font-mono">
+                View &rarr;
+              </span>
             </div>
-            <span className="text-xl sm:text-2xl font-black text-foreground">{data.overview.uniqueSessions.toLocaleString()}</span>
+            <span className="text-xl sm:text-2xl font-black text-foreground block">{data.overview.uniqueSessions.toLocaleString()}</span>
             <div className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
               <span>{data.overview.anonymousSessions ?? "?"} guest</span>
               <span>&bull;</span>
               <span>{data.overview.authenticatedSessions ?? "?"} user</span>
             </div>
           </div>
-          <div className="p-3 sm:p-4 bg-card border border-border rounded-2xl shadow-sm space-y-1">
-            <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">Avg Dwell Time</span>
-            <span className="text-xl sm:text-2xl font-black text-foreground font-mono">{formatDuration(data.overview.avgDuration)}</span>
+
+          {/* Card 5: Avg Dwell Time */}
+          <div
+            onClick={() => navigateToTab("engagement")}
+            className="p-3 sm:p-4 bg-card border border-border hover:border-primary/60 rounded-2xl shadow-sm space-y-1 cursor-pointer transition-all hover:bg-muted/30 group"
+            title="Click to view dwell time distribution & active engagement"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-extrabold uppercase text-muted-foreground group-hover:text-primary transition-colors block">Avg Dwell Time</span>
+              <span className="text-[10px] font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5 font-mono">
+                View &rarr;
+              </span>
+            </div>
+            <span className="text-xl sm:text-2xl font-black text-foreground font-mono block">{formatDuration(data.overview.avgDuration)}</span>
+            <div className="text-[10px] font-mono text-muted-foreground truncate">
+              Active session duration
+            </div>
           </div>
-          <div className="p-3 sm:p-4 bg-card border border-border rounded-2xl shadow-sm space-y-1">
-            <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">Avg Scroll Depth</span>
-            <span className="text-xl sm:text-2xl font-black text-foreground font-mono">{data.overview.avgScrollDepth}%</span>
+
+          {/* Card 6: Avg Scroll Depth */}
+          <div
+            onClick={() => navigateToTab("engagement")}
+            className="p-3 sm:p-4 bg-card border border-border hover:border-primary/60 rounded-2xl shadow-sm space-y-1 cursor-pointer transition-all hover:bg-muted/30 group"
+            title="Click to view scroll depth milestones & reading retention"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-extrabold uppercase text-muted-foreground group-hover:text-primary transition-colors block">Avg Scroll Depth</span>
+              <span className="text-[10px] font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5 font-mono">
+                View &rarr;
+              </span>
+            </div>
+            <span className="text-xl sm:text-2xl font-black text-foreground font-mono block">{data.overview.avgScrollDepth}%</span>
+            <div className="text-[10px] font-mono text-muted-foreground truncate">
+              Reading depth milestones
+            </div>
           </div>
-          <div className={`p-3 sm:p-4 rounded-2xl border shadow-sm space-y-1 ${data.errorStats.totalErrors > 0 ? "bg-rose-500/10 border-rose-500/20 text-rose-600 dark:text-rose-400" : "bg-card border border-border"}`}>
-            <span className="text-[10px] font-extrabold uppercase block">Runtime Errors</span>
-            <span className="text-xl sm:text-2xl font-black">{data.errorStats.totalErrors} <span className="text-xs ml-1 font-normal opacity-80">({data.errorStats.statusNew} new)</span></span>
+
+          {/* Card 7: Runtime Errors */}
+          <div
+            onClick={() => navigateToTab("errors")}
+            className={`p-3 sm:p-4 rounded-2xl border shadow-sm space-y-1 cursor-pointer transition-all hover:bg-muted/30 group ${
+              data.errorStats.totalErrors > 0
+                ? "bg-rose-500/10 border-rose-500/20 hover:border-rose-500/60 text-rose-600 dark:text-rose-400"
+                : "bg-card border border-border hover:border-primary/60"
+            }`}
+            title="Click to view runtime error diagnostics & triage"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-extrabold uppercase block group-hover:underline">Runtime Errors</span>
+              <span className={`text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5 font-mono ${
+                data.errorStats.totalErrors > 0 ? "text-rose-600 dark:text-rose-400" : "text-primary"
+              }`}>
+                View &rarr;
+              </span>
+            </div>
+            <span className="text-xl sm:text-2xl font-black block">
+              {data.errorStats.totalErrors} <span className="text-xs ml-1 font-normal opacity-80">({data.errorStats.statusNew} new)</span>
+            </span>
+            <div className="text-[10px] font-mono opacity-80 truncate">
+              Client &amp; simulation traces
+            </div>
           </div>
         </div>
       )}
@@ -1238,17 +1553,17 @@ Total Tracked Errors: ${errorsToCopy.length}
         </div>
       )}
 
-      <div className="flex items-center gap-1.5 p-1 bg-card border border-border rounded-2xl overflow-x-auto no-scrollbar shadow-sm text-xs font-bold">
+      <div ref={tabsNavRef} className="flex items-center gap-1.5 p-1 bg-card border border-border rounded-2xl overflow-x-auto no-scrollbar shadow-sm text-xs font-bold scroll-mt-6">
         {[
           { id: "live_feed", label: `All Page Views (${pvPagination.total.toLocaleString()})`, icon: Radio },
           { id: "returning_users", label: `Returning Users (${data?.returningUsers?.length ?? 0})`, icon: UserCheck },
-          { id: "vitals", label: `⚡ Web Vitals & RUM (${data?.webVitals?.totalMeasured || 0})`, icon: Activity },
-          { id: "labs", label: `🔬 Lab Intelligence (${data?.labIntelligence?.labs?.length || 0})`, icon: BookOpen },
-          { id: "ux", label: `🧠 Behavioral UX (${data?.behavioralSignals?.rageClicks?.length || 0})`, icon: Flame },
-          { id: "journeys", label: "🗺️ User Journeys", icon: Share2 },
+          { id: "vitals", label: `Web Vitals & RUM (${data?.webVitals?.totalMeasured || 0})`, icon: Activity },
+          { id: "labs", label: `Lab Intelligence (${data?.labIntelligence?.labs?.length || 0})`, icon: BookOpen },
+          { id: "ux", label: `Behavioral UX (${data?.behavioralSignals?.rageClicks?.length || 0})`, icon: Flame },
+          { id: "journeys", label: "User Journeys", icon: Share2 },
           { id: "pages", label: "Top Pages & Labs", icon: Layers },
           { id: "acquisition", label: "Traffic & Campaigns", icon: Compass },
-          { id: "tech", label: "Tech & Geography", icon: Laptop },
+          { id: "tech", label: `Geo & Systems (${data?.countries?.length || 0})`, icon: Globe },
           { id: "engagement", label: "Loyalty, Dwell & Scroll", icon: Sliders },
           { id: "events", label: `Custom Events (${data?.recentEvents?.length || 0})`, icon: Zap },
           { id: "errors", label: `Error Diagnostics (${data?.recentErrors?.length || 0})`, icon: Bug },
@@ -1531,13 +1846,12 @@ Total Tracked Errors: ${errorsToCopy.length}
                         {pv.webVitals?.lcp && (
                           <div className="mt-1 flex items-center gap-1">
                             <span
-                              className={`px-1.5 py-0.2 rounded text-[9px] font-mono font-bold border ${
-                                pv.webVitals.lcp <= 2500
-                                  ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
-                                  : pv.webVitals.lcp <= 4000
+                              className={`px-1.5 py-0.2 rounded text-[9px] font-mono font-bold border ${pv.webVitals.lcp <= 2500
+                                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                                : pv.webVitals.lcp <= 4000
                                   ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
                                   : "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20"
-                              }`}
+                                }`}
                             >
                               LCP: {pv.webVitals.lcp}ms
                             </span>
@@ -1627,8 +1941,8 @@ Total Tracked Errors: ${errorsToCopy.length}
                       key={idx}
                       onClick={() => setPvPage(num)}
                       className={`w-7 h-7 rounded-lg text-xs font-bold transition ${pvPage === num
-                          ? "bg-primary text-primary-foreground shadow-xs"
-                          : "bg-card border border-border hover:bg-muted text-foreground"
+                        ? "bg-primary text-primary-foreground shadow-xs"
+                        : "bg-card border border-border hover:bg-muted text-foreground"
                         }`}
                     >
                       {num}
@@ -2038,11 +2352,10 @@ Total Tracked Errors: ${errorsToCopy.length}
                 <div className="p-4 bg-card border border-border rounded-2xl shadow-xs space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">LCP (Load Speed)</span>
-                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
-                      rating === "good" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
+                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${rating === "good" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
                       rating === "needs" ? "bg-amber-500/15 text-amber-600 dark:text-amber-400" :
-                      rating === "poor" ? "bg-rose-500/15 text-rose-600 dark:text-rose-400" : "bg-muted text-muted-foreground"
-                    }`}>
+                        rating === "poor" ? "bg-rose-500/15 text-rose-600 dark:text-rose-400" : "bg-muted text-muted-foreground"
+                      }`}>
                       {rating === "good" ? "Good" : rating === "needs" ? "Needs Imp" : rating === "poor" ? "Poor" : "N/A"}
                     </span>
                   </div>
@@ -2080,11 +2393,10 @@ Total Tracked Errors: ${errorsToCopy.length}
                 <div className="p-4 bg-card border border-border rounded-2xl shadow-xs space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">INP (Interactivity)</span>
-                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
-                      rating === "good" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
+                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${rating === "good" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
                       rating === "needs" ? "bg-amber-500/15 text-amber-600 dark:text-amber-400" :
-                      rating === "poor" ? "bg-rose-500/15 text-rose-600 dark:text-rose-400" : "bg-muted text-muted-foreground"
-                    }`}>
+                        rating === "poor" ? "bg-rose-500/15 text-rose-600 dark:text-rose-400" : "bg-muted text-muted-foreground"
+                      }`}>
                       {rating === "good" ? "Good" : rating === "needs" ? "Needs Imp" : rating === "poor" ? "Poor" : "N/A"}
                     </span>
                   </div>
@@ -2120,11 +2432,10 @@ Total Tracked Errors: ${errorsToCopy.length}
                 <div className="p-4 bg-card border border-border rounded-2xl shadow-xs space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">CLS (Visual Shift)</span>
-                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
-                      rating === "good" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
+                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${rating === "good" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
                       rating === "needs" ? "bg-amber-500/15 text-amber-600 dark:text-amber-400" :
-                      rating === "poor" ? "bg-rose-500/15 text-rose-600 dark:text-rose-400" : "bg-muted text-muted-foreground"
-                    }`}>
+                        rating === "poor" ? "bg-rose-500/15 text-rose-600 dark:text-rose-400" : "bg-muted text-muted-foreground"
+                      }`}>
                       {rating === "good" ? "Good" : rating === "needs" ? "Needs Imp" : rating === "poor" ? "Poor" : "N/A"}
                     </span>
                   </div>
@@ -2160,11 +2471,10 @@ Total Tracked Errors: ${errorsToCopy.length}
                 <div className="p-4 bg-card border border-border rounded-2xl shadow-xs space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">FCP (First Paint)</span>
-                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
-                      rating === "good" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
+                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${rating === "good" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
                       rating === "needs" ? "bg-amber-500/15 text-amber-600 dark:text-amber-400" :
-                      rating === "poor" ? "bg-rose-500/15 text-rose-600 dark:text-rose-400" : "bg-muted text-muted-foreground"
-                    }`}>
+                        rating === "poor" ? "bg-rose-500/15 text-rose-600 dark:text-rose-400" : "bg-muted text-muted-foreground"
+                      }`}>
                       {rating === "good" ? "Good" : rating === "needs" ? "Needs Imp" : rating === "poor" ? "Poor" : "N/A"}
                     </span>
                   </div>
@@ -2197,11 +2507,10 @@ Total Tracked Errors: ${errorsToCopy.length}
                 <div className="p-4 bg-card border border-border rounded-2xl shadow-xs space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">TTFB (Server Speed)</span>
-                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
-                      rating === "good" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
+                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${rating === "good" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
                       rating === "needs" ? "bg-amber-500/15 text-amber-600 dark:text-amber-400" :
-                      rating === "poor" ? "bg-rose-500/15 text-rose-600 dark:text-rose-400" : "bg-muted text-muted-foreground"
-                    }`}>
+                        rating === "poor" ? "bg-rose-500/15 text-rose-600 dark:text-rose-400" : "bg-muted text-muted-foreground"
+                      }`}>
                       {rating === "good" ? "Good" : rating === "needs" ? "Needs Imp" : rating === "poor" ? "Poor" : "N/A"}
                     </span>
                   </div>
@@ -2267,29 +2576,26 @@ Total Tracked Errors: ${errorsToCopy.length}
                         </td>
                         <td className="p-3.5 text-right font-bold text-muted-foreground">{p.count}</td>
                         <td className="p-3.5 text-right">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                            !p.lcp ? "text-muted-foreground" :
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${!p.lcp ? "text-muted-foreground" :
                             p.lcp <= 2500 ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" :
-                            p.lcp <= 4000 ? "bg-amber-500/10 text-amber-600 dark:text-amber-400" : "bg-rose-500/10 text-rose-600 dark:text-rose-400"
-                          }`}>
+                              p.lcp <= 4000 ? "bg-amber-500/10 text-amber-600 dark:text-amber-400" : "bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                            }`}>
                             {p.lcp ? `${(p.lcp / 1000).toFixed(2)}s` : "—"}
                           </span>
                         </td>
                         <td className="p-3.5 text-right">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                            !p.inp ? "text-muted-foreground" :
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${!p.inp ? "text-muted-foreground" :
                             p.inp <= 200 ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" :
-                            p.inp <= 500 ? "bg-amber-500/10 text-amber-600 dark:text-amber-400" : "bg-rose-500/10 text-rose-600 dark:text-rose-400"
-                          }`}>
+                              p.inp <= 500 ? "bg-amber-500/10 text-amber-600 dark:text-amber-400" : "bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                            }`}>
                             {p.inp ? `${p.inp}ms` : "—"}
                           </span>
                         </td>
                         <td className="p-3.5 text-right">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                            p.cls === null || p.cls === undefined ? "text-muted-foreground" :
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${p.cls === null || p.cls === undefined ? "text-muted-foreground" :
                             p.cls <= 0.1 ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" :
-                            p.cls <= 0.25 ? "bg-amber-500/10 text-amber-600 dark:text-amber-400" : "bg-rose-500/10 text-rose-600 dark:text-rose-400"
-                          }`}>
+                              p.cls <= 0.25 ? "bg-amber-500/10 text-amber-600 dark:text-amber-400" : "bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                            }`}>
                             {p.cls !== null && p.cls !== undefined ? p.cls.toFixed(3) : "—"}
                           </span>
                         </td>
@@ -2926,90 +3232,344 @@ Total Tracked Errors: ${errorsToCopy.length}
 
       {/* ─── TAB 4: TECH & GEOGRAPHY ─── */}
       {activeTab === "tech" && data && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Device Types */}
-          <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-4">
-            <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground">
-              Device Split
-            </h3>
-            <div className="space-y-3">
-              {data.devices.map((d, idx) => (
-                <div key={idx} className="p-3 rounded-2xl bg-muted/40 border border-border space-y-1">
-                  <div className="flex items-center justify-between text-xs font-bold">
-                    <span className="capitalize text-foreground flex items-center gap-1.5">
-                      {d.device === "mobile" ? (
-                        <Smartphone size={14} />
-                      ) : d.device === "tablet" ? (
-                        <Tablet size={14} />
-                      ) : (
-                        <Laptop size={14} />
-                      )}
-                      {d.device}
-                    </span>
-                    <span>{d.percentage}%</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
-                    <div style={{ width: `${d.percentage}%` }} className="h-full bg-primary" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="space-y-6">
+          {/* Global Audience Geography & Geo Command Center */}
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div>
+                <h2 className="text-lg font-black text-foreground flex items-center gap-2">
+                  <Globe className="text-primary" size={20} />
+                  Global Audience Geography
+                </h2>
+                <p className="text-xs text-muted-foreground">
+                  Live geographic density, sovereign nation distribution, and regional telemetry
+                </p>
+              </div>
 
-          {/* Browsers */}
-          <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-4">
-            <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground">
-              Top Browsers
-            </h3>
-            <div className="space-y-2">
-              {data.browsers.map((b, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-muted/30 border border-border text-xs font-bold"
-                >
-                  <span className="text-foreground">{b.browser}</span>
-                  <span className="font-mono text-muted-foreground">{b.count} views</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Operating Systems */}
-          <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-4">
-            <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground">
-              Operating Systems
-            </h3>
-            <div className="space-y-2">
-              {data.operatingSystems.map((o, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-muted/30 border border-border text-xs font-bold"
-                >
-                  <span className="text-foreground">{o.os}</span>
-                  <span className="font-mono text-muted-foreground">{o.count} views</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Top Countries */}
-          <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-4">
-            <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground">
-              Top Countries
-            </h3>
-            <div className="space-y-2">
-              {data.countries.map((c, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-muted/30 border border-border text-xs font-bold"
-                >
-                  <span className="text-foreground flex items-center gap-1.5">
-                    <Globe size={12} className="text-primary" />
-                    {getFullCountryName(c.country)}
+              {selectedCountryFilter && (
+                <div className="flex items-center gap-2 self-start sm:self-auto px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/25 text-xs font-bold text-primary">
+                  <span>
+                    {getFullCountryName(selectedCountryFilter)} ({selectedCountryFilter.toUpperCase()})
                   </span>
-                  <span className="font-mono text-muted-foreground">{c.count} views</span>
+                  <button
+                    onClick={() => setSelectedCountryFilter(null)}
+                    className="p-1 rounded-md hover:bg-primary/20 transition-colors"
+                    title="Clear geographic filter"
+                  >
+                    <X size={12} />
+                  </button>
                 </div>
-              ))}
+              )}
+            </div>
+
+            {/* Geo KPI Metrics Banner */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+              {/* Nations Reached */}
+              <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-card border border-border shadow-sm flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0">
+                  <Globe size={18} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-muted-foreground truncate">
+                    Nations Reached
+                  </div>
+                  <div className="text-base sm:text-xl font-black text-foreground">
+                    {data.geoKpis?.nationsCount ?? data.countries.length}
+                  </div>
+                  <div className="text-[9px] sm:text-[10px] text-muted-foreground truncate">Sovereign territories</div>
+                </div>
+              </div>
+
+              {/* Top Country */}
+              <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-card border border-border shadow-sm flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
+                  <Globe size={18} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-muted-foreground truncate">
+                    Top Country
+                  </div>
+                  <div className="text-xs sm:text-sm font-black text-foreground truncate">
+                    {data.geoKpis?.topCountry?.name || "None"}
+                  </div>
+                  <div className="text-[9px] sm:text-[10px] text-muted-foreground font-mono truncate">
+                    {data.geoKpis?.topCountry ? `${data.geoKpis.topCountry.count} views (${data.geoKpis.topCountry.percentage}%)` : "—"}
+                  </div>
+                </div>
+              </div>
+
+              {/* Top Active City */}
+              <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-card border border-border shadow-sm flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center shrink-0">
+                  <MapPin size={18} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-muted-foreground truncate">
+                    Top Active City
+                  </div>
+                  <div className="text-xs sm:text-sm font-black text-foreground truncate">
+                    {data.geoKpis?.topCity?.name || "Global / Unknown"}
+                  </div>
+                  <div className="text-[9px] sm:text-[10px] text-muted-foreground truncate font-mono">
+                    {data.geoKpis?.topCity ? `${data.geoKpis.topCity.count} views (${data.geoKpis.topCity.country})` : "—"}
+                  </div>
+                </div>
+              </div>
+
+              {/* International Traffic Share */}
+              <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-card border border-border shadow-sm flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
+                  <TrendingUp size={18} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-muted-foreground truncate">
+                    International Share
+                  </div>
+                  <div className="text-base sm:text-xl font-black text-foreground">
+                    {data.geoKpis?.internationalRatio ?? 0}%
+                  </div>
+                  <div className="text-[9px] sm:text-[10px] text-muted-foreground truncate">Traffic outside top nation</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Vector Interactive World Map Component */}
+            <WorldMapAnalytics
+              countries={data.countries}
+              totalViews={data.overview.totalViews}
+              selectedCountryCode={selectedCountryFilter}
+              onSelectCountry={(code) => setSelectedCountryFilter((prev) => (prev === code ? null : code))}
+            />
+
+            {/* Geographic Breakdown Cards: Top Countries, Top Cities, Continents */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Top Countries Leaderboard */}
+              <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                    <Globe size={13} className="text-primary" /> Top Countries ({data.countries.length})
+                  </h3>
+                  {selectedCountryFilter && (
+                    <button
+                      onClick={() => setSelectedCountryFilter(null)}
+                      className="text-[10px] font-bold text-muted-foreground hover:text-foreground"
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+                <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1">
+                  {data.countries.map((c, idx) => {
+                    const isSelected = selectedCountryFilter === c.code;
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => setSelectedCountryFilter(isSelected ? null : c.code)}
+                        className={`w-full text-left p-2.5 rounded-xl border transition-all ${isSelected
+                          ? "bg-primary/15 border-primary text-foreground shadow-sm"
+                          : "bg-muted/30 border-border hover:bg-muted/60 text-foreground"
+                          }`}
+                      >
+                        <div className="flex items-center justify-between text-xs font-bold mb-1">
+                          <span className="flex items-center gap-2 truncate">
+                            <span className="px-1.5 py-0.5 rounded bg-muted/80 text-[10px] font-mono font-bold text-muted-foreground uppercase">{c.code}</span>
+                            <span className="truncate">{c.country}</span>
+                          </span>
+                          <span className="font-mono text-[11px] text-muted-foreground shrink-0">
+                            {c.count} ({c.percentage}%)
+                          </span>
+                        </div>
+                        <div className="w-full h-1 bg-muted rounded-full overflow-hidden">
+                          <div
+                            style={{ width: `${Math.min(100, c.percentage)}%` }}
+                            className={`h-full rounded-full ${isSelected ? "bg-primary" : "bg-primary/70"}`}
+                          />
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Top Cities Leaderboard */}
+              <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                    <MapPin size={13} className="text-purple-500" /> Top Active Cities ({data.topCities?.length || 0})
+                  </h3>
+                  {selectedCountryFilter && (
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                      {selectedCountryFilter}
+                    </span>
+                  )}
+                </div>
+                <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1">
+                  {(!data.topCities || data.topCities.length === 0) ? (
+                    <div className="text-center py-8 text-xs text-muted-foreground">
+                      No city telemetry recorded yet
+                    </div>
+                  ) : (
+                    data.topCities
+                      .filter((city) => !selectedCountryFilter || city.countryCode === selectedCountryFilter)
+                      .map((city, idx) => (
+                        <div
+                          key={idx}
+                          className="p-2.5 rounded-xl bg-muted/30 border border-border space-y-1 text-xs"
+                        >
+                          <div className="flex items-center justify-between font-bold">
+                            <span className="flex items-center gap-1.5 truncate">
+                              <span className="px-1 py-0.5 rounded bg-muted/80 text-[9px] font-mono font-bold text-muted-foreground uppercase">{city.countryCode || "—"}</span>
+                              <span className="text-foreground truncate">{city.city}</span>
+                              <span className="text-[10px] text-muted-foreground font-normal truncate">
+                                ({city.country})
+                              </span>
+                            </span>
+                            <span className="font-mono text-muted-foreground shrink-0 text-[11px]">
+                              {city.count} views
+                            </span>
+                          </div>
+                          <div className="w-full h-1 bg-muted rounded-full overflow-hidden">
+                            <div
+                              style={{ width: `${Math.min(100, city.percentage)}%` }}
+                              className="h-full bg-purple-500/70 rounded-full"
+                            />
+                          </div>
+                        </div>
+                      ))
+                  )}
+                </div>
+              </div>
+
+              {/* Continents & Regional Distribution */}
+              <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-4">
+                <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <Compass size={13} className="text-emerald-500" /> Continents &amp; Regions
+                </h3>
+                <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1">
+                  {(!data.continents || data.continents.length === 0) ? (
+                    <div className="text-center py-8 text-xs text-muted-foreground">
+                      No continent data recorded yet
+                    </div>
+                  ) : (
+                    data.continents.map((cont, idx) => (
+                      <div
+                        key={idx}
+                        className="p-2.5 rounded-xl bg-muted/30 border border-border space-y-1.5 text-xs"
+                      >
+                        <div className="flex items-center justify-between font-bold">
+                          <span className="text-foreground">{cont.continent}</span>
+                          <span className="font-mono text-muted-foreground text-[11px]">
+                            {cont.count} views ({cont.percentage}%)
+                          </span>
+                        </div>
+                        <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div
+                            style={{ width: `${Math.min(100, cont.percentage)}%` }}
+                            className="h-full bg-emerald-500 rounded-full"
+                          />
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Client Systems & Diagnostics Section */}
+          <div className="space-y-3 pt-2">
+            <h2 className="text-sm font-black uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+              <Laptop size={16} /> Client Hardware &amp; Environments
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Device Types */}
+              <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-4">
+                <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground">
+                  Device Split
+                </h3>
+                <div className="space-y-3">
+                  {data.devices.map((d, idx) => (
+                    <div key={idx} className="p-3 rounded-2xl bg-muted/40 border border-border space-y-1">
+                      <div className="flex items-center justify-between text-xs font-bold">
+                        <span className="capitalize text-foreground flex items-center gap-1.5">
+                          {d.device === "mobile" ? (
+                            <Smartphone size={14} />
+                          ) : d.device === "tablet" ? (
+                            <Tablet size={14} />
+                          ) : (
+                            <Laptop size={14} />
+                          )}
+                          {d.device}
+                        </span>
+                        <span>{d.percentage}%</span>
+                      </div>
+                      <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                        <div style={{ width: `${d.percentage}%` }} className="h-full bg-primary" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Browsers */}
+              <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-4">
+                <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground">
+                  Top Browsers
+                </h3>
+                <div className="space-y-2">
+                  {data.browsers.map((b, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between p-2.5 rounded-xl bg-muted/30 border border-border text-xs font-bold"
+                    >
+                      <span className="text-foreground">{b.browser}</span>
+                      <span className="font-mono text-muted-foreground">{b.count} views</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Operating Systems */}
+              <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-4">
+                <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground">
+                  Operating Systems
+                </h3>
+                <div className="space-y-2">
+                  {data.operatingSystems.map((o, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between p-2.5 rounded-xl bg-muted/30 border border-border text-xs font-bold"
+                    >
+                      <span className="text-foreground">{o.os}</span>
+                      <span className="font-mono text-muted-foreground">{o.count} views</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Screen Resolutions */}
+              <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-4">
+                <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground">
+                  Screen Resolutions
+                </h3>
+                <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                  {(!data.screenResolutions || data.screenResolutions.length === 0) ? (
+                    <div className="text-center py-6 text-xs text-muted-foreground">
+                      No screen data recorded yet
+                    </div>
+                  ) : (
+                    data.screenResolutions.map((s, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between p-2.5 rounded-xl bg-muted/30 border border-border text-xs font-bold"
+                      >
+                        <span className="text-foreground font-mono">{s.screen || "Unknown"}</span>
+                        <span className="font-mono text-muted-foreground text-[11px]">{s.count} views</span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -3044,12 +3604,12 @@ Total Tracked Errors: ${errorsToCopy.length}
                   <div
                     style={{
                       width: `${(data.retention?.totalVisitors || 1) > 0
-                          ? Math.round(
-                            ((data.retention?.newVisitors ?? data.overview.newVisitors ?? 0) /
-                              ((data.retention?.totalVisitors ?? data.overview.uniqueVisitors) || 1)) *
-                            100
-                          )
-                          : 50
+                        ? Math.round(
+                          ((data.retention?.newVisitors ?? data.overview.newVisitors ?? 0) /
+                            ((data.retention?.totalVisitors ?? data.overview.uniqueVisitors) || 1)) *
+                          100
+                        )
+                        : 50
                         }%`,
                     }}
                     className="h-full bg-emerald-500"
@@ -3058,12 +3618,12 @@ Total Tracked Errors: ${errorsToCopy.length}
                   <div
                     style={{
                       width: `${(data.retention?.totalVisitors || 1) > 0
-                          ? Math.round(
-                            ((data.retention?.returningVisitors ?? data.overview.returningVisitors ?? 0) /
-                              ((data.retention?.totalVisitors ?? data.overview.uniqueVisitors) || 1)) *
-                            100
-                          )
-                          : 50
+                        ? Math.round(
+                          ((data.retention?.returningVisitors ?? data.overview.returningVisitors ?? 0) /
+                            ((data.retention?.totalVisitors ?? data.overview.uniqueVisitors) || 1)) *
+                          100
+                        )
+                        : 50
                         }%`,
                     }}
                     className="h-full bg-blue-500"
@@ -3086,12 +3646,12 @@ Total Tracked Errors: ${errorsToCopy.length}
                       <div
                         style={{ width: `${tier.percentage}%` }}
                         className={`h-full rounded-full ${idx === 0
-                            ? "bg-emerald-500"
-                            : idx === 1
-                              ? "bg-blue-500"
-                              : idx === 2
-                                ? "bg-indigo-500"
-                                : "bg-purple-500"
+                          ? "bg-emerald-500"
+                          : idx === 1
+                            ? "bg-blue-500"
+                            : idx === 2
+                              ? "bg-indigo-500"
+                              : "bg-purple-500"
                           }`}
                       />
                     </div>
@@ -3290,8 +3850,8 @@ Total Tracked Errors: ${errorsToCopy.length}
                 onClick={() => handleCopyAllAiPrompts(filteredErrors)}
                 disabled={filteredErrors.length === 0}
                 className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer disabled:opacity-50 ${copiedAllErrors
-                    ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
-                    : "bg-primary text-primary-foreground hover:bg-primary/90"
+                  ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
+                  : "bg-primary text-primary-foreground hover:bg-primary/90"
                   }`}
                 title="Copy all currently filtered errors as an actionable prompt for AI agents (Antigravity, Cursor, Claude Code)"
               >
@@ -3317,46 +3877,52 @@ Total Tracked Errors: ${errorsToCopy.length}
                 </button>
 
                 {showExportDropdown && (
-                  <div className="absolute right-0 top-full mt-2 z-50 p-2 bg-card border border-border rounded-2xl shadow-2xl w-64 space-y-1 animate-in fade-in zoom-in-95 duration-150">
-                    <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-muted-foreground border-b border-border mb-1">
-                      Choose Export Format
+                  <>
+                    <div
+                      className="fixed inset-0 z-40"
+                      onClick={() => setShowExportDropdown(false)}
+                    />
+                    <div className="absolute right-0 top-full mt-2 z-50 p-2 bg-card border border-border rounded-2xl shadow-2xl w-64 max-w-[calc(100vw-2rem)] space-y-1 animate-in fade-in zoom-in-95 duration-150">
+                      <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-muted-foreground border-b border-border mb-1">
+                        Choose Export Format
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleExportErrors("markdown", filteredErrors)}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-foreground hover:bg-muted rounded-xl transition text-left cursor-pointer"
+                      >
+                        <FileText size={14} className="text-primary shrink-0" />
+                        <div>
+                          <div className="font-black">AI Debug Report (.md)</div>
+                          <div className="text-[10px] text-muted-foreground font-normal">Formatted markdown with AI fix prompts</div>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleExportErrors("json", filteredErrors)}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-foreground hover:bg-muted rounded-xl transition text-left cursor-pointer"
+                      >
+                        <FileJson size={14} className="text-amber-500 shrink-0" />
+                        <div>
+                          <div className="font-black">Raw JSON Dump (.json)</div>
+                          <div className="text-[10px] text-muted-foreground font-normal">Complete telemetry dataset</div>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleExportErrors("csv", filteredErrors)}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-foreground hover:bg-muted rounded-xl transition text-left cursor-pointer"
+                      >
+                        <FileSpreadsheet size={14} className="text-emerald-500 shrink-0" />
+                        <div>
+                          <div className="font-black">Spreadsheet Table (.csv)</div>
+                          <div className="text-[10px] text-muted-foreground font-normal">Excel and Google Sheets compatible</div>
+                        </div>
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => handleExportErrors("markdown", filteredErrors)}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-foreground hover:bg-muted rounded-xl transition text-left cursor-pointer"
-                    >
-                      <FileText size={14} className="text-primary shrink-0" />
-                      <div>
-                        <div className="font-black">AI Debug Report (.md)</div>
-                        <div className="text-[10px] text-muted-foreground font-normal">Formatted markdown with AI fix prompts</div>
-                      </div>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleExportErrors("json", filteredErrors)}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-foreground hover:bg-muted rounded-xl transition text-left cursor-pointer"
-                    >
-                      <FileJson size={14} className="text-amber-500 shrink-0" />
-                      <div>
-                        <div className="font-black">Raw JSON Dump (.json)</div>
-                        <div className="text-[10px] text-muted-foreground font-normal">Complete telemetry dataset</div>
-                      </div>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleExportErrors("csv", filteredErrors)}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-foreground hover:bg-muted rounded-xl transition text-left cursor-pointer"
-                    >
-                      <FileSpreadsheet size={14} className="text-emerald-500 shrink-0" />
-                      <div>
-                        <div className="font-black">Spreadsheet Table (.csv)</div>
-                        <div className="text-[10px] text-muted-foreground font-normal">Excel and Google Sheets compatible</div>
-                      </div>
-                    </button>
-                  </div>
+                  </>
                 )}
               </div>
 
@@ -3378,69 +3944,76 @@ Total Tracked Errors: ${errorsToCopy.length}
                 </button>
 
                 {showBulkActionDropdown && (
-                  <div className="absolute right-0 top-full mt-2 z-50 p-2 bg-card border border-border rounded-2xl shadow-2xl w-60 space-y-1 animate-in fade-in zoom-in-95 duration-150">
-                    <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-muted-foreground border-b border-border mb-1">
-                      Status Management
+                  <>
+                    <div
+                      className="fixed inset-0 z-40"
+                      onClick={() => setShowBulkActionDropdown(false)}
+                    />
+                    <div className="absolute left-0 sm:left-auto sm:right-0 top-full mt-2 z-50 p-2 bg-card border border-border rounded-2xl shadow-2xl w-60 max-w-[calc(100vw-2rem)] space-y-1 animate-in fade-in zoom-in-95 duration-150">
+                      <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-muted-foreground border-b border-border mb-1">
+                        Status Management
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleBulkUpdateErrors(
+                            "resolved",
+                            filteredErrors.map((e) => e._id)
+                          )
+                        }
+                        disabled={filteredErrors.length === 0}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-foreground hover:bg-muted rounded-xl transition text-left cursor-pointer disabled:opacity-50"
+                      >
+                        <CheckCheck size={14} className="text-emerald-500 shrink-0" />
+                        <span>Mark Filtered ({filteredErrors.length}) as Resolved</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleBulkUpdateErrors(
+                            "investigating",
+                            filteredErrors.map((e) => e._id)
+                          )
+                        }
+                        disabled={filteredErrors.length === 0}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-foreground hover:bg-muted rounded-xl transition text-left cursor-pointer disabled:opacity-50"
+                      >
+                        <Wrench size={14} className="text-amber-500 shrink-0" />
+                        <span>Mark Filtered as Investigating</span>
+                      </button>
+
+                      {isAdmin && (
+                        <>
+                          <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-rose-500 border-t border-border mt-1 pt-1.5">
+                            Admin Purge Tools
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => handleBulkPurgeErrors("resolved")}
+                            className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-500/10 rounded-xl transition text-left cursor-pointer"
+                          >
+                            <Trash2 size={14} className="shrink-0" />
+                            <span>Purge Resolved ({errorCounts.resolved})</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleBulkPurgeErrors("all")}
+                            className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-500/10 rounded-xl transition text-left cursor-pointer"
+                          >
+                            <Trash2 size={14} className="shrink-0" />
+                            <span>Purge All ({errorCounts.total}) Records</span>
+                          </button>
+                        </>
+                      )}
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleBulkUpdateErrors(
-                          "resolved",
-                          filteredErrors.map((e) => e._id)
-                        )
-                      }
-                      disabled={filteredErrors.length === 0}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-foreground hover:bg-muted rounded-xl transition text-left cursor-pointer disabled:opacity-50"
-                    >
-                      <CheckCheck size={14} className="text-emerald-500 shrink-0" />
-                      <span>Mark Filtered ({filteredErrors.length}) as Resolved</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleBulkUpdateErrors(
-                          "investigating",
-                          filteredErrors.map((e) => e._id)
-                        )
-                      }
-                      disabled={filteredErrors.length === 0}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-foreground hover:bg-muted rounded-xl transition text-left cursor-pointer disabled:opacity-50"
-                    >
-                      <Wrench size={14} className="text-amber-500 shrink-0" />
-                      <span>Mark Filtered as Investigating</span>
-                    </button>
-
-                    {isAdmin && (
-                      <>
-                        <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-rose-500 border-t border-border mt-1 pt-1.5">
-                          Admin Purge Tools
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={() => handleBulkPurgeErrors("resolved")}
-                          className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-500/10 rounded-xl transition text-left cursor-pointer"
-                        >
-                          <Trash2 size={14} className="shrink-0" />
-                          <span>Purge Resolved ({errorCounts.resolved})</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => handleBulkPurgeErrors("all")}
-                          className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-500/10 rounded-xl transition text-left cursor-pointer"
-                        >
-                          <Trash2 size={14} className="shrink-0" />
-                          <span>Purge All ({errorCounts.total}) Records</span>
-                        </button>
-                      </>
-                    )}
-                  </div>
+                  </>
                 )}
               </div>
+
             </div>
           </div>
 
@@ -3461,15 +4034,15 @@ Total Tracked Errors: ${errorsToCopy.length}
                   type="button"
                   onClick={() => setErrorStatusFilter(tab.id)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${errorStatusFilter === tab.id
-                      ? "bg-primary text-primary-foreground shadow-xs"
-                      : "bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted"
+                    ? "bg-primary text-primary-foreground shadow-xs"
+                    : "bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted"
                     }`}
                 >
                   <span>{tab.label}</span>
                   <span
                     className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${errorStatusFilter === tab.id
-                        ? "bg-primary-foreground/20 text-primary-foreground"
-                        : "bg-card text-muted-foreground"
+                      ? "bg-primary-foreground/20 text-primary-foreground"
+                      : "bg-card text-muted-foreground"
                       }`}
                   >
                     {tab.count}
@@ -3544,10 +4117,10 @@ Total Tracked Errors: ${errorsToCopy.length}
                 <div
                   key={err._id}
                   className={`p-4 sm:p-5 bg-card border rounded-3xl space-y-3.5 shadow-sm transition-all ${err.status === "new"
-                      ? "border-rose-500/40 bg-rose-500/[0.02]"
-                      : err.status === "investigating"
-                        ? "border-amber-500/30 bg-amber-500/[0.01]"
-                        : "border-border"
+                    ? "border-rose-500/40 bg-rose-500/[0.02]"
+                    : err.status === "investigating"
+                      ? "border-amber-500/30 bg-amber-500/[0.01]"
+                      : "border-border"
                     }`}
                 >
                   {/* Top: Error Message & Action Buttons */}
@@ -3556,24 +4129,24 @@ Total Tracked Errors: ${errorsToCopy.length}
                       <div className="flex items-center gap-2 flex-wrap">
                         <span
                           className={`px-2 py-0.5 rounded font-black font-mono text-[10px] uppercase border ${err.errorType === "not_found"
-                              ? "bg-orange-500/15 text-orange-600 dark:text-orange-400 border-orange-500/20"
-                              : err.errorType === "http_4xx"
-                                ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20"
-                                : err.errorType === "http_5xx" || err.errorType === "boundary"
-                                  ? "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/20"
-                                  : err.errorType === "api"
-                                    ? "bg-fuchsia-500/15 text-fuchsia-600 dark:text-fuchsia-400 border-fuchsia-500/20"
-                                    : err.errorType === "resource"
-                                      ? "bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border-cyan-500/20"
-                                      : err.errorType === "webgl"
-                                        ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
-                                        : err.errorType === "hydration" || err.errorType === "console"
-                                          ? "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border-indigo-500/20"
-                                          : err.errorType === "unhandledrejection"
-                                            ? "bg-yellow-500/15 text-yellow-600 dark:text-yellow-400 border-yellow-500/20"
-                                            : err.errorType === "network"
-                                              ? "bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/20"
-                                              : "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/20"
+                            ? "bg-orange-500/15 text-orange-600 dark:text-orange-400 border-orange-500/20"
+                            : err.errorType === "http_4xx"
+                              ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20"
+                              : err.errorType === "http_5xx" || err.errorType === "boundary"
+                                ? "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/20"
+                                : err.errorType === "api"
+                                  ? "bg-fuchsia-500/15 text-fuchsia-600 dark:text-fuchsia-400 border-fuchsia-500/20"
+                                  : err.errorType === "resource"
+                                    ? "bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border-cyan-500/20"
+                                    : err.errorType === "webgl"
+                                      ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                                      : err.errorType === "hydration" || err.errorType === "console"
+                                        ? "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border-indigo-500/20"
+                                        : err.errorType === "unhandledrejection"
+                                          ? "bg-yellow-500/15 text-yellow-600 dark:text-yellow-400 border-yellow-500/20"
+                                          : err.errorType === "network"
+                                            ? "bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/20"
+                                            : "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/20"
                             }`}
                         >
                           {err.errorType === "not_found"
@@ -3612,8 +4185,8 @@ Total Tracked Errors: ${errorsToCopy.length}
                         type="button"
                         onClick={() => handleCopyAiPrompt(err)}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition shadow-2xs cursor-pointer ${copiedErrorId === err._id
-                            ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
-                            : "bg-card border-border hover:border-primary text-foreground hover:bg-muted"
+                          ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
+                          : "bg-card border-border hover:border-primary text-foreground hover:bg-muted"
                           }`}
                         title="Copy diagnostic prompt to fix this error with AI"
                       >
@@ -3627,8 +4200,8 @@ Total Tracked Errors: ${errorsToCopy.length}
                           type="button"
                           onClick={() => handleUpdateErrorStatus(err._id, "new")}
                           className={`px-2 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${err.status === "new"
-                              ? "bg-rose-600 text-white shadow-xs"
-                              : "text-muted-foreground hover:text-foreground"
+                            ? "bg-rose-600 text-white shadow-xs"
+                            : "text-muted-foreground hover:text-foreground"
                             }`}
                         >
                           New
@@ -3637,8 +4210,8 @@ Total Tracked Errors: ${errorsToCopy.length}
                           type="button"
                           onClick={() => handleUpdateErrorStatus(err._id, "investigating")}
                           className={`px-2 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${err.status === "investigating"
-                              ? "bg-amber-500 text-white shadow-xs"
-                              : "text-muted-foreground hover:text-foreground"
+                            ? "bg-amber-500 text-white shadow-xs"
+                            : "text-muted-foreground hover:text-foreground"
                             }`}
                         >
                           Investigating
@@ -3647,8 +4220,8 @@ Total Tracked Errors: ${errorsToCopy.length}
                           type="button"
                           onClick={() => handleUpdateErrorStatus(err._id, "resolved")}
                           className={`px-2 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${err.status === "resolved"
-                              ? "bg-emerald-600 text-white shadow-xs"
-                              : "text-muted-foreground hover:text-foreground"
+                            ? "bg-emerald-600 text-white shadow-xs"
+                            : "text-muted-foreground hover:text-foreground"
                             }`}
                         >
                           Resolved
@@ -3657,8 +4230,8 @@ Total Tracked Errors: ${errorsToCopy.length}
                           type="button"
                           onClick={() => handleUpdateErrorStatus(err._id, "ignored")}
                           className={`px-2 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${err.status === "ignored"
-                              ? "bg-slate-700 text-white shadow-xs"
-                              : "text-muted-foreground hover:text-foreground"
+                            ? "bg-slate-700 text-white shadow-xs"
+                            : "text-muted-foreground hover:text-foreground"
                             }`}
                         >
                           Ignore
@@ -3806,8 +4379,8 @@ Total Tracked Errors: ${errorsToCopy.length}
                         type="button"
                         onClick={() => setErrorPage(num)}
                         className={`w-7 h-7 rounded-lg text-xs font-bold transition cursor-pointer ${errorPage === num
-                            ? "bg-primary text-primary-foreground shadow-xs"
-                            : "bg-card border border-border hover:bg-muted text-foreground"
+                          ? "bg-primary text-primary-foreground shadow-xs"
+                          : "bg-card border border-border hover:bg-muted text-foreground"
                           }`}
                       >
                         {num}

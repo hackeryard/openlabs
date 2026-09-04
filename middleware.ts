@@ -17,6 +17,8 @@ const publicPaths = [
   '/llms.txt',
   '/llms-full.txt',
   '/labs/biology/heart-cardiac-cycle',
+  '/labs/biology/mitosis-meiosis',
+  '/labs/computer-science/dsa/pathfinding-astar',
 ];
 
 

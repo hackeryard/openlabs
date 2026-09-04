@@ -2,7 +2,7 @@ import PageView from "@/app/models/PageView";
 import AnalyticsEvent from "@/app/models/AnalyticsEvent";
 import ErrorLog from "@/app/models/ErrorLog";
 import User from "@/app/models/User";
-import { getFullCountryName } from "@/app/lib/countries";
+import { getFullCountryName, getCountryIsoCode, getContinentForCountry } from "@/app/lib/countries";
 
 /**
  * Calculates date match stage and range metadata from timeRange string or explicit dates
@@ -475,7 +475,25 @@ export async function getAnalyticsDashboardData(
       },
     },
     { $sort: { count: -1 } },
-    { $limit: 20 },
+    { $limit: 35 },
+  ]);
+
+  // 8b. Cities Distribution
+  const citiesPromise = (PageView as any).aggregate([
+    {
+      $match: {
+        ...matchStage,
+        city: { $exists: true, $ne: "" },
+      },
+    },
+    {
+      $group: {
+        _id: { city: "$city", country: "$country" },
+        count: { $sum: 1 },
+      },
+    },
+    { $sort: { count: -1 } },
+    { $limit: 30 },
   ]);
 
   // 9. Duration Engagement Distribution
@@ -787,6 +805,7 @@ export async function getAnalyticsDashboardData(
     osRaw,
     screensRaw,
     countriesRaw,
+    citiesRaw,
     durationDistRaw,
     scrollDistRaw,
     recentPageViews,
@@ -817,6 +836,7 @@ export async function getAnalyticsDashboardData(
     osPromise,
     screensPromise,
     countriesPromise,
+    citiesPromise,
     durationDistributionPromise,
     scrollDistributionPromise,
     recentPageViewsPromise,
@@ -997,21 +1017,77 @@ export async function getAnalyticsDashboardData(
     percentage: totalViews > 0 ? parseFloat(((s.count / totalViews) * 100).toFixed(1)) : 0,
   }));
 
-  // Countries - normalize all ISO codes to full names and consolidate duplicates
-  const countryCountsMap = new Map<string, number>();
+  // Countries - normalize all ISO codes to full names and consolidate duplicates with 2-letter ISO codes
+  const countryCountsMap = new Map<string, { count: number; code: string; country: string }>();
   countriesRaw.forEach((c: any) => {
-    const fullName = getFullCountryName(c._id);
-    countryCountsMap.set(fullName, (countryCountsMap.get(fullName) || 0) + (c.count || 0));
+    const rawVal = c._id || "Unknown";
+    const fullName = getFullCountryName(rawVal);
+    const code = getCountryIsoCode(rawVal);
+    const existing = countryCountsMap.get(code);
+    if (existing) {
+      existing.count += c.count || 0;
+    } else {
+      countryCountsMap.set(code, {
+        code,
+        country: fullName,
+        count: c.count || 0,
+      });
+    }
   });
 
-  const countries = Array.from(countryCountsMap.entries())
-    .map(([country, count]) => ({
-      country,
+  const countries = Array.from(countryCountsMap.values())
+    .map((item) => ({
+      country: item.country,
+      code: item.code,
+      count: item.count,
+      continent: getContinentForCountry(item.code),
+      percentage: totalViews > 0 ? parseFloat(((item.count / totalViews) * 100).toFixed(1)) : 0,
+    }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 35);
+
+  // Top Cities
+  const topCities = (citiesRaw || []).map((item: any) => {
+    const cityName = item._id?.city || "Unknown";
+    const rawCountry = item._id?.country || "Unknown";
+    const countryName = getFullCountryName(rawCountry);
+    const countryCode = getCountryIsoCode(rawCountry);
+    return {
+      city: cityName,
+      country: countryName,
+      countryCode,
+      count: item.count,
+      percentage: totalViews > 0 ? parseFloat(((item.count / totalViews) * 100).toFixed(1)) : 0,
+    };
+  });
+
+  // Continents Distribution
+  const continentMap = new Map<string, number>();
+  countries.forEach((c) => {
+    continentMap.set(c.continent, (continentMap.get(c.continent) || 0) + c.count);
+  });
+  const continents = Array.from(continentMap.entries())
+    .map(([continent, count]) => ({
+      continent,
       count,
       percentage: totalViews > 0 ? parseFloat(((count / totalViews) * 100).toFixed(1)) : 0,
     }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 25);
+    .sort((a, b) => b.count - a.count);
+
+  // Geographic KPIs
+  const nationsCount = countries.filter((c) => c.code !== "Unknown").length;
+  const topCountry = countries.length > 0 ? countries[0] : null;
+  const topCity = topCities.length > 0 ? topCities[0] : null;
+  const domesticCount = topCountry ? topCountry.count : 0;
+  const internationalCount = Math.max(0, totalViews - domesticCount);
+  const internationalRatio = totalViews > 0 ? parseFloat(((internationalCount / totalViews) * 100).toFixed(1)) : 0;
+
+  const geoKpis = {
+    nationsCount,
+    topCountry: topCountry ? { name: topCountry.country, code: topCountry.code, count: topCountry.count, percentage: topCountry.percentage } : null,
+    topCity: topCity ? { name: topCity.city, country: topCity.country, countryCode: topCity.countryCode, count: topCity.count } : null,
+    internationalRatio,
+  };
 
   // Format recent pageviews country names
   const formattedPageViews = recentPageViews.map((pv: any) => ({
@@ -1230,6 +1306,9 @@ export async function getAnalyticsDashboardData(
     operatingSystems,
     screenResolutions,
     countries,
+    topCities,
+    continents,
+    geoKpis,
     durationDistribution,
     scrollDistribution,
     recentPageViews: formattedPageViews,
