@@ -2,6 +2,37 @@
 
 All notable changes to OpenLabs are documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/); since the project has no version tags yet, entries are grouped by date instead of version number. Generated from git history; merge commits and duplicate/typo commits are omitted.
 
+- **Visual Geo-Distribution, Interactive SVG World Map & Regional Analytics (`worldAtlas.ts`, `WorldMapAnalytics.tsx`, `countries.ts`, `analyticsDb.ts`, `/admin/analytics`)**:
+  - **Mobile Responsive Engine & Touch Gestures (`app/components/admin/WorldMapAnalytics.tsx`, `app/admin/analytics/page.tsx`)**:
+    - **Adaptive Viewport & Canvas**: Adapted the map canvas with responsive aspect ratio (`aspect-[16/10] sm:aspect-[2.05/1]` and `min-h-[260px] sm:min-h-[460px]`) ensuring full mobile viewport fitting without vertical letterboxing or horizontal clipping.
+    - **Touchscreen Pan & Pinch-to-Zoom**: Implemented 1-finger touch pan drag when zoomed in (`zoom > 1`) with bounded pan limits, 2-finger touch pinch-to-zoom, and dynamic `touchAction` management (`none` during active zoom, `pan-y` at 1x to permit seamless page scrolling).
+    - **Mobile Docked Inspection Drawer**: On mobile screens (<640px), replaced the cursor-following floating card with a docked bottom inspection drawer (`bottom-2 inset-x-2 max-w-[360px] mx-auto`) with a dedicated `✕` dismiss button, tap-to-filter / tap-to-clear action CTA, and tap-outside canvas dismissal.
+    - **Scrollable Continent Presets**: Converted continent preset jumps (World, Asia-Pac, Europe, Americas, Africa) into a horizontally scrollable pills bar (`overflow-x-auto no-scrollbar`) accessible on all screen sizes.
+    - **Interactive Executive KPI Cards**: Upgraded all 7 overview metric cards (**Total Pageviews**, **Unique Visitors**, **Returning Users**, **Total Sessions**, **Avg Dwell Time**, **Avg Scroll Depth**, **Runtime Errors**) into interactive, clickable cards with `View →` hover transitions, tooltip indicators, and smooth scrolling to their corresponding analytics tabs (`live_feed`, `acquisition`, `returning_users`, `journeys`, `engagement`, `errors`).
+    - **Bulk Actions & Export Dropdown Mobile Alignment**: Resolved mobile screen overflow where the Bulk Actions menu hung off the left edge of the viewport when wrapped onto a new line by applying responsive anchor alignment (`left-0 sm:left-auto sm:right-0`), maximum width bounds (`max-w-[calc(100vw-2rem)]`), and touch backdrop dismiss handlers.
+    - **Responsive Custom Date Range Selectors (`DateRangeNavigator`)**:
+      - **Mobile Bottom Sheet Modal**: Upgraded custom date picker from an overflowing popover to a native-feeling mobile bottom sheet drawer (`fixed inset-x-3 bottom-3 sm:bottom-auto sm:inset-x-auto sm:right-0 sm:top-full sm:absolute`) with a drag pill handle, 1-tap darkened backdrop dismiss (`fixed inset-0 z-50 bg-black/60`), and keyboard `Escape` dismissal.
+      - **Space-Efficient Range Formatting**: Added `formatRangeLabel()` converting unwieldy timestamps (e.g. `2026-08-01 to 2026-09-04`) into compact, human-readable spans (e.g. `Aug 1 – Sep 4`) that fit cleanly without wrapping or truncation on narrow mobile screens (320px–375px).
+      - **Window Stepper Navigation**: Enhanced the `<` / `>` day stepper to dynamically shift custom date range windows backward or forward by the active interval span, capped safely at today's date.
+      - **Touch-Friendly Ergonomics & Quick Presets**: Integrated horizontal quick preset chips ("Last 3 Days", "Last 7 Days", "Last 14 Days", "Last 30 Days", "This Month", "Last Month") with live selected span badge (`Nd span`), full 44px (`h-11`) touch target heights on mobile inputs, and native dark/light theme calendar scheme support (`dark:[color-scheme:dark] [color-scheme:light]`).
+    - **Responsive Geo KPI Metrics**: Optimized padding, typography, and icon sizing across executive Geo KPI cards (`Nations Reached`, `Top Country`, `Top Active City`, `International Share`) to prevent text truncation or multi-line overflow on narrow mobile screens.
+  - **Command-Center Vector World Map & Glassmorphic HUD Tooltip (`app/lib/geo/worldAtlas.ts`, `app/components/admin/WorldMapAnalytics.tsx`)**:
+    - Created an offline, zero-CDN vector World Map in Natural Earth projection with deep space radial vignette canvas, cartographic parallels (Equator, Tropics, Prime Meridian), and 1-click graticule toggle control.
+    - Added 1-click Continent Quick-Jump presets (World, Asia-Pac, Europe, Americas, Africa), interactive mouse pan-and-drag navigation, and native non-passive touchpad pinch-to-zoom and mouse-wheel zoom scaling towards the cursor position.
+    - Engineered 5-tier bioluminescent neon choropleth heatmap gradient fills (`#22d3ee` to `rgba(14,165,233,0.35)`).
+    - Redesigned the country hover card to float dynamically around the cursor with a 22px side clearance on desktop (preventing the card from being under the cursor or docked in corners), automatic right-to-left flipping near boundaries, vertical clamping, and zero emojis throughout.
+  - **Reverse ISO Lookup & Continent Region Engine (`app/lib/countries.ts`)**:
+    - Added `getCountryIsoCode()` supporting bidirectional resolution of full country names (e.g. `"India"` → `"IN"`, `"United States"` → `"US"`) and 2-letter codes.
+    - Added `getContinentForCountry()` categorizing traffic into 6 global zones ("Asia-Pacific", "Europe", "North America", "South America", "Africa", "Middle East", "Oceania").
+    - Enhanced `getCountryFlag()` with ISO code point math to render country flag emojis.
+  - **Database Geo Aggregations & City Telemetry (`app/lib/analyticsDb.ts`)**:
+    - Added `citiesPromise` pipeline grouping pageviews by `{ city, country }` to generate the top active cities leaderboard with view counts and percentage shares.
+    - Computed executive Geo KPIs: **Nations Reached** count, **Top Country**, **Top Active City**, and **International Traffic Share %** (ratio of traffic originating outside the #1 country).
+  - **Admin Geo & Systems Command Center (`app/admin/analytics/page.tsx`)**:
+    - Upgraded the Tech tab into **Geo & Systems** featuring 4 executive Geo KPI metric cards, the full interactive vector World Map, Top Countries leaderboard, Top Active Cities leaderboard, and Continents breakdown.
+    - Added interactive map filtering with active filter badges and 1-click filter reset.
+    - Retained and organized client device types, browsers, operating systems, and screen resolution diagnostics.
+
 - **Blog Markdown Hydration Error Fix (`app/components/blog/BlogPostInteractive.tsx`)**:
   - **Resolved `<p>` Cannot Contain `<div>` Hydration Mismatch**: In `react-markdown` v10, the deprecated `inline` prop was removed from the `code` component callback. As a result, inline code snippets (e.g. `` `A + B → AB` ``) inside paragraphs erroneously fell through to `<CodeBlock>`, injecting `<div>` elements inside `<p>` tags and triggering client hydration crashes.
   - **Separated `pre` and `code` Handlers**: Moved the custom `<CodeBlock>` wrapper to `components.pre` to intercept fenced code blocks at the block level where `<div>` is valid HTML. Configured `components.code` to render standard inline `<code>` elements within paragraphs. Added recursive `getCodeString` helper to safely extract plain text for the 1-click clipboard copy feature.

@@ -103,12 +103,107 @@ export function getFullCountryName(countryCode?: string | null): string {
 }
 
 /**
+ * Reverse mapping from lowercase full country name to 2-letter ISO alpha-2 code
+ */
+const NAME_TO_ISO_MAP: Record<string, string> = {};
+for (const [code, name] of Object.entries(COUNTRY_OVERRIDE_MAP)) {
+  if (code.length === 2) {
+    NAME_TO_ISO_MAP[name.toLowerCase()] = code;
+  }
+}
+// Additional manual aliases
+NAME_TO_ISO_MAP["united states of america"] = "US";
+NAME_TO_ISO_MAP["usa"] = "US";
+NAME_TO_ISO_MAP["uk"] = "GB";
+NAME_TO_ISO_MAP["great britain"] = "GB";
+NAME_TO_ISO_MAP["south korea"] = "KR";
+NAME_TO_ISO_MAP["republic of korea"] = "KR";
+NAME_TO_ISO_MAP["russia"] = "RU";
+NAME_TO_ISO_MAP["russian federation"] = "RU";
+NAME_TO_ISO_MAP["vietnam"] = "VN";
+NAME_TO_ISO_MAP["viet nam"] = "VN";
+NAME_TO_ISO_MAP["algeria"] = "DZ";
+NAME_TO_ISO_MAP["morocco"] = "MA";
+NAME_TO_ISO_MAP["ethiopia"] = "ET";
+NAME_TO_ISO_MAP["el salvador"] = "SV";
+NAME_TO_ISO_MAP["dominican republic"] = "DO";
+NAME_TO_ISO_MAP["guatemala"] = "GT";
+NAME_TO_ISO_MAP["cambodia"] = "KH";
+NAME_TO_ISO_MAP["georgia"] = "GE";
+NAME_TO_ISO_MAP["ecuador"] = "EC";
+
+/**
+ * Returns 2-letter uppercase ISO alpha-2 country code (e.g. "IN", "US", "GB")
+ */
+export function getCountryIsoCode(countryNameOrCode?: string | null): string {
+  if (!countryNameOrCode || countryNameOrCode.trim() === "" || countryNameOrCode.toLowerCase() === "unknown") {
+    return "Unknown";
+  }
+  const clean = countryNameOrCode.trim();
+  if (clean.length === 2 && /^[A-Za-z]{2}$/.test(clean)) {
+    const upper = clean.toUpperCase();
+    return upper === "UK" ? "GB" : upper;
+  }
+  const lower = clean.toLowerCase();
+  if (NAME_TO_ISO_MAP[lower]) {
+    return NAME_TO_ISO_MAP[lower];
+  }
+  // Try partial prefix match
+  for (const [name, code] of Object.entries(NAME_TO_ISO_MAP)) {
+    if (lower.includes(name) || name.includes(lower)) {
+      return code;
+    }
+  }
+  return clean.slice(0, 2).toUpperCase();
+}
+
+const CONTINENT_BY_ISO: Record<string, string> = {
+  // Asia
+  IN: "Asia-Pacific", CN: "Asia-Pacific", JP: "Asia-Pacific", KR: "Asia-Pacific",
+  SG: "Asia-Pacific", ID: "Asia-Pacific", PK: "Asia-Pacific", BD: "Asia-Pacific",
+  PH: "Asia-Pacific", VN: "Asia-Pacific", TH: "Asia-Pacific", MY: "Asia-Pacific",
+  HK: "Asia-Pacific", TW: "Asia-Pacific", SA: "Middle East", AE: "Middle East",
+  IL: "Middle East", QA: "Middle East", KW: "Middle East", OM: "Middle East",
+  LK: "Asia-Pacific", NP: "Asia-Pacific", KH: "Asia-Pacific", GE: "Middle East",
+  // Europe
+  GB: "Europe", DE: "Europe", FR: "Europe", IT: "Europe", ES: "Europe",
+  NL: "Europe", SE: "Europe", CH: "Europe", PL: "Europe", AT: "Europe",
+  BE: "Europe", DK: "Europe", FI: "Europe", NO: "Europe", PT: "Europe",
+  GR: "Europe", CZ: "Europe", RO: "Europe", HU: "Europe", IE: "Europe",
+  UA: "Europe", RU: "Europe",
+  // North America
+  US: "North America", CA: "North America", MX: "North America",
+  CR: "North America", PA: "North America", CU: "North America",
+  DO: "North America", GT: "North America", SV: "North America",
+  // South America
+  BR: "South America", AR: "South America", CL: "South America",
+  CO: "South America", PE: "South America", VE: "South America",
+  EC: "South America", UY: "South America", PY: "South America",
+  // Africa
+  EG: "Africa", NG: "Africa", ZA: "Africa", KE: "Africa", GH: "Africa",
+  DZ: "Africa", MA: "Africa", ET: "Africa", UG: "Africa", TZ: "Africa",
+  // Oceania
+  AU: "Oceania", NZ: "Oceania", FJ: "Oceania", PG: "Oceania",
+};
+
+/**
+ * Returns Continent / Geographic Region Name
+ */
+export function getContinentForCountry(countryNameOrCode?: string | null): string {
+  const iso = getCountryIsoCode(countryNameOrCode);
+  if (CONTINENT_BY_ISO[iso]) {
+    return CONTINENT_BY_ISO[iso];
+  }
+  return "Other Regions";
+}
+
+/**
  * Returns flag emoji for a given 2-letter ISO code or full country name if available.
  */
 export function getCountryFlag(countryCodeOrName?: string | null): string {
   if (!countryCodeOrName || countryCodeOrName === "Unknown") return "🌐";
 
-  const code = countryCodeOrName.trim().toUpperCase();
+  const code = getCountryIsoCode(countryCodeOrName);
   if (code.length === 2 && /^[A-Z]{2}$/.test(code)) {
     const codePoints = code
       .split("")
@@ -118,3 +213,4 @@ export function getCountryFlag(countryCodeOrName?: string | null): string {
 
   return "🌐";
 }
+
