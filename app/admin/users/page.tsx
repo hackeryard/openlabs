@@ -543,7 +543,7 @@ export default function AdminUsersDashboard() {
           </div>
 
           {/* Bottom Row: Detailed Filter Dropdowns */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 pt-3 border-t border-border">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 pt-3 border-t border-border">
 
             {/* Email Verification Filter */}
             <div>
@@ -556,7 +556,7 @@ export default function AdminUsersDashboard() {
                   setVerifiedFilter(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full bg-muted border border-border rounded-xl px-3 py-2 text-xs font-bold text-foreground focus:outline-none"
+                className="w-full bg-muted border border-border rounded-xl px-3 py-2 text-xs font-bold text-foreground focus:outline-none cursor-pointer [&>option]:bg-card [&>option]:text-foreground [&>option]:dark:bg-slate-900 [&>option]:dark:text-slate-100"
               >
                 <option value="all">All Verification</option>
                 <option value="true">Verified Emails</option>
@@ -575,7 +575,7 @@ export default function AdminUsersDashboard() {
                   setProfileCompleteFilter(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full bg-muted border border-border rounded-xl px-3 py-2 text-xs font-bold text-foreground focus:outline-none"
+                className="w-full bg-muted border border-border rounded-xl px-3 py-2 text-xs font-bold text-foreground focus:outline-none cursor-pointer [&>option]:bg-card [&>option]:text-foreground [&>option]:dark:bg-slate-900 [&>option]:dark:text-slate-100"
               >
                 <option value="all">All Setup Status</option>
                 <option value="true">Setup Complete</option>
@@ -594,7 +594,7 @@ export default function AdminUsersDashboard() {
                   setActivityFilter(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full bg-muted border border-border rounded-xl px-3 py-2 text-xs font-bold text-foreground focus:outline-none"
+                className="w-full bg-muted border border-border rounded-xl px-3 py-2 text-xs font-bold text-foreground focus:outline-none cursor-pointer [&>option]:bg-card [&>option]:text-foreground [&>option]:dark:bg-slate-900 [&>option]:dark:text-slate-100"
               >
                 <option value="all">All Activity</option>
                 <option value="active7">Active (Last 7 Days)</option>
@@ -613,7 +613,7 @@ export default function AdminUsersDashboard() {
                   setXpTierFilter(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full bg-muted border border-border rounded-xl px-3 py-2 text-xs font-bold text-foreground focus:outline-none"
+                className="w-full bg-muted border border-border rounded-xl px-3 py-2 text-xs font-bold text-foreground focus:outline-none cursor-pointer [&>option]:bg-card [&>option]:text-foreground [&>option]:dark:bg-slate-900 [&>option]:dark:text-slate-100"
               >
                 <option value="all">All XP Tiers</option>
                 <option value="novice">Novice (&lt; 100 XP)</option>
@@ -633,7 +633,7 @@ export default function AdminUsersDashboard() {
                   setLabStatusFilter(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full bg-muted border border-border rounded-xl px-3 py-2 text-xs font-bold text-foreground focus:outline-none"
+                className="w-full bg-muted border border-border rounded-xl px-3 py-2 text-xs font-bold text-foreground focus:outline-none cursor-pointer [&>option]:bg-card [&>option]:text-foreground [&>option]:dark:bg-slate-900 [&>option]:dark:text-slate-100"
               >
                 <option value="all">All Lab Counts</option>
                 <option value="hasCompleted">Completed ≥ 1 Lab</option>
@@ -919,7 +919,7 @@ export default function AdminUsersDashboard() {
                   setPageSize(Number(e.target.value));
                   setCurrentPage(1);
                 }}
-                className="bg-card border border-border rounded-lg px-2 py-1 text-foreground font-bold focus:outline-none"
+                className="bg-card border border-border rounded-lg px-2 py-1 text-foreground font-bold focus:outline-none cursor-pointer [&>option]:bg-card [&>option]:text-foreground [&>option]:dark:bg-slate-900 [&>option]:dark:text-slate-100"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -961,7 +961,7 @@ export default function AdminUsersDashboard() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-card w-full max-w-2xl h-full overflow-y-auto border-l border-border p-6 shadow-2xl space-y-6 animate-in slide-in-from-right duration-300 cursor-default"
+            className="bg-card w-full max-w-2xl h-full overflow-y-auto border-l border-border p-4 sm:p-6 shadow-2xl space-y-6 animate-in slide-in-from-right duration-300 cursor-default"
           >
 
             {/* Modal Header */}
@@ -976,7 +976,7 @@ export default function AdminUsersDashboard() {
                 </div>
                 <div>
                   <h2 className="text-xl font-black text-foreground">{selectedUser.name}</h2>
-                  <p className="text-xs text-muted-foreground font-mono">
+                  <p className="text-xs text-muted-foreground font-mono break-all">
                     ID: {selectedUser._id} • Joined {new Date(selectedUser.createdAt).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" })} at {new Date(selectedUser.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true })}
                   </p>
                 </div>
@@ -984,7 +984,7 @@ export default function AdminUsersDashboard() {
 
               <button
                 onClick={() => setSelectedUser(null)}
-                className="p-2 hover:bg-muted rounded-full transition text-muted-foreground hover:text-foreground"
+                className="p-2 hover:bg-muted rounded-full transition text-muted-foreground hover:text-foreground shrink-0"
               >
                 <X size={20} />
               </button>
@@ -999,10 +999,10 @@ export default function AdminUsersDashboard() {
               <>
                 {/* Core User Metadata Card */}
                 <div className="bg-muted/50 border border-border p-4 rounded-2xl space-y-3">
-                  <div className="grid grid-cols-2 gap-4 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                     <div>
                       <span className="text-muted-foreground font-bold uppercase tracking-wider block mb-0.5">Email</span>
-                      <span className="font-mono text-foreground font-semibold">{selectedUser.email}</span>
+                      <span className="font-mono text-foreground font-semibold break-all">{selectedUser.email}</span>
                     </div>
                     <div>
                       <span className="text-muted-foreground font-bold uppercase tracking-wider block mb-0.5">Username</span>
@@ -1044,7 +1044,7 @@ export default function AdminUsersDashboard() {
                   )}
 
                   {/* Role Control */}
-                  <div className="pt-3 border-t border-border/50 flex items-center justify-between">
+                  <div className="pt-3 border-t border-border/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                       <span className="text-xs font-extrabold uppercase text-foreground block">Account Role</span>
                       <span className="text-[10px] text-muted-foreground">
@@ -1059,7 +1059,7 @@ export default function AdminUsersDashboard() {
                           disabled={updatingRole}
                           value={selectedUser.role || "user"}
                           onChange={(e) => handleUpdateUserRole(selectedUser._id, e.target.value)}
-                          className="px-3 py-1.5 text-xs font-bold rounded-xl border border-border bg-card text-foreground focus:ring-2 focus:ring-primary/20 focus:outline-none cursor-pointer"
+                          className="px-3 py-1.5 text-xs font-bold rounded-xl border border-border bg-card text-foreground focus:ring-2 focus:ring-primary/20 focus:outline-none cursor-pointer [&>option]:bg-card [&>option]:text-foreground [&>option]:dark:bg-slate-900 [&>option]:dark:text-slate-100"
                         >
                           <option value="user">User (Student)</option>
                           <option value="moderator">Moderator</option>

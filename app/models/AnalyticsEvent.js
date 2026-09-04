@@ -61,6 +61,8 @@ const AnalyticsEventSchema = new mongoose.Schema(
 
 AnalyticsEventSchema.index({ createdAt: -1 })
 AnalyticsEventSchema.index({ eventName: 1, createdAt: -1 })
+AnalyticsEventSchema.index({ category: 1, createdAt: -1 })
 AnalyticsEventSchema.index({ labId: 1, createdAt: -1 })
+AnalyticsEventSchema.index({ eventName: 1, labId: 1, createdAt: -1 })
 
 export default mongoose.models.AnalyticsEvent || mongoose.model("AnalyticsEvent", AnalyticsEventSchema)

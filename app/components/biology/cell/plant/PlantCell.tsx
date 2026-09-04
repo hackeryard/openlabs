@@ -2,7 +2,7 @@
 
 import { useState, useRef, useMemo, useEffect } from "react"
 import { Canvas, useFrame } from "@react-three/fiber"
-import { OrbitControls, Stars, Environment, Float, Instance, Instances, RoundedBox } from "@react-three/drei"
+import { OrbitControls, Stars, Float, Instance, Instances, RoundedBox } from "@react-three/drei"
 import * as THREE from "three"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -313,10 +313,12 @@ export default function PlantCell({
       <Canvas camera={{ position: [0, 0, 9], fov: 45 }}>
         <color attach="background" args={['#052e16']} />
         
-        <ambientLight intensity={0.6} />
-        <pointLight position={[10, 10, 10]} intensity={1.5} color="#fff" />
-        <pointLight position={[-10, -10, -5]} intensity={0.8} color="#4ade80" />
-        <Environment preset="park" />
+        {/* --- LIGHTING (Cross-browser studio lighting without external HDR dependency) --- */}
+        <ambientLight intensity={0.7} />
+        <directionalLight position={[10, 15, 10]} intensity={1.5} color="#ffffff" />
+        <directionalLight position={[-10, -10, -5]} intensity={0.8} color="#4ade80" />
+        <pointLight position={[0, 0, 5]} intensity={0.6} color="#86efac" />
+        <hemisphereLight args={["#ffffff", "#052e16", 0.6]} />
         <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
 
         <group rotation={[0, -0.2, 0]}>

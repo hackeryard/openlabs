@@ -4,6 +4,7 @@
 /* @import "tailwindcss"; */
 
 :root {
+  color-scheme: light;
   --background: 0 0% 100%;
   --foreground: 222 47% 11%;
   --card: 0 0% 100%;
@@ -18,6 +19,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   --background: 222 47% 6%;
   --foreground: 210 40% 98%;
   --card: 222 47% 9%;
@@ -30,6 +32,36 @@
   --accent: 217 33% 15%;
   --accent-foreground: 210 40% 98%;
 }
+
+/* Native select & option theming across operating systems & dark mode */
+select {
+  color-scheme: light;
+}
+
+.dark select,
+html.dark select,
+body.dark select {
+  color-scheme: dark;
+}
+
+select option {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+.dark select option,
+html.dark select option,
+body.dark select option,
+.dark select > option {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+select option:checked {
+  background-color: #4f46e5 !important;
+  color: #ffffff !important;
+}
+
 
 html {
   scroll-behavior: smooth;

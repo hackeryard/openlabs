@@ -150,8 +150,16 @@ yarn start
 - 📝 **Cover Image Uploads** — Drag-and-drop file inputs on create and edit panel pages, feeding directly into Cloudinary CDN
 - 📝 **Cloudinary Integration** — Secure, stream-based uploads automatically optimized into lightweight WebP formatting (5MB limit)
 - 📝 **Admin Dashboard (CRUD)** — Robust administrative control panel (`/admin/blogs`) supporting secure creating, editing, and deleting of articles
-- 📝 **x-admin-secret Protection** — Rest API uploads and mutations strictly restricted using secure header auth validation
+- 📝 **Role-Based Access Control** — Rest API uploads and mutations strictly restricted using session role verification (admin / moderator)
 - 📝 **Dynamic FAQ Schema** — SEO-optimal automated injection of structured JSON-LD rich results from customized blog FAQs
+
+### Enterprise Web Analytics, Real User Monitoring (RUM) & Telemetry Suite 📊
+- 📊 **Executive Analytics Dashboard (`/admin/analytics`)** — Real-time telemetry cockpit featuring live pageview streams, active vs. idle dwell meters, Core Web Vitals gauges, STEM learning funnels, and frustration radars.
+- 📊 **Core Web Vitals & RUM (Real User Monitoring)** — Passive in-browser performance monitoring capturing LCP, INP, CLS, FCP, TTFB, and DOM/Window load against Google performance budgets.
+- 📊 **Hardware & Network Diagnostics** — Client environment profiling extracting unmasked WebGL GPU renderers (`WEBGL_debug_renderer_info`), CPU core counts, device RAM, and Network Information API connection profiles (4G/3G/2G, downlink, RTT).
+- 📊 **Behavioral UX & Frustration Radar** — Rapid click detection ($\ge 3$ clicks in 500ms, $< 40$px) with DOM element selectors, desktop exit-intent tracking, reading depth milestones (`25%`, `50%`, `75%`, `90%`, `100%`), and outbound external link clicks.
+- 📊 **STEM Lab Intelligence & Learning Funnel** — Granular telemetry capturing simulation starts, experiment completions, completion rate %, parameter sliders, and quiz attempts.
+- 📊 **Returning Users & Loyalty Directory** — Persistent visitor lifecycle tracking identifying returning students, lifetime visit counts, total dwell time, and profile linking for registered members.
 
 ### Enterprise Technical SEO & Educational Knowledge Graph 🌐
 - 🌐 **Modular Knowledge Graph** — Domain-driven STEM concept registries (`app/lib/knowledge/concepts/`), sequential learning paths (`paths/`), and formula registries (`formulas/`) mapping prerequisites, next steps, and related labs.
@@ -229,6 +237,8 @@ yarn start
 - **@headlessui/react** 2.2.9 (accessible UI components)
 
 ### Analytics & Performance
+- **OpenLabs Native Telemetry Engine** — In-browser PerformanceObservers (RUM), unmasked WebGL GPU extraction, active/idle dwell ticker, scroll milestones, frustration rage click radar, and MongoDB aggregation pipelines
+- **Microsoft Clarity** — Client session analytics and user interaction tracking
 - **@vercel/speed-insights** 1.3.1 (performance monitoring)
 
 ### Development & Build
@@ -399,7 +409,7 @@ Supports optional `?next=/path` query parameter to redirect users to their inten
 | `/blog` | Visual listing grid of all public articles with reading time and cover photo hovers |
 | `/blog/[slug]` | Dedicated editorial view with cover image and auto-injected dynamic FAQ Schema JSON-LD |
 | `admin.openlabs.org.in` | Executive Admin Subdomain with dedicated `AdminNavbar` and `AdminFooter` |
-| `/admin/analytics` | Real-time visitor telemetry, live event streams, error triage, and country traffic mapping |
+| `/admin/analytics` | Executive telemetry cockpit: live pageview stream, Core Web Vitals (RUM), STEM lab learning funnels, frustration signals, returning users directory, and error diagnostics |
 | `/admin/users` | Comprehensive User Telemetry Dashboard for inspecting accounts, XP, badges, and managing user roles (`user`, `moderator`, `admin`) |
 | `/admin/blogs` | Admin blog manager dashboard listing (published vs draft status) |
 | `/admin/feedback` | Virtual lab rating and review triage cockpit with status filtering |

@@ -86,6 +86,22 @@ export async function POST(req: Request) {
     if (type === "pageview") {
       const referrerDomain = extractDomain(body.referrer);
 
+      let isReturning = Boolean(body.isReturning);
+      let visitCount = Math.max(1, Number(body.visitCount) || 1);
+
+      // Server-side identity check: verify against prior sessions in database
+      if (!isReturning) {
+        const priorQuery: any[] = [{ visitorId, sessionId: { $ne: sessionId } }];
+        if (userId) {
+          priorQuery.push({ userId, sessionId: { $ne: sessionId } });
+        }
+        const priorPv = await (PageView as any).findOne({ $or: priorQuery }).select("_id").lean();
+        if (priorPv) {
+          isReturning = true;
+          visitCount = Math.max(2, visitCount);
+        }
+      }
+
       await (PageView as any).create({
         pathname,
         title: body.title || "",
@@ -109,27 +125,77 @@ export async function POST(req: Request) {
         city: geo.city,
         ip: geo.ip,
         duration: 1,
+        activeDuration: 0,
+        idleDuration: 0,
+        focusCount: 1,
         scrollDepth: 0,
+        scrollMilestones: [],
+        webVitals: {
+          fcp: null,
+          lcp: null,
+          cls: null,
+          inp: null,
+          ttfb: null,
+          domLoad: null,
+          windowLoad: null,
+        },
+        hardware: body.hardware || {},
+        network: body.network || {},
+        isBounce: false,
+        exitIntent: false,
+        isReturning,
+        visitCount,
       });
 
       return NextResponse.json({ ok: true });
     }
 
-    // ── B. Handle Heartbeat (Dwell time & Scroll update) ──
+    // ── B. Handle Heartbeat (Dwell time, Web Vitals & Scroll update) ──
     if (type === "heartbeat") {
-      const { duration, scrollDepth } = body;
+      const {
+        duration,
+        activeDuration,
+        idleDuration,
+        focusCount,
+        scrollDepth,
+        scrollMilestones,
+        webVitals,
+        isBounce,
+        exitIntent,
+      } = body;
 
-      // Find the most recent pageview for this session + pathname and update duration/scroll
+      const updateSet: Record<string, any> = {
+        duration: Number(duration) || 1,
+        activeDuration: Math.max(0, Number(activeDuration) || 0),
+        idleDuration: Math.max(0, Number(idleDuration) || 0),
+        focusCount: Math.max(1, Number(focusCount) || 1),
+        scrollDepth: Math.min(100, Math.max(0, Number(scrollDepth) || 0)),
+        isBounce: Boolean(isBounce),
+        exitIntent: Boolean(exitIntent),
+      };
+
+      if (Array.isArray(scrollMilestones) && scrollMilestones.length > 0) {
+        updateSet.scrollMilestones = scrollMilestones;
+      }
+
+      if (webVitals && typeof webVitals === "object") {
+        if (webVitals.fcp !== null && webVitals.fcp !== undefined) updateSet["webVitals.fcp"] = webVitals.fcp;
+        if (webVitals.lcp !== null && webVitals.lcp !== undefined) updateSet["webVitals.lcp"] = webVitals.lcp;
+        if (webVitals.cls !== null && webVitals.cls !== undefined) updateSet["webVitals.cls"] = webVitals.cls;
+        if (webVitals.inp !== null && webVitals.inp !== undefined) updateSet["webVitals.inp"] = webVitals.inp;
+        if (webVitals.ttfb !== null && webVitals.ttfb !== undefined) updateSet["webVitals.ttfb"] = webVitals.ttfb;
+        if (webVitals.domLoad !== null && webVitals.domLoad !== undefined) updateSet["webVitals.domLoad"] = webVitals.domLoad;
+        if (webVitals.windowLoad !== null && webVitals.windowLoad !== undefined) updateSet["webVitals.windowLoad"] = webVitals.windowLoad;
+      }
+
+      // Find the most recent pageview for this session + pathname and update duration/scroll/vitals
       await (PageView as any).findOneAndUpdate(
         {
           sessionId,
           pathname,
         },
         {
-          $set: {
-            duration: Number(duration) || 1,
-            scrollDepth: Math.min(100, Math.max(0, Number(scrollDepth) || 0)),
-          },
+          $set: updateSet,
         },
         { sort: { createdAt: -1 } }
       );
@@ -137,7 +203,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    // ── C. Handle Custom Learning / Lab Event ──
+    // ── C. Handle Custom Learning / Lab / UX / Web Vital Event ──
     if (type === "event") {
       const { eventName, category, labId, properties, value } = body;
 

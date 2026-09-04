@@ -59,6 +59,8 @@ import {
   CheckCheck,
   Wrench,
   Bot,
+  UserCheck,
+  Repeat,
 } from "lucide-react";
 import { getFullCountryName } from "@/app/lib/countries";
 
@@ -81,6 +83,8 @@ interface PageViewItem {
   visitorId: string;
   sessionId: string;
   userId?: UserSnippet | null;
+  isReturning?: boolean;
+  visitCount?: number;
   referrer?: string;
   referrerDomain?: string;
   utmSource?: string | null;
@@ -95,7 +99,36 @@ interface PageViewItem {
   country: string;
   city?: string;
   duration: number;
+  activeDuration?: number;
+  idleDuration?: number;
+  focusCount?: number;
   scrollDepth: number;
+  scrollMilestones?: number[];
+  webVitals?: {
+    fcp?: number | null;
+    lcp?: number | null;
+    cls?: number | null;
+    inp?: number | null;
+    ttfb?: number | null;
+    domLoad?: number | null;
+    windowLoad?: number | null;
+  };
+  hardware?: {
+    memory?: number | null;
+    cores?: number | null;
+    gpu?: string;
+    dpr?: number;
+    viewport?: string;
+    touchPoints?: number;
+  };
+  network?: {
+    effectiveType?: string;
+    downlink?: number | null;
+    rtt?: number | null;
+    saveData?: boolean;
+  };
+  isBounce?: boolean;
+  exitIntent?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -133,6 +166,23 @@ interface ErrorLogItem {
   userId?: UserSnippet | null;
 }
 
+interface ReturningUserItem {
+  visitorId: string;
+  user?: UserSnippet | null;
+  visitCount: number;
+  sessionCount: number;
+  totalViews: number;
+  totalDuration: number;
+  topPaths: string[];
+  country: string;
+  city: string;
+  device: string;
+  browser: string;
+  os: string;
+  firstSeen: string;
+  lastSeen: string;
+}
+
 interface AnalyticsData {
   overview: {
     totalViews: number;
@@ -143,12 +193,30 @@ interface AnalyticsData {
     avgDuration: number;
     avgScrollDepth: number;
     activeUsers: number;
+    returningVisitors?: number;
+    newVisitors?: number;
+    returnRate?: number;
   };
+  retention?: {
+    totalVisitors: number;
+    returningVisitors: number;
+    newVisitors: number;
+    returnRate: number;
+    frequency: { label: string; count: number; percentage: number }[];
+  };
+  returningUsers?: ReturningUserItem[];
   realtime: {
     totalActiveUsers: number;
     activePaths: { pathname: string; activeUsers: number }[];
   };
-  timeseries: { label: string; views: number; visitors: number }[];
+  timeseries: {
+    label: string;
+    views: number;
+    visitors: number;
+    returningVisitors?: number;
+    newVisitors?: number;
+    returningViews?: number;
+  }[];
   topPages: {
     pathname: string;
     title: string;
@@ -174,6 +242,7 @@ interface AnalyticsData {
   countries: { country: string; count: number; percentage: number }[];
   durationDistribution: { label: string; count: number }[];
   scrollDistribution: { label: string; count: number }[];
+  recentPageViews?: PageViewItem[];
   recentEvents: CustomEventItem[];
   recentErrors: ErrorLogItem[];
   errorStats: {
@@ -182,6 +251,76 @@ interface AnalyticsData {
     statusNew: number;
     statusInvestigating: number;
     statusResolved: number;
+  };
+  webVitals?: {
+    totalMeasured: number;
+    overall: {
+      lcp: number | null;
+      fcp: number | null;
+      cls: number | null;
+      inp: number | null;
+      ttfb: number | null;
+      domLoad: number | null;
+      windowLoad: number | null;
+    };
+    distributions: {
+      lcp: { good: number; needsImprovement: number; poor: number };
+      fcp: { good: number; needsImprovement: number; poor: number };
+      cls: { good: number; needsImprovement: number; poor: number };
+      inp: { good: number; needsImprovement: number; poor: number };
+    };
+    pages: {
+      pathname: string;
+      count: number;
+      lcp: number | null;
+      fcp: number | null;
+      cls: number | null;
+      inp: number | null;
+      ttfb: number | null;
+    }[];
+  };
+  hardwareDiagnostics?: {
+    networkTypes: { type: string; count: number; percentage: number }[];
+    gpus: { gpu: string; count: number; percentage: number }[];
+    cpuCores: { cores: string; count: number; percentage: number }[];
+  };
+  labIntelligence?: {
+    overview: {
+      totalStarts: number;
+      totalCompletions: number;
+      completionRate: number;
+      totalParameterTweaks: number;
+      totalQuizAttempts: number;
+    };
+    labs: {
+      labId: string;
+      starts: number;
+      completes: number;
+      completionRate: number;
+      parameterTweaks: number;
+      stepProgressions: number;
+      quizAttempts: number;
+      resets: number;
+      uniqueStudents: number;
+    }[];
+  };
+  behavioralSignals?: {
+    bounceRate: number;
+    exitIntentRate: number;
+    activeRatio: {
+      totalActiveSeconds: number;
+      totalIdleSeconds: number;
+      activePercentage: number;
+      avgActiveSeconds: number;
+      avgIdleSeconds: number;
+      avgFocusCount: number;
+    };
+    rageClicks: { element: string; pathname: string; count: number; sampleText: string }[];
+    outboundClicks: { href: string; count: number; sampleText: string }[];
+  };
+  userJourneys?: {
+    entryPages: { pathname: string; count: number; percentage: number }[];
+    exitPages: { pathname: string; count: number; percentage: number }[];
   };
 }
 
@@ -330,9 +469,9 @@ function DateRangeNavigator({
   };
 
   return (
-    <div className={`flex items-center gap-1.5 flex-wrap ${className}`}>
+    <div className={`flex items-center gap-1.5 flex-wrap max-w-full ${className}`}>
       {/* 1. Quick Presets Strip */}
-      <div className="flex items-center bg-muted/60 rounded-xl p-1 border border-border text-xs font-bold">
+      <div className="flex items-center bg-muted/60 rounded-xl p-1 border border-border text-xs font-bold overflow-x-auto no-scrollbar max-w-full">
         {[
           { id: "today", label: "Today" },
           { id: "yesterday", label: "Yesterday" },
@@ -346,11 +485,10 @@ function DateRangeNavigator({
               key={t.id}
               type="button"
               onClick={() => onChange(t.id)}
-              className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition ${
-                active
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${active
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               {t.label}
             </button>
@@ -359,7 +497,7 @@ function DateRangeNavigator({
       </div>
 
       {/* 2. Day-by-Day Stepper Navigator (< Day >) */}
-      <div className="flex items-center bg-muted/60 border border-border rounded-xl p-1 text-xs">
+      <div className="flex items-center bg-muted/60 border border-border rounded-xl p-1 text-xs shrink-0">
         <button
           type="button"
           onClick={handlePrevDay}
@@ -373,8 +511,8 @@ function DateRangeNavigator({
           {isSingleDayMode
             ? formatDayLabel(activeSingleDate)
             : isCustomRange
-            ? `${customParts[0]} → ${customParts[1]}`
-            : formatDayLabel(activeSingleDate)}
+              ? `${customParts[0]} → ${customParts[1]}`
+              : formatDayLabel(activeSingleDate)}
         </span>
 
         <button
@@ -389,15 +527,14 @@ function DateRangeNavigator({
       </div>
 
       {/* 3. Custom Date Range Picker */}
-      <div className="relative">
+      <div className="relative shrink-0">
         <button
           type="button"
           onClick={() => setShowCustomModal(!showCustomModal)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition shadow-xs ${
-            isCustomRange
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition shadow-xs ${isCustomRange
               ? "bg-primary text-primary-foreground border-primary shadow-sm"
               : "bg-card border-border text-foreground hover:bg-muted"
-          }`}
+            }`}
           title="Custom Date Range"
         >
           <Calendar size={13} />
@@ -406,7 +543,7 @@ function DateRangeNavigator({
 
         {/* Custom Range Popover Dropdown */}
         {showCustomModal && (
-          <div className="absolute right-0 top-full mt-2 z-50 p-4 bg-card border border-border rounded-2xl shadow-2xl w-72 space-y-3 animate-in fade-in zoom-in-95 duration-150">
+          <div className="absolute right-0 top-full mt-2 z-50 p-4 bg-card border border-border rounded-2xl shadow-2xl w-72 max-w-[calc(100vw-2rem)] space-y-3 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-border pb-2">
               <span className="text-xs font-black text-foreground">Custom Date Range</span>
               <button
@@ -470,8 +607,24 @@ export default function AdminAnalyticsDashboard() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [autoRefreshInterval, setAutoRefreshInterval] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<
-    "live_feed" | "pages" | "acquisition" | "tech" | "engagement" | "events" | "errors"
+    | "live_feed"
+    | "returning_users"
+    | "vitals"
+    | "labs"
+    | "ux"
+    | "journeys"
+    | "pages"
+    | "acquisition"
+    | "tech"
+    | "engagement"
+    | "events"
+    | "errors"
   >("live_feed");
+
+  // Returning Users Directory Filter State
+  const [retUserSearch, setRetUserSearch] = useState("");
+  const [retUserSegment, setRetUserSegment] = useState<"all" | "registered" | "guests">("all");
+  const [retUserSort, setRetUserSort] = useState<"visits_desc" | "recent_desc" | "views_desc" | "duration_desc">("visits_desc");
 
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
@@ -501,7 +654,7 @@ export default function AdminAnalyticsDashboard() {
   // Error Tab State & Filters
   const [errorStatusFilter, setErrorStatusFilter] = useState<string>("all");
   const [errorTypeFilter, setErrorTypeFilter] = useState<string>("all");
-  const [errorSearchQuery, setErrorSearchQuery] = useState<string>("" );
+  const [errorSearchQuery, setErrorSearchQuery] = useState<string>("");
   const [copiedErrorId, setCopiedErrorId] = useState<string | null>(null);
   const [copiedAllErrors, setCopiedAllErrors] = useState<boolean>(false);
   const [showExportDropdown, setShowExportDropdown] = useState<boolean>(false);
@@ -594,9 +747,8 @@ Total Tracked Errors: ${errorsToCopy.length}
       const header = `# 📋 OpenLabs Error Diagnostics & AI Fix Report
 - **Export Date:** ${new Date().toLocaleString()}
 - **Total Filtered Errors:** ${errorsToExport.length}
-- **Active Errors:** ${
-        errorsToExport.filter((e) => e.status === "new" || e.status === "investigating").length
-      }
+- **Active Errors:** ${errorsToExport.filter((e) => e.status === "new" || e.status === "investigating").length
+        }
 - **Resolved Errors:** ${errorsToExport.filter((e) => e.status === "resolved").length}
 
 ---
@@ -695,8 +847,8 @@ Total Tracked Errors: ${errorsToCopy.length}
       purgeMode === "all"
         ? "ALL error records"
         : purgeMode === "resolved"
-        ? "all RESOLVED error records"
-        : "all IGNORED error records";
+          ? "all RESOLVED error records"
+          : "all IGNORED error records";
     if (!window.confirm(`Are you sure you want to permanently delete ${label}?`)) return;
 
     setErrorBulkLoading(true);
@@ -970,66 +1122,137 @@ Total Tracked Errors: ${errorsToCopy.length}
       </div>
 
       {data && (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4">
-          <div className="p-4 bg-card border border-border rounded-2xl shadow-sm space-y-1">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3 sm:gap-4">
+          <div className="p-3 sm:p-4 bg-card border border-border rounded-2xl shadow-sm space-y-1">
             <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">Total Pageviews</span>
-            <span className="text-2xl font-black text-foreground">{data.overview.totalViews.toLocaleString()}</span>
+            <span className="text-xl sm:text-2xl font-black text-foreground">{data.overview.totalViews.toLocaleString()}</span>
           </div>
-          <div className="p-4 bg-card border border-border rounded-2xl shadow-sm space-y-1">
+          <div className="p-3 sm:p-4 bg-card border border-border rounded-2xl shadow-sm space-y-1">
             <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">Unique Visitors</span>
-            <span className="text-2xl font-black text-foreground">{data.overview.uniqueVisitors.toLocaleString()}</span>
+            <span className="text-xl sm:text-2xl font-black text-foreground">{data.overview.uniqueVisitors.toLocaleString()}</span>
           </div>
-          <div className="p-4 bg-card border border-border rounded-2xl shadow-sm space-y-1">
+          <div
+            onClick={() => setActiveTab("returning_users")}
+            className="p-3 sm:p-4 bg-card border border-border hover:border-primary/60 rounded-2xl shadow-sm space-y-1 cursor-pointer transition-all hover:bg-muted/30 group"
+            title="Click to view full Returning Users directory & profiles"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-extrabold uppercase text-muted-foreground group-hover:text-primary transition-colors block">Returning Users</span>
+              <span className="px-1.5 py-0.2 rounded text-[9px] font-black bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                {data.retention?.returnRate ?? data.overview.returnRate ?? 0}%
+              </span>
+            </div>
+            <div className="flex items-baseline justify-between">
+              <span className="text-xl sm:text-2xl font-black text-foreground">
+                {(data.retention?.returningVisitors ?? data.overview.returningVisitors ?? 0).toLocaleString()}
+              </span>
+              <span className="text-[10px] font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5 font-mono">
+                View &rarr;
+              </span>
+            </div>
+            <div className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
+              <span className="text-emerald-600 dark:text-emerald-400 font-bold">{data.retention?.newVisitors ?? data.overview.newVisitors ?? 0} new</span>
+              <span>&bull;</span>
+              <span className="text-blue-600 dark:text-blue-400 font-bold">{data.retention?.returningVisitors ?? data.overview.returningVisitors ?? 0} return</span>
+            </div>
+          </div>
+          <div className="p-3 sm:p-4 bg-card border border-border rounded-2xl shadow-sm space-y-1">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">Total Sessions</span>
             </div>
-            <span className="text-2xl font-black text-foreground">{data.overview.uniqueSessions.toLocaleString()}</span>
+            <span className="text-xl sm:text-2xl font-black text-foreground">{data.overview.uniqueSessions.toLocaleString()}</span>
             <div className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
               <span>{data.overview.anonymousSessions ?? "?"} guest</span>
               <span>&bull;</span>
               <span>{data.overview.authenticatedSessions ?? "?"} user</span>
             </div>
           </div>
-          <div className="p-4 bg-card border border-border rounded-2xl shadow-sm space-y-1">
+          <div className="p-3 sm:p-4 bg-card border border-border rounded-2xl shadow-sm space-y-1">
             <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">Avg Dwell Time</span>
-            <span className="text-2xl font-black text-foreground font-mono">{formatDuration(data.overview.avgDuration)}</span>
+            <span className="text-xl sm:text-2xl font-black text-foreground font-mono">{formatDuration(data.overview.avgDuration)}</span>
           </div>
-          <div className="p-4 bg-card border border-border rounded-2xl shadow-sm space-y-1">
+          <div className="p-3 sm:p-4 bg-card border border-border rounded-2xl shadow-sm space-y-1">
             <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">Avg Scroll Depth</span>
-            <span className="text-2xl font-black text-foreground font-mono">{data.overview.avgScrollDepth}%</span>
+            <span className="text-xl sm:text-2xl font-black text-foreground font-mono">{data.overview.avgScrollDepth}%</span>
           </div>
-          <div className={`p-4 rounded-2xl border shadow-sm space-y-1 ${data.errorStats.totalErrors > 0 ? "bg-rose-500/10 border-rose-500/20 text-rose-600 dark:text-rose-400" : "bg-card border border-border"}`}>
+          <div className={`p-3 sm:p-4 rounded-2xl border shadow-sm space-y-1 ${data.errorStats.totalErrors > 0 ? "bg-rose-500/10 border-rose-500/20 text-rose-600 dark:text-rose-400" : "bg-card border border-border"}`}>
             <span className="text-[10px] font-extrabold uppercase block">Runtime Errors</span>
-            <span className="text-2xl font-black">{data.errorStats.totalErrors} <span className="text-xs ml-1 font-normal opacity-80">({data.errorStats.statusNew} new)</span></span>
+            <span className="text-xl sm:text-2xl font-black">{data.errorStats.totalErrors} <span className="text-xs ml-1 font-normal opacity-80">({data.errorStats.statusNew} new)</span></span>
           </div>
         </div>
       )}
 
       {data && data.timeseries.length > 0 && (
-        <div className="p-5 bg-card border border-border rounded-3xl shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="p-4 sm:p-5 bg-card border border-border rounded-3xl shadow-sm space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-2">
               <TrendingUp size={16} className="text-primary" />
-              <h3 className="text-sm font-black text-foreground">Traffic &amp; Views Trend</h3>
+              <h3 className="text-sm font-black text-foreground">Traffic &amp; Returning Users Trend</h3>
             </div>
-            <span className="text-xs text-muted-foreground font-mono">{data.timeseries.length} data points</span>
+            <div className="flex items-center gap-3 text-xs font-mono">
+              <span className="flex items-center gap-1.5 text-muted-foreground">
+                <span className="w-2.5 h-2.5 rounded-sm bg-primary" /> All Pageviews
+              </span>
+              <span className="flex items-center gap-1.5 text-blue-500 font-bold">
+                <span className="w-2.5 h-2.5 rounded-sm bg-blue-500" /> Returning ({data.retention?.returnRate ?? data.overview.returnRate ?? 0}%)
+              </span>
+              <span className="text-muted-foreground font-mono">{data.timeseries.length} data points</span>
+            </div>
           </div>
-          <div className="h-40 flex items-end gap-1.5 sm:gap-2 pt-4 border-b border-border/50">
-            {data.timeseries.map((item, idx) => {
-              const heightPct = Math.max(6, Math.round((item.views / maxTimeseriesViews) * 100));
-              return (
-                <div key={idx} className="flex-1 flex flex-col items-center gap-1 group relative h-full justify-end">
-                  <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none bg-slate-900 text-white text-[10px] font-mono px-2 py-1 rounded-lg shadow-lg z-20 whitespace-nowrap">{item.label}: {item.views} views</div>
-                  <div style={{ height: `${heightPct}%` }} className="w-full max-w-[28px] bg-gradient-to-t from-primary/80 to-primary rounded-t-lg transition-all" />
-                </div>
-              );
-            })}
+          <div className="overflow-x-auto no-scrollbar">
+            <div className="h-40 min-w-[340px] flex items-end gap-1.5 sm:gap-2 pt-4 border-b border-border/50">
+              {data.timeseries.map((item, idx) => {
+                const heightPct = Math.max(6, Math.round((item.views / maxTimeseriesViews) * 100));
+                const retPct = item.views > 0 && item.returningViews ? Math.min(100, Math.round((item.returningViews / item.views) * 100)) : 0;
+                return (
+                  <div key={idx} className="flex-1 flex flex-col items-center gap-1 group relative h-full justify-end">
+                    <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none bg-slate-900 text-white text-[10px] font-mono px-2.5 py-1.5 rounded-xl shadow-xl z-20 whitespace-nowrap">
+                      <div className="font-bold text-slate-100">{item.label}</div>
+                      <div>{item.views} views ({item.visitors} visitors)</div>
+                      <div className="text-blue-300">
+                        {item.returningVisitors ?? 0} returning ({retPct}%)
+                      </div>
+                    </div>
+                    <div className="w-full flex flex-col justify-end items-center h-full">
+                      <div
+                        style={{ height: `${heightPct}%` }}
+                        className="w-full max-w-[28px] rounded-t-sm transition-all relative overflow-hidden bg-primary/20 group-hover:bg-primary/30 flex flex-col justify-end"
+                      >
+                        {retPct > 0 && (
+                          <div
+                            style={{ height: `${retPct}%` }}
+                            className="w-full bg-blue-500 transition-all rounded-t-xs"
+                            title={`${item.returningViews} returning views`}
+                          />
+                        )}
+                      </div>
+                    </div>
+                    <span className="text-[9px] font-mono text-muted-foreground truncate w-full text-center group-hover:text-foreground">
+                      {item.label.length > 5 ? item.label.slice(5) : item.label}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}
 
-      <div className="flex items-center gap-1.5 p-1 bg-card border border-border rounded-2xl overflow-x-auto shadow-sm text-xs font-bold">
-        {[ { id: "live_feed", label: `All Page Views & Stream (${pvPagination.total.toLocaleString()})`, icon: Radio }, { id: "pages", label: "Top Pages & Labs", icon: Layers }, { id: "acquisition", label: "Traffic & Campaigns", icon: Compass }, { id: "tech", label: "Tech & Geography", icon: Laptop }, { id: "engagement", label: "Dwell & Scroll Dist", icon: Sliders }, { id: "events", label: `Custom Events (${data?.recentEvents?.length || 0})`, icon: Zap }, { id: "errors", label: `Error Diagnostics (${data?.recentErrors?.length || 0})`, icon: Bug } ].map((tab) => {
+      <div className="flex items-center gap-1.5 p-1 bg-card border border-border rounded-2xl overflow-x-auto no-scrollbar shadow-sm text-xs font-bold">
+        {[
+          { id: "live_feed", label: `All Page Views (${pvPagination.total.toLocaleString()})`, icon: Radio },
+          { id: "returning_users", label: `Returning Users (${data?.returningUsers?.length ?? 0})`, icon: UserCheck },
+          { id: "vitals", label: `⚡ Web Vitals & RUM (${data?.webVitals?.totalMeasured || 0})`, icon: Activity },
+          { id: "labs", label: `🔬 Lab Intelligence (${data?.labIntelligence?.labs?.length || 0})`, icon: BookOpen },
+          { id: "ux", label: `🧠 Behavioral UX (${data?.behavioralSignals?.rageClicks?.length || 0})`, icon: Flame },
+          { id: "journeys", label: "🗺️ User Journeys", icon: Share2 },
+          { id: "pages", label: "Top Pages & Labs", icon: Layers },
+          { id: "acquisition", label: "Traffic & Campaigns", icon: Compass },
+          { id: "tech", label: "Tech & Geography", icon: Laptop },
+          { id: "engagement", label: "Loyalty, Dwell & Scroll", icon: Sliders },
+          { id: "events", label: `Custom Events (${data?.recentEvents?.length || 0})`, icon: Zap },
+          { id: "errors", label: `Error Diagnostics (${data?.recentErrors?.length || 0})`, icon: Bug },
+        ].map((tab) => {
           const Icon = tab.icon;
           return (
             <button key={tab.id} onClick={() => setActiveTab(tab.id as any)} className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl transition shrink-0 ${activeTab === tab.id ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"}`}>
@@ -1049,7 +1272,7 @@ Total Tracked Errors: ${errorsToCopy.length}
                 <h3 className="text-sm font-black tracking-tight text-foreground">All Pageview Events &amp; Live Stream</h3>
               </div>
               <button onClick={() => setLiveStreamActive((v) => !v)} className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border transition ${liveStreamActive ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30" : "bg-muted text-muted-foreground border-border hover:text-foreground"}`}>
-                {liveStreamActive ? ( <><Pause size={10} /> <span>Live (5s)</span></> ) : ( <><Play size={10} /> <span>Stream Paused</span></> )}
+                {liveStreamActive ? (<><Pause size={10} /> <span>Live (5s)</span></>) : (<><Play size={10} /> <span>Stream Paused</span></>)}
               </button>
             </div>
             <div className="flex items-center gap-2 flex-wrap text-xs">
@@ -1078,8 +1301,10 @@ Total Tracked Errors: ${errorsToCopy.length}
               {/* User Type Filter */}
               <div className="flex items-center gap-2 bg-background border border-border rounded-xl px-3 py-2 text-xs">
                 <Users size={14} className="text-muted-foreground shrink-0" />
-                <select value={pvUserType} onChange={(e) => { setPvUserType(e.target.value); setPvPage(1); }} className="w-full bg-transparent text-xs font-bold text-foreground focus:outline-none cursor-pointer">
+                <select value={pvUserType} onChange={(e) => { setPvUserType(e.target.value); setPvPage(1); }} className="w-full bg-transparent text-xs font-bold text-foreground focus:outline-none cursor-pointer [&>option]:bg-card [&>option]:text-foreground [&>option]:dark:bg-slate-900 [&>option]:dark:text-slate-100">
                   <option value="all">All Visitors</option>
+                  <option value="new">New Visitors Only (Visit #1)</option>
+                  <option value="returning">Returning Visitors Only</option>
                   <option value="anonymous">Guests / Anonymous Only</option>
                   <option value="authenticated">Logged-In Users Only</option>
                 </select>
@@ -1088,7 +1313,7 @@ Total Tracked Errors: ${errorsToCopy.length}
               {/* Device Filter */}
               <div className="flex items-center gap-2 bg-background border border-border rounded-xl px-3 py-2 text-xs">
                 <Smartphone size={14} className="text-muted-foreground shrink-0" />
-                <select value={pvDevice} onChange={(e) => { setPvDevice(e.target.value); setPvPage(1); }} className="w-full bg-transparent text-xs font-bold text-foreground focus:outline-none cursor-pointer">
+                <select value={pvDevice} onChange={(e) => { setPvDevice(e.target.value); setPvPage(1); }} className="w-full bg-transparent text-xs font-bold text-foreground focus:outline-none cursor-pointer [&>option]:bg-card [&>option]:text-foreground [&>option]:dark:bg-slate-900 [&>option]:dark:text-slate-100">
                   <option value="all">All Devices</option>
                   <option value="desktop">Desktop Only</option>
                   <option value="mobile">Mobile Only</option>
@@ -1099,7 +1324,7 @@ Total Tracked Errors: ${errorsToCopy.length}
               {/* Sort Filter */}
               <div className="flex items-center gap-2 bg-background border border-border rounded-xl px-3 py-2 text-xs">
                 <SlidersHorizontal size={14} className="text-muted-foreground shrink-0" />
-                <select value={pvSort} onChange={(e) => { setPvSort(e.target.value); setPvPage(1); }} className="w-full bg-transparent text-xs font-bold text-foreground focus:outline-none cursor-pointer">
+                <select value={pvSort} onChange={(e) => { setPvSort(e.target.value); setPvPage(1); }} className="w-full bg-transparent text-xs font-bold text-foreground focus:outline-none cursor-pointer [&>option]:bg-card [&>option]:text-foreground [&>option]:dark:bg-slate-900 [&>option]:dark:text-slate-100">
                   <option value="createdAt_desc">Newest First</option>
                   <option value="createdAt_asc">Oldest First</option>
                   <option value="duration_desc">Longest Dwell</option>
@@ -1181,9 +1406,22 @@ Total Tracked Errors: ${errorsToCopy.length}
                       <td className="p-3.5">
                         {pv.userId ? (
                           <div className="space-y-0.5">
-                            <span className="font-bold text-foreground block truncate max-w-[150px]">
-                              {pv.userId.name || pv.userId.email}
-                            </span>
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="font-bold text-foreground block truncate max-w-[150px]">
+                                {pv.userId.name || pv.userId.email}
+                              </span>
+                              {pv.isReturning || (pv.visitCount && pv.visitCount > 1) ? (
+                                <span className="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 font-sans font-bold text-[9px] border border-blue-500/20 inline-flex items-center gap-1" title={`Returning visitor (${pv.visitCount || 2} total visits)`}>
+                                  <Repeat size={8} />
+                                  <span>Return #{pv.visitCount || 2}</span>
+                                </span>
+                              ) : (
+                                <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-sans font-bold text-[9px] border border-emerald-500/20 inline-flex items-center gap-1" title="First-time new visitor">
+                                  <Sparkles size={8} />
+                                  <span>New</span>
+                                </span>
+                              )}
+                            </div>
                             <div className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
                               {pv.userId.username && <span>@{pv.userId.username}</span>}
                               {pv.userId.level && (
@@ -1195,10 +1433,21 @@ Total Tracked Errors: ${errorsToCopy.length}
                           </div>
                         ) : (
                           <div className="font-mono text-[10px] text-muted-foreground space-y-1">
-                            <div className="flex items-center gap-1.5">
+                            <div className="flex items-center gap-1.5 flex-wrap">
                               <span className="px-1.5 py-0.5 rounded bg-muted/80 text-muted-foreground font-sans font-bold text-[9px] uppercase tracking-wide border border-border/50">
-                                Guest / Anonymous
+                                Guest
                               </span>
+                              {pv.isReturning || (pv.visitCount && pv.visitCount > 1) ? (
+                                <span className="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 font-sans font-bold text-[9px] border border-blue-500/20 inline-flex items-center gap-1" title={`Returning guest (${pv.visitCount || 2} total visits)`}>
+                                  <Repeat size={8} />
+                                  <span>Return #{pv.visitCount || 2}</span>
+                                </span>
+                              ) : (
+                                <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-sans font-bold text-[9px] border border-emerald-500/20 inline-flex items-center gap-1" title="First-time new guest">
+                                  <Sparkles size={8} />
+                                  <span>New</span>
+                                </span>
+                              )}
                             </div>
                             <div className="flex items-center gap-2 text-[10px]">
                               <button
@@ -1232,9 +1481,22 @@ Total Tracked Errors: ${errorsToCopy.length}
                         )}
                       </td>
 
-                      {/* Dwell Time */}
-                      <td className="p-3.5 font-mono font-bold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
-                        {formatDuration(pv.duration)}
+                      {/* Dwell Time & Active vs. Idle Ratio */}
+                      <td className="p-3.5 font-mono whitespace-nowrap">
+                        <div className="font-bold text-emerald-600 dark:text-emerald-400">
+                          {formatDuration(pv.duration)}
+                        </div>
+                        {pv.activeDuration !== undefined && (
+                          <div className="text-[10px] text-muted-foreground flex items-center gap-1 font-mono mt-0.5">
+                            <span className="text-emerald-500 font-bold">{pv.activeDuration}s act</span>
+                            {pv.idleDuration ? <span>&bull; {pv.idleDuration}s idl</span> : null}
+                          </div>
+                        )}
+                        {pv.isBounce && (
+                          <span className="inline-block mt-0.5 px-1.5 py-0.2 rounded bg-rose-500/15 text-rose-600 dark:text-rose-400 text-[9px] font-bold border border-rose-500/20">
+                            Bounced
+                          </span>
+                        )}
                       </td>
 
                       {/* Scroll */}
@@ -1248,6 +1510,11 @@ Total Tracked Errors: ${errorsToCopy.length}
                             />
                           </div>
                         </div>
+                        {pv.exitIntent && (
+                          <span className="inline-block mt-0.5 px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-600 dark:text-amber-400 text-[9px] font-bold border border-amber-500/20">
+                            Exit Intent
+                          </span>
+                        )}
                       </td>
 
                       {/* Referrer & UTM */}
@@ -1260,6 +1527,26 @@ Total Tracked Errors: ${errorsToCopy.length}
                             utm: {pv.utmSource}
                             {pv.utmCampaign ? ` / ${pv.utmCampaign}` : ""}
                           </span>
+                        )}
+                        {pv.webVitals?.lcp && (
+                          <div className="mt-1 flex items-center gap-1">
+                            <span
+                              className={`px-1.5 py-0.2 rounded text-[9px] font-mono font-bold border ${
+                                pv.webVitals.lcp <= 2500
+                                  ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                                  : pv.webVitals.lcp <= 4000
+                                  ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
+                                  : "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20"
+                              }`}
+                            >
+                              LCP: {pv.webVitals.lcp}ms
+                            </span>
+                            {pv.webVitals.inp && (
+                              <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-muted text-muted-foreground border border-border">
+                                INP: {pv.webVitals.inp}ms
+                              </span>
+                            )}
+                          </div>
                         )}
                       </td>
 
@@ -1282,6 +1569,18 @@ Total Tracked Errors: ${errorsToCopy.length}
                           <span>{getFullCountryName(pv.country)}</span>
                           {pv.city && <span>({pv.city})</span>}
                         </div>
+                        {pv.network?.effectiveType && (
+                          <div className="flex items-center gap-1 text-[9px] font-mono text-muted-foreground mt-0.5">
+                            <span className="px-1 py-0.2 rounded bg-muted text-foreground uppercase font-bold border border-border/60">
+                              {pv.network.effectiveType}
+                            </span>
+                            {pv.hardware?.gpu && (
+                              <span className="truncate max-w-[120px] text-[9px]" title={pv.hardware.gpu}>
+                                &bull; {pv.hardware.gpu}
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))
@@ -1327,11 +1626,10 @@ Total Tracked Errors: ${errorsToCopy.length}
                     <button
                       key={idx}
                       onClick={() => setPvPage(num)}
-                      className={`w-7 h-7 rounded-lg text-xs font-bold transition ${
-                        pvPage === num
+                      className={`w-7 h-7 rounded-lg text-xs font-bold transition ${pvPage === num
                           ? "bg-primary text-primary-foreground shadow-xs"
                           : "bg-card border border-border hover:bg-muted text-foreground"
-                      }`}
+                        }`}
                     >
                       {num}
                     </button>
@@ -1381,6 +1679,1116 @@ Total Tracked Errors: ${errorsToCopy.length}
                   Go
                 </button>
               </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── TAB: RETURNING USERS DIRECTORY ─── */}
+      {activeTab === "returning_users" && data && (
+        <div className="bg-card border border-border rounded-3xl shadow-sm overflow-hidden space-y-4">
+          {/* Header Bar */}
+          <div className="p-4 sm:p-5 border-b border-border bg-muted/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                  <UserCheck size={18} />
+                </div>
+                <h3 className="text-sm font-black tracking-tight text-foreground">
+                  Returning Users Directory &amp; Visitor Profiles
+                </h3>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Profiles of registered accounts, frequent students, and persistent visitors returning to OpenLabs
+              </p>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap text-xs">
+              <span className="px-3 py-1.5 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold border border-blue-500/20 font-mono">
+                {data.retention?.returnRate ?? data.overview.returnRate ?? 0}% Return Rate
+              </span>
+              <span className="px-3 py-1.5 rounded-xl bg-background text-foreground font-bold border border-border font-mono">
+                {data.returningUsers?.length || 0} Profiles Identified
+              </span>
+            </div>
+          </div>
+
+          {/* Quick Metrics Strip */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-4 sm:px-5">
+            <div className="p-3 bg-muted/15 border border-border rounded-2xl space-y-1">
+              <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">Total Returnees</span>
+              <span className="text-lg font-black text-foreground">
+                {data.retention?.returningVisitors ?? data.overview.returningVisitors ?? 0}
+              </span>
+            </div>
+            <div className="p-3 bg-muted/15 border border-border rounded-2xl space-y-1">
+              <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">Registered Members</span>
+              <span className="text-lg font-black text-purple-600 dark:text-purple-400">
+                {(data.returningUsers || []).filter((u) => u.user).length}
+              </span>
+            </div>
+            <div className="p-3 bg-muted/15 border border-border rounded-2xl space-y-1">
+              <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">Guest Returnees</span>
+              <span className="text-lg font-black text-blue-600 dark:text-blue-400">
+                {(data.returningUsers || []).filter((u) => !u.user).length}
+              </span>
+            </div>
+            <div className="p-3 bg-muted/15 border border-border rounded-2xl space-y-1">
+              <span className="text-[10px] font-extrabold uppercase text-muted-foreground block">Max Visits Recorded</span>
+              <span className="text-lg font-black text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-mono">
+                <Flame size={14} className="text-amber-500" />
+                {(data.returningUsers && data.returningUsers.length > 0)
+                  ? Math.max(...data.returningUsers.map((u) => u.visitCount || 1))
+                  : 1}{" "}
+                visits
+              </span>
+            </div>
+          </div>
+
+          {/* Search, Filter & Segment Controls */}
+          <div className="px-4 sm:px-5 space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {/* Search Box */}
+              <div className="flex items-center gap-2 bg-background border border-border rounded-xl px-3 py-2 text-xs">
+                <Search size={14} className="text-muted-foreground shrink-0" />
+                <input
+                  value={retUserSearch}
+                  onChange={(e) => setRetUserSearch(e.target.value)}
+                  placeholder="Search name, email, vid, country, lab…"
+                  className="w-full bg-transparent text-xs text-foreground focus:outline-none placeholder:text-muted-foreground"
+                />
+              </div>
+
+              {/* Segment Selector */}
+              <div className="flex items-center gap-2 bg-background border border-border rounded-xl px-3 py-2 text-xs">
+                <Users size={14} className="text-muted-foreground shrink-0" />
+                <select
+                  value={retUserSegment}
+                  onChange={(e) => setRetUserSegment(e.target.value as any)}
+                  className="w-full bg-transparent text-xs font-bold text-foreground focus:outline-none cursor-pointer [&>option]:bg-card [&>option]:text-foreground [&>option]:dark:bg-slate-900 [&>option]:dark:text-slate-100"
+                >
+                  <option value="all">All Returning Visitors ({data.returningUsers?.length || 0})</option>
+                  <option value="registered">Registered Members Only ({(data.returningUsers || []).filter((u) => u.user).length})</option>
+                  <option value="guests">Guest Returnees ({(data.returningUsers || []).filter((u) => !u.user).length})</option>
+                </select>
+              </div>
+
+              {/* Sort Order */}
+              <div className="flex items-center gap-2 bg-background border border-border rounded-xl px-3 py-2 text-xs">
+                <SlidersHorizontal size={14} className="text-muted-foreground shrink-0" />
+                <select
+                  value={retUserSort}
+                  onChange={(e) => setRetUserSort(e.target.value as any)}
+                  className="w-full bg-transparent text-xs font-bold text-foreground focus:outline-none cursor-pointer [&>option]:bg-card [&>option]:text-foreground [&>option]:dark:bg-slate-900 [&>option]:dark:text-slate-100"
+                >
+                  <option value="visits_desc">Highest Lifetime Visits (Most Loyal)</option>
+                  <option value="recent_desc">Most Recently Active</option>
+                  <option value="views_desc">Most Pageviews</option>
+                  <option value="duration_desc">Longest Total Dwell Time</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Returning Visitors Table */}
+          <div className="overflow-x-auto border-t border-border">
+            {(() => {
+              const query = retUserSearch.toLowerCase().trim();
+              const filtered = (data.returningUsers || [])
+                .filter((item) => {
+                  if (retUserSegment === "registered" && !item.user) return false;
+                  if (retUserSegment === "guests" && item.user) return false;
+                  if (!query) return true;
+                  const nameMatch = item.user?.name?.toLowerCase().includes(query);
+                  const emailMatch = item.user?.email?.toLowerCase().includes(query);
+                  const usernameMatch = item.user?.username?.toLowerCase().includes(query);
+                  const vidMatch = item.visitorId?.toLowerCase().includes(query);
+                  const countryMatch = item.country?.toLowerCase().includes(query);
+                  const cityMatch = item.city?.toLowerCase().includes(query);
+                  const pathMatch = item.topPaths?.some((p) => p.toLowerCase().includes(query));
+                  return Boolean(nameMatch || emailMatch || usernameMatch || vidMatch || countryMatch || cityMatch || pathMatch);
+                })
+                .sort((a, b) => {
+                  if (retUserSort === "recent_desc") {
+                    return new Date(b.lastSeen).getTime() - new Date(a.lastSeen).getTime();
+                  }
+                  if (retUserSort === "views_desc") {
+                    return b.totalViews - a.totalViews;
+                  }
+                  if (retUserSort === "duration_desc") {
+                    return b.totalDuration - a.totalDuration;
+                  }
+                  return (b.visitCount || 1) - (a.visitCount || 1);
+                });
+
+              if (filtered.length === 0) {
+                return (
+                  <div className="p-12 text-center space-y-2">
+                    <p className="text-sm font-bold text-foreground">No returning users match your search criteria</p>
+                    <p className="text-xs text-muted-foreground">Try clearing search terms or selecting another timeframe.</p>
+                  </div>
+                );
+              }
+
+              return (
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-border/80 bg-muted/40 text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                      <th className="p-3.5">User / Visitor Identity</th>
+                      <th className="p-3.5">Loyalty &amp; Visits</th>
+                      <th className="p-3.5">Engagement</th>
+                      <th className="p-3.5">Top Explored Labs &amp; Pages</th>
+                      <th className="p-3.5">Location &amp; Tech</th>
+                      <th className="p-3.5">Activity Timeline</th>
+                      <th className="p-3.5 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/60">
+                    {filtered.map((item, idx) => (
+                      <tr key={item.visitorId || idx} className="hover:bg-muted/30 transition-colors">
+                        {/* Identity */}
+                        <td className="p-3.5">
+                          {item.user ? (
+                            <div className="flex items-center gap-3">
+                              <div className="w-9 h-9 rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400 font-bold shrink-0 overflow-hidden">
+                                {item.user.avatar ? (
+                                  <img src={item.user.avatar} alt="" className="w-full h-full object-cover" />
+                                ) : (
+                                  (item.user.name || item.user.email || "U").slice(0, 1).toUpperCase()
+                                )}
+                              </div>
+                              <div className="space-y-0.5">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="font-bold text-foreground block">
+                                    {item.user.name || item.user.email}
+                                  </span>
+                                  <span className="px-1.5 py-0.2 rounded bg-purple-500/15 text-purple-600 dark:text-purple-400 text-[9px] font-extrabold border border-purple-500/30">
+                                    Registered
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2 text-[10px] font-mono text-muted-foreground">
+                                  {item.user.email && <span>{item.user.email}</span>}
+                                  {item.user.username && <span>@{item.user.username}</span>}
+                                  {item.user.level && (
+                                    <span className="text-amber-600 dark:text-amber-400 font-bold">Lvl {item.user.level}</span>
+                                  )}
+                                </div>
+                                <button
+                                  onClick={() => handleCopy(item.visitorId + "_ret_vid", item.visitorId)}
+                                  className="text-[9px] font-mono text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
+                                  title="Visitor ID (click to copy)"
+                                >
+                                  <span>vid:{item.visitorId.slice(0, 10)}…</span>
+                                  {copiedId === item.visitorId + "_ret_vid" ? <Check size={8} className="text-emerald-500" /> : <Copy size={8} className="opacity-50" />}
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-3">
+                              <div className="w-9 h-9 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold shrink-0">
+                                <Users size={16} />
+                              </div>
+                              <div className="space-y-0.5">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="font-bold text-foreground">Anonymous Guest</span>
+                                  <span className="px-1.5 py-0.2 rounded bg-muted text-muted-foreground text-[9px] font-extrabold border border-border">
+                                    Guest
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground">
+                                  <button
+                                    onClick={() => handleCopy(item.visitorId + "_ret_vid", item.visitorId)}
+                                    className="hover:text-foreground inline-flex items-center gap-1"
+                                    title="Visitor ID (click to copy)"
+                                  >
+                                    <span>vid:{item.visitorId.slice(0, 12)}…</span>
+                                    {copiedId === item.visitorId + "_ret_vid" ? <Check size={8} className="text-emerald-500" /> : <Copy size={8} className="opacity-50" />}
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </td>
+
+                        {/* Loyalty & Visits */}
+                        <td className="p-3.5">
+                          <div className="space-y-1">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-black bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/30">
+                              <Flame size={12} className="text-amber-500" />
+                              <span>{item.visitCount} Visits</span>
+                            </span>
+                            <span className="block text-[10px] font-mono text-muted-foreground">
+                              {item.sessionCount} sessions in period
+                            </span>
+                          </div>
+                        </td>
+
+                        {/* Engagement Volume */}
+                        <td className="p-3.5 font-mono">
+                          <div className="space-y-0.5">
+                            <span className="font-black text-foreground block">{item.totalViews} views</span>
+                            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold block">
+                              {formatDuration(item.totalDuration)} dwell
+                            </span>
+                          </div>
+                        </td>
+
+                        {/* Explored Labs */}
+                        <td className="p-3.5 max-w-[260px]">
+                          <div className="flex flex-wrap gap-1">
+                            {item.topPaths.slice(0, 3).map((path, pIdx) => (
+                              <span
+                                key={pIdx}
+                                className="px-1.5 py-0.5 rounded bg-muted border border-border text-[10px] font-mono text-muted-foreground truncate max-w-[160px] inline-block"
+                                title={path}
+                              >
+                                {path}
+                              </span>
+                            ))}
+                            {item.topPaths.length > 3 && (
+                              <span className="text-[10px] text-muted-foreground font-mono">
+                                +{item.topPaths.length - 3} more
+                              </span>
+                            )}
+                          </div>
+                        </td>
+
+                        {/* Location & Tech */}
+                        <td className="p-3.5">
+                          <div className="space-y-0.5 text-xs">
+                            <div className="flex items-center gap-1 font-bold text-foreground">
+                              <Globe size={11} className="text-primary shrink-0" />
+                              <span className="truncate max-w-[120px]">{item.country}</span>
+                            </div>
+                            <div className="text-[10px] font-mono text-muted-foreground">
+                              <span>{item.city} &bull; {item.os} ({item.browser})</span>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Timeline */}
+                        <td className="p-3.5 font-mono text-xs">
+                          <div className="space-y-0.5">
+                            <span className="font-bold text-foreground block">
+                              {timeAgo(item.lastSeen)}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground block" title={`First: ${item.firstSeen}`}>
+                              First: {new Date(item.firstSeen).toLocaleDateString()}
+                            </span>
+                          </div>
+                        </td>
+
+                        {/* Action */}
+                        <td className="p-3.5 text-right">
+                          <button
+                            onClick={() => {
+                              setPvQuery(item.visitorId);
+                              setPvUserType("all");
+                              setActiveTab("live_feed");
+                            }}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-muted hover:bg-primary hover:text-primary-foreground border border-border text-[11px] font-bold transition shadow-xs whitespace-nowrap cursor-pointer"
+                            title="Filter live stream pageviews for this visitor"
+                          >
+                            <Eye size={12} />
+                            <span>Timeline</span>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              );
+            })()}
+          </div>
+        </div>
+      )}
+
+      {/* ─── TAB: CORE WEB VITALS & REAL USER MONITORING (RUM) ─── */}
+      {activeTab === "vitals" && data && (
+        <div className="space-y-6">
+          <div className="bg-card border border-border rounded-3xl p-5 md:p-6 shadow-sm space-y-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="text-base font-black text-foreground flex items-center gap-2">
+                  <Activity size={18} className="text-emerald-500" />
+                  <span>Real User Monitoring (RUM) &amp; Core Web Vitals</span>
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Real-world browser performance observed across Google Core Web Vitals (LCP, INP, CLS, FCP, TTFB)
+                </p>
+              </div>
+              <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-mono font-bold border border-emerald-500/20 w-fit">
+                {data.webVitals?.totalMeasured ?? 0} Measured Sessions
+              </span>
+            </div>
+          </div>
+
+          {/* 5 Primary Vital Gauges */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+            {/* 1. LCP */}
+            {(() => {
+              const lcp = data.webVitals?.overall.lcp;
+              const dist = data.webVitals?.distributions.lcp || { good: 0, needsImprovement: 0, poor: 0 };
+              const total = dist.good + dist.needsImprovement + dist.poor || 1;
+              const goodPct = Math.round((dist.good / total) * 100);
+              const needsPct = Math.round((dist.needsImprovement / total) * 100);
+              const poorPct = Math.round((dist.poor / total) * 100);
+              const rating = !lcp ? "none" : lcp <= 2500 ? "good" : lcp <= 4000 ? "needs" : "poor";
+
+              return (
+                <div className="p-4 bg-card border border-border rounded-2xl shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">LCP (Load Speed)</span>
+                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
+                      rating === "good" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
+                      rating === "needs" ? "bg-amber-500/15 text-amber-600 dark:text-amber-400" :
+                      rating === "poor" ? "bg-rose-500/15 text-rose-600 dark:text-rose-400" : "bg-muted text-muted-foreground"
+                    }`}>
+                      {rating === "good" ? "Good" : rating === "needs" ? "Needs Imp" : rating === "poor" ? "Poor" : "N/A"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-2xl font-black font-mono text-foreground">
+                      {lcp ? `${(lcp / 1000).toFixed(2)}s` : "—"}
+                    </span>
+                    <span className="block text-[10px] text-muted-foreground mt-0.5">Largest Contentful Paint</span>
+                  </div>
+                  {/* Distribution Bar */}
+                  <div className="space-y-1">
+                    <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden flex">
+                      <div style={{ width: `${goodPct}%` }} className="h-full bg-emerald-500" title={`Good: ${goodPct}%`} />
+                      <div style={{ width: `${needsPct}%` }} className="h-full bg-amber-500" title={`Needs Imp: ${needsPct}%`} />
+                      <div style={{ width: `${poorPct}%` }} className="h-full bg-rose-500" title={`Poor: ${poorPct}%`} />
+                    </div>
+                    <div className="flex justify-between text-[9px] font-mono text-muted-foreground">
+                      <span className="text-emerald-600 dark:text-emerald-400">{goodPct}% Good</span>
+                      <span>Target: &le; 2.5s</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* 2. INP */}
+            {(() => {
+              const inp = data.webVitals?.overall.inp;
+              const dist = data.webVitals?.distributions.inp || { good: 0, needsImprovement: 0, poor: 0 };
+              const total = dist.good + dist.needsImprovement + dist.poor || 1;
+              const goodPct = Math.round((dist.good / total) * 100);
+              const rating = !inp ? "none" : inp <= 200 ? "good" : inp <= 500 ? "needs" : "poor";
+
+              return (
+                <div className="p-4 bg-card border border-border rounded-2xl shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">INP (Interactivity)</span>
+                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
+                      rating === "good" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
+                      rating === "needs" ? "bg-amber-500/15 text-amber-600 dark:text-amber-400" :
+                      rating === "poor" ? "bg-rose-500/15 text-rose-600 dark:text-rose-400" : "bg-muted text-muted-foreground"
+                    }`}>
+                      {rating === "good" ? "Good" : rating === "needs" ? "Needs Imp" : rating === "poor" ? "Poor" : "N/A"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-2xl font-black font-mono text-foreground">
+                      {inp ? `${inp}ms` : "—"}
+                    </span>
+                    <span className="block text-[10px] text-muted-foreground mt-0.5">Interaction to Next Paint</span>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden flex">
+                      <div style={{ width: `${goodPct}%` }} className="h-full bg-emerald-500" />
+                      <div style={{ width: `${100 - goodPct}%` }} className="h-full bg-amber-500" />
+                    </div>
+                    <div className="flex justify-between text-[9px] font-mono text-muted-foreground">
+                      <span className="text-emerald-600 dark:text-emerald-400">{goodPct}% Good</span>
+                      <span>Target: &le; 200ms</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* 3. CLS */}
+            {(() => {
+              const cls = data.webVitals?.overall.cls;
+              const dist = data.webVitals?.distributions.cls || { good: 0, needsImprovement: 0, poor: 0 };
+              const total = dist.good + dist.needsImprovement + dist.poor || 1;
+              const goodPct = Math.round((dist.good / total) * 100);
+              const rating = cls === null || cls === undefined ? "none" : cls <= 0.1 ? "good" : cls <= 0.25 ? "needs" : "poor";
+
+              return (
+                <div className="p-4 bg-card border border-border rounded-2xl shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">CLS (Visual Shift)</span>
+                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
+                      rating === "good" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
+                      rating === "needs" ? "bg-amber-500/15 text-amber-600 dark:text-amber-400" :
+                      rating === "poor" ? "bg-rose-500/15 text-rose-600 dark:text-rose-400" : "bg-muted text-muted-foreground"
+                    }`}>
+                      {rating === "good" ? "Good" : rating === "needs" ? "Needs Imp" : rating === "poor" ? "Poor" : "N/A"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-2xl font-black font-mono text-foreground">
+                      {cls !== null && cls !== undefined ? cls.toFixed(3) : "—"}
+                    </span>
+                    <span className="block text-[10px] text-muted-foreground mt-0.5">Cumulative Layout Shift</span>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden flex">
+                      <div style={{ width: `${goodPct}%` }} className="h-full bg-emerald-500" />
+                      <div style={{ width: `${100 - goodPct}%` }} className="h-full bg-amber-500" />
+                    </div>
+                    <div className="flex justify-between text-[9px] font-mono text-muted-foreground">
+                      <span className="text-emerald-600 dark:text-emerald-400">{goodPct}% Good</span>
+                      <span>Target: &le; 0.10</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* 4. FCP */}
+            {(() => {
+              const fcp = data.webVitals?.overall.fcp;
+              const dist = data.webVitals?.distributions.fcp || { good: 0, needsImprovement: 0, poor: 0 };
+              const total = dist.good + dist.needsImprovement + dist.poor || 1;
+              const goodPct = Math.round((dist.good / total) * 100);
+              const rating = !fcp ? "none" : fcp <= 1800 ? "good" : fcp <= 3000 ? "needs" : "poor";
+
+              return (
+                <div className="p-4 bg-card border border-border rounded-2xl shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">FCP (First Paint)</span>
+                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
+                      rating === "good" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
+                      rating === "needs" ? "bg-amber-500/15 text-amber-600 dark:text-amber-400" :
+                      rating === "poor" ? "bg-rose-500/15 text-rose-600 dark:text-rose-400" : "bg-muted text-muted-foreground"
+                    }`}>
+                      {rating === "good" ? "Good" : rating === "needs" ? "Needs Imp" : rating === "poor" ? "Poor" : "N/A"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-2xl font-black font-mono text-foreground">
+                      {fcp ? `${(fcp / 1000).toFixed(2)}s` : "—"}
+                    </span>
+                    <span className="block text-[10px] text-muted-foreground mt-0.5">First Contentful Paint</span>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden flex">
+                      <div style={{ width: `${goodPct}%` }} className="h-full bg-emerald-500" />
+                      <div style={{ width: `${100 - goodPct}%` }} className="h-full bg-amber-500" />
+                    </div>
+                    <div className="flex justify-between text-[9px] font-mono text-muted-foreground">
+                      <span className="text-emerald-600 dark:text-emerald-400">{goodPct}% Good</span>
+                      <span>Target: &le; 1.8s</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* 5. TTFB */}
+            {(() => {
+              const ttfb = data.webVitals?.overall.ttfb;
+              const rating = !ttfb ? "none" : ttfb <= 800 ? "good" : ttfb <= 1800 ? "needs" : "poor";
+
+              return (
+                <div className="p-4 bg-card border border-border rounded-2xl shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">TTFB (Server Speed)</span>
+                    <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase ${
+                      rating === "good" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
+                      rating === "needs" ? "bg-amber-500/15 text-amber-600 dark:text-amber-400" :
+                      rating === "poor" ? "bg-rose-500/15 text-rose-600 dark:text-rose-400" : "bg-muted text-muted-foreground"
+                    }`}>
+                      {rating === "good" ? "Good" : rating === "needs" ? "Needs Imp" : rating === "poor" ? "Poor" : "N/A"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-2xl font-black font-mono text-foreground">
+                      {ttfb ? `${ttfb}ms` : "—"}
+                    </span>
+                    <span className="block text-[10px] text-muted-foreground mt-0.5">Time to First Byte</span>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden flex">
+                      <div style={{ width: `${rating === "good" ? 90 : 50}%` }} className={`h-full ${rating === "good" ? "bg-emerald-500" : "bg-amber-500"}`} />
+                    </div>
+                    <div className="flex justify-between text-[9px] font-mono text-muted-foreground">
+                      <span className="text-emerald-600 dark:text-emerald-400">Server Edge</span>
+                      <span>Target: &le; 800ms</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+
+          {/* Web Vitals by Page Matrix Table */}
+          <div className="bg-card border border-border rounded-3xl shadow-sm overflow-hidden">
+            <div className="p-4 border-b border-border bg-muted/20 flex items-center justify-between">
+              <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground">
+                Route-by-Route Core Web Vitals Matrix
+              </h3>
+              <span className="text-xs font-mono text-muted-foreground">
+                {data.webVitals?.pages?.length ?? 0} Analyzed Routes
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs font-mono">
+                <thead className="bg-muted/40 border-b border-border text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                  <tr>
+                    <th className="p-3.5">Route Path</th>
+                    <th className="p-3.5 text-right">Samples</th>
+                    <th className="p-3.5 text-right">LCP</th>
+                    <th className="p-3.5 text-right">INP</th>
+                    <th className="p-3.5 text-right">CLS</th>
+                    <th className="p-3.5 text-right">FCP</th>
+                    <th className="p-3.5 text-right">TTFB</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {(!data.webVitals?.pages || data.webVitals.pages.length === 0) ? (
+                    <tr>
+                      <td colSpan={7} className="p-8 text-center text-muted-foreground font-sans text-xs">
+                        No Core Web Vitals records available for the selected time range.
+                      </td>
+                    </tr>
+                  ) : (
+                    data.webVitals.pages.map((p, idx) => (
+                      <tr key={idx} className="hover:bg-muted/20 transition">
+                        <td className="p-3.5 font-bold text-foreground">
+                          <a href={getMainSiteHref(p.pathname)} target="_blank" rel="noopener noreferrer" className="hover:text-primary flex items-center gap-1.5">
+                            <span>{p.pathname}</span>
+                            <ExternalLink size={10} className="text-muted-foreground" />
+                          </a>
+                        </td>
+                        <td className="p-3.5 text-right font-bold text-muted-foreground">{p.count}</td>
+                        <td className="p-3.5 text-right">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                            !p.lcp ? "text-muted-foreground" :
+                            p.lcp <= 2500 ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" :
+                            p.lcp <= 4000 ? "bg-amber-500/10 text-amber-600 dark:text-amber-400" : "bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                          }`}>
+                            {p.lcp ? `${(p.lcp / 1000).toFixed(2)}s` : "—"}
+                          </span>
+                        </td>
+                        <td className="p-3.5 text-right">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                            !p.inp ? "text-muted-foreground" :
+                            p.inp <= 200 ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" :
+                            p.inp <= 500 ? "bg-amber-500/10 text-amber-600 dark:text-amber-400" : "bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                          }`}>
+                            {p.inp ? `${p.inp}ms` : "—"}
+                          </span>
+                        </td>
+                        <td className="p-3.5 text-right">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                            p.cls === null || p.cls === undefined ? "text-muted-foreground" :
+                            p.cls <= 0.1 ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" :
+                            p.cls <= 0.25 ? "bg-amber-500/10 text-amber-600 dark:text-amber-400" : "bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                          }`}>
+                            {p.cls !== null && p.cls !== undefined ? p.cls.toFixed(3) : "—"}
+                          </span>
+                        </td>
+                        <td className="p-3.5 text-right font-bold text-muted-foreground">
+                          {p.fcp ? `${(p.fcp / 1000).toFixed(2)}s` : "—"}
+                        </td>
+                        <td className="p-3.5 text-right font-bold text-muted-foreground">
+                          {p.ttfb ? `${p.ttfb}ms` : "—"}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Hardware & Network Diagnostics Matrix */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Network Speeds */}
+            <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-3">
+              <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground block">
+                Network Connection Speeds
+              </span>
+              <div className="space-y-2">
+                {(!data.hardwareDiagnostics?.networkTypes || data.hardwareDiagnostics.networkTypes.length === 0) ? (
+                  <p className="text-xs text-muted-foreground">No network data recorded yet.</p>
+                ) : (
+                  data.hardwareDiagnostics.networkTypes.map((net, idx) => (
+                    <div key={idx} className="flex items-center justify-between text-xs font-mono">
+                      <span className="font-bold text-foreground uppercase">{net.type}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">{net.count}</span>
+                        <span className="text-primary font-bold">{net.percentage}%</span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* GPU Renderers */}
+            <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-3">
+              <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground block">
+                Unmasked WebGL GPUs
+              </span>
+              <div className="space-y-2">
+                {(!data.hardwareDiagnostics?.gpus || data.hardwareDiagnostics.gpus.length === 0) ? (
+                  <p className="text-xs text-muted-foreground">No GPU profiles recorded yet.</p>
+                ) : (
+                  data.hardwareDiagnostics.gpus.map((gpu, idx) => (
+                    <div key={idx} className="flex items-center justify-between text-xs font-mono">
+                      <span className="font-bold text-foreground truncate max-w-[170px]" title={gpu.gpu}>{gpu.gpu}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">{gpu.count}</span>
+                        <span className="text-primary font-bold">{gpu.percentage}%</span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* CPU Cores */}
+            <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-3">
+              <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground block">
+                CPU Core Architecture
+              </span>
+              <div className="space-y-2">
+                {(!data.hardwareDiagnostics?.cpuCores || data.hardwareDiagnostics.cpuCores.length === 0) ? (
+                  <p className="text-xs text-muted-foreground">No CPU cores recorded yet.</p>
+                ) : (
+                  data.hardwareDiagnostics.cpuCores.map((cpu, idx) => (
+                    <div key={idx} className="flex items-center justify-between text-xs font-mono">
+                      <span className="font-bold text-foreground">{cpu.cores}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">{cpu.count}</span>
+                        <span className="text-primary font-bold">{cpu.percentage}%</span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── TAB: LAB INTELLIGENCE & LEARNING FUNNEL ─── */}
+      {activeTab === "labs" && data && (
+        <div className="space-y-6">
+          <div className="bg-card border border-border rounded-3xl p-5 md:p-6 shadow-sm space-y-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="text-base font-black text-foreground flex items-center gap-2">
+                  <BookOpen size={18} className="text-primary" />
+                  <span>Interactive STEM Lab Intelligence &amp; Learning Funnel</span>
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Granular simulation telemetry tracking experiment starts, parameter adjustments, step progressions, and completion rates
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* 5 Executive KPI Cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+            <div className="p-4 bg-card border border-border rounded-2xl shadow-xs space-y-1">
+              <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground block">Lab Starts</span>
+              <span className="text-2xl font-black text-foreground">{data.labIntelligence?.overview.totalStarts.toLocaleString() ?? 0}</span>
+              <span className="text-[10px] text-muted-foreground font-mono block">Initiated simulations</span>
+            </div>
+            <div className="p-4 bg-card border border-border rounded-2xl shadow-xs space-y-1">
+              <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground block">Completions</span>
+              <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400">{data.labIntelligence?.overview.totalCompletions.toLocaleString() ?? 0}</span>
+              <span className="text-[10px] text-muted-foreground font-mono block">XP-awarded finishes</span>
+            </div>
+            <div className="p-4 bg-card border border-border rounded-2xl shadow-xs space-y-1">
+              <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground block">Completion Rate</span>
+              <span className="text-2xl font-black text-blue-600 dark:text-blue-400">{data.labIntelligence?.overview.completionRate ?? 0}%</span>
+              <span className="text-[10px] text-muted-foreground font-mono block">Overall learning success</span>
+            </div>
+            <div className="p-4 bg-card border border-border rounded-2xl shadow-xs space-y-1">
+              <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground block">Parameter Tweaks</span>
+              <span className="text-2xl font-black text-purple-600 dark:text-purple-400">{data.labIntelligence?.overview.totalParameterTweaks.toLocaleString() ?? 0}</span>
+              <span className="text-[10px] text-muted-foreground font-mono block">Interactive control edits</span>
+            </div>
+            <div className="p-4 bg-card border border-border rounded-2xl shadow-xs space-y-1">
+              <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground block">Quiz Attempts</span>
+              <span className="text-2xl font-black text-amber-600 dark:text-amber-400">{data.labIntelligence?.overview.totalQuizAttempts.toLocaleString() ?? 0}</span>
+              <span className="text-[10px] text-muted-foreground font-mono block">Knowledge checks</span>
+            </div>
+          </div>
+
+          {/* Interactive Learning Funnel Visualizer */}
+          <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-4">
+            <h4 className="text-xs font-black uppercase tracking-wider text-muted-foreground">
+              Universal Student Learning Progression Funnel
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 font-mono">
+              <div className="p-4 rounded-2xl bg-muted/40 border border-border space-y-2">
+                <span className="text-[10px] font-black text-muted-foreground uppercase">Stage 1: Session Start</span>
+                <span className="text-xl font-black text-foreground block">{data.labIntelligence?.overview.totalStarts ?? 0}</span>
+                <div className="h-1.5 w-full bg-primary rounded-full" />
+                <span className="text-[10px] text-muted-foreground block">100% Entry baseline</span>
+              </div>
+              <div className="p-4 rounded-2xl bg-muted/40 border border-border space-y-2">
+                <span className="text-[10px] font-black text-muted-foreground uppercase">Stage 2: Active Tweaks</span>
+                <span className="text-xl font-black text-purple-600 dark:text-purple-400 block">{data.labIntelligence?.overview.totalParameterTweaks ?? 0}</span>
+                <div className="h-1.5 w-full bg-purple-500 rounded-full" />
+                <span className="text-[10px] text-muted-foreground block">Control interactions</span>
+              </div>
+              <div className="p-4 rounded-2xl bg-muted/40 border border-border space-y-2">
+                <span className="text-[10px] font-black text-muted-foreground uppercase">Stage 3: Quiz Attempts</span>
+                <span className="text-xl font-black text-amber-600 dark:text-amber-400 block">{data.labIntelligence?.overview.totalQuizAttempts ?? 0}</span>
+                <div className="h-1.5 w-full bg-amber-500 rounded-full" />
+                <span className="text-[10px] text-muted-foreground block">Assessment checks</span>
+              </div>
+              <div className="p-4 rounded-2xl bg-muted/40 border border-border space-y-2">
+                <span className="text-[10px] font-black text-muted-foreground uppercase">Stage 4: Experiment Finished</span>
+                <span className="text-xl font-black text-emerald-600 dark:text-emerald-400 block">{data.labIntelligence?.overview.totalCompletions ?? 0}</span>
+                <div className="h-1.5 w-full bg-emerald-500 rounded-full" />
+                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold block">{data.labIntelligence?.overview.completionRate ?? 0}% Conversion</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Per-Lab Detailed Telemetry Table */}
+          <div className="bg-card border border-border rounded-3xl shadow-sm overflow-hidden">
+            <div className="p-4 border-b border-border bg-muted/20 flex items-center justify-between">
+              <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground">
+                Discipline &amp; Individual Lab Performance Table
+              </h3>
+              <span className="text-xs font-mono text-muted-foreground">
+                {data.labIntelligence?.labs?.length ?? 0} Active Labs
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs font-mono">
+                <thead className="bg-muted/40 border-b border-border text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                  <tr>
+                    <th className="p-3.5">Lab Identifier</th>
+                    <th className="p-3.5 text-right">Starts</th>
+                    <th className="p-3.5 text-right">Completions</th>
+                    <th className="p-3.5 text-right">Success Rate</th>
+                    <th className="p-3.5 text-right">Param Tweaks</th>
+                    <th className="p-3.5 text-right">Step Progress</th>
+                    <th className="p-3.5 text-right">Quizzes</th>
+                    <th className="p-3.5 text-right">Resets</th>
+                    <th className="p-3.5 text-right">Students</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {(!data.labIntelligence?.labs || data.labIntelligence.labs.length === 0) ? (
+                    <tr>
+                      <td colSpan={9} className="p-8 text-center text-muted-foreground font-sans text-xs">
+                        No interactive lab telemetry recorded yet in this timeframe. Run experiments in virtual labs to populate!
+                      </td>
+                    </tr>
+                  ) : (
+                    data.labIntelligence.labs.map((lab, idx) => (
+                      <tr key={idx} className="hover:bg-muted/20 transition">
+                        <td className="p-3.5 font-bold text-foreground">
+                          <a href={getMainSiteHref(`/labs/${lab.labId}`)} target="_blank" rel="noopener noreferrer" className="hover:text-primary flex items-center gap-1.5">
+                            <span>{lab.labId}</span>
+                            <ExternalLink size={10} className="text-muted-foreground" />
+                          </a>
+                        </td>
+                        <td className="p-3.5 text-right font-bold text-foreground">{lab.starts}</td>
+                        <td className="p-3.5 text-right font-bold text-emerald-600 dark:text-emerald-400">{lab.completes}</td>
+                        <td className="p-3.5 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <span className="font-bold">{lab.completionRate}%</span>
+                            <div className="w-12 h-1.5 rounded-full bg-muted overflow-hidden">
+                              <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${Math.min(100, lab.completionRate)}%` }} />
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-3.5 text-right text-purple-600 dark:text-purple-400 font-bold">{lab.parameterTweaks}</td>
+                        <td className="p-3.5 text-right text-muted-foreground">{lab.stepProgressions}</td>
+                        <td className="p-3.5 text-right text-amber-600 dark:text-amber-400">{lab.quizAttempts}</td>
+                        <td className="p-3.5 text-right text-muted-foreground">{lab.resets}</td>
+                        <td className="p-3.5 text-right font-black text-foreground">{lab.uniqueStudents}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── TAB: BEHAVIORAL UX SIGNALS & FRUSTRATION RADAR ─── */}
+      {activeTab === "ux" && data && (
+        <div className="space-y-6">
+          <div className="bg-card border border-border rounded-3xl p-5 md:p-6 shadow-sm space-y-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="text-base font-black text-foreground flex items-center gap-2">
+                  <Flame size={18} className="text-amber-500" />
+                  <span>Behavioral UX Signals &amp; Frustration Radar</span>
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Automated detection of user frustration, rage clicks, bounce rate, and active vs. idle tab dwell times
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* 4 Key UX Metrics */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+            <div className="p-4 bg-card border border-border rounded-2xl shadow-xs space-y-1">
+              <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground block">Bounce Rate</span>
+              <span className="text-2xl font-black text-foreground">{data.behavioralSignals?.bounceRate ?? 0}%</span>
+              <span className="text-[10px] text-muted-foreground font-mono block">Sessions &lt; 10s with 0 scroll</span>
+            </div>
+            <div className="p-4 bg-card border border-border rounded-2xl shadow-xs space-y-1">
+              <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground block">Exit Intent Rate</span>
+              <span className="text-2xl font-black text-amber-600 dark:text-amber-400">{data.behavioralSignals?.exitIntentRate ?? 0}%</span>
+              <span className="text-[10px] text-muted-foreground font-mono block">Desktop cursor exited top</span>
+            </div>
+            <div className="p-4 bg-card border border-border rounded-2xl shadow-xs space-y-1">
+              <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground block">Active Learning Ratio</span>
+              <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
+                {data.behavioralSignals?.activeRatio.activePercentage ?? 100}%
+              </span>
+              <span className="text-[10px] text-muted-foreground font-mono block">Genuine tab interaction time</span>
+            </div>
+            <div className="p-4 bg-card border border-border rounded-2xl shadow-xs space-y-1">
+              <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground block">Avg Focus Switches</span>
+              <span className="text-2xl font-black text-blue-600 dark:text-blue-400">
+                {data.behavioralSignals?.activeRatio.avgFocusCount ?? 1}
+              </span>
+              <span className="text-[10px] text-muted-foreground font-mono block">Tab blur / focus cycles</span>
+            </div>
+          </div>
+
+          {/* Rage Clicks Radar Table */}
+          <div className="bg-card border border-border rounded-3xl shadow-sm overflow-hidden">
+            <div className="p-4 border-b border-border bg-muted/20 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
+                <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground">
+                  Rage Click Radar (Rapid Frustrated Clicks on Frozen / Confusing Elements)
+                </h3>
+              </div>
+              <span className="text-xs font-mono text-muted-foreground font-bold">
+                {data.behavioralSignals?.rageClicks?.length ?? 0} Flagged Targets
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs font-mono">
+                <thead className="bg-muted/40 border-b border-border text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                  <tr>
+                    <th className="p-3.5">Element Selector</th>
+                    <th className="p-3.5">Affected Page</th>
+                    <th className="p-3.5 text-right">Frustration Count</th>
+                    <th className="p-3.5">Element Text Preview</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {(!data.behavioralSignals?.rageClicks || data.behavioralSignals.rageClicks.length === 0) ? (
+                    <tr>
+                      <td colSpan={4} className="p-8 text-center text-muted-foreground font-sans text-xs">
+                        🎉 Zero rage clicks detected! Students are navigating and interacting without UI frustration.
+                      </td>
+                    </tr>
+                  ) : (
+                    data.behavioralSignals.rageClicks.map((r, idx) => (
+                      <tr key={idx} className="hover:bg-muted/20 transition">
+                        <td className="p-3.5 font-bold text-rose-600 dark:text-rose-400">
+                          <code>{r.element}</code>
+                        </td>
+                        <td className="p-3.5">
+                          <a href={getMainSiteHref(r.pathname)} target="_blank" rel="noopener noreferrer" className="hover:text-primary font-bold text-foreground">
+                            {r.pathname}
+                          </a>
+                        </td>
+                        <td className="p-3.5 text-right font-black text-rose-600 dark:text-rose-400">{r.count} &times;</td>
+                        <td className="p-3.5 text-muted-foreground font-sans truncate max-w-xs">{r.sampleText || "—"}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Outbound External Links */}
+          <div className="bg-card border border-border rounded-3xl shadow-sm overflow-hidden">
+            <div className="p-4 border-b border-border bg-muted/20 flex items-center justify-between">
+              <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground">
+                Top Outbound External Resource Clicks
+              </h3>
+              <span className="text-xs font-mono text-muted-foreground">
+                {data.behavioralSignals?.outboundClicks?.length ?? 0} External Links
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs font-mono">
+                <thead className="bg-muted/40 border-b border-border text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                  <tr>
+                    <th className="p-3.5">Target External URL</th>
+                    <th className="p-3.5">Label Preview</th>
+                    <th className="p-3.5 text-right">Click Count</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {(!data.behavioralSignals?.outboundClicks || data.behavioralSignals.outboundClicks.length === 0) ? (
+                    <tr>
+                      <td colSpan={3} className="p-8 text-center text-muted-foreground font-sans text-xs">
+                        No external outbound clicks recorded in this timeframe.
+                      </td>
+                    </tr>
+                  ) : (
+                    data.behavioralSignals.outboundClicks.map((link, idx) => (
+                      <tr key={idx} className="hover:bg-muted/20 transition">
+                        <td className="p-3.5 font-bold text-foreground">
+                          <a href={link.href} target="_blank" rel="noopener noreferrer" className="hover:text-primary flex items-center gap-1.5">
+                            <span className="truncate max-w-md">{link.href}</span>
+                            <ExternalLink size={10} className="text-muted-foreground" />
+                          </a>
+                        </td>
+                        <td className="p-3.5 text-muted-foreground font-sans truncate max-w-xs">{link.sampleText || "—"}</td>
+                        <td className="p-3.5 text-right font-black text-foreground">{link.count}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── TAB: USER JOURNEYS & PATH FLOWS ─── */}
+      {activeTab === "journeys" && data && (
+        <div className="space-y-6">
+          <div className="bg-card border border-border rounded-3xl p-5 md:p-6 shadow-sm space-y-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="text-base font-black text-foreground flex items-center gap-2">
+                  <Share2 size={18} className="text-blue-500" />
+                  <span>User Journeys &amp; Path Flows</span>
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Analyze where student journeys begin (Entry Landing Pages) and where they abandon or conclude (Exit Drop-off Pages)
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Top Entry Pages */}
+            <div className="bg-card border border-border rounded-3xl shadow-sm overflow-hidden">
+              <div className="p-4 border-b border-border bg-muted/20 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                  <h4 className="text-xs font-black uppercase tracking-wider text-foreground">
+                    Top Entry Pages (Session Starters)
+                  </h4>
+                </div>
+                <span className="text-xs font-mono text-muted-foreground font-bold">
+                  {data.userJourneys?.entryPages?.length ?? 0} Paths
+                </span>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs font-mono">
+                  <thead className="bg-muted/40 border-b border-border text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                    <tr>
+                      <th className="p-3.5">Entry Route</th>
+                      <th className="p-3.5 text-right">Sessions</th>
+                      <th className="p-3.5 text-right">Share %</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {(!data.userJourneys?.entryPages || data.userJourneys.entryPages.length === 0) ? (
+                      <tr>
+                        <td colSpan={3} className="p-8 text-center text-muted-foreground font-sans text-xs">
+                          No entry path data available.
+                        </td>
+                      </tr>
+                    ) : (
+                      data.userJourneys.entryPages.map((entry, idx) => (
+                        <tr key={idx} className="hover:bg-muted/20 transition">
+                          <td className="p-3.5 font-bold text-foreground">
+                            <a href={getMainSiteHref(entry.pathname)} target="_blank" rel="noopener noreferrer" className="hover:text-primary">
+                              {entry.pathname}
+                            </a>
+                          </td>
+                          <td className="p-3.5 text-right font-black text-foreground">{entry.count}</td>
+                          <td className="p-3.5 text-right">
+                            <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-[10px]">
+                              {entry.percentage}%
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Top Exit Pages */}
+            <div className="bg-card border border-border rounded-3xl shadow-sm overflow-hidden">
+              <div className="p-4 border-b border-border bg-muted/20 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+                  <h4 className="text-xs font-black uppercase tracking-wider text-foreground">
+                    Top Exit Pages (Drop-off Points)
+                  </h4>
+                </div>
+                <span className="text-xs font-mono text-muted-foreground font-bold">
+                  {data.userJourneys?.exitPages?.length ?? 0} Paths
+                </span>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs font-mono">
+                  <thead className="bg-muted/40 border-b border-border text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                    <tr>
+                      <th className="p-3.5">Exit Route</th>
+                      <th className="p-3.5 text-right">Drop-offs</th>
+                      <th className="p-3.5 text-right">Share %</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {(!data.userJourneys?.exitPages || data.userJourneys.exitPages.length === 0) ? (
+                      <tr>
+                        <td colSpan={3} className="p-8 text-center text-muted-foreground font-sans text-xs">
+                          No exit path data available.
+                        </td>
+                      </tr>
+                    ) : (
+                      data.userJourneys.exitPages.map((exit, idx) => (
+                        <tr key={idx} className="hover:bg-muted/20 transition">
+                          <td className="p-3.5 font-bold text-foreground">
+                            <a href={getMainSiteHref(exit.pathname)} target="_blank" rel="noopener noreferrer" className="hover:text-primary">
+                              {exit.pathname}
+                            </a>
+                          </td>
+                          <td className="p-3.5 text-right font-black text-rose-600 dark:text-rose-400">{exit.count}</td>
+                          <td className="p-3.5 text-right">
+                            <span className="px-2 py-0.5 rounded bg-rose-500/10 text-rose-600 dark:text-rose-400 font-bold text-[10px]">
+                              {exit.percentage}%
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -1607,58 +3015,141 @@ Total Tracked Errors: ${errorsToCopy.length}
         </div>
       )}
 
-      {/* ─── TAB 5: DWELL & SCROLL ENGAGEMENT DISTRIBUTIONS ─── */}
+      {/* ─── TAB 5: DWELL, SCROLL & RETENTION ENGAGEMENT ─── */}
       {activeTab === "engagement" && data && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Dwell Time Distribution */}
-          <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-4">
-            <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground">
-              Time on Page (Dwell Time Distribution)
-            </h3>
-            <div className="space-y-3">
-              {data.durationDistribution.map((dur, idx) => {
-                const total = data.overview.totalViews || 1;
-                const pct = Math.round((dur.count / total) * 100);
-                return (
-                  <div key={idx} className="space-y-1">
-                    <div className="flex items-center justify-between text-xs font-bold">
-                      <span className="font-mono text-foreground">{dur.label}</span>
-                      <span className="text-muted-foreground font-mono">
-                        {dur.count} views ({pct}%)
-                      </span>
-                    </div>
-                    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                      <div style={{ width: `${pct}%` }} className="h-full bg-emerald-500 rounded-full" />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            {/* Visitor Loyalty & Visit Frequency */}
+            <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground">
+                  Visitor Retention &amp; Loyalty
+                </h3>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/30">
+                  {data.retention?.returnRate ?? data.overview.returnRate ?? 0}% Return Rate
+                </span>
+              </div>
 
-          {/* Scroll Depth Distribution */}
-          <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-4">
-            <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground">
-              Reading Scroll Depth Milestones
-            </h3>
-            <div className="space-y-3">
-              {data.scrollDistribution.map((scr, idx) => {
-                const total = data.overview.totalViews || 1;
-                const pct = Math.round((scr.count / total) * 100);
-                return (
+              {/* New vs Returning Split Bar */}
+              <div className="p-3 bg-muted/20 border border-border rounded-2xl space-y-2">
+                <div className="flex items-center justify-between text-xs font-bold">
+                  <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+                    <Sparkles size={12} /> New ({data.retention?.newVisitors ?? data.overview.newVisitors ?? 0})
+                  </span>
+                  <span className="flex items-center gap-1.5 text-blue-600 dark:text-blue-400">
+                    <Repeat size={12} /> Returning ({data.retention?.returningVisitors ?? data.overview.returningVisitors ?? 0})
+                  </span>
+                </div>
+                <div className="w-full h-2.5 bg-muted rounded-full overflow-hidden flex">
+                  <div
+                    style={{
+                      width: `${(data.retention?.totalVisitors || 1) > 0
+                          ? Math.round(
+                            ((data.retention?.newVisitors ?? data.overview.newVisitors ?? 0) /
+                              ((data.retention?.totalVisitors ?? data.overview.uniqueVisitors) || 1)) *
+                            100
+                          )
+                          : 50
+                        }%`,
+                    }}
+                    className="h-full bg-emerald-500"
+                    title="New visitors"
+                  />
+                  <div
+                    style={{
+                      width: `${(data.retention?.totalVisitors || 1) > 0
+                          ? Math.round(
+                            ((data.retention?.returningVisitors ?? data.overview.returningVisitors ?? 0) /
+                              ((data.retention?.totalVisitors ?? data.overview.uniqueVisitors) || 1)) *
+                            100
+                          )
+                          : 50
+                        }%`,
+                    }}
+                    className="h-full bg-blue-500"
+                    title="Returning visitors"
+                  />
+                </div>
+              </div>
+
+              {/* Frequency Milestones */}
+              <div className="space-y-3 pt-1">
+                {(data.retention?.frequency || []).map((tier, idx) => (
                   <div key={idx} className="space-y-1">
                     <div className="flex items-center justify-between text-xs font-bold">
-                      <span className="font-mono text-foreground">{scr.label}</span>
+                      <span className="font-mono text-foreground">{tier.label}</span>
                       <span className="text-muted-foreground font-mono">
-                        {scr.count} views ({pct}%)
+                        {tier.count} visitors ({tier.percentage}%)
                       </span>
                     </div>
                     <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                      <div style={{ width: `${pct}%` }} className="h-full bg-indigo-500 rounded-full" />
+                      <div
+                        style={{ width: `${tier.percentage}%` }}
+                        className={`h-full rounded-full ${idx === 0
+                            ? "bg-emerald-500"
+                            : idx === 1
+                              ? "bg-blue-500"
+                              : idx === 2
+                                ? "bg-indigo-500"
+                                : "bg-purple-500"
+                          }`}
+                      />
                     </div>
                   </div>
-                );
-              })}
+                ))}
+              </div>
+            </div>
+
+            {/* Dwell Time Distribution */}
+            <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-4">
+              <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground">
+                Time on Page (Dwell Time)
+              </h3>
+              <div className="space-y-3">
+                {data.durationDistribution.map((dur, idx) => {
+                  const total = data.overview.totalViews || 1;
+                  const pct = Math.round((dur.count / total) * 100);
+                  return (
+                    <div key={idx} className="space-y-1">
+                      <div className="flex items-center justify-between text-xs font-bold">
+                        <span className="font-mono text-foreground">{dur.label}</span>
+                        <span className="text-muted-foreground font-mono">
+                          {dur.count} views ({pct}%)
+                        </span>
+                      </div>
+                      <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                        <div style={{ width: `${pct}%` }} className="h-full bg-teal-500 rounded-full" />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Scroll Depth Distribution */}
+            <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-4">
+              <h3 className="text-xs font-black uppercase tracking-wider text-muted-foreground">
+                Reading Scroll Depth Milestones
+              </h3>
+              <div className="space-y-3">
+                {data.scrollDistribution.map((scr, idx) => {
+                  const total = data.overview.totalViews || 1;
+                  const pct = Math.round((scr.count / total) * 100);
+                  return (
+                    <div key={idx} className="space-y-1">
+                      <div className="flex items-center justify-between text-xs font-bold">
+                        <span className="font-mono text-foreground">{scr.label}</span>
+                        <span className="text-muted-foreground font-mono">
+                          {scr.count} views ({pct}%)
+                        </span>
+                      </div>
+                      <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                        <div style={{ width: `${pct}%` }} className="h-full bg-indigo-500 rounded-full" />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
@@ -1798,11 +3289,10 @@ Total Tracked Errors: ${errorsToCopy.length}
                 type="button"
                 onClick={() => handleCopyAllAiPrompts(filteredErrors)}
                 disabled={filteredErrors.length === 0}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer disabled:opacity-50 ${
-                  copiedAllErrors
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer disabled:opacity-50 ${copiedAllErrors
                     ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
                     : "bg-primary text-primary-foreground hover:bg-primary/90"
-                }`}
+                  }`}
                 title="Copy all currently filtered errors as an actionable prompt for AI agents (Antigravity, Cursor, Claude Code)"
               >
                 {copiedAllErrors ? <Check size={14} /> : <Bot size={14} />}
@@ -1970,19 +3460,17 @@ Total Tracked Errors: ${errorsToCopy.length}
                   key={tab.id}
                   type="button"
                   onClick={() => setErrorStatusFilter(tab.id)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
-                    errorStatusFilter === tab.id
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${errorStatusFilter === tab.id
                       ? "bg-primary text-primary-foreground shadow-xs"
                       : "bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted"
-                  }`}
+                    }`}
                 >
                   <span>{tab.label}</span>
                   <span
-                    className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
-                      errorStatusFilter === tab.id
+                    className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${errorStatusFilter === tab.id
                         ? "bg-primary-foreground/20 text-primary-foreground"
                         : "bg-card text-muted-foreground"
-                    }`}
+                      }`}
                   >
                     {tab.count}
                   </span>
@@ -1997,7 +3485,7 @@ Total Tracked Errors: ${errorsToCopy.length}
                 value={errorTypeFilter}
                 onChange={(e) => setErrorTypeFilter(e.target.value)}
                 aria-label="Filter error logs by type"
-                className="px-3 py-1.5 bg-card border border-border rounded-xl text-xs font-bold text-foreground focus:outline-none focus:border-primary shadow-2xs cursor-pointer"
+                className="px-3 py-1.5 bg-card border border-border rounded-xl text-xs font-bold text-foreground focus:outline-none focus:border-primary shadow-2xs cursor-pointer [&>option]:bg-card [&>option]:text-foreground [&>option]:dark:bg-slate-900 [&>option]:dark:text-slate-100"
               >
                 <option value="all">All Error Types</option>
                 <option value="not_found">404 Not Found</option>
@@ -2055,48 +3543,46 @@ Total Tracked Errors: ${errorsToCopy.length}
               paginatedErrors.map((err) => (
                 <div
                   key={err._id}
-                  className={`p-4 sm:p-5 bg-card border rounded-3xl space-y-3.5 shadow-sm transition-all ${
-                    err.status === "new"
+                  className={`p-4 sm:p-5 bg-card border rounded-3xl space-y-3.5 shadow-sm transition-all ${err.status === "new"
                       ? "border-rose-500/40 bg-rose-500/[0.02]"
                       : err.status === "investigating"
-                      ? "border-amber-500/30 bg-amber-500/[0.01]"
-                      : "border-border"
-                  }`}
+                        ? "border-amber-500/30 bg-amber-500/[0.01]"
+                        : "border-border"
+                    }`}
                 >
                   {/* Top: Error Message & Action Buttons */}
                   <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-3 border-b border-border pb-3.5">
                     <div className="space-y-1.5 flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span
-                          className={`px-2 py-0.5 rounded font-black font-mono text-[10px] uppercase border ${
-                            err.errorType === "not_found"
+                          className={`px-2 py-0.5 rounded font-black font-mono text-[10px] uppercase border ${err.errorType === "not_found"
                               ? "bg-orange-500/15 text-orange-600 dark:text-orange-400 border-orange-500/20"
                               : err.errorType === "http_4xx"
-                              ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20"
-                              : err.errorType === "http_5xx" || err.errorType === "boundary"
-                              ? "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/20"
-                              : err.errorType === "api"
-                              ? "bg-fuchsia-500/15 text-fuchsia-600 dark:text-fuchsia-400 border-fuchsia-500/20"
-                              : err.errorType === "resource"
-                              ? "bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border-cyan-500/20"
-                              : err.errorType === "webgl"
-                              ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
-                              : err.errorType === "hydration" || err.errorType === "console"
-                              ? "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border-indigo-500/20"
-                              : err.errorType === "unhandledrejection"
-                              ? "bg-yellow-500/15 text-yellow-600 dark:text-yellow-400 border-yellow-500/20"
-                              : err.errorType === "network"
-                              ? "bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/20"
-                              : "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/20"
-                          }`}
+                                ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20"
+                                : err.errorType === "http_5xx" || err.errorType === "boundary"
+                                  ? "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/20"
+                                  : err.errorType === "api"
+                                    ? "bg-fuchsia-500/15 text-fuchsia-600 dark:text-fuchsia-400 border-fuchsia-500/20"
+                                    : err.errorType === "resource"
+                                      ? "bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border-cyan-500/20"
+                                      : err.errorType === "webgl"
+                                        ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                                        : err.errorType === "hydration" || err.errorType === "console"
+                                          ? "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border-indigo-500/20"
+                                          : err.errorType === "unhandledrejection"
+                                            ? "bg-yellow-500/15 text-yellow-600 dark:text-yellow-400 border-yellow-500/20"
+                                            : err.errorType === "network"
+                                              ? "bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/20"
+                                              : "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/20"
+                            }`}
                         >
                           {err.errorType === "not_found"
                             ? "404 Not Found"
                             : err.errorType === "http_4xx"
-                            ? "HTTP 4xx (Client)"
-                            : err.errorType === "http_5xx"
-                            ? "HTTP 5xx (Server)"
-                            : err.errorType || "runtime"}
+                              ? "HTTP 4xx (Client)"
+                              : err.errorType === "http_5xx"
+                                ? "HTTP 5xx (Server)"
+                                : err.errorType || "runtime"}
                         </span>
 
                         <span className="px-2 py-0.5 bg-muted rounded font-mono text-[10px] text-muted-foreground font-bold">
@@ -2125,11 +3611,10 @@ Total Tracked Errors: ${errorsToCopy.length}
                       <button
                         type="button"
                         onClick={() => handleCopyAiPrompt(err)}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition shadow-2xs cursor-pointer ${
-                          copiedErrorId === err._id
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition shadow-2xs cursor-pointer ${copiedErrorId === err._id
                             ? "bg-emerald-600 text-white border-emerald-600 shadow-sm"
                             : "bg-card border-border hover:border-primary text-foreground hover:bg-muted"
-                        }`}
+                          }`}
                         title="Copy diagnostic prompt to fix this error with AI"
                       >
                         {copiedErrorId === err._id ? <Check size={13} /> : <Bot size={13} className="text-primary" />}
@@ -2141,44 +3626,40 @@ Total Tracked Errors: ${errorsToCopy.length}
                         <button
                           type="button"
                           onClick={() => handleUpdateErrorStatus(err._id, "new")}
-                          className={`px-2 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
-                            err.status === "new"
+                          className={`px-2 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${err.status === "new"
                               ? "bg-rose-600 text-white shadow-xs"
                               : "text-muted-foreground hover:text-foreground"
-                          }`}
+                            }`}
                         >
                           New
                         </button>
                         <button
                           type="button"
                           onClick={() => handleUpdateErrorStatus(err._id, "investigating")}
-                          className={`px-2 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
-                            err.status === "investigating"
+                          className={`px-2 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${err.status === "investigating"
                               ? "bg-amber-500 text-white shadow-xs"
                               : "text-muted-foreground hover:text-foreground"
-                          }`}
+                            }`}
                         >
                           Investigating
                         </button>
                         <button
                           type="button"
                           onClick={() => handleUpdateErrorStatus(err._id, "resolved")}
-                          className={`px-2 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
-                            err.status === "resolved"
+                          className={`px-2 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${err.status === "resolved"
                               ? "bg-emerald-600 text-white shadow-xs"
                               : "text-muted-foreground hover:text-foreground"
-                          }`}
+                            }`}
                         >
                           Resolved
                         </button>
                         <button
                           type="button"
                           onClick={() => handleUpdateErrorStatus(err._id, "ignored")}
-                          className={`px-2 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
-                            err.status === "ignored"
+                          className={`px-2 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${err.status === "ignored"
                               ? "bg-slate-700 text-white shadow-xs"
                               : "text-muted-foreground hover:text-foreground"
-                          }`}
+                            }`}
                         >
                           Ignore
                         </button>
@@ -2249,7 +3730,7 @@ Total Tracked Errors: ${errorsToCopy.length}
                             onClick={async () => {
                               try {
                                 await navigator.clipboard.writeText(err.stack || "");
-                              } catch {}
+                              } catch { }
                             }}
                             className="absolute top-2.5 right-2.5 px-2 py-1 bg-white/10 hover:bg-white/20 text-white rounded-lg text-[9px] font-bold font-mono transition"
                             title="Copy stack trace only"
@@ -2282,7 +3763,7 @@ Total Tracked Errors: ${errorsToCopy.length}
                       setErrorPage(1);
                     }}
                     aria-label="Errors per page"
-                    className="px-2 py-1 bg-muted border border-border rounded-lg text-xs font-bold text-foreground focus:outline-none focus:border-primary cursor-pointer"
+                    className="px-2 py-1 bg-muted border border-border rounded-lg text-xs font-bold text-foreground focus:outline-none focus:border-primary cursor-pointer [&>option]:bg-card [&>option]:text-foreground [&>option]:dark:bg-slate-900 [&>option]:dark:text-slate-100"
                   >
                     <option value={10}>10</option>
                     <option value={20}>20</option>
@@ -2324,11 +3805,10 @@ Total Tracked Errors: ${errorsToCopy.length}
                         key={idx}
                         type="button"
                         onClick={() => setErrorPage(num)}
-                        className={`w-7 h-7 rounded-lg text-xs font-bold transition cursor-pointer ${
-                          errorPage === num
+                        className={`w-7 h-7 rounded-lg text-xs font-bold transition cursor-pointer ${errorPage === num
                             ? "bg-primary text-primary-foreground shadow-xs"
                             : "bg-card border border-border hover:bg-muted text-foreground"
-                        }`}
+                          }`}
                       >
                         {num}
                       </button>

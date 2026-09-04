@@ -32,37 +32,53 @@ export async function GET(request: Request) {
     const sortBy = searchParams.get("sortBy") || "createdAt_desc";
 
     const { matchStage } = parseDateFilter(timeRange, startDateParam, endDateParam);
-    const filterObj: Record<string, any> = {
-      createdAt: matchStage.createdAt,
-    };
+    const andConditions: any[] = [{ createdAt: matchStage.createdAt }];
 
     if (device && device !== "all") {
-      filterObj.device = device;
+      andConditions.push({ device });
     }
 
     if (userType === "anonymous") {
-      filterObj.userId = null;
+      andConditions.push({ userId: null });
     } else if (userType === "authenticated") {
-      filterObj.userId = { $ne: null };
+      andConditions.push({ userId: { $ne: null } });
+    } else if (userType === "new") {
+      andConditions.push({
+        $or: [
+          { isReturning: false },
+          { isReturning: { $exists: false }, visitCount: { $lte: 1 } },
+        ],
+      });
+    } else if (userType === "returning") {
+      andConditions.push({
+        $or: [
+          { isReturning: true },
+          { visitCount: { $gt: 1 } },
+        ],
+      });
     }
 
     if (query) {
       const regex = new RegExp(query, "i");
-      filterObj.$or = [
-        { pathname: regex },
-        { title: regex },
-        { labId: regex },
-        { referrerDomain: regex },
-        { country: regex },
-        { city: regex },
-        { browser: regex },
-        { os: regex },
-        { visitorId: regex },
-        { sessionId: regex },
-        { utmSource: regex },
-        { utmCampaign: regex },
-      ];
+      andConditions.push({
+        $or: [
+          { pathname: regex },
+          { title: regex },
+          { labId: regex },
+          { referrerDomain: regex },
+          { country: regex },
+          { city: regex },
+          { browser: regex },
+          { os: regex },
+          { visitorId: regex },
+          { sessionId: regex },
+          { utmSource: regex },
+          { utmCampaign: regex },
+        ],
+      });
     }
+
+    const filterObj = andConditions.length === 1 ? andConditions[0] : { $and: andConditions };
 
     // Sort mapping
     let sortObj: Record<string, 1 | -1> = { createdAt: -1 };
@@ -101,11 +117,17 @@ export async function GET(request: Request) {
       (PageView as any).countDocuments(filterObj),
     ]);
 
+    const formattedPageviews = pageviews.map((pv: any) => ({
+      ...pv,
+      isReturning: Boolean(pv.isReturning || (pv.visitCount && pv.visitCount > 1)),
+      visitCount: typeof pv.visitCount === "number" ? pv.visitCount : 1,
+    }));
+
     const totalPages = Math.ceil(totalCount / limit) || 1;
 
     return NextResponse.json(
       {
-        pageviews,
+        pageviews: formattedPageviews,
         pagination: {
           total: totalCount,
           page,

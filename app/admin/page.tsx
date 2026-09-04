@@ -248,7 +248,7 @@ export default function AdminPortalHomePage() {
           {/* Total Registered Users */}
           <Link
             href={getRoute("/admin/users")}
-            className="group p-4 rounded-2xl bg-card border border-border/80 hover:border-primary/40 hover:shadow-md transition-all space-y-2"
+            className="group p-3.5 sm:p-4 rounded-2xl bg-card border border-border/80 hover:border-primary/40 hover:shadow-md transition-all space-y-2"
           >
             <div className="flex items-center justify-between text-muted-foreground">
               <span className="text-[11px] font-bold uppercase tracking-wider">Users</span>
@@ -270,7 +270,7 @@ export default function AdminPortalHomePage() {
           {/* 24h Page Views */}
           <Link
             href={getRoute("/admin/analytics")}
-            className="group p-4 rounded-2xl bg-card border border-border/80 hover:border-primary/40 hover:shadow-md transition-all space-y-2"
+            className="group p-3.5 sm:p-4 rounded-2xl bg-card border border-border/80 hover:border-primary/40 hover:shadow-md transition-all space-y-2"
           >
             <div className="flex items-center justify-between text-muted-foreground">
               <span className="text-[11px] font-bold uppercase tracking-wider">Views 24h</span>
@@ -289,7 +289,7 @@ export default function AdminPortalHomePage() {
           </Link>
 
           {/* Total Platform XP */}
-          <div className="p-4 rounded-2xl bg-card border border-border/80 space-y-2">
+          <div className="p-3.5 sm:p-4 rounded-2xl bg-card border border-border/80 space-y-2">
             <div className="flex items-center justify-between text-muted-foreground">
               <span className="text-[11px] font-bold uppercase tracking-wider">XP Earned</span>
               <div className="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center">
@@ -307,7 +307,7 @@ export default function AdminPortalHomePage() {
           {/* Published Articles */}
           <Link
             href={getRoute("/admin/blogs")}
-            className="group p-4 rounded-2xl bg-card border border-border/80 hover:border-primary/40 hover:shadow-md transition-all space-y-2"
+            className="group p-3.5 sm:p-4 rounded-2xl bg-card border border-border/80 hover:border-primary/40 hover:shadow-md transition-all space-y-2"
           >
             <div className="flex items-center justify-between text-muted-foreground">
               <span className="text-[11px] font-bold uppercase tracking-wider">Stories</span>
@@ -328,7 +328,7 @@ export default function AdminPortalHomePage() {
           {/* Open Feedback */}
           <Link
             href={getRoute("/admin/feedback")}
-            className="group p-4 rounded-2xl bg-card border border-border/80 hover:border-primary/40 hover:shadow-md transition-all space-y-2"
+            className="group p-3.5 sm:p-4 rounded-2xl bg-card border border-border/80 hover:border-primary/40 hover:shadow-md transition-all space-y-2"
           >
             <div className="flex items-center justify-between text-muted-foreground">
               <span className="text-[11px] font-bold uppercase tracking-wider">Feedback</span>
@@ -359,7 +359,7 @@ export default function AdminPortalHomePage() {
           {/* Contact Inquiries */}
           <Link
             href={getRoute("/admin/contacts")}
-            className="group p-4 rounded-2xl bg-card border border-border/80 hover:border-primary/40 hover:shadow-md transition-all space-y-2"
+            className="group p-3.5 sm:p-4 rounded-2xl bg-card border border-border/80 hover:border-primary/40 hover:shadow-md transition-all space-y-2"
           >
             <div className="flex items-center justify-between text-muted-foreground">
               <span className="text-[11px] font-bold uppercase tracking-wider">Inquiries</span>

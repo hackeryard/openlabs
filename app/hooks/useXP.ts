@@ -1,7 +1,8 @@
 // app/hooks/useXP.ts
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { analyticsService } from "@/lib/analytics";
+import { trackLabInteraction } from "@/app/lib/tracker";
 import { getNextLabInTrack, getTrackForLab, getTrackProgress, CurriculumTrack, TrackLabStep } from "@/app/lib/tracks";
 
 export interface XPResult {
@@ -23,6 +24,54 @@ export function useLab(labId: string, subject: string, type: "simulation" | "exp
   const [nextLabProgression, setNextLabProgression] = useState<NextLabProgression | null>(null);
   const [showNextLabModal, setShowNextLabModal] = useState(false);
   const calledRef = useRef(false);
+  const startedRef = useRef(false);
+  const startTimeRef = useRef<number>(Date.now());
+
+  // Auto-track lab session start
+  useEffect(() => {
+    if (!startedRef.current && labId) {
+      startedRef.current = true;
+      startTimeRef.current = Date.now();
+      trackLabInteraction(labId, "start", { subject, type });
+    }
+  }, [labId, subject, type]);
+
+  // Granular interactive lab telemetry helpers
+  const trackParameterChange = useCallback(
+    (paramName: string, value: any, unit?: string) => {
+      trackLabInteraction(labId, "parameter_change", {
+        paramName,
+        value,
+        unit: unit || "",
+      });
+    },
+    [labId]
+  );
+
+  const trackLabStep = useCallback(
+    (stepNumber: number, stepTitle: string) => {
+      trackLabInteraction(labId, "step_progress", {
+        stepNumber,
+        stepTitle,
+      });
+    },
+    [labId]
+  );
+
+  const trackQuizAttempt = useCallback(
+    (questionId: string, isCorrect: boolean, score?: number) => {
+      trackLabInteraction(labId, "quiz_attempt", {
+        questionId,
+        isCorrect,
+        score,
+      });
+    },
+    [labId]
+  );
+
+  const trackLabReset = useCallback(() => {
+    trackLabInteraction(labId, "reset", {});
+  }, [labId]);
 
   const completeExperiment = useCallback(async () => {
     if (calledRef.current) return;
@@ -47,6 +96,14 @@ export function useLab(labId: string, subject: string, type: "simulation" | "exp
 
       // Track learning milestone
       analyticsService.trackLabCompleted(labId, subject, data.xpEarned, data.leveledUp);
+      trackLabInteraction(labId, "complete", {
+        subject,
+        type,
+        xpEarned: data.xpEarned,
+        leveledUp: data.leveledUp,
+        newLevel: data.newLevel,
+        durationSeconds: Math.max(1, Math.round((Date.now() - startTimeRef.current) / 1000)),
+      });
 
       // Check curriculum track progression
       const track = getTrackForLab(labId);
@@ -89,5 +146,9 @@ export function useLab(labId: string, subject: string, type: "simulation" | "exp
     nextLabProgression,
     showNextLabModal,
     setShowNextLabModal,
+    trackParameterChange,
+    trackLabStep,
+    trackQuizAttempt,
+    trackLabReset,
   };
 }

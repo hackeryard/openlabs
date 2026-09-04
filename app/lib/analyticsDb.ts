@@ -195,9 +195,155 @@ export async function getAnalyticsDashboardData(
         _id: { $dateToString: { format: dateFormat, date: "$createdAt" } },
         views: { $sum: 1 },
         visitors: { $addToSet: "$visitorId" },
+        returningVisitors: {
+          $addToSet: {
+            $cond: [
+              {
+                $or: [
+                  { $eq: ["$isReturning", true] },
+                  { $gt: ["$visitCount", 1] },
+                ],
+              },
+              "$visitorId",
+              "$$REMOVE",
+            ],
+          },
+        },
+        returningViews: {
+          $sum: {
+            $cond: [
+              {
+                $or: [
+                  { $eq: ["$isReturning", true] },
+                  { $gt: ["$visitCount", 1] },
+                ],
+              },
+              1,
+              0,
+            ],
+          },
+        },
       },
     },
     { $sort: { _id: 1 } },
+  ]);
+
+  // 3b. Visitor Retention & Frequency Distribution (New vs. Returning)
+  const retentionPromise = (PageView as any).aggregate([
+    { $match: matchStage },
+    {
+      $group: {
+        _id: "$visitorId",
+        sessions: { $addToSet: "$sessionId" },
+        maxVisitCount: { $max: { $ifNull: ["$visitCount", 1] } },
+        hasReturningFlag: { $max: { $cond: ["$isReturning", 1, 0] } },
+      },
+    },
+    {
+      $project: {
+        isReturning: {
+          $or: [
+            { $eq: ["$hasReturningFlag", 1] },
+            { $gt: ["$maxVisitCount", 1] },
+            { $gt: [{ $size: "$sessions" }, 1] },
+          ],
+        },
+        effectiveVisits: {
+          $max: ["$maxVisitCount", { $size: "$sessions" }],
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalVisitors: { $sum: 1 },
+        returningVisitors: { $sum: { $cond: ["$isReturning", 1, 0] } },
+        newVisitors: { $sum: { $cond: ["$isReturning", 0, 1] } },
+        singleVisit: { $sum: { $cond: [{ $eq: ["$effectiveVisits", 1] }, 1, 0] } },
+        twoVisits: { $sum: { $cond: [{ $eq: ["$effectiveVisits", 2] }, 1, 0] } },
+        threeToFiveVisits: {
+          $sum: {
+            $cond: [
+              {
+                $and: [
+                  { $gte: ["$effectiveVisits", 3] },
+                  { $lte: ["$effectiveVisits", 5] },
+                ],
+              },
+              1,
+              0,
+            ],
+          },
+        },
+        sixPlusVisits: {
+          $sum: { $cond: [{ $gte: ["$effectiveVisits", 6] }, 1, 0] },
+        },
+      },
+    },
+  ]);
+
+  // 3c. Detailed Returning Visitors Profiles & Directory (Who are the returning users)
+  const returningUsersPromise = (PageView as any).aggregate([
+    { $match: matchStage },
+    {
+      $group: {
+        _id: "$visitorId",
+        userIds: { $addToSet: "$userId" },
+        firstSeen: { $min: "$createdAt" },
+        lastSeen: { $max: "$createdAt" },
+        totalViews: { $sum: 1 },
+        totalDuration: { $sum: "$duration" },
+        maxVisitCount: { $max: { $ifNull: ["$visitCount", 1] } },
+        sessions: { $addToSet: "$sessionId" },
+        paths: { $addToSet: "$pathname" },
+        country: { $last: "$country" },
+        city: { $last: "$city" },
+        device: { $last: "$device" },
+        browser: { $last: "$browser" },
+        os: { $last: "$os" },
+        hasReturningFlag: { $max: { $cond: ["$isReturning", 1, 0] } },
+      },
+    },
+    {
+      $match: {
+        $or: [
+          { hasReturningFlag: 1 },
+          { maxVisitCount: { $gt: 1 } },
+          { $expr: { $gt: [{ $size: "$sessions" }, 1] } },
+        ],
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        userId: {
+          $arrayElemAt: [
+            {
+              $filter: {
+                input: "$userIds",
+                as: "u",
+                cond: { $ne: ["$$u", null] },
+              },
+            },
+            0,
+          ],
+        },
+        firstSeen: 1,
+        lastSeen: 1,
+        totalViews: 1,
+        totalDuration: 1,
+        visitCount: { $max: ["$maxVisitCount", { $size: "$sessions" }] },
+        sessionCount: { $size: "$sessions" },
+        topPaths: { $slice: ["$paths", 5] },
+        country: 1,
+        city: 1,
+        device: 1,
+        browser: 1,
+        os: 1,
+      },
+    },
+    { $sort: { lastSeen: -1 } },
+    { $limit: 100 },
   ]);
 
   // 4. Top Pages / Labs
@@ -406,11 +552,233 @@ export async function getAnalyticsDashboardData(
     },
   ]);
 
+  // 14. Real User Monitoring (RUM) & Core Web Vitals
+  const webVitalsSummaryPromise = (PageView as any).aggregate([
+    {
+      $match: {
+        ...matchStage,
+        $or: [
+          { "webVitals.lcp": { $ne: null } },
+          { "webVitals.fcp": { $ne: null } },
+          { "webVitals.cls": { $ne: null } },
+          { "webVitals.inp": { $ne: null } },
+          { "webVitals.ttfb": { $ne: null } },
+        ],
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalWithVitals: { $sum: 1 },
+        avgLcp: { $avg: "$webVitals.lcp" },
+        avgFcp: { $avg: "$webVitals.fcp" },
+        avgCls: { $avg: "$webVitals.cls" },
+        avgInp: { $avg: "$webVitals.inp" },
+        avgTtfb: { $avg: "$webVitals.ttfb" },
+        avgDomLoad: { $avg: "$webVitals.domLoad" },
+        avgWindowLoad: { $avg: "$webVitals.windowLoad" },
+        goodLcp: { $sum: { $cond: [{ $and: [{ $ne: ["$webVitals.lcp", null] }, { $lte: ["$webVitals.lcp", 2500] }] }, 1, 0] } },
+        needsImpLcp: { $sum: { $cond: [{ $and: [{ $gt: ["$webVitals.lcp", 2500] }, { $lte: ["$webVitals.lcp", 4000] }] }, 1, 0] } },
+        poorLcp: { $sum: { $cond: [{ $gt: ["$webVitals.lcp", 4000] }, 1, 0] } },
+        goodFcp: { $sum: { $cond: [{ $and: [{ $ne: ["$webVitals.fcp", null] }, { $lte: ["$webVitals.fcp", 1800] }] }, 1, 0] } },
+        needsImpFcp: { $sum: { $cond: [{ $and: [{ $gt: ["$webVitals.fcp", 1800] }, { $lte: ["$webVitals.fcp", 3000] }] }, 1, 0] } },
+        poorFcp: { $sum: { $cond: [{ $gt: ["$webVitals.fcp", 3000] }, 1, 0] } },
+        goodCls: { $sum: { $cond: [{ $and: [{ $ne: ["$webVitals.cls", null] }, { $lte: ["$webVitals.cls", 0.1] }] }, 1, 0] } },
+        needsImpCls: { $sum: { $cond: [{ $and: [{ $gt: ["$webVitals.cls", 0.1] }, { $lte: ["$webVitals.cls", 0.25] }] }, 1, 0] } },
+        poorCls: { $sum: { $cond: [{ $gt: ["$webVitals.cls", 0.25] }, 1, 0] } },
+        goodInp: { $sum: { $cond: [{ $and: [{ $ne: ["$webVitals.inp", null] }, { $lte: ["$webVitals.inp", 200] }] }, 1, 0] } },
+        needsImpInp: { $sum: { $cond: [{ $and: [{ $gt: ["$webVitals.inp", 200] }, { $lte: ["$webVitals.inp", 500] }] }, 1, 0] } },
+        poorInp: { $sum: { $cond: [{ $gt: ["$webVitals.inp", 500] }, 1, 0] } },
+      },
+    },
+  ]);
+
+  const webVitalsPagesPromise = (PageView as any).aggregate([
+    {
+      $match: {
+        ...matchStage,
+        "webVitals.lcp": { $ne: null },
+      },
+    },
+    {
+      $group: {
+        _id: "$pathname",
+        count: { $sum: 1 },
+        avgLcp: { $avg: "$webVitals.lcp" },
+        avgFcp: { $avg: "$webVitals.fcp" },
+        avgCls: { $avg: "$webVitals.cls" },
+        avgInp: { $avg: "$webVitals.inp" },
+        avgTtfb: { $avg: "$webVitals.ttfb" },
+      },
+    },
+    { $sort: { count: -1 } },
+    { $limit: 15 },
+  ]);
+
+  // 15. Hardware & Network Diagnostics
+  const networkTypesPromise = (PageView as any).aggregate([
+    { $match: { ...matchStage, "network.effectiveType": { $exists: true, $ne: "" } } },
+    { $group: { _id: "$network.effectiveType", count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+  ]);
+
+  const hardwareGpuPromise = (PageView as any).aggregate([
+    { $match: { ...matchStage, "hardware.gpu": { $exists: true, $ne: "" } } },
+    { $group: { _id: "$hardware.gpu", count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+    { $limit: 10 },
+  ]);
+
+  const hardwareCoresPromise = (PageView as any).aggregate([
+    { $match: { ...matchStage, "hardware.cores": { $exists: true, $ne: null } } },
+    { $group: { _id: "$hardware.cores", count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+    { $limit: 8 },
+  ]);
+
+  // 16. Lab Intelligence & Learning Funnel
+  const labFunnelPromise = (AnalyticsEvent as any).aggregate([
+    {
+      $match: {
+        ...matchStage,
+        category: "lab",
+      },
+    },
+    {
+      $group: {
+        _id: "$labId",
+        starts: { $sum: { $cond: [{ $eq: ["$eventName", "lab_started"] }, 1, 0] } },
+        completes: { $sum: { $cond: [{ $eq: ["$eventName", "lab_completed"] }, 1, 0] } },
+        parameterTweaks: { $sum: { $cond: [{ $eq: ["$eventName", "lab_param_change"] }, 1, 0] } },
+        stepProgressions: { $sum: { $cond: [{ $eq: ["$eventName", "lab_step_progress"] }, 1, 0] } },
+        quizAttempts: { $sum: { $cond: [{ $eq: ["$eventName", "lab_quiz_attempt"] }, 1, 0] } },
+        resets: { $sum: { $cond: [{ $eq: ["$eventName", "lab_reset"] }, 1, 0] } },
+        uniqueStudents: { $addToSet: "$visitorId" },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        starts: 1,
+        completes: 1,
+        parameterTweaks: 1,
+        stepProgressions: 1,
+        quizAttempts: 1,
+        resets: 1,
+        uniqueStudents: { $size: "$uniqueStudents" },
+        completionRate: {
+          $cond: [
+            { $gt: ["$starts", 0] },
+            { $round: [{ $multiply: [{ $divide: ["$completes", "$starts"] }, 100] }, 1] },
+            0,
+          ],
+        },
+      },
+    },
+    { $sort: { starts: -1 } },
+    { $limit: 25 },
+  ]);
+
+  // 17. Behavioral UX Signals (Rage clicks, Bounce, Active vs. Idle Dwell)
+  const rageClicksPromise = (AnalyticsEvent as any).aggregate([
+    {
+      $match: {
+        ...matchStage,
+        eventName: "ux_rage_click",
+      },
+    },
+    {
+      $group: {
+        _id: {
+          element: "$properties.element",
+          pathname: "$pathname",
+        },
+        count: { $sum: 1 },
+        sampleText: { $first: "$properties.text" },
+      },
+    },
+    { $sort: { count: -1 } },
+    { $limit: 15 },
+  ]);
+
+  const outboundClicksPromise = (AnalyticsEvent as any).aggregate([
+    {
+      $match: {
+        ...matchStage,
+        eventName: "ux_outbound_click",
+      },
+    },
+    {
+      $group: {
+        _id: "$properties.href",
+        count: { $sum: 1 },
+        sampleText: { $first: "$properties.text" },
+      },
+    },
+    { $sort: { count: -1 } },
+    { $limit: 15 },
+  ]);
+
+  const behavioralSummaryPromise = (PageView as any).aggregate([
+    { $match: matchStage },
+    {
+      $group: {
+        _id: null,
+        totalSessions: { $addToSet: "$sessionId" },
+        bouncedSessions: {
+          $addToSet: {
+            $cond: [{ $eq: ["$isBounce", true] }, "$sessionId", "$$REMOVE"],
+          },
+        },
+        exitIntentSessions: {
+          $addToSet: {
+            $cond: [{ $eq: ["$exitIntent", true] }, "$sessionId", "$$REMOVE"],
+          },
+        },
+        totalActiveDuration: { $sum: "$activeDuration" },
+        totalIdleDuration: { $sum: "$idleDuration" },
+        avgActiveDuration: { $avg: "$activeDuration" },
+        avgIdleDuration: { $avg: "$idleDuration" },
+        avgFocusCount: { $avg: "$focusCount" },
+      },
+    },
+  ]);
+
+  // 18. User Journeys (Entry pages & Exit pages)
+  const sessionPathsPromise = (PageView as any).aggregate([
+    { $match: matchStage },
+    { $sort: { createdAt: 1 } },
+    {
+      $group: {
+        _id: "$sessionId",
+        entryPage: { $first: "$pathname" },
+        exitPage: { $last: "$pathname" },
+        pathCount: { $sum: 1 },
+      },
+    },
+    {
+      $facet: {
+        entryPages: [
+          { $group: { _id: "$entryPage", count: { $sum: 1 } } },
+          { $sort: { count: -1 } },
+          { $limit: 10 },
+        ],
+        exitPages: [
+          { $group: { _id: "$exitPage", count: { $sum: 1 } } },
+          { $sort: { count: -1 } },
+          { $limit: 10 },
+        ],
+      },
+    },
+  ]);
+
   // Execute all aggregations in parallel
   const [
     overviewRaw,
     realtimeRaw,
     timeseriesRaw,
+    retentionRaw,
+    returningUsersRaw,
     topPagesRaw,
     topReferrersRaw,
     utmCampaignsRaw,
@@ -425,10 +793,22 @@ export async function getAnalyticsDashboardData(
     recentEvents,
     recentErrors,
     errorStatsRaw,
+    webVitalsSummaryRaw,
+    webVitalsPagesRaw,
+    networkTypesRaw,
+    hardwareGpuRaw,
+    hardwareCoresRaw,
+    labFunnelRaw,
+    rageClicksRaw,
+    outboundClicksRaw,
+    behavioralSummaryRaw,
+    sessionPathsRaw,
   ] = await Promise.all([
     overviewPromise,
     realtimePromise,
     timeseriesPromise,
+    retentionPromise,
+    returningUsersPromise,
     topPagesPromise,
     topReferrersPromise,
     utmCampaignsPromise,
@@ -443,6 +823,16 @@ export async function getAnalyticsDashboardData(
     eventsPromise,
     errorsPromise,
     errorStatsPromise,
+    webVitalsSummaryPromise,
+    webVitalsPagesPromise,
+    networkTypesPromise,
+    hardwareGpuPromise,
+    hardwareCoresPromise,
+    labFunnelPromise,
+    rageClicksPromise,
+    outboundClicksPromise,
+    behavioralSummaryPromise,
+    sessionPathsPromise,
   ]);
 
   // Transform Overview
@@ -454,6 +844,76 @@ export async function getAnalyticsDashboardData(
   const authenticatedSessions = rawO.authenticatedSessions?.length || 0;
   const avgDuration = rawO.avgDuration ? Math.round(rawO.avgDuration) : 0;
   const avgScrollDepth = rawO.avgScrollDepth ? Math.round(rawO.avgScrollDepth) : 0;
+
+  // Transform Retention & Loyalty
+  const rawRet = retentionRaw[0] || {};
+  const retTotalVisitors = rawRet.totalVisitors || uniqueVisitors || 0;
+  const retReturningVisitors = rawRet.returningVisitors || 0;
+  const retNewVisitors = Math.max(0, retTotalVisitors - retReturningVisitors);
+  const returnRate = retTotalVisitors > 0
+    ? parseFloat(((retReturningVisitors / retTotalVisitors) * 100).toFixed(1))
+    : 0;
+
+  const retentionFrequency = [
+    {
+      label: "1 Visit (First-Time)",
+      count: rawRet.singleVisit || retNewVisitors,
+      percentage: retTotalVisitors > 0 ? parseFloat((((rawRet.singleVisit || retNewVisitors) / retTotalVisitors) * 100).toFixed(1)) : 0,
+    },
+    {
+      label: "2 Visits (First Return)",
+      count: rawRet.twoVisits || 0,
+      percentage: retTotalVisitors > 0 ? parseFloat((((rawRet.twoVisits || 0) / retTotalVisitors) * 100).toFixed(1)) : 0,
+    },
+    {
+      label: "3 – 5 Visits (Regular)",
+      count: rawRet.threeToFiveVisits || 0,
+      percentage: retTotalVisitors > 0 ? parseFloat((((rawRet.threeToFiveVisits || 0) / retTotalVisitors) * 100).toFixed(1)) : 0,
+    },
+    {
+      label: "6+ Visits (Loyal Champions)",
+      count: rawRet.sixPlusVisits || 0,
+      percentage: retTotalVisitors > 0 ? parseFloat((((rawRet.sixPlusVisits || 0) / retTotalVisitors) * 100).toFixed(1)) : 0,
+    },
+  ];
+
+  const retention = {
+    totalVisitors: retTotalVisitors,
+    returningVisitors: retReturningVisitors,
+    newVisitors: retNewVisitors,
+    returnRate,
+    frequency: retentionFrequency,
+  };
+
+  // Populate Returning Users Profiles
+  let populatedReturningUsers = returningUsersRaw || [];
+  try {
+    if (User && (User as any).populate) {
+      populatedReturningUsers = await (User as any).populate(returningUsersRaw, {
+        path: "userId",
+        select: "name email username avatar level xp",
+      });
+    }
+  } catch (err) {
+    console.warn("Returning users populate error:", err);
+  }
+
+  const returningUsers = populatedReturningUsers.map((ru: any) => ({
+    visitorId: ru._id,
+    user: ru.userId && typeof ru.userId === "object" ? ru.userId : null,
+    visitCount: ru.visitCount || 1,
+    sessionCount: ru.sessionCount || 1,
+    totalViews: ru.totalViews || 0,
+    totalDuration: ru.totalDuration ? Math.round(ru.totalDuration) : 0,
+    topPaths: (ru.topPaths || []).filter(Boolean),
+    country: getFullCountryName(ru.country),
+    city: ru.city || "Unknown",
+    device: ru.device || "desktop",
+    browser: ru.browser || "Unknown",
+    os: ru.os || "Unknown",
+    firstSeen: ru.firstSeen ? new Date(ru.firstSeen).toISOString() : new Date().toISOString(),
+    lastSeen: ru.lastSeen ? new Date(ru.lastSeen).toISOString() : new Date().toISOString(),
+  }));
 
   // Realtime
   let totalActiveUsers = 0;
@@ -467,11 +927,19 @@ export async function getAnalyticsDashboardData(
   });
 
   // Timeseries
-  const timeseries = timeseriesRaw.map((t: any) => ({
-    label: t._id,
-    views: t.views,
-    visitors: t.visitors?.length || 0,
-  }));
+  const timeseries = timeseriesRaw.map((t: any) => {
+    const visitors = t.visitors?.length || 0;
+    const returningVisitors = t.returningVisitors?.length || 0;
+    const newVisitors = Math.max(0, visitors - returningVisitors);
+    return {
+      label: t._id,
+      views: t.views,
+      visitors,
+      returningVisitors,
+      newVisitors,
+      returningViews: t.returningViews || 0,
+    };
+  });
 
   // Top Pages
   const topPages = topPagesRaw.map((p: any) => ({
@@ -581,6 +1049,158 @@ export async function getAnalyticsDashboardData(
     statusResolved: rawErr.statusResolved || 0,
   };
 
+  // Real User Monitoring (RUM) & Core Web Vitals
+  const rawVitals = webVitalsSummaryRaw[0] || {};
+  const webVitals = {
+    totalMeasured: rawVitals.totalWithVitals || 0,
+    overall: {
+      lcp: rawVitals.avgLcp ? Math.round(rawVitals.avgLcp) : null,
+      fcp: rawVitals.avgFcp ? Math.round(rawVitals.avgFcp) : null,
+      cls: rawVitals.avgCls ? Number(rawVitals.avgCls.toFixed(3)) : null,
+      inp: rawVitals.avgInp ? Math.round(rawVitals.avgInp) : null,
+      ttfb: rawVitals.avgTtfb ? Math.round(rawVitals.avgTtfb) : null,
+      domLoad: rawVitals.avgDomLoad ? Math.round(rawVitals.avgDomLoad) : null,
+      windowLoad: rawVitals.avgWindowLoad ? Math.round(rawVitals.avgWindowLoad) : null,
+    },
+    distributions: {
+      lcp: {
+        good: rawVitals.goodLcp || 0,
+        needsImprovement: rawVitals.needsImpLcp || 0,
+        poor: rawVitals.poorLcp || 0,
+      },
+      fcp: {
+        good: rawVitals.goodFcp || 0,
+        needsImprovement: rawVitals.needsImpFcp || 0,
+        poor: rawVitals.poorFcp || 0,
+      },
+      cls: {
+        good: rawVitals.goodCls || 0,
+        needsImprovement: rawVitals.needsImpCls || 0,
+        poor: rawVitals.poorCls || 0,
+      },
+      inp: {
+        good: rawVitals.goodInp || 0,
+        needsImprovement: rawVitals.needsImpInp || 0,
+        poor: rawVitals.poorInp || 0,
+      },
+    },
+    pages: webVitalsPagesRaw.map((p: any) => ({
+      pathname: p._id,
+      count: p.count,
+      lcp: p.avgLcp ? Math.round(p.avgLcp) : null,
+      fcp: p.avgFcp ? Math.round(p.avgFcp) : null,
+      cls: p.avgCls ? Number(p.avgCls.toFixed(3)) : null,
+      inp: p.avgInp ? Math.round(p.avgInp) : null,
+      ttfb: p.avgTtfb ? Math.round(p.avgTtfb) : null,
+    })),
+  };
+
+  // Hardware & Network Diagnostics
+  const networkTypes = networkTypesRaw.map((n: any) => ({
+    type: n._id || "Unknown",
+    count: n.count,
+    percentage: totalViews > 0 ? parseFloat(((n.count / totalViews) * 100).toFixed(1)) : 0,
+  }));
+
+  const gpus = hardwareGpuRaw.map((g: any) => ({
+    gpu: g._id || "Unknown",
+    count: g.count,
+    percentage: totalViews > 0 ? parseFloat(((g.count / totalViews) * 100).toFixed(1)) : 0,
+  }));
+
+  const cpuCores = hardwareCoresRaw.map((c: any) => ({
+    cores: `${c._id} Cores`,
+    count: c.count,
+    percentage: totalViews > 0 ? parseFloat(((c.count / totalViews) * 100).toFixed(1)) : 0,
+  }));
+
+  const hardwareDiagnostics = {
+    networkTypes,
+    gpus,
+    cpuCores,
+  };
+
+  // Lab Intelligence & Learning Funnel
+  const totalLabStarts = labFunnelRaw.reduce((acc: number, l: any) => acc + (l.starts || 0), 0);
+  const totalLabCompletions = labFunnelRaw.reduce((acc: number, l: any) => acc + (l.completes || 0), 0);
+  const totalLabTweaks = labFunnelRaw.reduce((acc: number, l: any) => acc + (l.parameterTweaks || 0), 0);
+  const totalLabQuizzes = labFunnelRaw.reduce((acc: number, l: any) => acc + (l.quizAttempts || 0), 0);
+  const overallLabCompletionRate =
+    totalLabStarts > 0 ? parseFloat(((totalLabCompletions / totalLabStarts) * 100).toFixed(1)) : 0;
+
+  const labIntelligence = {
+    overview: {
+      totalStarts: totalLabStarts,
+      totalCompletions: totalLabCompletions,
+      completionRate: overallLabCompletionRate,
+      totalParameterTweaks: totalLabTweaks,
+      totalQuizAttempts: totalLabQuizzes,
+    },
+    labs: labFunnelRaw.map((l: any) => ({
+      labId: l._id || "unknown",
+      starts: l.starts || 0,
+      completes: l.completes || 0,
+      completionRate: l.completionRate || 0,
+      parameterTweaks: l.parameterTweaks || 0,
+      stepProgressions: l.stepProgressions || 0,
+      quizAttempts: l.quizAttempts || 0,
+      resets: l.resets || 0,
+      uniqueStudents: l.uniqueStudents || 0,
+    })),
+  };
+
+  // Behavioral UX Signals
+  const rawBeh = behavioralSummaryRaw[0] || {};
+  const behTotalSessions = rawBeh.totalSessions?.length || 0;
+  const behBouncedSessions = rawBeh.bouncedSessions?.length || 0;
+  const behExitIntentSessions = rawBeh.exitIntentSessions?.length || 0;
+  const bounceRate = behTotalSessions > 0 ? parseFloat(((behBouncedSessions / behTotalSessions) * 100).toFixed(1)) : 0;
+  const exitIntentRate = behTotalSessions > 0 ? parseFloat(((behExitIntentSessions / behTotalSessions) * 100).toFixed(1)) : 0;
+
+  const totalActiveDuration = rawBeh.totalActiveDuration || 0;
+  const totalIdleDuration = rawBeh.totalIdleDuration || 0;
+  const totalDwellSum = totalActiveDuration + totalIdleDuration;
+  const activePercentage = totalDwellSum > 0 ? parseFloat(((totalActiveDuration / totalDwellSum) * 100).toFixed(1)) : 100;
+
+  const behavioralSignals = {
+    bounceRate,
+    exitIntentRate,
+    activeRatio: {
+      totalActiveSeconds: totalActiveDuration,
+      totalIdleSeconds: totalIdleDuration,
+      activePercentage,
+      avgActiveSeconds: rawBeh.avgActiveDuration ? Math.round(rawBeh.avgActiveDuration) : 0,
+      avgIdleSeconds: rawBeh.avgIdleDuration ? Math.round(rawBeh.avgIdleDuration) : 0,
+      avgFocusCount: rawBeh.avgFocusCount ? Number(rawBeh.avgFocusCount.toFixed(1)) : 1,
+    },
+    rageClicks: rageClicksRaw.map((r: any) => ({
+      element: r._id.element || "element",
+      pathname: r._id.pathname || "/",
+      count: r.count,
+      sampleText: r.sampleText || "",
+    })),
+    outboundClicks: outboundClicksRaw.map((o: any) => ({
+      href: o._id || "",
+      count: o.count,
+      sampleText: o.sampleText || "",
+    })),
+  };
+
+  // User Journeys (Entry & Exit Paths)
+  const sessionPathsResult = sessionPathsRaw[0] || { entryPages: [], exitPages: [] };
+  const userJourneys = {
+    entryPages: (sessionPathsResult.entryPages || []).map((p: any) => ({
+      pathname: p._id || "/",
+      count: p.count,
+      percentage: uniqueSessions > 0 ? parseFloat(((p.count / uniqueSessions) * 100).toFixed(1)) : 0,
+    })),
+    exitPages: (sessionPathsResult.exitPages || []).map((p: any) => ({
+      pathname: p._id || "/",
+      count: p.count,
+      percentage: uniqueSessions > 0 ? parseFloat(((p.count / uniqueSessions) * 100).toFixed(1)) : 0,
+    })),
+  };
+
   return {
     overview: {
       totalViews,
@@ -591,7 +1211,12 @@ export async function getAnalyticsDashboardData(
       avgDuration,
       avgScrollDepth,
       activeUsers: totalActiveUsers,
+      returningVisitors: retReturningVisitors,
+      newVisitors: retNewVisitors,
+      returnRate,
     },
+    retention,
+    returningUsers,
     realtime: {
       totalActiveUsers,
       activePaths,
@@ -611,5 +1236,10 @@ export async function getAnalyticsDashboardData(
     recentEvents,
     recentErrors,
     errorStats,
+    webVitals,
+    hardwareDiagnostics,
+    labIntelligence,
+    behavioralSignals,
+    userJourneys,
   };
 }
