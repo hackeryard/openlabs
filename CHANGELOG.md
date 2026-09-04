@@ -2,6 +2,48 @@
 
 All notable changes to OpenLabs are documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/); since the project has no version tags yet, entries are grouped by date instead of version number. Generated from git history; merge commits and duplicate/typo commits are omitted.
 
+- **Mitosis, Meiosis & Microscopic Cell Division Studio (`MitosisMeiosisLab.tsx`, `/labs/biology/mitosis-meiosis`, `/biology/mitosis-meiosis`, `pageKnowledge.ts`, `labs.ts`, `tracks.ts`, `biology/page.tsx`)**:
+  - **Full Architectural Rework & SVG Graphical Simulation Engine (`MitosisMeiosisLab.tsx`)**:
+    - **Authentic Sister Chromatid Disjunction Engine**: Reworked Anaphase in somatic mitosis to physically disjoin sister chromatids for *every* chromosome into dynamic V-shaped flexed arms dragging toward opposite spindle poles, ensuring both daughter cells receive an exact, identical diploid set ($2n = 4$, $2C$).
+    - **Meiotic Synapsis & Direct Chiasmata Crossing-Over**: Engineered bivalent tetrad synapsis in Prophase I (Pachytene) with interactive chiasma nodes directly on the chromosome arms. Clicking exchanges non-sister chromatid segments with live recombinant allele updates ($A-B-c$ and $a-b-C$) and linkage map distance telemetry ($50.0\text{ cM}$).
+    - **Independent Assortment Combinatorics**: Implemented double-file bivalent alignment at Metaphase I with 1-click pole orientation flips for both chromosome pairs, visually proving Mendel's $2^n = 4$ gametic combinations.
+    - **Meiotic Gamete Outcome Inspector (4x)**: Added an interactive 4-gamete inspection suite detailing ploidy ($n=2$), chromosome count, parental vs recombinant genotype combinations, and clinical aneuploidy risk.
+    - **High-Precision SVG Vector Engine**: Dynamic 500×500 vector canvas rendering continuous biological morphs from spherical Interphase cells to elongated Anaphase spindles, actin-myosin contractile cleavage furrows (animal), and Golgi phragmoplast cell plate assembly (plant).
+    - **Dynamic Nuclear Envelope Cycle**: Modeled intact double membrane in Interphase, vesicular fragmentation in Prometaphase, complete dissolution in Metaphase, and dual daughter envelope reconstruction in Telophase.
+    - **Centrosome Asters & Dynamic Microtubules**: Rendered bipolar aster poles radiating astral rays, interpolar overlap fibers, and kinetochore microtubules actively tethered to chromosome centromeres with shortening dynamics during Anaphase.
+    - **Pharmacological Inhibitors (Spindle Poisons)**: Added live chemical interventions:
+      - *Colchicine / Nocodazole*: Inhibits tubulin polymerization, dissolves spindle fibers, and triggers Spindle Assembly Checkpoint (SAC) arrest at Metaphase for diagnostic clinical karyotyping.
+      - *Taxol (Paclitaxel)*: Stabilizes microtubule polymers, preventing depolymerization and halting Anaphase chromatid disjunction.
+    - **Clinical Cytogenetics & Aneuploidy Etiology**: Interactive Spindle Assembly Checkpoint (SAC) tension inspector monitoring Mad2 kinetochore dissociation, Securin/Separase cascade, paired with an Anaphase I vs Anaphase II nondisjunction simulator detailing Trisomy 21 (Down syndrome), Turner syndrome (45,X), and Klinefelter syndrome (47,XXY).
+    - **Adaptive Viewport & Mobile Architecture**: Fluid responsive ocular aperture (`w-full max-w-[360px] sm:max-w-[500px] aspect-square`), sticky bottom docked controller with Autoplay Phase and Stepper buttons, tabbed sub-navigation, and strict zero-emoji compliance.
+    - **Direct Access Route Integration**: Added `/labs/biology/mitosis-meiosis` and `/labs/computer-science/dsa/pathfinding-astar` to `publicPaths` in `middleware.ts` for instant browser testing and public simulation access.
+
+- **A* Pathfinding & Heuristic Search Studio (`AStarPathfindingLab.tsx`, `/labs/computer-science/dsa/pathfinding-astar`, `/computer-science/dsa/pathfinding-astar`, `pageKnowledge.ts`, `labs.ts`, `tracks.ts`, `dsa/page.tsx`, `dsaContent.ts`)**:
+  - **Responsive Layout & Mobile Touch Gestures (`AStarPathfindingLab.tsx`)**:
+    - **Adaptive Grid Presets**: Implemented 3 responsive grid configurations: Mobile Fit (21×15), Studio (29×17), and Expansive (39×21), with automatic viewport detection on mount and 1-click segmented pill switching that scales proportionally without horizontal clipping.
+    - **Touchscreen Finger Painting & Dragging**: Added native touch listeners (`onTouchStart`, `onTouchMove`, `onTouchEnd`) mapping client touches to grid coordinates via `elementFromPoint`, allowing smooth 1-finger continuous drawing of walls, mud, water, or eraser, and 1-finger dragging of Start and Target pins with `touch-action: none` (suppressing accidental page scroll).
+    - **Sticky Bottom Docked Controller**: Engineered a glassmorphic floating control dock (`fixed bottom-3 inset-x-3 sm:max-w-xl sm:mx-auto`) with high-contrast tactile action triggers (Visualize, Pause, Instant Compute, Clear Path) accessible at all times on mobile and desktop without scrolling.
+    - **Tap-to-Inspect Telemetry HUD**: Added a dedicated "Inspect" tool and touch inspection support displaying live coordinates, terrain weights, $g(n)$, $h(n)$, and $f(n)$ scores in a docked telemetry HUD for non-hover touch devices.
+    - **Tabbed Sub-Navigation**: Organized Visualizer Grid, Algorithmic Benchmark Race, and Guided Challenges into clean segmented tabs for mobile screens.
+  - **Cybernetic Observatory Visual Aesthetic**:
+    - Ambient radial glow header with live formula HUD: $f(n) = g(n) + \epsilon \cdot h(n)$ with admissibility classification (Optimal vs Suboptimal Speedup).
+    - Bioluminescent node styling: quantum emerald start beacon, radiant crimson target crosshair, pulsating cyan frontier ring (`shadow-[0_0_8px_rgba(6,182,212,0.35)]`), deep ultraviolet closed set, and golden laser shortest path pipeline (`shadow-[0_0_12px_rgba(245,158,11,0.8)]`).
+    - Harmonic pentatonic audio synthesizer scaling pitch logarithmically with heuristic distance and playing a victory arpeggio on path discovery.
+  - **Interactive Grid & Weighted Terrain Engine**:
+    - 5 search algorithms: A* Search ($f = g + h$), Dijkstra's Algorithm ($h = 0$), Greedy Best-First Search ($f = h$), Breadth-First Search (BFS), Depth-First Search (DFS).
+    - 4 heuristic metrics: Manhattan Distance, Euclidean Distance, Chebyshev Distance, and Octile Distance.
+    - Heuristic weight multiplier slider ($\epsilon \in [0.0, 3.0]$) demonstrating transition from Dijkstra ($\epsilon = 0$) to Optimal A* ($\epsilon = 1$) to Suboptimal Greedy ($\epsilon > 1$).
+    - Procedural maze generators: Recursive Division maze generator with guaranteed corridor pass-throughs, Muddy Swamp Pass terrain generator, Concave U-Trap trap setup, and Random Scatter obstacle density.
+    - Dual split-screen Algorithm Benchmark Race mode running two algorithms simultaneously comparing expanded node count, total path cost, and execution duration.
+    - Guided interactive challenges: Shortest Path under Obstacles, Muddy Swamp Weighted Cost Routing, and Heuristic Weight Optimization.
+  - **Complete 9-Step Architecture Integration**:
+    - Simulation route: `app/labs/computer-science/dsa/pathfinding-astar/page.tsx` (`ssr: false` + `UniversalLoader subject="computer-science"`).
+    - Gamification & Next-Lab Hook: `useLab("computer-science/dsa/pathfinding-astar", "computerScience", "simulation")` and `<NextLabModal />`.
+    - AI Tutor Knowledge: Added `"computer-science/dsa/pathfinding-astar"` entry in `app/lib/pageKnowledge.ts`.
+    - SEO Landing Page: `app/computer-science/dsa/pathfinding-astar/page.tsx` using `EducationalLandingLayout` with complete Schema.org JSON-LD metadata.
+    - Registry & Curriculum Tracks: Registered in `LABS` in `app/lib/labs.ts` and added step to `cs-algorithms-dsa` in `app/lib/tracks.ts`.
+    - Hub Explorer: Added to `app/computer-science/dsa/page.tsx` subtopic card explorer and `dsaContent.ts`.
+
 - **Visual Geo-Distribution, Interactive SVG World Map & Regional Analytics (`worldAtlas.ts`, `WorldMapAnalytics.tsx`, `countries.ts`, `analyticsDb.ts`, `/admin/analytics`)**:
   - **Mobile Responsive Engine & Touch Gestures (`app/components/admin/WorldMapAnalytics.tsx`, `app/admin/analytics/page.tsx`)**:
     - **Adaptive Viewport & Canvas**: Adapted the map canvas with responsive aspect ratio (`aspect-[16/10] sm:aspect-[2.05/1]` and `min-h-[260px] sm:min-h-[460px]`) ensuring full mobile viewport fitting without vertical letterboxing or horizontal clipping.

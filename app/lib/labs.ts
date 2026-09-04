@@ -382,6 +382,15 @@ export const LABS: Lab[] = [
     challengeEnabled: true,
     description: "4-chamber anatomical heart pump, Lead II ECG waveforms, Wiggers pressure diagram, heart sounds, and clinical hemodynamics",
   },
+  {
+    id: "biology/mitosis-meiosis",
+    name: "Mitosis, Meiosis & Cell Division Studio",
+    subject: "biology",
+    type: "simulation",
+    challengeParams: ["phasesExplored", "recombinationEvents", "aneuploidiesAnalyzed"],
+    challengeEnabled: true,
+    description: "Somatic mitosis, gametic meiosis, chiasmata crossing-over recombination, spindle checkpoint, and nondisjunction aneuploidies under virtual brightfield and fluorescence microscopy",
+  },
 
 
   // ─── COMPUTER SCIENCE ──────────────────────────────────
@@ -673,6 +682,15 @@ export const LABS: Lab[] = [
     challengeParams: ["pathsFound", "mstsComputed", "graphsColored"],
     challengeEnabled: true,
     description: "Interactive Dijkstra shortest path, Kruskal and Prim MST, chromatic vertex coloring, and Ford-Fulkerson max flow",
+  },
+  {
+    id: "computer-science/dsa/pathfinding-astar",
+    name: "A* Pathfinding & Heuristic Search",
+    subject: "computerScience",
+    type: "simulation",
+    challengeParams: ["pathLength", "totalCost", "nodesVisited"],
+    challengeEnabled: true,
+    description: "Informed graph search, dynamic obstacle matrix, weighted terrain routing (mud, water), and admissible heuristic evaluations",
   },
   {
     id: "computer-science/networking/circuit-switching",

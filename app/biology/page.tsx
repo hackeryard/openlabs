@@ -128,6 +128,15 @@ const experiments: BiologyExperiment[] = [
     difficulty: "Intermediate",
     duration: "15 min",
   },
+  {
+    href: "/biology/mitosis-meiosis",
+    title: "Mitosis, Meiosis & Cell Division",
+    desc: "Simulate somatic mitosis, gametic meiosis, chiasmata crossing-over recombination, and chromosomal nondisjunction aneuploidies under virtual brightfield and fluorescence microscopy.",
+    formula: "2n → 2n vs 2n → 4 × n, N = 2ⁿ",
+    category: "Cellular Biology",
+    difficulty: "Intermediate",
+    duration: "18 min",
+  },
 ];
 
 const faqs = [
@@ -206,6 +215,12 @@ const scientificPrinciples = [
     laws: "Hodgkin-Huxley Action Potential, Nernst-Goldman",
     formulas: "V_m = (RT/F) ln[(P_K[K⁺]_o + P_Na[Na⁺]_o)/(P_K[K⁺]_i + P_Na[Na⁺]_i)]",
     solver: "Nonlinear 4-ODE Ion Channel Permeability Solver",
+  },
+  {
+    domain: "Cytogenetics & Cell Division",
+    laws: "Mitotic Equational vs Meiotic Reductional Division, Chiasmata Recombination",
+    formulas: "2n → 2n, 2n → 4 × n, N = 2ⁿ (Independent Assortment)",
+    solver: "Spindle Checkpoint & Chromosome Kinetochore Tension Engine",
   },
 ];
 

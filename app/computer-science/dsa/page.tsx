@@ -75,6 +75,15 @@ const cards: SubtopicCard[] = [
     difficulty: "Advanced",
     duration: "18 min",
   },
+  {
+    href: "/computer-science/dsa/pathfinding-astar",
+    title: "A* Pathfinding & Heuristic Search",
+    desc: "Simulate A*, Dijkstra, and Greedy BFS on custom obstacle grids with weighted mud/swamp terrain and procedural mazes.",
+    tag: "Heuristics",
+    formula: "f(n) = g(n) + h(n)",
+    difficulty: "Intermediate",
+    duration: "15 min",
+  },
 ];
 
 const howToSteps: HowToStep[] = [
