@@ -95,10 +95,21 @@ function slugify(text: string): string {
     .trim();
 }
 
+function getCodeString(children: any): string {
+  if (typeof children === "string") return children;
+  if (Array.isArray(children)) {
+    return children.map(getCodeString).join("");
+  }
+  if (children && typeof children === "object" && "props" in children) {
+    return getCodeString(children.props.children);
+  }
+  return String(children || "");
+}
+
 // Custom Code Block component with 1-Click Copy
 function CodeBlock({ children, className, ...props }: any) {
   const [copied, setCopied] = useState(false);
-  const codeText = String(children).replace(/\n$/, "");
+  const codeText = getCodeString(children).replace(/\n$/, "");
   const match = /language-(\w+)/.exec(className || "");
   const language = match ? match[1] : "";
 
@@ -475,19 +486,26 @@ export default function BlogPostInteractive({
                       </h3>
                     );
                   },
-                  // Use CodeBlock for pre/code blocks
-                  code: ({ node, inline, className, children, ...props }: any) => {
-                    if (inline) {
+                  // Fenced code blocks: react-markdown wraps block code in <pre><code>...</code></pre>
+                  pre: ({ node, children, ...props }: any) => {
+                    if (React.isValidElement(children)) {
+                      const codeEl = children as React.ReactElement<any>;
+                      const className = codeEl.props?.className || "";
+                      const codeChildren = codeEl.props?.children;
                       return (
-                        <code className={className} {...props}>
-                          {children}
-                        </code>
+                        <CodeBlock className={className} {...codeEl.props}>
+                          {codeChildren}
+                        </CodeBlock>
                       );
                     }
+                    return <pre {...props}>{children}</pre>;
+                  },
+                  // Inline code: Render inline <code> element inside <p>, preventing <div> descendant hydration errors
+                  code: ({ node, className, children, ...props }: any) => {
                     return (
-                      <CodeBlock className={className} {...props}>
+                      <code className={className} {...props}>
                         {children}
-                      </CodeBlock>
+                      </code>
                     );
                   },
                 }}

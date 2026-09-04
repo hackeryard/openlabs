@@ -59,10 +59,14 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 ### 2.5 Administration & Content Management
 - FR-22: The system shall support published/draft blog posts with slug-based URLs, categories, and cover images.
 - FR-23: Only published posts shall be visible through public endpoints/pages.
-- FR-24: Administrators (`role: "admin"`) shall have direct, instant clearance across all administration routes, user role mutations, and permanent deletion of accounts, publications, error logs, and contact submissions.
-- FR-24a: Moderators (`role: "moderator"`) shall access admin dashboards by entering the shared `ADMIN_SECRET`, with permission to triage feedback, reply to contact inquiries, draft blogs, and inspect telemetry, while remaining blocked from modifying user roles or deleting records.
-- FR-24b: The system shall provide an isolated admin subdomain (`admin.openlabs.org.in`) with dedicated `AdminNavbar` and `AdminFooter` components, zero-flash secret state persistence, and automatic 404 hiding on the apex domain.
+- FR-24: Administrators (`role: "admin"`) shall have direct clearance across all administration routes, user role mutations, and permanent deletion of accounts, publications, error logs, and contact submissions.
+- FR-24a: Moderators (`role: "moderator"`) shall have operational access to admin dashboards with permission to triage feedback, reply to contact inquiries, draft blogs, and inspect telemetry, while remaining blocked from modifying user roles or deleting records.
+- FR-24b: The system shall provide an isolated admin subdomain (`admin.openlabs.org.in`) with dedicated `AdminNavbar` and `AdminFooter` components, role-verified access, and automatic 404 hiding on the apex domain.
 - FR-24c: Administrators and moderators shall be able to inspect, search, filter, sort, and export to CSV student telemetry via the Admin Users dashboard (`/admin/users`).
+- FR-24d: The system shall provide an Executive Web Analytics & Telemetry Suite (`/admin/analytics`) tracking live pageviews, returning users, session durations, active vs. idle dwell time, scroll milestones, bounce rates, and desktop exit-intent.
+- FR-24e: The telemetry engine shall collect Core Web Vitals (LCP, INP, CLS, FCP, TTFB) evaluated against Google performance budgets, client hardware profiles (unmasked WebGL GPU renderers, CPU cores, client RAM), and network connection conditions (`4g`, `3g`, `2g`, downlink, RTT).
+- FR-24f: The system shall track interactive STEM virtual lab learning funnels (lab starts, completions, completion rate %, parameter adjustments, and quiz attempts) and UX frustration signals (rage clicks $\ge 3$ rapid clicks within 500ms, outbound external links).
+- FR-24g: The system shall provide a Returning Users Directory in the admin suite with visitor identification, profile linking for registered students, session counts, lifetime dwell time, and timeline inspection.
 
 ### 2.6 Code editor labs
 - FR-25: The Computer Science "code lab" shall provide an in-browser HTML/CSS/JS editor with saved projects per user.
@@ -82,7 +86,7 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 - NFR-1 (Deployment): The application shall be deployable on Vercel, including a daily cron job for challenge generation.
 - NFR-2 (Data store): User, content, and progress data shall be persisted in MongoDB via Mongoose, with a cached connection reused across serverless invocations.
 - NFR-3 (Security headers): Responses shall include standard hardening headers (`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`).
-- NFR-4 (Secrets): Sensitive configuration (DB URI, JWT secret, OAuth credentials, admin secret, cron secret, AI API keys, email credentials, Cloudinary credentials) shall be supplied via environment variables, never committed.
+- NFR-4 (Secrets): Sensitive configuration (DB URI, JWT secret, OAuth credentials, cron secret, AI API keys, email credentials, Cloudinary credentials) shall be supplied via environment variables, never committed.
 - NFR-5 (Media): User-uploaded images (blog covers, avatars) shall be stored via Cloudinary, validated for type and size before upload.
 - NFR-6 (Client rendering): Simulation components using canvas/WebGL/DOM-heavy libraries (three.js, d3, p5) shall be client-rendered only (no SSR) to avoid server-side rendering errors.
 - NFR-7 (Rate limiting): AI chat usage shall be rate-limited per user per day to bound third-party API cost.
@@ -96,7 +100,6 @@ These exist as placeholders or partial scaffolding in the codebase but are **not
 - Server-side code execution for the "run code" flow (`app/api/auth/run` returns a hardcoded stub, no sandbox/Docker execution exists yet).
 - The standalone external "AI agent" service integration (`app/api/agent`) — superseded by `app/api/chat`, currently has no caller, and unlike `app/api/chat` has no authentication or rate limiting (a gap to close before ever wiring it up, not a pattern to copy).
 - Google OAuth's dedicated `start`/`callback` routes — actual Google login goes entirely through NextAuth instead.
-- Per-user admin roles (RBAC) — admin access today is a single shared secret, not scoped per user.
 - **A single, unified theming system** — the six DSA sorting-algorithm labs (`app/components/computer-science/dsa/sorting/*`) run their own independent local dark/light toggle predating the site-wide `next-themes` rollout; the two are not reconciled, so a user can have the sorting labs in a different visual mode than the rest of the site. See `CLAUDE.md` § Theming for the full list of components not yet migrated to the shared token system.
 
 ## 5. Open questions / suggested follow-ups

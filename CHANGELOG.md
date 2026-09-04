@@ -2,6 +2,64 @@
 
 All notable changes to OpenLabs are documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/); since the project has no version tags yet, entries are grouped by date instead of version number. Generated from git history; merge commits and duplicate/typo commits are omitted.
 
+- **Blog Markdown Hydration Error Fix (`app/components/blog/BlogPostInteractive.tsx`)**:
+  - **Resolved `<p>` Cannot Contain `<div>` Hydration Mismatch**: In `react-markdown` v10, the deprecated `inline` prop was removed from the `code` component callback. As a result, inline code snippets (e.g. `` `A + B → AB` ``) inside paragraphs erroneously fell through to `<CodeBlock>`, injecting `<div>` elements inside `<p>` tags and triggering client hydration crashes.
+  - **Separated `pre` and `code` Handlers**: Moved the custom `<CodeBlock>` wrapper to `components.pre` to intercept fenced code blocks at the block level where `<div>` is valid HTML. Configured `components.code` to render standard inline `<code>` elements within paragraphs. Added recursive `getCodeString` helper to safely extract plain text for the 1-click clipboard copy feature.
+
+- **Enterprise Web Analytics, Core Web Vitals RUM & STEM Lab Learning Telemetry (`PageView.js`, `AnalyticsEvent.js`, `tracker.ts`, `OpenLabsTracker.tsx`, `useXP.ts`, `route.ts`, `analyticsDb.ts`, `/admin/analytics`)**:
+  - **Real User Monitoring (RUM) & Core Web Vitals**:
+    - Integrated native `PerformanceObserver` instances in `OpenLabsTracker.tsx` collecting Real User Monitoring (RUM) vitals: Largest Contentful Paint (LCP), First Contentful Paint (FCP), Cumulative Layout Shift (CLS), Interaction to Next Paint (INP), and Navigation Timing (TTFB, DOM Content Loaded, Window Load).
+    - Added rating classification (Good, Needs Improvement, Poor) matching Google Web Vitals performance budgets.
+  - **Hardware & Network Diagnostics**:
+    - Client environment detector extracts unmasked WebGL GPU renderers (Apple M-series, Nvidia RTX, Intel Iris, AMD Radeon, Mali, Adreno) via `WEBGL_debug_renderer_info`.
+    - Captured client device memory (RAM in GB), logical CPU cores, device pixel ratio (DPR), viewport dimensions, and Network Information API connection profiles (4G, 3G, 2G, downlink speed, RTT).
+  - **Engagement Dwell & Frustration UX Telemetry**:
+    - Added 1-second active vs. idle interval ticker isolating genuine user interaction time from backgrounded tabs.
+    - Added scroll depth milestone tracker (`25%`, `50%`, `75%`, `90%`, `100%`) logging progressive student reading breadcrumbs.
+    - Implemented Rage Click Radar detecting frustrated rapid clicks ($\ge 3$ clicks within 500ms and radius $< 40$px) with element CSS selectors and text snippets.
+    - Added desktop exit-intent detection and outbound external documentation click telemetry.
+  - **Interactive STEM Lab Intelligence (`useXP.ts`)**:
+    - Auto-dispatches `lab_started` upon student entry to any virtual science simulation.
+    - Dispatches `lab_completed` on experiment completion with XP earned and duration.
+    - Exported granular learning telemetry hooks: `trackParameterChange` (slider/input changes), `trackLabStep` (checkpoint progressions), `trackQuizAttempt` (knowledge checks), and `trackLabReset`.
+  - **Analytics Database Aggregation Pipelines (`analyticsDb.ts`)**:
+    - Added parallel aggregation pipelines: `webVitalsSummaryPromise` (LCP/INP/CLS/FCP/TTFB averages & Good/Needs/Poor distribution tiers), `webVitalsPagesPromise` (matrix of Web Vitals per route), `networkTypesPromise`, `hardwareGpuPromise`, `hardwareCoresPromise`, `labFunnelPromise` (starts, completions, completion rate %, parameter tweaks, quiz attempts), `rageClicksPromise`, `outboundClicksPromise`, `behavioralSummaryPromise` (bounce rate, exit intent rate, active/idle ratio), and `sessionPathsPromise` (top landing entry pages and top exit drop-off pages).
+  - **Executive Analytics Dashboard Tabs (`/admin/analytics`)**:
+    - Added **⚡ Core Web Vitals & RUM Tab**: Interactive performance gauges for LCP, INP, CLS, FCP, TTFB with budget progress bars, route-by-route Web Vitals matrix table, and hardware/network distribution cards.
+    - Added **🔬 Lab Intelligence & Learning Funnel Tab**: Executive KPIs for lab starts, experiment completions, completion rate %, parameter tweaks, quiz attempts, and a per-lab telemetry table with live links to simulations.
+    - Added **🧠 Behavioral UX Signals Tab**: Bounce rate %, exit intent %, active dwell ratio, and a live Rage Click Radar table highlighting frustrated clicks with CSS selectors.
+    - Added **🗺️ User Journeys & Paths Tab**: Top entry pages (session starters) and top exit drop-off pages with traffic share percentages.
+    - Enhanced Live Stream Feed with badges for active vs. idle dwell, network connection type (4G), GPU renderer, and Web Vitals score.
+
+- **Admin Panel Dark Mode Dropdowns & Responsive Layout Fixes (`app/globals.css`, `app/admin/analytics/page.tsx`, `app/admin/users/page.tsx`, `app/admin/feedback/page.tsx`, `app/admin/contacts/page.tsx`, `app/admin/blogs/create/page.tsx`, `app/admin/blogs/[slug]/edit/page.tsx`, `app/admin/page.tsx`)**:
+  - **Native Dark Mode Select Popups (`app/globals.css`)**: Defined `color-scheme: light` in `:root` and `color-scheme: dark` in `.dark` and `.dark select`, instructing Chromium, WebKit, and Gecko to render native `<select>` popups in OS dark canvas mode. Added explicit global `.dark select option` rules (`#0f172a` background and `#f8fafc` text) and `select option:checked` highlighting, eliminating unreadable white-on-white text in Windows/Chrome dark mode.
+  - **Explicit Option Theming Across Admin Pages**: Added `cursor-pointer [&>option]:bg-card [&>option]:text-foreground [&>option]:dark:bg-slate-900 [&>option]:dark:text-slate-100` classes to all `<select>` inputs across Analytics, Users, Feedback, Contacts, and Roles drawers.
+  - **Date Range Navigator Overflow Guard (`app/admin/analytics/page.tsx`)**: Enabled smooth horizontal scrolling (`overflow-x-auto no-scrollbar max-w-full`) for quick preset buttons and bounded the custom date range picker popover to `max-w-[calc(100vw-2rem)]`, preventing horizontal layout breaking on mobile devices.
+  - **Users Detailed Filter Grid & Drawer (`app/admin/users/page.tsx`)**: Converted the 5-filter strip from `grid-cols-2` to `grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5` with comfortable touch targets. Added mobile drawer padding (`p-4 sm:p-6`), `break-all` on user IDs and emails, and responsive stacking on the role selection row.
+  - **Feedback & Contacts Control Bars (`app/admin/feedback/page.tsx`, `app/admin/contacts/page.tsx`)**: Upgraded filter toolbars to flex wrap (`flex-col sm:flex-row`) with responsive search inputs and scrollable view mode pills.
+  - **Blog Creation & Edit Forms (`app/admin/blogs/create/page.tsx`, `app/admin/blogs/[slug]/edit/page.tsx`)**: Replaced hardcoded light alerts (`bg-red-50`, `bg-emerald-50`) with dark-friendly semantic tokens (`bg-rose-500/10 text-rose-600 dark:text-rose-400`, `bg-emerald-500/10 text-emerald-600 dark:text-emerald-400`), and adjusted container padding from fixed `p-8` to responsive `p-4 sm:p-6 md:p-8`.
+  - **Admin Overview KPI Cards (`app/admin/page.tsx`)**: Adjusted padding from `p-4` to `p-3.5 sm:p-4` for optimal mobile screen fit.
+
+- **Returning Users Tracking, Retention & Profiles Directory (`app/models/PageView.js`, `app/lib/tracker.ts`, `app/api/analytics/collect/route.ts`, `app/lib/analyticsDb.ts`, `app/api/admin/analytics/pageviews/route.ts`, `app/admin/analytics/page.tsx`)**:
+  - **Client-Side Visitor Lifecycle & Visit Counting**: Enhanced `tracker.ts` with `getVisitorMetadata()` using persistent storage keys (`openlabs_vc`, `openlabs_ls`, `openlabs_v_trans`) to count lifetime visit sessions, track last-seen timestamps, and tag pageviews with `isReturning: boolean` and `visitCount: number`.
+  - **Telemetry Ingestion & Database Resilience**: Updated `PageView` schema with `isReturning` and `visitCount` compound indexes, and updated `/api/analytics/collect` to persist returning status with database fallback looking up historical sessions for the visitor.
+  - **Analytics Aggregation Engine**: Added `retentionPromise` aggregation in `analyticsDb.ts` computing total unique visitors, returning visitors, new visitors, return rate %, and visit frequency loyalty distribution tiers (1 visit, 2 visits, 3–5 visits, 6+ visits). Added returning visitors and views to the timeseries aggregation.
+  - **Returning Users Profiles & Directory Pipeline**: Added `returningUsersPromise` aggregation pipeline grouping returnees by `visitorId`, populating registered accounts (`User` model: name, email, username, avatar, level, xp), calculating lifetime visits, sessions in range, total dwell time, top explored labs, and country/city/device/OS attribution.
+  - **Executive Analytics Dashboard UI**:
+    - Added dedicated **Returning Users Directory Tab (`/admin/analytics`)**: Searchable and filterable directory (Registered Members vs. Anonymous Guests) sorted by lifetime visits, recent activity, pageviews, or dwell time.
+    - Features user cards/rows showing student names, emails, avatars, XP, guest visitor IDs, visit frequencies, top explored science labs, and a 1-click **Inspect Timeline** button that filters the live pageview stream for that visitor.
+    - Added dedicated **Returning Users Overview Card** displaying total returning visitors, return rate %, new vs. returning breakdown, and 1-click link to the directory.
+    - Added stacked returning pageviews visualization and detailed returning/new visitor tooltips to the **Traffic & Returning Users Trend** time-series graph.
+    - Added interactive **Visitor Retention & Loyalty Breakdown** card in the Engagement tab with new vs. returning split bars and loyalty milestone distributions.
+    - Added `New Visitors Only` and `Returning Visitors Only` filters to the Live Feed query selector, and tagged every live stream pageview row with `🟢 New` or `🔄 Return (#visitCount)` badges.
+
+- **Error Triage Fixes & WebGL Stability Patch (`AnimalCell.tsx`, `PlantCell.tsx`, `OpenLabsTracker.tsx`, `/labs/biology/cell`)**:
+  - **Resolved 1499 Safari WebGL Crashes (Bug #9, #10)**: Replaced external HDR `<Environment preset="city" />` and `preset="park"` in `AnimalCell.tsx` and `PlantCell.tsx` with studio directional and hemisphere lighting, eliminating Three.js PMREM shader compilation crashes (`u.getProgramInfoLog(T).trim`) and WebGL context loss.
+  - **Auto-Recovery on Stale Deployment Chunks (Bug #1, #2, #3)**: Added automatic one-time session page reload and error suppression for Next.js `ChunkLoadError` and stale script hash 404s after redeployments.
+  - **Ad-Blocker & Analytics Script Suppression (Bug #5, #6, #11, #12, #13, #14, #23)**: Suppressed false-positive resource errors for blocked third-party telemetry scripts (`_vercel/insights`, `_vercel/speed-insights`, `clarity.ms`, extensions).
+  - **Network Disconnect & Background Auth Probe Guard (Bug #4, #7, #8, #15, #16, #17, #18, #19, #20, #22)**: Prevented `TypeError: Failed to fetch` on `/api/auth/me` from being logged as server errors when clients go offline or background tabs disconnect.
+  - **Fixed Broken Route 404 (Bug #21)**: Created `app/labs/biology/cell/page.tsx` redirecting to `/biology/cell`.
+
 - **Lab Feedback System Business Rules & Data Integrity Fix (`app/components/FloatingLabFeedback.tsx`, `app/components/FeedbackPulse.tsx`, `app/hooks/useFeedback.ts`, `app/api/feedback/route.ts`)**:
   - **Eliminated Premature Pulse Submissions**: Removed premature `submitPulse()` background calls on initial "Yes, Helpful" / "Not Helpful" button clicks in `FloatingLabFeedback` and `FeedbackPulse`. Choices now purely advance the modal state without creating premature, unrated, or unannotated records in MongoDB.
   - **Helpful Flow Enforcement**: Star rating (1–5) is strictly mandatory. If rating is $< 3$ stars, detailed comment is mandatory. If $\ge 3$ stars, comment is optional.

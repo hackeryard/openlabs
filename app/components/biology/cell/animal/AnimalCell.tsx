@@ -2,7 +2,7 @@
 
 import { useState, useRef, useMemo, useEffect } from "react"
 import { Canvas, useFrame } from "@react-three/fiber"
-import { OrbitControls, Stars, Environment, Float, Instance, Instances } from "@react-three/drei"
+import { OrbitControls, Stars, Float, Instance, Instances } from "@react-three/drei"
 import * as THREE from "three"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -335,11 +335,12 @@ export default function Ultimate3DCell({
       <Canvas camera={{ position: [0, 0, 7], fov: 40 }}>
         <color attach="background" args={['#020617']} />
         
-        {/* --- LIGHTING --- */}
-        <ambientLight intensity={0.4} />
-        <pointLight position={[10, 10, 10]} intensity={1.5} color="#fff" />
-        <pointLight position={[-10, -10, -5]} intensity={0.5} color="#4f46e5" />
-        <Environment preset="city" />
+        {/* --- LIGHTING (Cross-browser studio lighting without external HDR dependency) --- */}
+        <ambientLight intensity={0.7} />
+        <directionalLight position={[10, 15, 10]} intensity={1.5} color="#ffffff" />
+        <directionalLight position={[-10, -10, -5]} intensity={0.8} color="#818cf8" />
+        <pointLight position={[0, 0, 5]} intensity={0.6} color="#38bdf8" />
+        <hemisphereLight args={["#ffffff", "#020617", 0.6]} />
         <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
 
         <group>

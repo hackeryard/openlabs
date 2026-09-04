@@ -94,21 +94,24 @@ app/
 │                                     #   DailyChallengeCard, UniversalLoader, LoginForm*)
 ├── api/**/route.ts|js                # backend routes, see Auth/Gamification/AI sections below
 ├── models/                          # Mongoose schemas: User.js, Blog.ts, DailyChallenge.js,
-│                                     #   OTP.js, Project.ts
+│                                     #   OTP.js, Project.ts, PageView.js, AnalyticsEvent.js,
+│                                     #   Feedback.ts, Contact.ts
 ├── lib/                             # server + shared utilities (auth.js, mongodb.ts, xp.ts,
 │                                     #   labs.ts, pageKnowledge.ts, email.js, cloudinary.ts,
-│                                     #   getUserFromToken.ts, devMock.js)
-├── hooks/                           # useXP.ts (exports `useLab`, NOT `useXP` — naming
-│                                     #   mismatch, see Known drift), useDailyChallenge.ts,
-│                                     #   useProjects.ts, useLocalStorage.ts
+│                                     #   getUserFromToken.ts, devMock.js, tracker.ts, analyticsDb.ts)
+├── hooks/                           # useXP.ts (exports `useLab`, NOT `useXP`), useFeedback.ts,
+│                                     #   useDailyChallenge.ts, useProjects.ts, useLocalStorage.ts
 ├── types/                           # gitSimualtor.ts (typo in filename, kept as-is),
 │                                     #   jsDebugger.ts
 ├── src/data/elements.js             # AUTO-GENERATED periodic table data (118 elements) —
 │                                     #   don't hand-edit
 ├── middleware/middleware.js          # DEAD CODE — see Auth section, Next.js never loads this
-└── admin/                            # admin panels (gated by ADMIN_SECRET)
-    ├── blogs/                       # admin blog CRUD UI
+└── admin/                            # admin panels (gated by RBAC: admin / moderator)
+    ├── analytics/                   # telemetry dashboard, Web Vitals, learning funnels, UX signals
     ├── users/                       # admin user telemetry & database dashboard
+    ├── blogs/                       # admin blog CRUD UI
+    ├── feedback/                    # lab rating & review triage dashboard
+    ├── contacts/                    # incoming contact & partnership inquiries
     └── seo-dashboard/               # internal SEO performance audit dashboard
 
 components/    (root, NOT app/components) — EducationalLandingLayout, PhysicsExperimentLanding,
@@ -126,8 +129,8 @@ middleware.ts  (root) — the ONLY middleware Next.js actually loads (see Auth s
 - **The bridge**: `options.ts`'s `redirect` callback hijacks NextAuth's post-login destination to `/api/auth/nextauth/sync?next=<original>`. `app/api/auth/nextauth/sync/route.ts` verifies the live NextAuth session, finds-or-creates the `User` doc (redundant safety net), calls the **same** `generateToken()` used by password login, manually builds the `Set-Cookie` header, and 302-redirects to `next`. Net effect: OAuth-login users end up with an identical `auth-token` cookie to password-login users, so everything downstream (middleware, API routes) treats both uniformly post-sync.
 - **`/api/auth/run`** is unrelated to auth despite its path — unimplemented stub (`{output: "Hello"}"`), commented as a future "send code to a Docker container and execute" feature. Don't extend it without confirming intent.
 - **Admin & RBAC** (`/admin/*`, `/api/admin/*`, `admin.openlabs.org.in`): Role-Based Access Control with `role` on `User` (`user`, `admin`, `moderator`).
-  - **Administrators (`role: "admin"`)**: Instant clearance across all dashboards and APIs without entering secret keys; full authority to modify user roles and delete accounts, error logs, and publications.
-  - **Moderators (`role: "moderator"`)**: Gated by entering the shared `ADMIN_SECRET` into `AdminSecretContext` (sent as `x-admin-secret` header). Authorized for operational workflows (feedback triage, contact inquiries, blog drafting, telemetry) but restricted from modifying user roles or deleting records.
+  - **Administrators (`role: "admin"`)**: Direct clearance across all dashboards and APIs; full authority to modify user roles and delete accounts, error logs, feedback, and publications.
+  - **Moderators (`role: "moderator"`)**: Direct clearance for operational workflows (feedback triage, contact inquiries, blog drafting, telemetry) but restricted from modifying user roles or deleting records.
   - **Regular Users (`role: "user"`)**: Render in-place soft 403 Access Restricted card (`AdminAccessDenied`) with admin navigation/footer chrome suppressed.
   - **Subdomain Routing**: Intercepted by `middleware.ts` for `admin.openlabs.org.in` (and `admin.localhost`), serving dedicated `AdminNavbar` and `AdminFooter`, while returning 404 on the apex domain `/admin/*`.
 - **Cron** (`/api/challenges/generate`): `Authorization: Bearer <CRON_SECRET>` or `x-cron-secret` header.
@@ -153,13 +156,23 @@ Admin-only CRUD (`x-admin-secret` header, no JWT) at `/api/admin/blogs*`. Two-st
 - **`/api/agent`** — forwards `{question}` to a hardcoded external URL (`https://agent.aicodepro.com/api/v1/prediction/<id>`, Flowise-style). **Has no auth check and no rate limiting**, unlike `/api/chat`. Has **no callers anywhere in the app** — dead code. Don't extend it without confirming intent first; if you do touch it, note the missing auth is a real gap (open proxy to a paid third-party endpoint), not an oversight to preserve.
 - Env vars `NVAPI`, `NVBASEURL`, `GLM_API_KEY`, `GLM_BASE_URL`, `CHATBOT_API_BASE_URL` are present in `.env`/`.env.local` but referenced nowhere in code — leftover/reserved, not wired to anything.
 
-### Analytics (Microsoft Clarity)
+### Analytics & Real User Monitoring (RUM)
 
-`components/ClarityProvider.tsx` calls `Clarity.init(NEXT_PUBLIC_CLARITY_ID)` once on mount (bypasses the wrapper below). `components/ClarityTrackerObserver.tsx` runs on every route change, fetches `/api/auth/me`, and if logged in calls into `lib/analytics.ts`'s singleton `analyticsService` (`identify`, `setUserTags` — note most tags like `role`/`plan`/`organizationId`/`accountType`/`country` are **synthesized via heuristics**, not real `User` schema fields). `analyticsService` de-dupes identify/tag/event calls per session (`sessionStorage`) and exposes business-event helpers (`trackSignupCompleted`, `trackLoginCompleted`, `trackProjectCreated`, etc.) called ad hoc from feature code (e.g. `useProjects.ts`). Event vocabulary lives in root `types/analytics.ts`.
+- **Microsoft Clarity**: `components/ClarityProvider.tsx` calls `Clarity.init(NEXT_PUBLIC_CLARITY_ID)` once on mount (bypasses the wrapper below). `components/ClarityTrackerObserver.tsx` runs on every route change, fetches `/api/auth/me`, and if logged in calls into `lib/analytics.ts`'s singleton `analyticsService` (`identify`, `setUserTags`).
+- **OpenLabs Native Telemetry & RUM Engine**:
+  - `app/components/OpenLabsTracker.tsx`: Mounts passively on client layout. Strictly suppressed on localhost, dev mode, and `/admin` routes. Collects Core Web Vitals (LCP, FCP, CLS, INP, TTFB) using `PerformanceObserver`, extracts unmasked WebGL GPU renderers (`WEBGL_debug_renderer_info`), hardware profiles (CPU cores, client RAM, DPR), and network profiles (effective type `4g/3g`, downlink, RTT). Runs a 1s active vs. idle dwell ticker, scroll milestone tracker (`25%`, `50%`, `75%`, `90%`, `100%`), rage click radar ($\ge 3$ clicks in 500ms, $< 40$px), and desktop exit-intent.
+  - `app/lib/tracker.ts`: Ring-buffer breadcrumbs (`addBreadcrumb`, `getBreadcrumbs`), `trackWebVital`, `trackLabInteraction`, `trackUxSignal`, and `getVisitorMetadata` (lifecycle visit counting and returning-user detection).
+  - `app/api/analytics/collect/route.ts`: Ingests pageviews, heartbeat beacons, hardware/network profiles, and custom events into MongoDB.
+  - `app/lib/analyticsDb.ts`: Executes parallel aggregation pipelines for the executive dashboard (`/admin/analytics`), computing Web Vitals budget distributions, route matrices, STEM lab learning funnels, rage click incidents, user journey entry/exit paths, and the Returning Users directory.
+  - `app/hooks/useXP.ts`: Auto-tracks `lab_started` and `lab_completed` telemetry and exports `trackParameterChange`, `trackLabStep`, `trackQuizAttempt`, and `trackLabReset`.
 
 ### Data models (`app/models/`)
 
 - **`User.js`** — auth fields (`name, email, password, role: "user"|"admin"|"moderator", emailVerified, createdAt`), profile (`username, avatar, bio, profileSetupComplete`), gamification (`xp, level, streak, lastActiveDate, badges[], completedExperiments[], subjectProgress[], activityLog[], dailyChallenges[]`), AI rate-limiting (`aiQueriesCount, lastAiQueryDate`). No `timestamps: true` (only the explicit `createdAt`, no `updatedAt`).
+- **`PageView.js`** — pageview telemetry records (`pathname, title, labId, visitorId, sessionId, userId, isReturning, visitCount, referrerDomain, utmSource, device, browser, os, screen, country, city, duration, activeDuration, idleDuration, focusCount, scrollDepth, scrollMilestones, webVitals, hardware, network, isBounce, exitIntent`), indexed on `createdAt`, `isBounce`, `webVitals.lcp`, and `(visitorId, createdAt)`.
+- **`AnalyticsEvent.js`** — custom interaction and learning telemetry records (`eventName, category, labId, pathname, properties, value, visitorId, sessionId, userId`), indexed on `(category, createdAt)` and `(eventName, labId, createdAt)`.
+- **`Feedback.ts`** — student simulation ratings and reviews (`labId, labTitle, category, wasHelpful, rating, comment, user, status`), with strictly validated mandatory ratings and mandatory negative feedback comments.
+- **`Contact.ts`** — student, educator, and partnership inquiries (`name, email, subject, message, status, repliedAt`).
 - **`Blog.ts`** — `slug, title, excerpt, content, category, author, date, readTime, published, coverImage, faqs[], metaTitle, metaDescription`, `timestamps: true`.
 - **`DailyChallenge.js`** — `labId, subject, date, challenge, hint, targetParam, targetValue, tolerance, xpReward, difficulty`, unique compound index `{labId, date}`.
 - **`OTP.js`** — `email, code, expiresAt, createdAt` with a TTL index (`expires: 600`, auto-deletes 10 min after creation).

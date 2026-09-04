@@ -158,20 +158,20 @@ export default function CreateBlogPage() {
         </div>
 
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 flex items-start gap-3 text-red-700">
+          <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-start gap-3 text-rose-600 dark:text-rose-400">
             <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
             <p className="font-medium text-sm">{error}</p>
           </div>
         )}
 
         {success && (
-          <div className="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex items-start gap-3 text-emerald-700">
+          <div className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-start gap-3 text-emerald-600 dark:text-emerald-400">
             <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" />
             <p className="font-medium text-sm">{success}</p>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-8 bg-card p-8 rounded-3xl shadow-sm border border-border">
+        <form onSubmit={handleSubmit} className="space-y-8 bg-card p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl shadow-sm border border-border">
 
           {/* Security */}
           {/* Admin Secret is securely loaded from sessionStorage */}

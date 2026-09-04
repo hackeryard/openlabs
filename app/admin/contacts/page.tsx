@@ -281,12 +281,12 @@ export default function AdminContactsDashboard() {
       {/* Filter & Search Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 bg-card border border-border rounded-2xl p-3 shadow-sm">
         {/* Left: Status Filter */}
-        <div className="flex items-center gap-1.5">
-          <Filter size={14} className="text-muted-foreground" />
+        <div className="flex items-center gap-1.5 flex-wrap w-full sm:w-auto">
+          <Filter size={14} className="text-muted-foreground shrink-0" />
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-1.5 rounded-xl border border-border bg-background text-foreground text-xs font-bold focus:outline-none focus:ring-1 focus:ring-primary"
+            className="px-3 py-1.5 rounded-xl border border-border bg-card text-foreground text-xs font-bold focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer [&>option]:bg-card [&>option]:text-foreground [&>option]:dark:bg-slate-900 [&>option]:dark:text-slate-100"
           >
             <option value="">All Statuses</option>
             <option value="new">New (Unread)</option>
@@ -299,7 +299,7 @@ export default function AdminContactsDashboard() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="px-3 py-1.5 rounded-xl border border-border bg-background text-foreground text-xs font-bold focus:outline-none focus:ring-1 focus:ring-primary"
+            className="px-3 py-1.5 rounded-xl border border-border bg-card text-foreground text-xs font-bold focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer [&>option]:bg-card [&>option]:text-foreground [&>option]:dark:bg-slate-900 [&>option]:dark:text-slate-100"
           >
             <option value="recent">Most Recent</option>
             <option value="oldest">Oldest First</option>
@@ -307,7 +307,7 @@ export default function AdminContactsDashboard() {
         </div>
 
         {/* Right: Search Input */}
-        <div className="flex-1 min-w-[220px] max-w-md relative">
+        <div className="flex-1 min-w-[200px] max-w-md w-full sm:w-auto relative">
           <Search
             size={14}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"

@@ -511,10 +511,10 @@ export default function AdminFeedbackPage() {
       {/* Controls & View Switcher */}
       <div className="flex flex-wrap items-center justify-between gap-3 bg-card border border-border rounded-2xl p-3 shadow-sm">
         {/* Left: View Mode Toggle */}
-        <div className="flex items-center gap-1.5 p-1 bg-muted rounded-xl border border-border">
+        <div className="flex items-center gap-1.5 p-1 bg-muted rounded-xl border border-border w-full sm:w-auto overflow-x-auto no-scrollbar">
           <button
             onClick={() => setViewMode("feed")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shrink-0 ${
               viewMode === "feed"
                 ? "bg-primary text-primary-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
@@ -525,7 +525,7 @@ export default function AdminFeedbackPage() {
           </button>
           <button
             onClick={() => setViewMode("summary")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shrink-0 ${
               viewMode === "summary"
                 ? "bg-primary text-primary-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
@@ -537,12 +537,12 @@ export default function AdminFeedbackPage() {
         </div>
 
         {/* Middle: Filters */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           {/* Status Filter */}
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-1.5 rounded-xl border border-border bg-background text-foreground text-xs font-bold focus:outline-none focus:ring-1 focus:ring-primary"
+            className="px-3 py-1.5 rounded-xl border border-border bg-card text-foreground text-xs font-bold focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer [&>option]:bg-card [&>option]:text-foreground [&>option]:dark:bg-slate-900 [&>option]:dark:text-slate-100"
           >
             <option value="">All Statuses</option>
             <option value="new">New</option>
@@ -554,7 +554,7 @@ export default function AdminFeedbackPage() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="px-3 py-1.5 rounded-xl border border-border bg-background text-foreground text-xs font-bold focus:outline-none focus:ring-1 focus:ring-primary"
+            className="px-3 py-1.5 rounded-xl border border-border bg-card text-foreground text-xs font-bold focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer [&>option]:bg-card [&>option]:text-foreground [&>option]:dark:bg-slate-900 [&>option]:dark:text-slate-100"
           >
             <option value="recent">Most Recent</option>
             <option value="lowRating">Lowest Rating</option>
@@ -563,7 +563,7 @@ export default function AdminFeedbackPage() {
         </div>
 
         {/* Right: Search */}
-        <div className="flex-1 min-w-[200px] max-w-sm relative">
+        <div className="flex-1 min-w-[200px] max-w-sm w-full sm:w-auto relative">
           <Search
             size={14}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"

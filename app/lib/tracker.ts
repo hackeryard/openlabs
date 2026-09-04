@@ -23,6 +23,47 @@ export function getOrCreateSessionId(): string {
   return sid;
 }
 
+export function getVisitorMetadata(): {
+  isReturning: boolean;
+  visitCount: number;
+  daysSinceLastVisit: number | null;
+} {
+  if (typeof window === "undefined") {
+    return { isReturning: false, visitCount: 1, daysSinceLastVisit: null };
+  }
+
+  const countKey = "openlabs_vc";
+  const lastSeenKey = "openlabs_ls";
+  const sessionCheckKey = "openlabs_session_active";
+
+  const rawCount = parseInt(localStorage.getItem(countKey) || "0", 10);
+  const lastSeen = parseInt(localStorage.getItem(lastSeenKey) || "0", 10);
+  const isCurrentSessionActive = sessionStorage.getItem(sessionCheckKey);
+
+  let visitCount = rawCount;
+  let daysSinceLastVisit: number | null = null;
+
+  if (lastSeen > 0) {
+    daysSinceLastVisit = Math.floor((Date.now() - lastSeen) / (1000 * 60 * 60 * 24));
+  }
+
+  if (!isCurrentSessionActive) {
+    // New browsing session starts: increment visit count
+    visitCount = rawCount + 1;
+    localStorage.setItem(countKey, String(visitCount));
+    localStorage.setItem(lastSeenKey, String(Date.now()));
+    sessionStorage.setItem(sessionCheckKey, "1");
+  }
+
+  const isReturning = visitCount > 1;
+
+  return {
+    isReturning,
+    visitCount,
+    daysSinceLastVisit,
+  };
+}
+
 // ── Telemetry Ingestion Dispatcher ─────────────────────────────────────
 export function isLocalDevelopment(): boolean {
   if (process.env.NODE_ENV !== "production") return true;
@@ -62,10 +103,14 @@ export function sendTelemetryBeacon(url: string, data: Record<string, any>) {
   // Never track analytics or telemetry in local development or admin panel
   if (isLocalDevelopment() || isAdminRoute()) return;
 
+  const visitorMeta = getVisitorMetadata();
+
   const payload = JSON.stringify({
     ...data,
     visitorId: getOrCreateVisitorId(),
     sessionId: getOrCreateSessionId(),
+    isReturning: data.isReturning !== undefined ? data.isReturning : visitorMeta.isReturning,
+    visitCount: data.visitCount !== undefined ? data.visitCount : visitorMeta.visitCount,
     timestamp: Date.now(),
   });
 
@@ -91,6 +136,38 @@ export function sendTelemetryBeacon(url: string, data: Record<string, any>) {
   }
 }
 
+// ── User Action Breadcrumbs (Attached to Crash Diagnostics) ───────────
+interface Breadcrumb {
+  timestamp: number;
+  action: string;
+  data?: Record<string, any>;
+}
+
+const MAX_BREADCRUMBS = 10;
+const breadcrumbsQueue: Breadcrumb[] = [];
+
+export function addBreadcrumb(
+  action: string | { category?: string; message: string; data?: Record<string, any> },
+  data?: Record<string, any>
+) {
+  if (typeof window === "undefined") return;
+  const actionStr = typeof action === "string" ? action : `[${action.category || "ui"}] ${action.message}`;
+  const payloadData = typeof action === "object" && action.data ? { ...action.data, ...(data || {}) } : data;
+
+  breadcrumbsQueue.push({
+    timestamp: Date.now(),
+    action: actionStr,
+    data: payloadData,
+  });
+  if (breadcrumbsQueue.length > MAX_BREADCRUMBS) {
+    breadcrumbsQueue.shift();
+  }
+}
+
+export function getBreadcrumbs(): Breadcrumb[] {
+  return [...breadcrumbsQueue];
+}
+
 // ── Public Helper: Track Custom Event ──────────────────────────────────
 export function trackEvent(
   eventName: string,
@@ -113,6 +190,8 @@ export function trackEvent(
   if (properties.labId) delete cleanProperties.labId;
   if (properties.pathname) delete cleanProperties.pathname;
 
+  addBreadcrumb(`event:${eventName}`, { category, labId, pathname: path });
+
   sendTelemetryBeacon("/api/analytics/collect", {
     type: "event",
     eventName,
@@ -121,6 +200,76 @@ export function trackEvent(
     pathname: path,
     properties: cleanProperties,
     value,
+  });
+}
+
+// ── Public Helper: Track Core Web Vital ────────────────────────────────
+export function trackWebVital(metric: {
+  name: "FCP" | "LCP" | "CLS" | "FID" | "INP" | "TTFB";
+  value: number;
+  rating?: "good" | "needs-improvement" | "poor";
+}) {
+  if (typeof window === "undefined" || isLocalDevelopment() || isAdminRoute()) return;
+
+  sendTelemetryBeacon("/api/analytics/collect", {
+    type: "event",
+    eventName: "web_vital",
+    category: "performance",
+    pathname: window.location.pathname,
+    properties: {
+      metricName: metric.name,
+      metricValue: Math.round(metric.value * 100) / 100,
+      rating: metric.rating || (
+        metric.name === "LCP" ? (metric.value <= 2500 ? "good" : metric.value <= 4000 ? "needs-improvement" : "poor") :
+        metric.name === "CLS" ? (metric.value <= 0.1 ? "good" : metric.value <= 0.25 ? "needs-improvement" : "poor") :
+        metric.name === "INP" ? (metric.value <= 200 ? "good" : metric.value <= 500 ? "needs-improvement" : "poor") :
+        metric.name === "FCP" ? (metric.value <= 1800 ? "good" : metric.value <= 3000 ? "needs-improvement" : "poor") :
+        metric.name === "TTFB" ? (metric.value <= 800 ? "good" : metric.value <= 1800 ? "needs-improvement" : "poor") : "good"
+      ),
+    },
+    value: metric.value,
+  });
+}
+
+// ── Public Helper: Track STEM Virtual Lab Learning Interaction ─────────
+export function trackLabInteraction(
+  labId: string,
+  action:
+    | "start"
+    | "reset"
+    | "parameter_change"
+    | "step_complete"
+    | "step_progress"
+    | "quiz_attempt"
+    | "complete"
+    | "fps_drop",
+  data: Record<string, any> = {}
+) {
+  if (typeof window === "undefined" || isLocalDevelopment() || isAdminRoute()) return;
+
+  addBreadcrumb(`lab:${action}`, { labId, ...data });
+
+  trackEvent(`lab_${action}`, {
+    category: "lab",
+    labId,
+    pathname: window.location.pathname,
+    ...data,
+  });
+}
+
+// ── Public Helper: Track UX / Behavioral Signal ────────────────────────
+export function trackUxSignal(
+  signal: "rage_click" | "dead_click" | "exit_intent" | "outbound_click" | "text_copy" | "internal_search" | "scroll_milestone",
+  details: Record<string, any> = {}
+) {
+  if (typeof window === "undefined" || isLocalDevelopment() || isAdminRoute()) return;
+
+  addBreadcrumb(`ux:${signal}`, details);
+
+  trackEvent(`ux_${signal}`, {
+    category: "ux",
+    pathname: window.location.pathname,
+    ...details,
   });
 }
 
@@ -151,10 +300,16 @@ export function trackError(
   const message = typeof error === "string" ? error : error.message || "Unknown error";
   let stack = typeof error === "string" ? "" : error.stack || "";
 
-  if (context.extra && Object.keys(context.extra).length > 0) {
+  const recentBreadcrumbs = getBreadcrumbs();
+  const contextPayload: Record<string, any> = {
+    ...(context.extra || {}),
+    ...(recentBreadcrumbs.length > 0 ? { recentActions: recentBreadcrumbs } : {}),
+  };
+
+  if (Object.keys(contextPayload).length > 0) {
     stack = stack
-      ? `${stack}\n\n[Diagnostic Context]\n${JSON.stringify(context.extra, null, 2)}`
-      : `[Diagnostic Context]\n${JSON.stringify(context.extra, null, 2)}`;
+      ? `${stack}\n\n[Diagnostic Context]\n${JSON.stringify(contextPayload, null, 2)}`
+      : `[Diagnostic Context]\n${JSON.stringify(contextPayload, null, 2)}`;
   }
 
   sendTelemetryBeacon("/api/analytics/error", {
