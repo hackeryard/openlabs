@@ -2,6 +2,13 @@
 
 All notable changes to OpenLabs are documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/); since the project has no version tags yet, entries are grouped by date instead of version number. Generated from git history; merge commits and duplicate/typo commits are omitted.
 
+- **Google AdSense Script Integration & Lab Route Exclusion (`GoogleAdSense.tsx`, `app/layout.tsx`, `app/globals.css`)**:
+  - **Client Script Integration**: Integrated Google AdSense tag (`ca-pub-4121707034074280`) into OpenLabs with automatic environment detection.
+  - **Strict Lab Simulation Exclusions (`/labs/*`)**: Implemented 3-layer protection to guarantee ads never load or appear on interactive simulation lab pages (`/labs/*` or `/labs`) or administrative contexts (`/admin/*` and `admin.*`):
+    - *Conditional Script Loading*: Prevents script tag injection on direct visits to any `/labs/*` or `/admin/*` routes.
+    - *Active Route Guard & Mutation Observer*: Detects route changes, sets `data-no-ads="true"` on `document.body`, instantly purges any existing ad elements, and actively intercepts background DOM insertions.
+    - *Zero-Latency CSS Hard-Block*: Injected global suppression styles in `globals.css` ensuring zero visual displacement or interference with simulation controls.
+
 - **Mitosis, Meiosis & Microscopic Cell Division Studio (`MitosisMeiosisLab.tsx`, `/labs/biology/mitosis-meiosis`, `/biology/mitosis-meiosis`, `pageKnowledge.ts`, `labs.ts`, `tracks.ts`, `biology/page.tsx`)**:
   - **Full Architectural Rework & SVG Graphical Simulation Engine (`MitosisMeiosisLab.tsx`)**:
     - **Authentic Sister Chromatid Disjunction Engine**: Reworked Anaphase in somatic mitosis to physically disjoin sister chromatids for *every* chromosome into dynamic V-shaped flexed arms dragging toward opposite spindle poles, ensuring both daughter cells receive an exact, identical diploid set ($2n = 4$, $2C$).
