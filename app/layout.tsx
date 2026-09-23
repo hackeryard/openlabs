@@ -8,6 +8,7 @@ import OpenLabsAILoader from './components/OpenLabsAILoader'
 import FloatingLabFeedback from './components/FloatingLabFeedback'
 import { ChatProvider } from './components/ChatContext'
 import AppAnalytics from './components/AppAnalytics'
+import GoogleAdSense from './components/GoogleAdSense'
 import ThemeProvider from '@/components/ThemeProvider'
 import AmbientBackground from '@/components/ui/AmbientBackground'
 import StructuredData from './components/seo/StructuredData'
@@ -123,6 +124,8 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
                     <FloatingLabFeedback />
                     {/* Analytics conditionally initialized only on live production domain (never localhost or yarn start) */}
                     <AppAnalytics />
+                    {/* Google AdSense script integration with automatic lab page exclusions */}
+                    <GoogleAdSense />
                   </ChatProvider>
                 </div>
               </div>

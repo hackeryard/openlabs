@@ -112,3 +112,40 @@ html, body, #__next, main { height: 100%; }
 .code-lab-active-line-gutter {
   border-left: 2px solid rgb(129, 140, 248) !important;
 }
+
+/* ── Google AdSense Lab Exclusions ──────────────────────────────────────────
+   Completely suppresses and neutralizes any Google Auto-Ads containers, ins units,
+   and iframes when visiting or navigating within interactive lab simulation pages
+   and restricted contexts. */
+body[data-no-ads="true"] .google-auto-placed,
+body[data-no-ads="true"] ins.adsbygoogle,
+body[data-no-ads="true"] iframe[id^="aswift_"],
+body[data-no-ads="true"] #google_esf,
+body[data-no-ads="true"] [id^="google_ads_iframe"],
+body[data-no-ads="true"] .adsbygoogle-noablate,
+body[data-is-lab-page="true"] .google-auto-placed,
+body[data-is-lab-page="true"] ins.adsbygoogle,
+body[data-is-lab-page="true"] iframe[id^="aswift_"],
+body[data-is-lab-page="true"] #google_esf,
+body[data-is-lab-page="true"] [id^="google_ads_iframe"],
+body[data-is-lab-page="true"] .adsbygoogle-noablate,
+[data-ol-lab-container] .google-auto-placed,
+[data-ol-lab-container] ins.adsbygoogle,
+[data-ol-lab-container] iframe[id^="aswift_"],
+.lab-workspace .google-auto-placed,
+.lab-workspace ins.adsbygoogle {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  z-index: -9999 !important;
+}
