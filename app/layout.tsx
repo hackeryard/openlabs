@@ -91,7 +91,10 @@ export const metadata: Metadata = {
   verification: {
     google: 'iAVkmM8erPgrIq7AOILu',
     yandex: 'dec6f568bf371741',
-    other: { bing: 'DB3814EA47FB786C9197CFE5A3FC3BFC' },
+    other: {
+      bing: 'DB3814EA47FB786C9197CFE5A3FC3BFC',
+      'google-adsense-account': 'ca-pub-4121707034074280',
+    },
   },
   applicationName: "OpenLabs",
 }
@@ -108,6 +111,11 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
           src="https://api.openanalytics.org.in/open.js"
           strategy="afterInteractive"
           data-project-id="OA-7E5FC8DC2298918A"
+        />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4121707034074280"
+          crossOrigin="anonymous"
         />
       </head>
       <body className="bg-background text-foreground">
