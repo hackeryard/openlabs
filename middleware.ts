@@ -14,6 +14,7 @@ const publicPaths = [
   '/403',
   '/sitemap.xml',
   '/robots.txt',
+  '/ads.txt',
   '/llms.txt',
   '/llms-full.txt',
   '/labs/biology/heart-cardiac-cycle',
@@ -239,6 +240,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|woff|woff2|ttf|eot)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|ads.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|woff|woff2|ttf|eot)$).*)',
   ],
 };

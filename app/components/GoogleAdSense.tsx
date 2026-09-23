@@ -2,10 +2,6 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import Script from "next/script";
-
-const ADSENSE_CLIENT_ID =
-  process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "ca-pub-4121707034074280";
 
 /**
  * Returns true if the pathname is an interactive lab route or restricted page.
@@ -117,18 +113,6 @@ export default function GoogleAdSense() {
     }
   }, [pathname, isLab]);
 
-  // Do not inject the script tag when rendering an excluded route
-  if (isExcluded) {
-    return null;
-  }
-
-  return (
-    <Script
-      id="google-adsense"
-      async
-      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
-      crossOrigin="anonymous"
-      strategy="afterInteractive"
-    />
-  );
+  // Script is statically rendered in RootLayout head for verification; component guards lab routes.
+  return null;
 }
