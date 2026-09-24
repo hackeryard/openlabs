@@ -99,7 +99,6 @@ export const metadata: Metadata = {
   applicationName: "OpenLabs",
 }
 
-import Script from 'next/script'
 import { AuthProvider } from '@/components/AuthProvider'
 import { AdminSecretProvider } from './components/AdminSecretContext'
 
@@ -107,9 +106,9 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <Script
+        <script
+          defer
           src="https://api.openanalytics.org.in/open.js"
-          strategy="afterInteractive"
           data-project-id="OA-7E5FC8DC2298918A"
         />
         <script
