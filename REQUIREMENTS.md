@@ -19,6 +19,9 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 - FR-1g: The Mathematics Differential Equations & Dynamical Systems Lab shall support 1st-order direction fields ($dy/dx = f(x, y)$), Euler, Heun, and 4th-order Runge-Kutta (RK4) numerical integrators, 2D Linear System Phase Portraits ($\dot{x} = Ax$) with Trace-Determinant stability diagrams, Lotka-Volterra predator-prey cyclic orbits, Damped & Driven Harmonic Oscillators ($m\ddot{x} + c\dot{x} + kx = F_0\cos(\omega t)$) with resonance curves, 3D Lorenz Strange Attractor with Butterfly Effect sensitive dependence simulator, and Kermack-McKendrick SIR epidemiological models.
 - FR-1h: The Computer Science Classical & Modern Cryptography Lab shall support Caesar cipher wheel rotations with Chi-squared ($\chi^2$) frequency auto-cracking, $26 \times 26$ Vigenère Tabula Recta grid coordinate intersection highlighting, 3-rotor WWII Enigma machine stepping with turnover notches, UKW-B reflector, Steckerbrett plugboard, and electrical signal trace, Diffie-Hellman Key Exchange with paint color-mixing and discrete logarithm math, and 256-bit SHA-256 Avalanche Effect bit-difference mapping with Proof-of-Work Bitcoin mining.
 - FR-1i: The Biology Cardiac Cycle, ECG & Heart Hemodynamics Lab shall simulate a 4-chamber anatomical pump with dynamic valve kinematics, SA/AV/Purkinje electrical conduction glow, Lead II ECG waveforms synchronized to cardiac phase fraction, Wiggers pressure-volume diagrams with dicrotic notch, hemodynamic calculations (CO, SV, EF, MAP), clinical pathology presets (stenosis, regurgitation, heart failure, AV block), and anterior chest wall stethoscope auscultation with synthesized heart sounds (S1, S2).
+- FR-1j: The Biology Mitosis, Meiosis & Microscopic Cell Division Lab shall simulate somatic mitosis with sister chromatid disjunction, meiotic Prophase I synapsis with reciprocal non-sister chromatid chiasmata crossing-over, Metaphase I independent assortment, and a 4-gamete inspector detailing ploidy and parental vs recombinant genotypes.
+- FR-1k: The Computer Science DSA Pathfinding Lab shall provide interactive A*, Dijkstra, BFS, and DFS grid navigation with heuristic distance metrics ($h(n)$), customizable obstacles, and step-by-step path tracing.
+- FR-1l: The Computer Science AI Problem Neural Network Lab shall provide interactive perceptron and multi-layer feedforward neural network training, decision boundary visualization, and loss telemetry with full public landing page discovery and AI tutor context.
 - FR-2: Each lab shall have a public SEO landing page (theory, learning objectives, FAQs) separate from its interactive simulation page, which requires authentication.
 - FR-2a: The system shall provide interactive discipline landing pages (`/physics`, `/chemistry`, `/biology`, `/mathematics`, `/computer-science`) with real-time text search, category filters, difficulty badges, ambient radial dot grid styling, and dynamic lab/domain count indicators.
 - FR-2b: Sub-topic hub pages containing multiple experiments (e.g. `/computer-science/networking`, `/computer-science/logic-gates`, `/computer-science/dsa`, `/computer-science/cryptography`, `/biology/cell`, `/biology/genetics`) shall implement a standardized layout (`SubtopicHubLayout`) incorporating 4-step practical investigation protocols (AEO), computational & mathematical governing laws matrices (GEO), curriculum alignment, single-open FAQs, and complete Schema.org JSON-LD structured data (`CollectionPage`, `ItemList`, `HowTo`, `FAQPage`, `BreadcrumbList`).
@@ -73,13 +76,22 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 - FR-26: Users shall be able to create, list, and delete their own projects.
 - FR-27: The JS Event Loop Visualizer shall let users run their own JavaScript through a deterministic, fully-sandboxed simulation engine (no real network/timers; runaway loops and recursion stopped by safety budgets), in either Browser or Node.js queue-ordering semantics, with every piece of runtime state visible simultaneously during playback on all device sizes.
 
-### 2.7 SEO & discoverability
-- FR-27: The system shall expose `sitemap.xml` and `robots.txt`, regenerated on a bounded cache interval.
-- FR-28: Each lab/blog page shall carry accurate metadata (title, description, canonical URL, Open Graph/Twitter tags) and structured data (schema.org) where applicable.
+### 2.7 SEO, Crawling & Discovery Architecture
+- FR-28: The platform shall implement a centralized SEO route classification policy (`app/lib/seoRoutePolicy.ts`) distinguishing public indexable pages, non-indexable interactive lab runtimes (`/labs/*`), private routes, and permanent redirects.
+- FR-28a: The system shall enforce a 3-layer defensive shield around all interactive lab simulations (`app/labs/layout.tsx` `robots: noindex, nofollow`, `middleware.ts` header `X-Robots-Tag: noindex, nofollow, noarchive`, and sitemap purity filter) while maintaining complete indexability of public educational landing pages (`/<subject>/<slug>`).
+- FR-28b: Subtopic landing pages across DSA, Logic Gates, Networking, and AI problems shall provide reciprocal sibling cross-linking to ensure search crawler discovery and eliminate single-internal-link crawl warnings.
+- FR-28c: The blog engine shall statically pre-render all published articles (`generateStaticParams`) with query deduplication (`React.cache()`), keeping Edge response latency under 100ms and eliminating serverless cold-start bottlenecks.
+- FR-28d: The platform shall expose dynamic `sitemap.xml` and `robots.txt` reflecting only eligible public routes (0 lab or private routes) and validating all URLs through `isSitemapEligible()`.
+- FR-28e: Automated technical SEO regression testing (`yarn test:seo` / `scripts/seo-regression-test.cjs`) shall validate route existence, sitemap purity, canonical standards, and negative invariants in local development and GitHub Actions CI.
 
 ### 2.8 Theming
 - FR-29: Users shall be able to switch between light, dark, and system-matched appearance via a toggle in the navigation bar; the choice shall persist across sessions and avoid a flash-of-wrong-theme on load.
 - FR-30: Core navigation, shared UI chrome, and lab UI chrome (panels, buttons, text) shall render correctly in both themes; simulation/visualization *content* (canvas draw colors, 3D material colors, chart data-series colors, data-encoding legend/status colors) is exempt and may remain fixed regardless of theme. Deliberately dark-by-design surfaces (code editors, terminals, a small number of labs with a fixed dark aesthetic) are exempt by design, not by omission — see `CLAUDE.md` § Theming for the current exemption list.
+
+### 2.9 Browser Resilience & Script Hardening
+- FR-31: The platform shall deploy a client-side Translation Guard (`TranslationGuard.tsx`) to intercept browser auto-translation DOM mutations (`removeChild`, `insertBefore`) from Chrome/Safari translation engines, preventing React VDOM reconciliation crashes.
+- FR-32: All 3D WebGL simulation canvases shall handle `webglcontextlost` and `webglcontextrestored` events gracefully and wrap renders in `WebGLErrorBoundary.tsx`.
+- FR-33: Google AdSense script integration shall strictly suppress ad scripts and elements on all interactive lab routes (`/labs/*`) and administrative routes (`/admin/*`) via route listeners, body attributes (`data-no-ads`), and CSS hard-blocks.
 
 ## 3. Non-functional requirements
 
@@ -106,4 +118,4 @@ These exist as placeholders or partial scaffolding in the codebase but are **not
 
 - Decide whether to remove the dead code paths in §4 or finish implementing them (notably server-side code execution, which is a natural fit for the Computer Science code lab).
 - Reconcile `eslint.config.js` (currently inert for `app/**/*.{ts,tsx}`) with `eslint-config-next` so TypeScript app code is actually linted by one canonical config.
-- Consider adding automated tests — none currently exist, and CI does not run lint/typecheck/build, only the license guard.
+- Automated technical SEO regression tests now run in CI (`yarn test:seo`). Full end-to-end integration and unit tests for interactive UI simulation physics engines remain an open opportunity.

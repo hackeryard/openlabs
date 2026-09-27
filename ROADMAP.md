@@ -32,15 +32,12 @@ This document outlines the product growth roadmap, user retention mechanics, int
 - **Web Push Notifications (Optional Browser Opt-In)**:
   - Lightweight browser push notifications at 9:00 AM when the fresh daily challenge drops.
 
-### B. 🗺️ Guided "Curriculum Tracks" & Skill Trees (Progression Hook)
+### B. 🗺️ Guided "Curriculum Tracks" & Skill Trees (Progression Hook) [SHIPPED ✅]
 Transform the platform from an unstructured catalog of 94 separate labs into a guided mastery journey:
 - **Structured Learning Tracks with Progress Bars**:
-  - *High School Physics Track* (Free Fall $\rightarrow$ Projectile Motion $\rightarrow$ Hooke's Law $\rightarrow$ Energy Conservation) — `[=== 60% Complete ===]`
-  - *AP Chemistry Mastery* (Titration $\rightarrow$ Periodic Table $\rightarrow$ Reaction Kinetics $\rightarrow$ Chemical Bonds)
-  - *Computer Systems & DSA Track* (Logic Gates $\rightarrow$ CPU Scheduling $\rightarrow$ Sorting Algorithms $\rightarrow$ Graph Pathfinding)
+  - Live at [`/tracks`](/tracks) with sequenced step milestones, live percentage progress tracking, and interactive circular node timelines across Physics, Chemistry, Biology, Computer Science, and Mathematics.
 - **"Next Experiment" Recommended Pathway**:
-  - Upon completing any lab or challenge, render an immediate post-lab celebration modal:
-    > *"🎉 Great job on Free Fall! Next in Classical Mechanics: **Projectile Motion**. [Continue Track →]"*
+  - Integrated `<NextLabModal />` post-lab continuation flow celebrating earned XP and providing a 1-click continuation link to the next experiment in the active curriculum sequence.
 
 ### C. ⏱️ 60-Second "Daily Science Puzzle" on the Homepage & Dashboard
 - Eliminate the friction of loading a heavy 3D canvas simulation just to complete a daily challenge.
@@ -104,6 +101,8 @@ Transform the platform from an unstructured catalog of 94 separate labs into a g
   - Energy profile reaction coordinate diagrams with transition state geometries.
 
 ### C. Biology & Biotechnology
+- **Mitosis, Meiosis & Microscopic Cell Division Studio [SHIPPED ✅]**:
+  - Live at [`/labs/biology/mitosis-meiosis`](/labs/biology/mitosis-meiosis) and [`/biology/mitosis-meiosis`](/biology/mitosis-meiosis). Somatic mitosis with sister chromatid disjunction, meiotic Prophase I synapsis with reciprocal non-sister chromatid chiasmata crossing-over, Metaphase I independent assortment with pole flips, and an interactive 4-gamete inspector detailing ploidy and parental vs recombinant genotypes.
 - **Enzyme Kinetics & Michaelis-Menten Model**:
   - Substrate-enzyme active site binding dynamics.
   - Real-time Lineweaver-Burk double reciprocal plots ($1/V$ vs. $1/[S]$).
@@ -116,13 +115,10 @@ Transform the platform from an unstructured catalog of 94 separate labs into a g
   - Carrying capacity limits, invasive species perturbations, and biodiversity resilience metrics.
 
 ### D. Computer Science & Discrete Mathematics
-- **Pathfinding & Graph Algorithms Studio**:
-  - Interactive weighted grid with obstacle drawing and custom maze generators (Recursive Backtracking, Prim's, Kruskal's).
-  - Step-by-step visualizations and time/space complexity analysis for $A^*$ Search (Euclidean, Manhattan, Chebyshev heuristics), Dijkstra's, Bidirectional BFS, and Bellman-Ford.
-- **Neural Network & Deep Learning from Scratch**:
-  - Fully configurable Multi-Layer Perceptron (MLP) architecture (input, hidden, output neurons).
-  - Layer-by-layer activation function comparisons (ReLU, Leaky ReLU, Sigmoid, Tanh, GELU).
-  - Live forward propagation signal flow and backpropagation gradient descent weight updates on 2D decision boundary datasets.
+- **Pathfinding & Graph Algorithms Studio [SHIPPED ✅]**:
+  - Live at [`/labs/computer-science/dsa/pathfinding-astar`](/labs/computer-science/dsa/pathfinding-astar) and [`/computer-science/dsa/pathfinding-astar`](/computer-science/dsa/pathfinding-astar). Interactive grid with obstacle drawing, step-by-step visualizations and time/space complexity analysis for $A^*$ Search (Euclidean, Manhattan, Chebyshev heuristics), Dijkstra's, BFS, and DFS.
+- **Neural Network & Deep Learning from Scratch [SHIPPED ✅]**:
+  - Live at [`/labs/computer-science/ai-problem/neural-network`](/labs/computer-science/ai-problem/neural-network) and [`/computer-science/ai-problem/neural-network`](/computer-science/ai-problem/neural-network). Multi-layer perceptron training, activation function toggles, forward propagation signal flow, and backpropagation gradient descent weight updates on 2D decision boundary datasets.
 - **CPU Scheduling & Memory Management Visualizer**:
   - Interactive Gantt chart simulator for FCFS, SJF, SRTF, Round Robin (time quantum tuning), and Multilevel Feedback Queues.
   - Virtual memory page replacement algorithms (FIFO, LRU, Optimal, Clock/Second-Chance) with page fault counters.

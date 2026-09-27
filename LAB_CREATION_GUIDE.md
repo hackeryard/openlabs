@@ -258,14 +258,24 @@ Assign the new lab to its appropriate `CurriculumTrack` in `CURRICULUM_TRACKS`:
 
 ---
 
-### Step 9: Search Engine Indexing & Validation
-1. **XML Sitemap** (`app/sitemap.ts`):
-   * Add entries for `https://www.openlabs.org.in/<subject>/<slug>` (priority `0.8`) and `https://www.openlabs.org.in/labs/<subject>/<slug>` (priority `0.7`).
-2. **Typecheck & Linting**:
+### Step 9: Search Engine Indexing, Automated SEO Testing & Documentation Sync
+1. **XML Sitemap & SEO Route Policy** (`app/sitemap.ts` & `app/lib/seoRoutePolicy.ts`):
+   * Register the public educational landing page (`https://www.openlabs.org.in/<subject>/<slug>`) with priority `0.8` (automatically enumerated via `LABS` in `app/lib/labs.ts`).
+   * **DO NOT** add the simulation route (`/labs/<subject>/<slug>`) to `sitemap.ts`. Interactive simulation routes are protected behind authentication, excluded in `robots.ts`, and shielded with `X-Robots-Tag: noindex, nofollow, noarchive` via `app/labs/layout.tsx` and `middleware.ts`.
+2. **Automated SEO Regression Suite**:
    ```bash
-   npx tsc --noEmit
+   yarn test:seo
+   ```
+   * Verifies all routes against `app/lib/seoRoutePolicy.ts`, checks sitemap completeness, confirms zero `/labs/*` entries, and checks absolute canonical URLs.
+3. **Typecheck & Linting**:
+   ```bash
+   yarn tsc --noEmit
    yarn lint
    ```
-3. **Docs Sync**:
-   * Add an entry in `CHANGELOG.md` under the latest date.
-   * Update lab counts in `README.md` if milestone is reached.
+4. **Mandatory Documentation Synchronization**:
+   * As defined in `.agents/rules/documentation-sync.md`, update all companion documentation before completing any task:
+     * `CHANGELOG.md` — log the newly added lab under the current date.
+     * `README.md` — increment lab counts and add to subject highlights.
+     * `REQUIREMENTS.md` — append functional requirement (`FR-1...`) with lab specification.
+     * `ROADMAP.md` — mark lab item as `[SHIPPED ✅]`.
+     * `CLAUDE.md` & `AGENTS.md` — update architectural conventions or registries if modified.

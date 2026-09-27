@@ -19,6 +19,7 @@ import {
 import FormulaSection from "@/app/components/seo/FormulaSection";
 import EducationalGraphSection from "@/app/components/seo/EducationalGraphSection";
 import type { NetworkingContent } from "./networkingContent";
+import { networkingContent } from "./networkingContent";
 
 type Props = {
   content: NetworkingContent;
@@ -383,6 +384,69 @@ export default function NetworkingLanding({ content }: Props) {
             and watch the visual network state update. Use the animation to trace
             paths, layers, packets, links, or topology changes.
           </p>
+        </div>
+      </section>
+
+      {/* Sibling Networking Labs Cross-Linking Section */}
+      <section className="border-t border-border bg-muted/20">
+        <div className="mx-auto max-w-6xl px-6 py-14 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-primary">
+                Networking Curriculum
+              </span>
+              <h2 className="mt-2 text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+                Explore Sibling Networking Labs
+              </h2>
+            </div>
+            <Link
+              href="/computer-science/networking"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:underline"
+            >
+              View All Networking Labs
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {Object.values(networkingContent)
+              .filter((item) => item.slug !== content.slug)
+              .map((sibling) => (
+                <article
+                  key={sibling.slug}
+                  className="group rounded-2xl border border-border bg-card p-6 shadow-xs hover:border-primary/40 hover:shadow-md transition-all flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-bold text-primary">
+                        {sibling.badge || "Computer Networks"}
+                      </span>
+                      <span className="text-[11px] font-mono text-muted-foreground">
+                        {sibling.visual ? `${sibling.visual.toUpperCase()} Model` : "Simulation"}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
+                      <Link href={`/computer-science/networking/${sibling.slug}`}>
+                        {sibling.name}
+                      </Link>
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground line-clamp-2">
+                      {sibling.heroDescription || sibling.metaDescription}
+                    </p>
+                  </div>
+
+                  <div className="mt-5 pt-4 border-t border-border/60 flex items-center justify-between text-xs font-bold text-primary">
+                    <Link
+                      href={`/computer-science/networking/${sibling.slug}`}
+                      className="inline-flex items-center justify-between w-full"
+                    >
+                      <span>Explore Simulation</span>
+                      <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
+                </article>
+              ))}
+          </div>
         </div>
       </section>
 

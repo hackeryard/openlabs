@@ -13,17 +13,23 @@ yarn install     # requires NPM_TOKEN for the private @hackeryard scope (.npmrc)
 yarn dev          # start dev server, http://localhost:3000
 yarn build         # production build
 yarn lint           # next lint
+yarn test:seo       # run automated technical SEO & indexing regression suite
 ```
 
 - Package manager: **Yarn 1.22.22** (pinned via `packageManager` in package.json). Don't switch to npm/pnpm.
 - `predev`/`prebuild`/`prestart` run `scripts/guard.cjs` (a private license/env gate: `@hackeryard/mandatory-guard`). If a command fails immediately with a guard error, that's this gate — not a code problem.
-- **No test suite exists in this repo.** Do not invent or assume `yarn test` works.
-- CI (`.github/workflows/guard.yml`) only runs `yarn install --frozen-lockfile` + the guard script — it does not lint, typecheck, or build. Run `yarn lint` and check `tsc` yourself before calling a change done.
+- **Automated Tests**: Technical SEO and indexing invariants are validated via `yarn test:seo` (`scripts/seo-regression-test.cjs`). General unit test runner is not present, so do not assume `yarn test` works.
+- CI (`.github/workflows/guard.yml`) runs `yarn install --frozen-lockfile`, the security guard script (`scripts/guard.cjs`), and the automated SEO regression suite (`scripts/seo-regression-test.cjs`). Run `yarn lint`, `yarn test:seo`, and check `yarn tsc --noEmit` yourself before calling a change done.
 
 ## Code conventions
 
 - `tsconfig.json` has `strict: false` and a `@/*` → repo-root path alias. Imports like `@/app/lib/...`, `@/lib/...`, `@/components/...` are all valid and point at *different* top-level dirs (`app/lib` vs root `lib`, `app/components` vs root `components`) — don't assume they're the same directory.
 - New interactive labs require **all 9 steps** documented in **[`LAB_CREATION_GUIDE.md`](LAB_CREATION_GUIDE.md)**: component (`app/components/<subject>/<LabName>Lab.tsx`), simulation route (`app/labs/<subject>/<slug>/page.tsx` with `ssr: false`), XP gamification & next-lab modal hook (`useLab()`), AI tutor knowledge base (`app/lib/pageKnowledge.ts`), SEO landing page (`app/<subject>/<slug>/page.tsx`), central registry entry (`app/lib/labs.ts`), curriculum track sequence (`app/lib/tracks.ts`), navigation/hub links (`Navbar.tsx`, `Hero.tsx`, `app/<subject>/page.tsx`), and XML sitemap (`app/sitemap.ts`).
+- **Technical SEO & Indexing Policy**: Route classification is centralized in [`app/lib/seoRoutePolicy.ts`](app/lib/seoRoutePolicy.ts). Public educational landing pages (`/<subject>/<slug>`) are indexable with self-referencing absolute canonical URLs. Interactive lab simulations (`/labs/*`) are intentionally non-indexable and protected by a 3-layer defensive shield: `app/labs/layout.tsx` (`robots: { index: false, follow: false, nocache: true }`), `middleware.ts` (`X-Robots-Tag: noindex, nofollow, noarchive`), and `app/sitemap.ts` (`isSitemapEligible()` filter guaranteeing 0 lab routes enter the sitemap). See [`SEO_MAINTENANCE.md`](SEO_MAINTENANCE.md).
+- **Subtopic Landing Pages**: Subtopic landing pages across DSA, Logic Gates, Networking, and AI problems implement reciprocal cross-linking between sibling experiments, preventing single-internal-link crawl warnings.
+- **Blog Engine Performance**: Blog articles under `app/blog/[slug]/page.tsx` use `generateStaticParams()` for build-time SSG pre-rendering and wrap queries in React `cache()`, maintaining Edge response times under 100ms.
+- **Browser Translation & WebGL Resilience**: `TranslationGuard.tsx` in `app/layout.tsx` intercepts `removeChild` and `insertBefore` mutations from Chrome/Safari translation engines to prevent VDOM crashes. All 3D canvases implement `webglcontextlost` and `webglcontextrestored` event handlers and wrap renders in `WebGLErrorBoundary.tsx`.
+- **Google AdSense Exclusions**: Ad scripts are strictly suppressed on all `/labs/*` and `/admin/*` routes via route listeners, `data-no-ads` body attributes, and CSS suppression in `app/globals.css`.
 - Subject discipline landing pages (`app/<subject>/page.tsx`) and sub-topic hubs (`app/<subject>/<subtopic>/page.tsx`) follow the `/physics` design system: radial dot grid, live search/tag explorers (`<SubtopicCardExplorer />`), curriculum tracks banner (`<CurriculumTracksExplorer />`), computational principles matrices (GEO), HowTo procedural protocols (AEO), curriculum alignment, single-open FAQs, and complete Schema.org JSON-LD (`CollectionPage`, `ItemList`, `HowTo`, `FAQPage`, `BreadcrumbList`).
 - `/labs/*` and `/admin/*` require auth (enforced in root `middleware.ts`); subject landing pages, `/tracks`, and `/blog` are public.
 - Admin routes (`/admin/*`) and the isolated admin subdomain (`admin.openlabs.org.in`) enforce Role-Based Access Control (RBAC) with `admin` and `moderator` roles; regular users receive an in-place 403 Access Restricted screen without administrative chrome.
@@ -33,15 +39,18 @@ yarn lint           # next lint
 - `app/hooks/useXP.ts` exports `useLab` (providing `completeExperiment()`, `nextLabProgression`, and next-lab modal triggers).
 - Light/dark theming uses semantic Tailwind tokens (`bg-card`, `text-foreground`, `text-muted-foreground`, `border-border`, `bg-primary`, `bg-accent`) backed by CSS variables in `app/globals.css`, not Tailwind's `dark:` prefix — match that convention, and see `CLAUDE.md` § Theming for the token-mapping table and the list of surfaces deliberately left dark-only or unconverted.
 
-## Docs to keep in sync
+## Docs to keep in sync (MANDATORY INVARIANT)
 
-When you change behavior, update the relevant doc(s) in the same change:
+**CRITICAL RULE**: When you change ANY code or behavior, you MUST update all relevant companion docs in the EXACT SAME commit/task. Never skip documentation or leave it as a follow-up task:
 
-- **`README.md`** — user-facing setup, features, stack.
-- **`CLAUDE.md`** — architecture/conventions for Claude Code specifically.
+- **`README.md`** — user-facing setup, features, new labs, and stack.
+- **`CLAUDE.md`** — architecture/conventions for Claude Code and AI agents.
 - **`AGENTS.md`** (this file) — tool-agnostic agent instructions.
-- **`REQUIREMENTS.md`** — functional/non-functional requirements.
-- **`CHANGELOG.md`** — one entry per user-visible change, newest on top.
+- **`REQUIREMENTS.md`** — functional/non-functional requirements reflecting shipped features.
+- **`ROADMAP.md`** — product roadmap, marking completed milestones as `[SHIPPED]`.
+- **`CHANGELOG.md`** — dated, factual record of what shipped, newest on top.
+- **`SEO_MAINTENANCE.md`** — technical SEO, indexing, and sitemap policies.
+- **`.agents/rules/documentation-sync.md`** — workspace rule enforcing this mandate across all agents.
 
 ## PR / commit conventions
 

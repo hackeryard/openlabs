@@ -1,23 +1,33 @@
-// app/robots.ts
 import { MetadataRoute } from "next";
 import { SITE_METADATA } from "@/app/lib/constants/subjects";
 
 export default function robots(): MetadataRoute.Robots {
+  const baseUrl = SITE_METADATA.baseUrl.replace(/\/+$/, "");
+
   return {
     rules: [
       {
         userAgent: "*",
         allow: [
           "/",
+          "/physics",
           "/physics/",
+          "/chemistry",
           "/chemistry/",
+          "/biology",
           "/biology/",
+          "/computer-science",
           "/computer-science/",
-          "/labs/",
+          "/mathematics",
+          "/mathematics/",
+          "/tracks",
+          "/leaderboard",
+          "/blog",
           "/blog/",
           "/about",
           "/contact",
           "/llms.txt",
+          "/llms-full.txt",
         ],
         disallow: [
           "/admin/",
@@ -29,9 +39,10 @@ export default function robots(): MetadataRoute.Robots {
           "/reset-password",
           "/verify-email",
           "/setup-profile",
+          "/403",
         ],
       },
     ],
-    sitemap: `${SITE_METADATA.baseUrl}/sitemap.xml`,
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }

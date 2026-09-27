@@ -15,6 +15,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import type { DsaContent } from "./dsaContent";
+import { dsaContent } from "./dsaContent";
 
 type Props = {
   content: DsaContent;
@@ -332,6 +333,70 @@ export default function DsaLanding({ content }: Props) {
             watch the visual state update immediately. Use the animation to trace
             the operation order, compare complexity, and verify your understanding.
           </p>
+        </div>
+      </section>
+
+      {/* Sibling Topic Cross-Linking Section */}
+      <section className="border-t border-border bg-muted/20">
+        <div className="mx-auto max-w-6xl px-6 py-14 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-primary">
+                Curriculum Continuity
+              </span>
+              <h2 className="mt-2 text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+                Explore Related DSA Visualizers
+              </h2>
+            </div>
+            <Link
+              href="/computer-science/dsa"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:underline"
+            >
+              View All DSA Labs
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {Object.values(dsaContent)
+              .filter((item) => item.route !== content.route && item.slug !== content.slug)
+              .slice(0, 6)
+              .map((sibling) => (
+                <article
+                  key={sibling.route}
+                  className="group rounded-2xl border border-border bg-card p-6 shadow-xs hover:border-primary/40 hover:shadow-md transition-all flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-bold text-primary">
+                        {sibling.category}
+                      </span>
+                      <span className="text-[11px] font-mono text-muted-foreground">
+                        {sibling.complexity ? sibling.complexity.split(",")[0] : "O(N)"}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
+                      <Link href={`/computer-science/dsa/${sibling.route}`}>
+                        {sibling.name}
+                      </Link>
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground line-clamp-2">
+                      {sibling.heroDescription || sibling.metaDescription}
+                    </p>
+                  </div>
+
+                  <div className="mt-5 pt-4 border-t border-border/60 flex items-center justify-between text-xs font-bold text-primary">
+                    <Link
+                      href={`/computer-science/dsa/${sibling.route}`}
+                      className="inline-flex items-center justify-between w-full"
+                    >
+                      <span>Explore Visualizer</span>
+                      <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
+                </article>
+              ))}
+          </div>
         </div>
       </section>
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { cache } from "react";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { connectDB } from "@/app/lib/mongodb";
@@ -37,7 +37,7 @@ interface RelatedPost {
   coverImage?: string;
 }
 
-async function getBlogPost(slug: string): Promise<BlogPost | null> {
+const getBlogPost = cache(async (slug: string): Promise<BlogPost | null> => {
   try {
     await connectDB();
     const blog = await Blog.findOne({ slug, published: true }).lean();
@@ -49,9 +49,9 @@ async function getBlogPost(slug: string): Promise<BlogPost | null> {
     console.error("Failed to fetch blog post directly:", error);
     return null;
   }
-}
+});
 
-async function getRelatedPosts(currentSlug: string, category: string): Promise<RelatedPost[]> {
+const getRelatedPosts = cache(async (currentSlug: string, category: string): Promise<RelatedPost[]> => {
   try {
     await connectDB();
     let related = await Blog.find({
@@ -82,6 +82,19 @@ async function getRelatedPosts(currentSlug: string, category: string): Promise<R
     console.error("Failed to fetch related posts:", error);
     return [];
   }
+});
+
+export async function generateStaticParams() {
+  try {
+    await connectDB();
+    const posts = await Blog.find({ published: true }).select("slug").lean();
+    return (posts || []).map((post: any) => ({
+      slug: post.slug,
+    }));
+  } catch (error) {
+    console.error("Failed to generate static params for blog posts:", error);
+    return [];
+  }
 }
 
 export async function generateMetadata({
@@ -104,8 +117,10 @@ export async function generateMetadata({
   const title = post.metaTitle || `${post.title} | OpenLabs Blog`;
   const description =
     post.metaDescription || post.excerpt || `Read ${post.title} on the OpenLabs Blog.`;
-  const canonical = `/blog/${post.slug}`;
-  const image = post.coverImage || "/images/og-image.svg";
+  const canonical = `https://www.openlabs.org.in/blog/${post.slug}`;
+  const image = post.coverImage?.startsWith("http")
+    ? post.coverImage
+    : `https://www.openlabs.org.in${post.coverImage || "/images/og-image.svg"}`;
 
   return {
     title,

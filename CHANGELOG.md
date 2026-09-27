@@ -2,6 +2,30 @@
 
 All notable changes to OpenLabs are documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/); since the project has no version tags yet, entries are grouped by date instead of version number. Generated from git history; merge commits and duplicate/typo commits are omitted.
 
+- **Technical SEO Architecture, Optimization & Automated Regression Prevention (`seoRoutePolicy.ts`, `app/labs/layout.tsx`, `app/sitemap.ts`, `app/robots.ts`, `app/blog/[slug]/page.tsx`, `DsaLanding.tsx`, `LogicGateLanding.tsx`, `NetworkingLanding.tsx`, `AiProblemLanding.tsx`, `STEMExperimentLanding.tsx`, `seo-regression-test.cjs`, `SEO_MAINTENANCE.md`)**:
+  - **Centralized SEO Route Policy (`app/lib/seoRoutePolicy.ts`)**: Built a single source of truth for classifying public indexable routes, interactive labs, private/admin routes, and permanent redirects with dedicated helper functions (`classifyRoute`, `isIndexableRoute`, `isSitemapEligible`, `toCanonicalUrl`).
+  - **Interactive Lab Exclusion Multi-Layer Shield (`app/labs/layout.tsx`, `middleware.ts`, `app/robots.ts`, `app/sitemap.ts`)**:
+    - Created `app/labs/layout.tsx` enforcing `robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } }` across all 101 interactive labs.
+    - Added HTTP header `X-Robots-Tag: noindex, nofollow, noarchive` in `middleware.ts` for all `/labs/*` responses.
+    - Updated `app/robots.ts` to cleanly permit crawler header inspection while blocking private/auth paths (`/admin/`, `/api/`, etc.) and advertising the canonical sitemap.
+    - Overhauled `app/sitemap.ts` to strictly enforce `isSitemapEligible`, guaranteeing 0 lab routes or private paths enter `sitemap.xml`.
+  - **AI Problem & Neural Network Route Fixes (`app/lib/labs.ts`, `app/lib/pageKnowledge.ts`, `aiProblemContent.ts`)**:
+    - Registered missing `computer-science/ai-problem/neural-network` in `LABS` registry and added AI tutor knowledge base entries.
+    - Verified proper HTTP 200 rendering, metadata, and bidirectional internal links from `/computer-science/ai-problem`.
+  - **Blog Serverless Optimization & Cold-Start Elimination (`app/blog/[slug]/page.tsx`, `app/blog/page.tsx`)**:
+    - Resolved slow 4.056s blog load time by exporting `generateStaticParams()` for build-time SSG pre-rendering, reducing Edge response latency to <100ms.
+    - Wrapped Mongoose query functions (`getBlogPost`, `getRelatedPosts`) in React `cache()` to eliminate duplicate database handshakes during metadata and page rendering.
+    - Normalized blog canonical URLs to fully-qualified absolute addresses (`https://www.openlabs.org.in/blog/${post.slug}`).
+  - **Subtopic Sibling Cross-Linking & Discovery Expansion (`DsaLanding.tsx`, `LogicGateLanding.tsx`, `NetworkingLanding.tsx`, `AiProblemLanding.tsx`)**:
+    - Resolved 41 single-internal-link and low text-to-HTML crawl anomalies by adding rich "Related Concepts & Sibling Experiments" grids across DSA, Logic Gates, Networking, and AI Problem templates.
+  - **Sitemap Completeness & Structured Data Cleanup (`app/sitemap.ts`, `STEMExperimentLanding.tsx`)**:
+    - Expanded `app/sitemap.ts` to dynamically include `/tracks`, `/leaderboard`, 9 subtopic hubs, 98 public lab landing pages, 118 periodic table element atom pages, and all published blog posts.
+    - Removed conflicting inline HTML microdata attributes from `STEMExperimentLanding.tsx` FAQ markup, preserving pristine JSON-LD (`LearningResource`, `FAQPage`, `BreadcrumbList`).
+  - **Automated Regression Prevention Suite & CI Pipeline (`scripts/seo-regression-test.cjs`, `package.json`, `.github/workflows/guard.yml`, `SEO_MAINTENANCE.md`)**:
+    - Created comprehensive regression test suite verifying route classifications, sitemap purity, metadata canonical standards, route existence, and negative invariants.
+    - Integrated `yarn test:seo` into `package.json` and GitHub Actions CI workflow (`guard.yml`).
+    - Authored `SEO_MAINTENANCE.md` documenting policies, schemas, and contributor protocols.
+
 - **Production Error Triage & System-Wide Resilience Engine (`TranslationGuard.tsx`, `WebGLErrorBoundary.tsx`, `app/error.tsx`, `app/global-error.tsx`, `OpenLabsTracker.tsx`, `Navbar.tsx`, `AdminNavbar.tsx`, `ReactionSimulation.jsx`, `AnimalCell.tsx`, `PlantCell.tsx`, `AnatomyScene.tsx`, `/api/xp/complete`, `/api/challenges/[labId]`, `/api/challenges/validate`, `next.config.js`)**:
   - **Browser Translation DOM Conflict Shield (`TranslationGuard.tsx`, `app/layout.tsx`, `app/error.tsx`, `app/global-error.tsx`)**:
     - Resolved over 70% of tracked production errors (`removeChild`, `insertBefore`, `NotFoundError`, Safari's `"The object can not be found here"`, and `null is not an object (evaluating 't.parallelRoutes.get')`) caused by Google Chrome Translate and Apple Safari Translate wrapping text nodes in `<font>` tags during React VDOM reconciliation.

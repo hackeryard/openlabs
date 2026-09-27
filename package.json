@@ -14,7 +14,8 @@
     "prestart": "node scripts/guard.cjs",
     "start": "next start",
     "lint": "next lint",
-    "preview": "next start"
+    "preview": "next start",
+    "test:seo": "node scripts/seo-regression-test.cjs"
   },
   "dependencies": {
     "@babel/generator": "^7.29.1",

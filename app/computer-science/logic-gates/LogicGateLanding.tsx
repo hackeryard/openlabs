@@ -16,6 +16,7 @@ import {
 import FormulaSection from "@/app/components/seo/FormulaSection";
 import EducationalGraphSection from "@/app/components/seo/EducationalGraphSection";
 import type { LogicGateContent } from "./gateContent";
+import { gateContent } from "./gateContent";
 
 type Props = {
   gate: LogicGateContent;
@@ -362,6 +363,70 @@ export default function LogicGateLanding({ gate }: Props) {
             and watch the output update immediately. The visual circuit and truth
             table make each Boolean result easier to verify.
           </p>
+        </div>
+      </section>
+
+      {/* Sibling Logic Gate Cross-Linking Section */}
+      <section className="border-t border-border bg-muted/20">
+        <div className="mx-auto max-w-6xl px-6 py-14 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-primary">
+                Digital Logic Curriculum
+              </span>
+              <h2 className="mt-2 text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+                Explore Sibling Logic Gates & Circuits
+              </h2>
+            </div>
+            <Link
+              href="/computer-science/logic-gates"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:underline"
+            >
+              View All Logic Gates
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {Object.values(gateContent)
+              .filter((item) => item.slug !== gate.slug)
+              .slice(0, 6)
+              .map((sibling) => (
+                <article
+                  key={sibling.slug}
+                  className="group rounded-2xl border border-border bg-card p-6 shadow-xs hover:border-primary/40 hover:shadow-md transition-all flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-bold text-primary">
+                        {sibling.shortName} Gate
+                      </span>
+                      <span className="text-[11px] font-mono text-muted-foreground">
+                        {sibling.formula}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
+                      <Link href={`/computer-science/logic-gates/${sibling.slug}`}>
+                        {sibling.name}
+                      </Link>
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground line-clamp-2">
+                      {sibling.heroDescription || sibling.metaDescription}
+                    </p>
+                  </div>
+
+                  <div className="mt-5 pt-4 border-t border-border/60 flex items-center justify-between text-xs font-bold text-primary">
+                    <Link
+                      href={`/computer-science/logic-gates/${sibling.slug}`}
+                      className="inline-flex items-center justify-between w-full"
+                    >
+                      <span>Explore Truth Table & Simulation</span>
+                      <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
+                </article>
+              ))}
+          </div>
         </div>
       </section>
 
