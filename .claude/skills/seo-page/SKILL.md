@@ -45,10 +45,18 @@ export const metadata: Metadata = {
 - Reuse an existing hero image path convention (`/images/<subject>/<slug>-hero.png`) — check `public/images/<subject>/` for what actually exists before referencing a new filename; a missing OG image silently breaks social previews.
 - If the page is a lab landing page, also pass the SEO-relevant content (`theory`, `formula`, `faqs`, `learningObjectives`, `applications`) into the shared landing component (`PhysicsExperimentLanding` or the subject-appropriate equivalent from root `components/`) — the FAQ list feeds a JSON-LD FAQ schema, so keep answers factual and self-contained (they're read out of context by search engines).
 
-## Sitemap
+## Sitemap & Route Policy
 
-Static top-level and category pages are listed by hand in `app/sitemap.ts` (`revalidate = 43200`, i.e. every 12h) with `changeFrequency`/`priority`. Blog posts are pulled dynamically from MongoDB in the same file. **Individual lab pages are not currently enumerated in `sitemap.ts`** — if asked to make a new lab page more discoverable, check whether it should be added there, but don't assume every page must be (confirm with the user; the existing pattern favors category-level entries plus dynamic blog entries, not per-lab).
+All route classifications are centralized in `app/lib/seoRoutePolicy.ts`:
+- **Public Educational Landings** (`/<subject>/<slug>`): Automatically enumerated in `app/sitemap.ts` dynamically from `LABS` in `app/lib/labs.ts` (priority `0.8`, `monthly`) alongside 118 periodic table elements (priority `0.75`), 9 subtopic hubs, `/tracks`, `/leaderboard`, and published blog articles.
+- **Simulation Routes** (`/labs/<subject>/<slug>`): Strictly **excluded** from `sitemap.ts`, disallowed in `app/robots.ts`, served with `X-Robots-Tag: noindex, nofollow, noarchive` in `middleware.ts`, and wrapped with `robots: { index: false, follow: false, nocache: true }` in `app/labs/layout.tsx`.
 
-## After writing
+## Verification & Automated Testing
 
-Cross-check `app/robots.ts` isn't excluding the new path. Current `disallow` list: `/api/`, `/admin/`, `/private/`, `/labs/` (simulation routes are intentionally not crawled — they're auth-gated anyway), `/login`, `/signup`, `/forgotpassword`, `/reset-password`, `/verify-email`. A new public landing page should live outside all of those; a new subject prefix should be added to `allow` alongside `/physics/`, `/chemistry/`, `/biology/`, `/computer-science/`, `/maths/`.
+After adding or modifying metadata:
+1. Run `yarn test:seo` to verify:
+   - Valid metadata and absolute canonical URL format (`https://www.openlabs.org.in/...`)
+   - Proper route classification (`public` vs `lab` vs `private`)
+   - Zero `/labs/*` entries in sitemap output
+   - Reciprocal internal links
+2. Run `yarn tsc --noEmit` to verify TypeScript typings.

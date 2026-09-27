@@ -1949,6 +1949,33 @@ const LAB_KNOWLEDGE: Record<string, PageKnowledge> = {
     ],
   },
 
+  "computer-science/ai-problem/neural-network": {
+    title: "Multilayer Perceptron Neural Network Lab",
+    overview:
+      "Interactive deep learning playground for training Multilayer Perceptron (MLP) feedforward networks on 2D datasets using backpropagation gradient descent.",
+    howToUse: [
+      "Select a dataset: Circle, XOR, Two Spirals, or Linear Separation.",
+      "Configure network architecture: number of hidden layers and neurons per layer.",
+      "Choose activation functions: ReLU, Sigmoid, Tanh, or Linear.",
+      "Adjust learning rate, batch size, and regularization penalty.",
+      "Click 'Train' and observe the 2D decision boundary evolve alongside epoch loss curves.",
+    ],
+    controls: [
+      "Hidden layer count and neuron density sliders",
+      "Activation function selector (ReLU, Sigmoid, Tanh)",
+      "Learning rate (η) slider from 0.001 to 1.0",
+      "Real-time decision boundary heatmap canvas and loss chart",
+    ],
+    keyConcepts: [
+      "Feedforward propagation: z = W·x + b, a = σ(z)",
+      "Backpropagation: chain rule gradient computation ∂L/∂W = (∂L/∂a)·(∂a/∂z)·(∂z/∂W)",
+      "Non-linear activation enables classification of non-linearly separable data (e.g. XOR)",
+    ],
+    whatToTry: [
+      "Select the XOR dataset with 0 hidden layers (single perceptron) and observe it fail, then add 1 hidden layer with 4 ReLU neurons to solve it.",
+    ],
+  },
+
   // ────────────────── MATHEMATICS LABS ──────────────────
   "mathematics/functiongrapher": {
     title: "Interactive Function Grapher & Calculus Studio",

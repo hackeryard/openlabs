@@ -217,9 +217,9 @@ export default function STEMExperimentLanding({
                     <p>
                       Launch the simulation workspace, adjust parameters in real time, and observe the immediate response in the telemetry and graphical indicator loops.
                     </p>
-                    <div className="px-formula-panel">
+                    <div className="px-formula-panel notranslate" translate="no">
                       <span>{formulaLabel}</span>
-                      <strong>{formula}</strong>
+                      <strong className="notranslate" translate="no">{formula}</strong>
                     </div>
                   </div>
                 </article>
@@ -233,16 +233,13 @@ export default function STEMExperimentLanding({
                     </div>
                     <span className="px-faq-count">{faqs.length} Answers</span>
                   </div>
-                  <div className="px-faqs" itemScope itemType="https://schema.org/FAQPage">
+                  <div className="px-faqs">
                     {faqs.map((faq, index) => {
                       const isOpen = openFaqIndex === index;
                       return (
                         <div
                           className={`px-faq-item ${isOpen ? "px-faq-open" : ""}`}
                           key={faq.question}
-                          itemScope
-                          itemProp="mainEntity"
-                          itemType="https://schema.org/Question"
                         >
                           <button
                             type="button"
@@ -252,7 +249,7 @@ export default function STEMExperimentLanding({
                           >
                             <div className="px-faq-question-wrap">
                               <span className="px-faq-number">{String(index + 1).padStart(2, "0")}</span>
-                              <h3 itemProp="name">{faq.question}</h3>
+                              <h3>{faq.question}</h3>
                             </div>
                             <ChevronDown
                               size={18}
@@ -260,13 +257,8 @@ export default function STEMExperimentLanding({
                             />
                           </button>
                           {isOpen && (
-                            <div
-                              className="px-faq-answer"
-                              itemScope
-                              itemProp="acceptedAnswer"
-                              itemType="https://schema.org/Answer"
-                            >
-                              <p itemProp="text">{faq.answer}</p>
+                            <div className="px-faq-answer">
+                              <p>{faq.answer}</p>
                             </div>
                           )}
                         </div>

@@ -6,6 +6,7 @@ import { EffectComposer, Bloom, Vignette, Noise } from "@react-three/postprocess
 import { useRef, useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import * as THREE from "three"; 
+import WebGLErrorBoundary from "@/app/components/WebGLErrorBoundary";
 import { REACTIONS_DATA } from "./reactionData";
 import { REACTION_DETAILS } from "./reactionDetails";
 
@@ -583,53 +584,65 @@ export default function ReactionSimulation({ onComplete, onStateChange }) {
                 </div>
             </div>
             
-            <Canvas 
-                shadows 
-                camera={{ position: [0, 0, 16], fov: 25 }} 
-                dpr={[1, 2]}
-            >
-              <color attach="background" args={["#050505"]} />
-              
-              <ambientLight intensity={0.4} />
-              <spotLight position={[10, 10, 10]} angle={0.3} penumbra={1} intensity={2} castShadow />
-              <pointLight position={[-5, -5, -5]} intensity={0.5} color="#6366f1" />
-              <Stars radius={100} depth={50} count={1000} factor={4} saturation={0} fade />
- 
-              <Float speed={2} rotationIntensity={0.2} floatIntensity={0.2}>
-                <Center>
-                  <group>
-                    <ProgressDriver targetProgress={target3DProgress} progress={progress} />
-                    
-                    {currentData.atoms.map((atom, index) => (
-                      <Atom
-                        key={atom.id}
-                        element={atom.element}
-                        color={atom.color}
-                        progress={progress}
-                        reactantPos={currentData.reactants[atom.id]}
-                        productPos={currentData.products[atom.id]}
-                        setRef={(el) => (atomRefs.current[index] = el)}
-                      />
-                    ))}
- 
-                    <BondSystem atomRefs={atomRefs} currentData={currentData} progress={progress} />
- 
-                  </group>
-                </Center>
-              </Float>
- 
-              <EffectComposer disableNormalPass>
-                <Bloom luminanceThreshold={0.6} intensity={1.0} radius={0.5} />
-                <Vignette eskil={false} offset={0.1} darkness={0.7} />
-                <Noise opacity={0.04} />
-              </EffectComposer>
- 
-              <OrbitControls 
-                  enablePan={false} 
-                  enableZoom={false} 
-                  enableRotate={true}
-              />
-            </Canvas>
+            <WebGLErrorBoundary title="Atomic Simulation Unavailable" className="bg-slate-950 border-slate-900">
+              <Canvas 
+                  shadows 
+                  camera={{ position: [0, 0, 16], fov: 25 }} 
+                  dpr={[1, 2]}
+                  onCreated={(state) => {
+                    const canvas = state.gl.domElement;
+                    canvas.addEventListener(
+                      "webglcontextlost",
+                      (e) => {
+                        e.preventDefault();
+                      },
+                      false
+                    );
+                  }}
+              >
+                <color attach="background" args={["#050505"]} />
+                
+                <ambientLight intensity={0.4} />
+                <spotLight position={[10, 10, 10]} angle={0.3} penumbra={1} intensity={2} castShadow />
+                <pointLight position={[-5, -5, -5]} intensity={0.5} color="#6366f1" />
+                <Stars radius={100} depth={50} count={1000} factor={4} saturation={0} fade />
+   
+                <Float speed={2} rotationIntensity={0.2} floatIntensity={0.2}>
+                  <Center>
+                    <group>
+                      <ProgressDriver targetProgress={target3DProgress} progress={progress} />
+                      
+                      {currentData.atoms.map((atom, index) => (
+                        <Atom
+                          key={atom.id}
+                          element={atom.element}
+                          color={atom.color}
+                          progress={progress}
+                          reactantPos={currentData.reactants[atom.id]}
+                          productPos={currentData.products[atom.id]}
+                          setRef={(el) => (atomRefs.current[index] = el)}
+                        />
+                      ))}
+   
+                      <BondSystem atomRefs={atomRefs} currentData={currentData} progress={progress} />
+   
+                    </group>
+                  </Center>
+                </Float>
+   
+                <EffectComposer disableNormalPass>
+                  <Bloom luminanceThreshold={0.6} intensity={1.0} radius={0.5} />
+                  <Vignette eskil={false} offset={0.1} darkness={0.7} />
+                  <Noise opacity={0.04} />
+                </EffectComposer>
+   
+                <OrbitControls 
+                    enablePan={false} 
+                    enableZoom={false} 
+                    enableRotate={true}
+                />
+              </Canvas>
+            </WebGLErrorBoundary>
  
             <div className="absolute bottom-4 left-4 flex gap-2 pointer-events-none flex-wrap max-w-[95%]">
                 {Array.from(new Set(currentData.atoms.map(a => JSON.stringify({e: a.element, c: a.color}))))

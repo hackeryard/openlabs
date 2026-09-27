@@ -9,7 +9,7 @@
 
 **OpenLabs** is a comprehensive, interactive platform providing in-browser science labs and visualizations across **Physics**, **Chemistry**, **Biology**, **Computer Science**, and **Mathematics**. Built with modern web technologies, it enables students, educators, and enthusiasts to conduct hands-on experiments and explore scientific concepts without requiring physical lab equipment.
 
-> Related docs: [LAB_CREATION_GUIDE.md](LAB_CREATION_GUIDE.md) (complete 9-step guide for creating new labs), [CLAUDE.md](CLAUDE.md) (architecture notes for Claude Code), [AGENTS.md](AGENTS.md) (tool-agnostic agent instructions), [REQUIREMENTS.md](REQUIREMENTS.md) (functional/non-functional requirements), [ROADMAP.md](ROADMAP.md) (future work & feature roadmap), [CHANGELOG.md](CHANGELOG.md) (release history).
+> Related docs: [LAB_CREATION_GUIDE.md](LAB_CREATION_GUIDE.md) (complete 9-step guide for creating new labs), [CLAUDE.md](CLAUDE.md) (architecture notes for Claude Code), [AGENTS.md](AGENTS.md) (tool-agnostic agent instructions), [REQUIREMENTS.md](REQUIREMENTS.md) (functional/non-functional requirements), [ROADMAP.md](ROADMAP.md) (future work & feature roadmap), [CHANGELOG.md](CHANGELOG.md) (release history), [SEO_MAINTENANCE.md](SEO_MAINTENANCE.md) (technical SEO and crawling architecture).
 
 ---
 
@@ -62,7 +62,7 @@ npm install
 npm run dev
 ```
 
-### Production Build
+### Production Build & Automated Tests
 
 ```bash
 # Build for production
@@ -70,6 +70,9 @@ yarn build
 
 # Start production server
 yarn start
+
+# Run automated technical SEO & indexing regression suite (43 checks)
+yarn test:seo
 ```
 
 ---
@@ -93,6 +96,7 @@ yarn start
 - **Electronics** — RC Circuit simulator with interactive component controls and analysis
 
 ### Biology Labs
+- **Mitosis, Meiosis & Microscopic Cell Division Studio** — Somatic mitosis with physical sister chromatid disjunction, meiotic Prophase I synapsis with reciprocal non-sister chromatid chiasmata crossing-over, Metaphase I independent assortment with pole flips, and an interactive 4-gamete inspector detailing ploidy ($n=2$) and parental vs recombinant genotypes ($A-B-c$, $a-b-C$)
 - **Cardiac Cycle, ECG & Heart Hemodynamics** — 4-chamber anatomical pump simulator, mechanical valve dynamics, Lead II ECG waveforms, Wiggers pressure diagram, and stethoscope auscultation
 - **3D Cell Visualization** — Interactive animal and plant cell models with organelle details
 - **Human Anatomy** — Anatomical structure explorer with biological information
@@ -103,13 +107,14 @@ yarn start
 ### Computer Science Labs
 - **HTML/CSS/JS Code Editor** — Live code editor with real-time preview and console output
 - **JavaScript Event Loop Visualizer** — Step-through visualization of the Call Stack, Web APIs, Microtask/Macrotask queues, with a Predict Mode for guessing execution order before running
-- **Data Structures & Algorithms (DSA)** — Interactive DSA visualizations and algorithm implementations
+- **Data Structures & Algorithms (DSA)** — Interactive DSA visualizations, algorithm implementations, and reciprocal sibling topic explorers
+- **A* Pathfinding & Heuristic Search Studio** — Interactive grid visualizer for $A^*$ Search, Dijkstra's algorithm, BFS, and DFS with real-time heuristic metrics ($h(n)$), customizable obstacles, and step-by-step path tracing
 - **Data Analyzer** — Data visualization and analysis tools with D3 integration
 - **Data Science** — Data science experiments and machine learning demonstrations
-- **AI Problem Solver** — AI-powered problem solving and code suggestion tool
+- **AI Problem Solver & Neural Networks** — Heuristic state space search solvers (Water Jug, Tower of Hanoi, Missionaries & Cannibals) and live Perceptron / Multi-Layer Feedforward Neural Network training with decision boundary visualization
 - **Blockchain Explorer** — Blockchain technology visualization and concepts
-- **Networking Lab** — Network protocols and communication simulations
-- **Logic Gates** — Boolean logic and digital circuit simulations
+- **Networking Lab** — Network protocols, OSI model, packet switching, circuit switching, and topology simulations
+- **Logic Gates** — Boolean logic and digital circuit simulations with live truth tables and sibling gate cross-links
 - **Git Simulator** — Interactive Git version control simulator
 - **Classical & Modern Cryptography Studio** — Interactive classical and modern ciphers laboratory featuring a rotating Caesar cipher wheel ($C \equiv P + k \pmod{26}$) with Chi-squared ($\chi^2$) frequency analysis auto-cracker, $26 \times 26$ Vigenère Tabula Recta with live coordinate intersections, WWII Wehrmacht Enigma rotor machine simulator (3 stepping rotors, turnover notches, Reflector UKW-B, Steckerbrett plugboard, signal trace, and lampboard), asymmetric Diffie-Hellman Key Exchange with paint color-mixing and discrete logarithm sandbox ($g^{ab} \pmod p$), and 256-bit SHA-256 Avalanche Effect visualizer with Bitcoin Proof-of-Work block mining simulator.
 - **Project Management** — Save, load, and manage projects with type-based filtering and persistent storage
@@ -162,14 +167,21 @@ yarn start
 - 📊 **Returning Users & Loyalty Directory** — Persistent visitor lifecycle tracking identifying returning students, lifetime visit counts, total dwell time, and profile linking for registered members.
 
 ### Enterprise Technical SEO & Educational Knowledge Graph 🌐
+- 🌐 **Centralized Route Classification Policy** — Single source of truth in `app/lib/seoRoutePolicy.ts` distinguishing public indexable landing pages, non-indexable interactive labs (`/labs/*`), private routes, and redirects.
+- 🌐 **Multi-Layer Interactive Lab Shield** — Strict separation of 101 interactive lab canvases from public search indexes using `robots: { index: false, follow: false, nocache: true }` in `app/labs/layout.tsx`, Edge HTTP headers (`X-Robots-Tag: noindex, nofollow, noarchive`) in `middleware.ts`, and sitemap purity filters in `app/sitemap.ts`.
+- 🌐 **Subtopic Reciprocal Cross-Linking** — Dynamic "Related Concepts & Sibling Experiments" grids across DSA, Logic Gates, Networking, and AI Problem templates, eliminating single-internal-link crawl warnings and boosting horizontal PageRank.
+- 🌐 **Blog Engine Performance (SSG + Cache)** — Build-time Static Site Generation (`generateStaticParams`) and React `cache()` query deduplication in `app/blog/[slug]/page.tsx`, reducing response latency from 4.056s to <100ms.
+- 🌐 **Automated SEO Regression Suite (`yarn test:seo`)** — 43 automated invariants validating sitemap purity, route existence, canonical standards, and negative security constraints in local development and CI (`.github/workflows/guard.yml`). See [`SEO_MAINTENANCE.md`](SEO_MAINTENANCE.md).
 - 🌐 **Modular Knowledge Graph** — Domain-driven STEM concept registries (`app/lib/knowledge/concepts/`), sequential learning paths (`paths/`), and formula registries (`formulas/`) mapping prerequisites, next steps, and related labs.
 - 🌐 **Focused SEO Utilities & Metadata Creators** — Standardized metadata builders (`app/lib/seo/metadata/`) for labs, subjects, and articles preventing title brand template duplication (`%s | OpenLabs`).
 - 🌐 **Canonical URL Normalizer** — Automatic absolute canonical generator enforcing HTTPS, lowercase paths, removing trailing slashes, and stripping tracking parameters (`utm_*`, `gclid`, `fbclid`).
-- 🌐 **Schema.org JSON-LD Suite** — Modular schema creators (`app/lib/seo/schema/`) producing valid `LearningResource`, `BreadcrumbList`, `FAQPage`, `BlogPosting`, and `DefinedTerm` payloads.
-- 🌐 **Recommendations & Internal Linking API** — `getRelatedContent()`, `getRelatedLabs()`, `getPrerequisites()`, and `getNextTopics()` driving contextual internal linking.
-- 🌐 **Edge Dynamic OG Image Generator** — Edge API (`/api/og`) producing branded OpenGraph share cards with 1-year immutable CDN headers.
-- 🌐 **AI Search Optimization (`/llms.txt`)** — Formatted Markdown knowledge route optimized for ChatGPT, Perplexity, Claude, Gemini, and Copilot AI crawlers.
-- 🌐 **Admin SEO Dashboard & CI Audit** — Internal health monitoring panel (`/admin/seo-dashboard`) and static build-time validator (`scripts/seo-audit.ts`).
+- 🌐 **Schema.org JSON-LD Suite** — Modular schema creators producing valid `LearningResource`, `BreadcrumbList`, `FAQPage`, `BlogPosting`, and `DefinedTerm` payloads with 0 conflicting inline HTML microdata.
+- 🌐 **Dynamic Sitemaps & Robots** — Dynamic sitemap (`sitemap.ts`) indexing 98 lab landing pages, 118 periodic table element atom detail pages, 9 subtopic hubs, and published blogs; clean `robots.ts`; Edge OG Image Generator (`app/api/og/route.tsx`) with 1-year immutable CDN headers; and AI search crawler markdown route (`/llms.txt`).
+
+### Browser Translation & WebGL Resilience 🛡️
+- 🛡️ **Translation DOM Conflict Shield (`TranslationGuard.tsx`)** — Client-side patch intercepting `Node.prototype.removeChild` and `Node.prototype.insertBefore`, safely rescuing detached or mutated nodes wrapped in `<font>` tags by Chrome/Safari translation engines to prevent React VDOM reconciliation crashes.
+- 🛡️ **WebGL Context Loss Recovery (`WebGLErrorBoundary.tsx`)** — Automatic recovery via `webglcontextlost` and `webglcontextrestored` event handlers across all 3D canvases, preventing crashes during mobile tab switching or GPU memory exhaustion.
+- 🛡️ **Google AdSense Strict Lab Exclusions** — Dynamic script suppression, body attribute tagging (`data-no-ads`), and CSS isolation ensuring ads never render on interactive simulation lab pages (`/labs/*`) or administrative contexts (`/admin/*`).
 
 ### AI & Chat Features
 - ✅ **OpenLabsAI Chat Assistant** — Context-aware AI assistant integrated across all labs

@@ -49,7 +49,12 @@ export default function AdminNavbar() {
 
   const [profileOpen, setProfileOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setAvatarError(false);
+  }, [user?.avatar]);
 
   // Close profile dropdown on outside click
   useEffect(() => {
@@ -169,13 +174,14 @@ export default function AdminNavbar() {
                 title="Admin Account"
               >
                 <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-primary font-black text-[10px] overflow-hidden">
-                  {user.avatar ? (
+                  {user.avatar && !avatarError ? (
                     <Image
                       src={user.avatar}
                       alt="User Avatar"
                       width={24}
                       height={24}
                       className="w-full h-full object-cover"
+                      onError={() => setAvatarError(true)}
                     />
                   ) : (
                     user.name?.charAt(0).toUpperCase() || <UserIcon className="w-3 h-3" />

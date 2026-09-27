@@ -639,6 +639,15 @@ export const LABS: Lab[] = [
     description: "Water jug production rules and state space search",
   },
   {
+    id: "computer-science/ai-problem/neural-network",
+    name: "Multilayer Perceptron Neural Network",
+    subject: "computerScience",
+    type: "simulation",
+    challengeParams: ["epochsTrained", "lossAchieved", "accuracy"],
+    challengeEnabled: true,
+    description: "Deep feedforward neural network with backpropagation and activation functions",
+  },
+  {
     id: "computer-science/blockchain",
     name: "Blockchain Explorer",
     subject: "computerScience",

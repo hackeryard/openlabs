@@ -12,6 +12,7 @@ import GoogleAdSense from './components/GoogleAdSense'
 import ThemeProvider from '@/components/ThemeProvider'
 import AmbientBackground from '@/components/ui/AmbientBackground'
 import StructuredData from './components/seo/StructuredData'
+import TranslationGuard from './components/TranslationGuard'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.openlabs.org.in'
 
@@ -118,6 +119,7 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
         />
       </head>
       <body className="bg-background text-foreground">
+        <TranslationGuard />
         <AuthProvider>
           <AdminSecretProvider>
             <ThemeProvider>

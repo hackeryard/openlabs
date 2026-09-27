@@ -23,11 +23,11 @@ yarn dev            # next dev, http://localhost:3000
 yarn build           # next build
 yarn start           # next start (serve a production build)
 yarn lint             # next lint (uses eslint-config-next + .eslintignore, NOT eslint.config.js — see Linting below)
+yarn test:seo         # run automated technical SEO & indexing regression suite (43 checks)
 ```
 
-There is **no test suite** in this repo (no jest/vitest/playwright, no `test` script) — do not assume one exists or try to run `yarn test`.
-
-`predev`/`prebuild`/`prestart` all run `node scripts/guard.cjs`, which loads `.env`/`.env.local` and calls `initGuard()` from the private `@hackeryard/mandatory-guard` package. This requires a valid `NPM_TOKEN` (GitHub Packages, see `.npmrc`) to even `yarn install`, and runs before every dev/build/start invocation. If dev/build fails immediately with a guard error, it's this gate, not your code.
+- **Testing**: Technical SEO, route classification, sitemap purity, and metadata standards are validated via `yarn test:seo` (`scripts/seo-regression-test.cjs`). General unit test runner is not present, so do not assume `yarn test` works.
+- `predev`/`prebuild`/`prestart` all run `node scripts/guard.cjs`, which loads `.env`/`.env.local` and calls `initGuard()` from the private `@hackeryard/mandatory-guard` package. This requires a valid `NPM_TOKEN` (GitHub Packages, see `.npmrc`) to even `yarn install`, and runs before every dev/build/start invocation. If dev/build fails immediately with a guard error, it's this gate, not your code.
 
 ### Linting caveat
 
@@ -35,7 +35,7 @@ There are **two eslint configs** and only one is actually used by `yarn lint`:
 - `.eslintignore` + `eslint-config-next` → what `next lint` (i.e. `yarn lint`) actually runs.
 - `eslint.config.js` (flat config, React-Hooks/React-Refresh oriented) → **globally ignores `app/**/*.tsx` and `app/**/*.ts`**, so it barely lints anything in `app/`. Don't rely on it as a signal for TypeScript app code; it appears to be leftover/unused Vite-style scaffolding.
 
-CI (`.github/workflows/guard.yml`) does **not** run lint, typecheck, or build — it only runs `yarn install --frozen-lockfile` and `node scripts/guard.cjs` (job name "Security Guard Check", triggered on PRs and pushes to `main`/`master`). Nothing else is gated in CI, so run `yarn lint` / `tsc --noEmit` yourself before considering a change done.
+CI (`.github/workflows/guard.yml`) runs `yarn install --frozen-lockfile`, `node scripts/guard.cjs` (Security Guard Check), and `node scripts/seo-regression-test.cjs` (SEO Regression Checks) on PRs and pushes to `main`/`master`. Always run `yarn lint`, `yarn test:seo`, and `yarn tsc --noEmit` yourself before considering a change done.
 
 ### next.config duplication
 
@@ -206,13 +206,17 @@ The app supports a user-toggleable light/dark theme via `next-themes`, added on 
 
 ## Enterprise Technical SEO & Educational Knowledge Graph Architecture
 
+- **Centralized SEO Route Policy** ([`app/lib/seoRoutePolicy.ts`](app/lib/seoRoutePolicy.ts)): Single source of truth for classifying routes into `public`, `lab`, `private`, and `redirect`. Exposes `classifyRoute()`, `isIndexableRoute()`, `isSitemapEligible()`, and `toCanonicalUrl()`.
+- **Multi-Layer Interactive Lab Shield**: Strictly separates 101 interactive lab canvases (`/labs/*`) from public educational landing pages (`/<subject>/<slug>`). Excludes labs from search indexing via 3 coordinated defenses: `app/labs/layout.tsx` (`robots: { index: false, follow: false, nocache: true }`), `middleware.ts` (`X-Robots-Tag: noindex, nofollow, noarchive`), and `app/sitemap.ts` (`isSitemapEligible()` filter guaranteeing 0 lab routes enter the XML sitemap).
+- **Subtopic Reciprocal Cross-Linking**: Subtopic landing templates (`DsaLanding.tsx`, `LogicGateLanding.tsx`, `NetworkingLanding.tsx`, `AiProblemLanding.tsx`) implement reciprocal cross-linking between sibling experiments, eliminating single-internal-link crawl warnings and boosting internal PageRank.
+- **Blog Engine Performance (SSG + Cache)**: `app/blog/[slug]/page.tsx` exports `generateStaticParams()` to pre-render published articles at build time, wraps Mongoose queries in React `cache()` to eliminate duplicate database handshakes, and emits absolute canonical URLs, cutting response latency from 4.056s to <100ms.
+- **Automated Regression Suite & CI**: `scripts/seo-regression-test.cjs` validates 43 SEO invariants (route existence, sitemap purity, canonical formatting, negative invariants) via `yarn test:seo`, running automatically in GitHub Actions CI (`.github/workflows/guard.yml`). See [`SEO_MAINTENANCE.md`](SEO_MAINTENANCE.md).
 - **Shared Types & Constants** (`app/lib/types/`, `app/lib/constants/`): Centralized interfaces (`knowledge.ts`, `seo.ts`, `schema.ts`) and subject metadata constants (`subjects.ts`, `difficulty.ts`, `levels.ts`).
 - **Focused SEO Builders** (`app/lib/seo/`): Normalizing canonical URL builder (`canonicalBuilder.ts`), intent-driven keyword builder (`keywordBuilder.ts`), modular metadata creators (`metadata/lab.ts`, `metadata/subject.ts`, `metadata/article.ts`), and schema creators (`schema/breadcrumb.ts`, `schema/learning.ts`, `schema/faq.ts`, `schema/article.ts`).
 - **Recommendations API** (`app/lib/seo/relatedContent.ts`): Clean internal linking API (`getRelatedContent()`, `getRelatedLabs()`).
 - **Modular Educational Knowledge Graph** (`app/lib/knowledge/`): Domain concept registries (`concepts/`), learning paths (`paths/`), formula registries (`formulas/`), graph query engine (`graph.ts`), and build-time validator (`validator.ts`).
 - **SEO & Knowledge UI Components** (`app/components/seo/`): `<Breadcrumbs />` (accessible DOM + `BreadcrumbList` JSON-LD), `<StructuredData />` script wrapper, `<EducationalGraphSection />` (Prerequisites, Next Steps, Related Labs), `<FormulaSection />`, and `<KnowledgeGraphVisualizer />`.
-- **Robots, Sitemap, Edge OG & AI Discoverability**: Dynamic sitemap (`sitemap.ts`) iterating LABS registry and blogs, updated `robots.ts`, Edge OG Image Generator (`app/api/og/route.tsx`) with 1-year immutable CDN headers, AI search crawler markdown route (`/llms.txt`), internal SEO dashboard (`app/admin/seo-dashboard`), and build-time CI audit script (`scripts/seo-audit.ts`).
-
+- **Robots, Sitemap, Edge OG & AI Discoverability**: Dynamic sitemap (`sitemap.ts`) iterating 98 lab landing pages, 118 periodic table element atom detail pages, 9 subtopic hubs, and published blogs; clean `robots.ts`; Edge OG Image Generator (`app/api/og/route.tsx`) with 1-year immutable CDN headers; and AI search crawler markdown route (`/llms.txt`).
 
 ## Environment variables
 
@@ -220,7 +224,7 @@ Present in `.env`/`.env.local` (both gitignored, never commit them): `MONGO_URI`
 
 ## Known drift / rough edges (don't "clean up" without checking intent first)
 
-- **`app/lib/labs.ts` registry drift from actual routes**: Several `computer-science/ai-problem/*` subfolders are unregistered — only `hangman`, `hill-climb`, `maze-qlearn` are in `LABS`; `constraint-satisfy`, `forward-backward`, `monkey-banana`, `water-jug`, and `neural-network` (which is a `.jsx` page, the only non-`.tsx` page in that folder) have working routes but aren't registered, so they get no gamification/XP/daily-challenge support. Run the `audit-labs-registry` skill before trusting `LABS` as a complete lab list.
+- **`app/lib/labs.ts` registry status**: `computer-science/ai-problem/neural-network` is fully registered in `LABS`, has its AI tutor knowledge entry in `app/lib/pageKnowledge.ts`, and has both its public landing page (`app/computer-science/ai-problem/neural-network/page.tsx`) and interactive simulation (`app/labs/computer-science/ai-problem/neural-network/page.jsx`). Some legacy folders (`constraint-satisfy`, `forward-backward`, `monkey-banana`, `water-jug`) have working interactive routes without separate `LABS` gamification entries.
 - **The Mathematics subject category was officially introduced** (August 2026) with a full suite of interactive labs: **Function Grapher** (`/mathematics/functiongrapher`), **Interactive Geometry Studio** (`/mathematics/geometry`), **Vector Algebra & 3D Space** (`/mathematics/vector-algebra`), **Combinatorics & Discrete Counting** (`/mathematics/combinatorics`), **Number Theory & Cryptography** (`/mathematics/number-theory`), and **Differential Equations & Dynamical Systems** (`/mathematics/differential-equations`), with full SEO landing pages, error boundaries (`app/mathematics/error.tsx`), and gamification/daily challenge support.
 - **`app/middleware/middleware.js`**, `app/api/auth/google/{start,callback}` (empty), `app/api/agent`, `app/api/auth/run` — all dead/unimplemented, confirmed via repo-wide reference search.
 - **`next.config.cjs`** is a near-empty leftover; `next.config.js` is the one actually loaded.
@@ -232,8 +236,15 @@ Present in `.env`/`.env.local` (both gitignored, never commit them): `MONGO_URI`
 - **`Navbar.tsx` and `Hero.tsx` both hardcode their own lab lists** rather than deriving from `app/lib/labs.ts` — updating the registry alone does not update navigation; both need manual edits (see two-tier lab pattern above).
 - **`app/layout.tsx`'s `title.template: '%s | OpenLabs'` does NOT cascade past one intervening layout that defines its own concrete `title`** — empirically verified (not documented behavior we're relying on faith for). A page/layout exactly one segment below root (e.g. `/chemistry`, `/biology`, `/computer-science`) gets the template applied once, so its own `title` field must NOT bake in `"| OpenLabs"` itself (doing so doubles it: confirmed live as `"...| OpenLabs | OpenLabs"` on all three before the fix). But a page nested two+ segments below root, under a layout that already has its own `title` (e.g. `/physics/freefall` under `physics/layout.tsx`, or any `/computer-science/*` subpage under `computer-science/layout.tsx`), gets NO template applied at all — its own `title` field must bake in `"| OpenLabs"` manually or the rendered `<title>` has no site name. Check the actual rendered `<title>` via curl after adding/editing metadata at any nesting depth — don't assume the template's behavior, verify it, especially for anything under a subject `layout.tsx`.
 - **`components/PhysicsExperimentLanding.tsx` is a Server Component** (converted from a `"use client"` component that mount-gated its entire render behind `useState`/`useEffect`, which meant it server-rendered nothing — no H1, no theory text — until client JS hydrated). If touching this file, don't reintroduce a mount gate without a concrete reason (e.g. an actual browser-only API): the whole point of the fix was that nothing in it needs one.
-- **`/computer-science/ai-problem/neural-network` has an interactive lab (`app/labs/computer-science/ai-problem/neural-network/page.jsx`) but no SEO landing page** — unlike its 7 sibling AI-problem labs, there's no `app/computer-science/ai-problem/neural-network/page.tsx`, so the URL 404s. Not fixed as part of the SEO remediation pass (building a new landing page is lab-scaffolding work, not a metadata fix) — see the `new-lab` skill if adding one.
 
-## Keeping this file current
+## Keeping this file current (MANDATORY INVARIANT)
 
-After completing any non-trivial task (new lab, new API route, schema change, architecture change), update the relevant section here, add an entry to `CHANGELOG.md`, and adjust `REQUIREMENTS.md`/`README.md` if the change affects product scope or setup instructions. The `sync-docs` skill (`.claude/skills/sync-docs/SKILL.md`) automates this checklist — invoke it at the end of a work session rather than leaving docs to drift.
+**CRITICAL WORKSPACE INVARIANT**: Whenever you complete ANY task (new lab, bug fix, API change, SEO update, or architectural modification), you MUST update all companion documentation files in the exact same change:
+1. `README.md` — user-facing features, setup, commands.
+2. `CLAUDE.md` — architecture, known drift, commands, conventions.
+3. `AGENTS.md` — operational agent summary.
+4. `REQUIREMENTS.md` — functional/non-functional requirements.
+5. `ROADMAP.md` — update milestone statuses (`[SHIPPED]`).
+6. `CHANGELOG.md` — top dated entry detailing the change and files modified.
+7. `SEO_MAINTENANCE.md` — technical SEO and sitemap policies.
+8. `.agents/rules/documentation-sync.md` — permanent workspace rule.

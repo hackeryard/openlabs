@@ -12,13 +12,13 @@ export const metadata: Metadata = {
   description:
     "Read OpenLabs articles about virtual experiments, AI learning tools, STEM pedagogy, engineering updates, and the future of interactive science education.",
   alternates: {
-    canonical: "/blog",
+    canonical: "https://www.openlabs.org.in/blog",
   },
   openGraph: {
     title: "OpenLabs Blog - Virtual Labs, STEM Learning, and EdTech Updates",
     description:
       "Deep dives into virtual experiments, AI learning tools, STEM pedagogy, and OpenLabs engineering updates.",
-    url: "/blog",
+    url: "https://www.openlabs.org.in/blog",
     type: "website",
     images: [
       {

@@ -26,7 +26,15 @@ export async function GET(req: Request, { params }: { params: { labId: string } 
        if (user && user.dailyChallenges) {
          const todayStr = today.toISOString().split("T")[0];
          const existing = user.dailyChallenges.find(
-           (dc: any) => dc.labId === labId && dc.date.toISOString().startsWith(todayStr) && dc.completed
+           (dc: any) => {
+             if (!dc || dc.labId !== labId || !dc.completed) return false;
+             try {
+               const d = dc.date ? new Date(dc.date) : null;
+               return d && !isNaN(d.getTime()) && d.toISOString().startsWith(todayStr);
+             } catch {
+               return false;
+             }
+           }
          );
          if (existing) alreadyCompleted = true;
        }

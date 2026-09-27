@@ -35,3 +35,6 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - run: node scripts/guard.cjs
+
+      - name: Run SEO Regression Checks
+        run: node scripts/seo-regression-test.cjs

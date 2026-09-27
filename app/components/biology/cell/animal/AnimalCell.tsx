@@ -5,6 +5,7 @@ import { Canvas, useFrame } from "@react-three/fiber"
 import { OrbitControls, Stars, Float, Instance, Instances } from "@react-three/drei"
 import * as THREE from "three"
 import { motion, AnimatePresence } from "framer-motion"
+import WebGLErrorBoundary from "@/app/components/WebGLErrorBoundary"
 
 // --- 1. DATA & DESCRIPTIONS ---
 type OrganelleType = 
@@ -332,7 +333,20 @@ export default function Ultimate3DCell({
   return (
     <div className={`w-full relative overflow-hidden font-sans rounded-2xl ${standalone ? "h-screen bg-black" : "h-[500px] md:h-[600px] bg-slate-950 border border-slate-800"}`}>
       
-      <Canvas camera={{ position: [0, 0, 7], fov: 40 }}>
+      <WebGLErrorBoundary title="3D Animal Cell Simulation Unavailable">
+        <Canvas 
+          camera={{ position: [0, 0, 7], fov: 40 }}
+          onCreated={(state) => {
+            const canvas = state.gl.domElement;
+            canvas.addEventListener(
+              "webglcontextlost",
+              (e) => {
+                e.preventDefault();
+              },
+              false
+            );
+          }}
+        >
         <color attach="background" args={['#020617']} />
         
         {/* --- LIGHTING (Cross-browser studio lighting without external HDR dependency) --- */}
@@ -392,7 +406,8 @@ export default function Ultimate3DCell({
         </group>
 
         <OrbitControls enablePan={false} minDistance={4} maxDistance={14} autoRotate={!selected} autoRotateSpeed={0.5} />
-      </Canvas>
+        </Canvas>
+      </WebGLErrorBoundary>
 
       {/* --- UI OVERLAY --- */}
       {standalone && (

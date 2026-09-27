@@ -48,4 +48,4 @@ Complete all 9 steps for every new lab:
 
 8. **Navigation & Catalogs** — Add to `app/components/Navbar.tsx` (mega-menu highlights), `app/components/Hero.tsx` (homepage carousel if featured), and `app/<subject>/page.tsx` (`experiments` array).
 
-9. **Sitemap & Verification** — Add URLs to `app/sitemap.ts`, verify with `npx tsc --noEmit` and `yarn lint`, and log in `CHANGELOG.md`.
+9. **Sitemap, Testing & Docs Sync** — Verify public landing is enumerated in `app/sitemap.ts` (automatically via `LABS` in `app/lib/labs.ts`), confirm `/labs/*` is NOT in sitemap, run `yarn test:seo`, verify with `yarn tsc --noEmit` and `yarn lint`, and update all companion docs (`CHANGELOG.md`, `README.md`, `REQUIREMENTS.md`, `ROADMAP.md`, `CLAUDE.md`, `AGENTS.md`) per `.agents/rules/documentation-sync.md`.
