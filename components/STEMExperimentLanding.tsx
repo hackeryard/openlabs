@@ -39,6 +39,11 @@ export type STEMExperimentLandingProps = {
   visualDetail: string;
   heroImageUrl?: string;
   kickerBadges?: string[];
+  relatedExperiments?: {
+    title: string;
+    href: string;
+    description?: string;
+  }[];
 };
 
 export default function STEMExperimentLanding({
@@ -60,6 +65,7 @@ export default function STEMExperimentLanding({
   visualDetail,
   heroImageUrl,
   kickerBadges,
+  relatedExperiments,
 }: STEMExperimentLandingProps) {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const words = title.split(" ");
@@ -312,6 +318,24 @@ export default function STEMExperimentLanding({
                     ))}
                   </ul>
                 </div>
+
+                {relatedExperiments && relatedExperiments.length > 0 && (
+                  <div className="px-side-card">
+                    <p className="px-eyebrow">Connected Curriculum</p>
+                    <h2>Related Laboratories</h2>
+                    <div className="px-related-list">
+                      {relatedExperiments.map((exp, idx) => (
+                        <Link key={idx} href={exp.href} className="px-related-item">
+                          <div>
+                            <strong>{exp.title}</strong>
+                            {exp.description && <p>{exp.description}</p>}
+                          </div>
+                          <ArrowRight size={14} className="px-related-arrow" />
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </aside>
             </div>
           </div>
@@ -577,6 +601,27 @@ export default function STEMExperimentLanding({
         .px-objectives-list li, .px-applications-list li { display: flex; gap: 10px; align-items: flex-start; line-height: 1.5; }
         .px-bullet-icon { color: var(--px-primary); flex-shrink: 0; margin-top: 2px; }
         .px-bullet-icon-arrow { color: var(--px-warm); flex-shrink: 0; margin-top: 3px; }
+        .px-related-list { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+        .px-related-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 10px 12px;
+          border-radius: 10px;
+          border: 1px solid hsl(var(--border));
+          background: color-mix(in srgb, var(--px-primary) 4%, hsl(var(--card)));
+          text-decoration: none;
+          color: hsl(var(--foreground));
+          transition: all 180ms ease;
+        }
+        .px-related-item:hover {
+          border-color: var(--px-primary);
+          background: color-mix(in srgb, var(--px-primary) 10%, hsl(var(--card)));
+          transform: translateX(2px);
+        }
+        .px-related-item strong { display: block; font-size: 13px; font-weight: 750; color: hsl(var(--foreground)); }
+        .px-related-item p { margin: 2px 0 0; font-size: 11px; color: hsl(var(--muted-foreground)); line-height: 1.4; }
+        .px-related-arrow { color: var(--px-primary); flex-shrink: 0; margin-left: 8px; }
       `}</style>
     </>
   );

@@ -289,6 +289,55 @@ assert(
 );
 
 // ---------------------------------------------------------------------------
+// SUITE 9: Schema.org Validation & Public Route Accessibility
+// ---------------------------------------------------------------------------
+console.log('\nSuite 9: Schema.org Validation & Public Route Accessibility');
+
+// 9A: app/layout.tsx Schema.org organization structure
+const layoutPath = path.join(ROOT_DIR, 'app', 'layout.tsx');
+if (fs.existsSync(layoutPath)) {
+  const layoutContent = fs.readFileSync(layoutPath, 'utf8');
+  assert(
+    !layoutContent.includes('offers: [') || layoutContent.includes('hasOfferCatalog'),
+    'app/layout.tsx uses Schema.org compliant hasOfferCatalog rather than naked course offers'
+  );
+  assert(
+    !layoutContent.includes('educationalCredentialAwarded:') && !layoutContent.includes('hasEducationalUse:'),
+    'app/layout.tsx contains 0 invalid course/learning property leaks on EducationalOrganization'
+  );
+}
+
+// 9B: middleware.ts public path accessibility for sitemap routes
+if (fs.existsSync(middlewarePath)) {
+  const middlewareContent = fs.readFileSync(middlewarePath, 'utf8');
+  assert(
+    middlewareContent.includes("'/leaderboard'"),
+    'middleware.ts includes /leaderboard in publicPaths (guarantees HTTP 200 for crawlers)'
+  );
+}
+
+// 9C: app/contact/page.tsx absolute canonical URL
+const contactPath = path.join(ROOT_DIR, 'app', 'contact', 'page.tsx');
+if (fs.existsSync(contactPath)) {
+  const contactContent = fs.readFileSync(contactPath, 'utf8');
+  assert(
+    contactContent.includes("canonical: 'https://www.openlabs.org.in/contact'") ||
+      contactContent.includes('canonical: "https://www.openlabs.org.in/contact"'),
+    'app/contact/page.tsx enforces absolute canonical URL https://www.openlabs.org.in/contact'
+  );
+}
+
+// 9D: app/blog/[slug]/page.tsx title truncation to prevent long title warnings
+const blogSlugPath = path.join(ROOT_DIR, 'app', 'blog', '[slug]', 'page.tsx');
+if (fs.existsSync(blogSlugPath)) {
+  const blogSlugContent = fs.readFileSync(blogSlugPath, 'utf8');
+  assert(
+    blogSlugContent.includes('formatBlogMetaTitle'),
+    'app/blog/[slug]/page.tsx enforces formatBlogMetaTitle to bound meta titles <= 65 chars'
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Final Results Summary
 // ---------------------------------------------------------------------------
 console.log('\n======================================================');

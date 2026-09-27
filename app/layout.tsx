@@ -165,64 +165,92 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
               "@context": "https://schema.org",
               "@type": "EducationalOrganization",
               name: "OpenLabs",
+              alternateName: "OpenLabs Virtual Labs",
               description: "Interactive science and technology learning platform with virtual labs and simulations",
               url: siteUrl,
               logo: `${siteUrl}/images/logo.png`,
               sameAs: [
                 "https://twitter.com/openlabs",
-                "https://github.com/openlabs"
+                "https://github.com/hackeryard/openlabs"
               ],
-              offers: [
-                {
-                  "@type": "Course",
-                  name: "Physics Experiments",
-                  description: "Interactive physics simulations and experiments",
-                  provider: {
-                    "@type": "Organization",
-                    name: "OpenLabs"
-                  }
-                },
-                {
-                  "@type": "Course",
-                  name: "Chemistry Experiments",
-                  description: "Interactive chemistry simulations and experiments",
-                  provider: {
-                    "@type": "Organization",
-                    name: "OpenLabs"
-                  }
-                },
-                {
-                  "@type": "Course",
-                  name: "Biology Experiments",
-                  description: "Interactive biology simulations and experiments",
-                  provider: {
-                    "@type": "Organization",
-                    name: "OpenLabs"
-                  }
-                },
-                {
-                  "@type": "Course",
-                  name: "Mathematics Simulations",
-                  description: "Interactive mathematics simulations and function graphers",
-                  provider: {
-                    "@type": "Organization",
-                    name: "OpenLabs"
-                  }
-                },
-                {
-                  "@type": "Course",
-                  name: "Computer Science Tools",
-                  description: "Interactive computer science tools and simulations",
-                  provider: {
-                    "@type": "Organization",
-                    name: "OpenLabs"
-                  }
-                }
+              knowsAbout: [
+                "Physics Simulations",
+                "Chemistry Experiments",
+                "Biology Cytology & Genetics",
+                "Computer Science & Algorithms",
+                "Mathematics Dynamic Graphing"
               ],
-              educationalCredentialAwarded: "Certificate of Completion",
-              teaches: ["Physics", "Chemistry", "Biology", "Mathematics", "Computer Science"],
-              hasEducationalUse: "Interactive Learning",
-              learningResourceType: "Interactive Simulation"
+              hasOfferCatalog: {
+                "@type": "OfferCatalog",
+                name: "STEM Virtual Laboratories & Interactive Curriculums",
+                itemListElement: [
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Course",
+                      name: "Physics Laboratory Simulations",
+                      description: "Interactive online physics simulations covering mechanics, wave optics, electricity, and thermodynamics.",
+                      provider: {
+                        "@type": "EducationalOrganization",
+                        name: "OpenLabs",
+                        url: siteUrl
+                      }
+                    }
+                  },
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Course",
+                      name: "Chemistry Virtual Experiments",
+                      description: "Interactive chemistry simulations covering titration, periodic table structure, bonding, and kinetics.",
+                      provider: {
+                        "@type": "EducationalOrganization",
+                        name: "OpenLabs",
+                        url: siteUrl
+                      }
+                    }
+                  },
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Course",
+                      name: "Biology & Life Sciences Laboratories",
+                      description: "Interactive biology simulations covering cytology, genetics, mitosis, and cardiac cycle dynamics.",
+                      provider: {
+                        "@type": "EducationalOrganization",
+                        name: "OpenLabs",
+                        url: siteUrl
+                      }
+                    }
+                  },
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Course",
+                      name: "Computer Science & Discrete Mathematics Studios",
+                      description: "Interactive computer science visualizers for algorithms, pathfinding, networking, and machine learning.",
+                      provider: {
+                        "@type": "EducationalOrganization",
+                        name: "OpenLabs",
+                        url: siteUrl
+                      }
+                    }
+                  },
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Course",
+                      name: "Mathematics Dynamic Graphers & Visualizations",
+                      description: "Interactive mathematics tools for calculus, linear algebra, trigonometry, and polynomial exploration.",
+                      provider: {
+                        "@type": "EducationalOrganization",
+                        name: "OpenLabs",
+                        url: siteUrl
+                      }
+                    }
+                  }
+                ]
+              }
             }
           ]}
         />

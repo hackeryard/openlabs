@@ -97,6 +97,29 @@ export async function generateStaticParams() {
   }
 }
 
+function formatBlogMetaTitle(post: { title: string; metaTitle?: string; slug?: string }): string {
+  if (post.metaTitle && post.metaTitle.trim().length > 0) {
+    return post.metaTitle;
+  }
+  if (post.slug === "simple-harmonic-motion-explained-pendulums-springs") {
+    return "Simple Harmonic Motion: Pendulums & Springs | OpenLabs";
+  }
+  if (post.slug === "how-to-learn-data-structures-visually") {
+    return "Learn Data Structures Visually: Interactive Guide | OpenLabs";
+  }
+  if (post.slug === "projectile-motion-explained-simulation") {
+    return "Projectile Motion Formulas & Simulation | OpenLabs";
+  }
+  const baseTitle = post.title.trim();
+  const brandSuffix = " | OpenLabs";
+  if (baseTitle.length + brandSuffix.length <= 65) {
+    return `${baseTitle}${brandSuffix}`;
+  }
+  const maxBaseLen = 65 - brandSuffix.length - 3;
+  const truncated = baseTitle.slice(0, maxBaseLen).replace(/\s+\S*$/, "");
+  return `${truncated}...${brandSuffix}`;
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -114,7 +137,7 @@ export async function generateMetadata({
     };
   }
 
-  const title = post.metaTitle || `${post.title} | OpenLabs Blog`;
+  const title = formatBlogMetaTitle(post);
   const description =
     post.metaDescription || post.excerpt || `Read ${post.title} on the OpenLabs Blog.`;
   const canonical = `https://www.openlabs.org.in/blog/${post.slug}`;

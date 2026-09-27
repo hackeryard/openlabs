@@ -414,6 +414,66 @@ export default function Page() {
         </div>
       </section>
 
+      {/* ─── RELATED COMPUTER SCIENCE EXPERIMENTS ─── */}
+      <section className="border-t border-border bg-card/50 py-14" aria-label="Related Computer Science Labs">
+        <div className="mx-auto max-w-6xl px-6 lg:px-8">
+          <div className="mb-8">
+            <span className="text-xs font-black uppercase tracking-wider text-indigo-600">Connected Curriculum</span>
+            <h2 className="text-2xl sm:text-3xl font-black text-foreground mt-1">Related Computer Science Laboratories</h2>
+            <p className="text-sm text-muted-foreground mt-1">Explore companion computational engines and algorithm visualizers.</p>
+          </div>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+            <Link
+              href="/computer-science/code-lab"
+              className="group rounded-2xl border border-border bg-card p-5 shadow-sm transition hover:-translate-y-1 hover:border-indigo-500/40 hover:shadow-md"
+            >
+              <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-500">Live Editor</span>
+              <h3 className="text-base font-bold text-foreground group-hover:text-indigo-600 transition-colors mt-1">
+                Interactive Code Lab
+              </h3>
+              <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
+                JavaScript & Python live execution with call stack frames, heap visualizers, and runtime console.
+              </p>
+              <div className="text-xs font-bold text-indigo-600 mt-4 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                Explore Lab <ArrowRight className="h-3.5 w-3.5" />
+              </div>
+            </Link>
+
+            <Link
+              href="/computer-science/dsa"
+              className="group rounded-2xl border border-border bg-card p-5 shadow-sm transition hover:-translate-y-1 hover:border-indigo-500/40 hover:shadow-md"
+            >
+              <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-500">Core Curriculum</span>
+              <h3 className="text-base font-bold text-foreground group-hover:text-indigo-600 transition-colors mt-1">
+                Data Structures & Algorithms
+              </h3>
+              <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
+                Directed Acyclic Graphs (DAGs), tree traversal, and commit branch node relationships.
+              </p>
+              <div className="text-xs font-bold text-indigo-600 mt-4 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                Explore Lab <ArrowRight className="h-3.5 w-3.5" />
+              </div>
+            </Link>
+
+            <Link
+              href="/computer-science/blockchain"
+              className="group rounded-2xl border border-border bg-card p-5 shadow-sm transition hover:-translate-y-1 hover:border-indigo-500/40 hover:shadow-md"
+            >
+              <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-500">Distributed Systems</span>
+              <h3 className="text-base font-bold text-foreground group-hover:text-indigo-600 transition-colors mt-1">
+                Blockchain & Cryptographic Ledger
+              </h3>
+              <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
+                SHA-256 commit hashing, Merkle trees, and cryptographic block immutability.
+              </p>
+              <div className="text-xs font-bold text-indigo-600 mt-4 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                Explore Lab <ArrowRight className="h-3.5 w-3.5" />
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section className="border-t border-border bg-card">
         <div className="mx-auto max-w-6xl px-6 py-14 lg:px-8">
           <h2 className="text-3xl font-black tracking-tight text-foreground">

@@ -79,6 +79,23 @@ export default function DihybridLandingPage() {
             "Because the two genes segregate independently, the probability of any joint outcome is the product of their individual monohybrid probabilities: 3/4 dominant × 3/4 dominant = 9/16, 3/4 dominant × 1/4 recessive = 3/16, 1/4 recessive × 3/4 dominant = 3/16, and 1/4 recessive × 1/4 recessive = 1/16.",
         },
       ]}
+      relatedExperiments={[
+        {
+          title: "Monohybrid Cross & Punnett Square",
+          href: "/biology/genetics/monohybrid",
+          description: "Mendelian single-gene allele segregation and 3:1 phenotypic ratios.",
+        },
+        {
+          title: "Pedigree Tree & Inheritance Patterns",
+          href: "/biology/genetics/pedigree",
+          description: "Autosomal dominant, recessive, and sex-linked genealogical analysis.",
+        },
+        {
+          title: "DNA Transcription & Translation",
+          href: "/biology/genetics/transcription-translation",
+          description: "Central dogma molecular synthesis from mRNA codon to peptide chain.",
+        },
+      ]}
     />
   );
 }

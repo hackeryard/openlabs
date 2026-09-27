@@ -79,6 +79,23 @@ export default function PedigreeLandingPage() {
             "Consanguinity is mating between close biological relatives (indicated by a double horizontal line on a pedigree). Because relatives share a significant proportion of their genome inherited from a common ancestor, consanguinity dramatically increases the probability that both parents carry the same rare deleterious recessive allele.",
         },
       ]}
+      relatedExperiments={[
+        {
+          title: "Monohybrid Cross & Punnett Square",
+          href: "/biology/genetics/monohybrid",
+          description: "Mendelian single-gene allele segregation and 3:1 phenotypic ratios.",
+        },
+        {
+          title: "Dihybrid Cross & Independent Assortment",
+          href: "/biology/genetics/dihybrid",
+          description: "Two-trait inheritance, 16-cell Punnett matrix, and 9:3:3:1 phenotypic ratios.",
+        },
+        {
+          title: "DNA Transcription & Translation",
+          href: "/biology/genetics/transcription-translation",
+          description: "Central dogma molecular synthesis from mRNA codon to peptide chain.",
+        },
+      ]}
     />
   );
 }

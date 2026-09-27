@@ -11,6 +11,7 @@ const publicPaths = [
   '/about',
   '/contact',
   '/tracks',
+  '/leaderboard',
   '/403',
   '/sitemap.xml',
   '/robots.txt',
