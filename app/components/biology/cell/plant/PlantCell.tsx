@@ -5,6 +5,7 @@ import { Canvas, useFrame } from "@react-three/fiber"
 import { OrbitControls, Stars, Float, Instance, Instances, RoundedBox } from "@react-three/drei"
 import * as THREE from "three"
 import { motion, AnimatePresence } from "framer-motion"
+import WebGLErrorBoundary from "@/app/components/WebGLErrorBoundary"
 
 // --- 1. DATA & DESCRIPTIONS ---
 type OrganelleType = 
@@ -310,7 +311,20 @@ export default function PlantCell({
   return (
     <div className={`w-full relative overflow-hidden font-sans rounded-2xl ${standalone ? "h-screen bg-black" : "h-[500px] md:h-[600px] bg-slate-950 border border-slate-800"}`}>
       
-      <Canvas camera={{ position: [0, 0, 9], fov: 45 }}>
+      <WebGLErrorBoundary title="3D Plant Cell Simulation Unavailable">
+        <Canvas 
+          camera={{ position: [0, 0, 9], fov: 45 }}
+          onCreated={(state) => {
+            const canvas = state.gl.domElement;
+            canvas.addEventListener(
+              "webglcontextlost",
+              (e) => {
+                e.preventDefault();
+              },
+              false
+            );
+          }}
+        >
         <color attach="background" args={['#052e16']} />
         
         {/* --- LIGHTING (Cross-browser studio lighting without external HDR dependency) --- */}
@@ -343,7 +357,8 @@ export default function PlantCell({
         </group>
 
         <OrbitControls enablePan={false} minDistance={6} maxDistance={16} autoRotate={!selected} autoRotateSpeed={0.5} />
-      </Canvas>
+        </Canvas>
+      </WebGLErrorBoundary>
 
       {/* --- UI OVERLAY --- */}
       {standalone && (

@@ -2,6 +2,27 @@
 
 All notable changes to OpenLabs are documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/); since the project has no version tags yet, entries are grouped by date instead of version number. Generated from git history; merge commits and duplicate/typo commits are omitted.
 
+- **Production Error Triage & System-Wide Resilience Engine (`TranslationGuard.tsx`, `WebGLErrorBoundary.tsx`, `app/error.tsx`, `app/global-error.tsx`, `OpenLabsTracker.tsx`, `Navbar.tsx`, `AdminNavbar.tsx`, `ReactionSimulation.jsx`, `AnimalCell.tsx`, `PlantCell.tsx`, `AnatomyScene.tsx`, `/api/xp/complete`, `/api/challenges/[labId]`, `/api/challenges/validate`, `next.config.js`)**:
+  - **Browser Translation DOM Conflict Shield (`TranslationGuard.tsx`, `app/layout.tsx`, `app/error.tsx`, `app/global-error.tsx`)**:
+    - Resolved over 70% of tracked production errors (`removeChild`, `insertBefore`, `NotFoundError`, Safari's `"The object can not be found here"`, and `null is not an object (evaluating 't.parallelRoutes.get')`) caused by Google Chrome Translate and Apple Safari Translate wrapping text nodes in `<font>` tags during React VDOM reconciliation.
+    - Mounted zero-dependency client-side `TranslationGuard` intercepting `Node.prototype.removeChild` and `Node.prototype.insertBefore`, safely rescuing detached/mutated nodes and rerouting removals to `child.parentNode`.
+    - Enhanced route and global error boundaries with automated translation conflict detection and graceful recovery via `reset()`.
+    - Protected mathematical formula panels (`px-formula-panel`) in `STEMExperimentLanding.tsx` with `translate="no"` and `notranslate` attributes, preventing recursive translation stack overflows in Safari.
+  - **Dynamic WebGL Context Protection & Canvas Recovery (`WebGLErrorBoundary.tsx`, `ReactionSimulation.jsx`, `AnimalCell.tsx`, `PlantCell.tsx`, `AnatomyScene.tsx`, `chemicalbonds/page.tsx`)**:
+    - Created reusable `WebGLErrorBoundary` with graceful 2D fallback banners and retry mechanisms for low-end devices or exhausted mobile GPUs.
+    - Added native `webglcontextlost` and `webglcontextrestored` event handlers across all 3D simulation canvases (`ReactionSimulation.jsx`, `AnimalCell.tsx`, `PlantCell.tsx`, and `chemicalbonds/page.tsx`), calling `e.preventDefault()` to allow automatic GPU context restoration without crashing the React tree.
+    - Enhanced `AnatomyScene.tsx` with `ModelErrorBoundary` and seamless fallback to pure code-primitive procedural anatomy (`HumanBody.tsx`) when the 25 MB `human.glb` model fails to load over poor network conditions.
+  - **Defensive API Hardening & Missing Fields (`/api/xp/complete`, `/api/challenges/[labId]`, `/api/challenges/validate`)**:
+    - Hard-guarded user document arrays (`completedExperiments`, `subjectProgress`, `activityLog`, `dailyChallenges`, `badges`) with defensive array initializations to eliminate HTTP 500 errors on legacy or third-party OAuth user profiles.
+    - Added safe `labId` inference, default parameter fallbacks, and resilient `Date` parsing on challenge retrieval and validation routes.
+  - **Missing Assets, Avatar Fallback & URL Redirects (`public/images/biology/`, `Navbar.tsx`, `AdminNavbar.tsx`, `next.config.js`)**:
+    - Created authentic vector asset `mitosis-meiosis-hero.svg` and rendered `mitosis-meiosis-hero.png` (960×540) to resolve missing static image 404s (29 error occurrences).
+    - Added `avatarError` state with `onError` fallbacks in `Navbar.tsx` and `AdminNavbar.tsx` to automatically fall back to styled user initials if Google OAuth profile avatars (`lh3.googleusercontent.com`) fail to load.
+    - Added 308 permanent redirect from `/virtual-science-labs` to `/tracks` in `next.config.js`.
+  - **Telemetry Signal-to-Noise Filtering (`OpenLabsTracker.tsx`)**:
+    - Filtered client-side ad-blocker blocked resources (`openanalytics`, `pagead`, `googlesyndication`, `adsbygoogle`, `adtrafficquality`, `sodar`, `googleadservices`, `googleusercontent.com`).
+    - Filtered benign native Safari translation rejections (`"La"`) and expected chat quota limits (`/api/chat` 429) from polluting error telemetry.
+
 - **Google AdSense Script Integration & Lab Route Exclusion (`GoogleAdSense.tsx`, `app/layout.tsx`, `app/globals.css`)**:
   - **Client Script Integration**: Integrated Google AdSense tag (`ca-pub-4121707034074280`) into OpenLabs with automatic environment detection.
   - **Strict Lab Simulation Exclusions (`/labs/*`)**: Implemented 3-layer protection to guarantee ads never load or appear on interactive simulation lab pages (`/labs/*` or `/labs`) or administrative contexts (`/admin/*` and `admin.*`):

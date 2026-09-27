@@ -217,9 +217,9 @@ export default function STEMExperimentLanding({
                     <p>
                       Launch the simulation workspace, adjust parameters in real time, and observe the immediate response in the telemetry and graphical indicator loops.
                     </p>
-                    <div className="px-formula-panel">
+                    <div className="px-formula-panel notranslate" translate="no">
                       <span>{formulaLabel}</span>
-                      <strong>{formula}</strong>
+                      <strong className="notranslate" translate="no">{formula}</strong>
                     </div>
                   </div>
                 </article>

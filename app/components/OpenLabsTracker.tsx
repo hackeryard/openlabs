@@ -192,6 +192,14 @@ export default function OpenLabsTracker() {
             lowerSrc.includes("google-analytics") ||
             lowerSrc.includes("doubleclick") ||
             lowerSrc.includes("googleads") ||
+            lowerSrc.includes("googlesyndication") ||
+            lowerSrc.includes("pagead") ||
+            lowerSrc.includes("adsbygoogle") ||
+            lowerSrc.includes("adtrafficquality") ||
+            lowerSrc.includes("sodar") ||
+            lowerSrc.includes("openanalytics") ||
+            lowerSrc.includes("googleadservices") ||
+            lowerSrc.includes("googleusercontent.com") ||
             lowerSrc.includes("extension://") ||
             lowerSrc.includes("chrome-extension://") ||
             lowerSrc.includes("moz-extension://") ||
@@ -231,12 +239,16 @@ export default function OpenLabsTracker() {
         return;
       }
 
-      // Ignore benign browser notifications, extension mutations & third party injected scripts
+      // Ignore benign browser notifications, translation mutations & third party injected scripts
       if (
         message.includes("ResizeObserver loop") ||
         message.includes("removeChild") ||
         message.includes("insertBefore") ||
         message.includes("not a child of this node") ||
+        message.includes("The object can not be found here") ||
+        message.includes("parallelRoutes.get") ||
+        (message.includes("Cannot read properties of null (reading 'get')") && typeof document !== "undefined" && Boolean(document.querySelector("font"))) ||
+        message.includes("Maximum call stack size exceeded") ||
         message.includes("MetaMask") ||
         message.includes("metamask") ||
         message.includes("@context") ||
@@ -283,8 +295,9 @@ export default function OpenLabsTracker() {
         return;
       }
 
-      // Ignore benign / extension errors / network aborts
+      // Ignore benign / extension errors / network aborts / Safari translation artifacts
       if (
+        message === "La" ||
         message.includes("ResizeObserver loop") ||
         message.includes("AbortError") ||
         message.includes("cancelled") ||
@@ -322,9 +335,14 @@ export default function OpenLabsTracker() {
 
         // Only monitor internal /api/ routes (ignore analytics beacons to prevent infinite loops)
         if (url.includes("/api/") && !url.includes("/api/analytics/")) {
-          // Normal expected client state checks:
+          // Normal expected client state & quota responses:
           // /api/auth/me returning 401 (guest) or 403 (unverified email) is normal status response
           if (url.includes("/api/auth/me") && (response.status === 401 || response.status === 403)) {
+            return response;
+          }
+
+          // /api/chat returning 429 indicates user has reached their daily 10-query limit (expected quota response)
+          if (url.includes("/api/chat") && response.status === 429) {
             return response;
           }
 
@@ -356,18 +374,22 @@ export default function OpenLabsTracker() {
       } catch (err: any) {
         const url = typeof args[0] === "string" ? args[0] : (args[0] as Request)?.url || "";
         const isAbort = err?.name === "AbortError" || String(err).includes("aborted");
+        const isSafariCancelled = err?.name === "TypeError" && err?.message === "Load failed";
+        const isChromeCancelled = err?.name === "TypeError" && err?.message === "Failed to fetch" && (typeof document !== "undefined" && document.visibilityState === "hidden");
         const isOffline = typeof navigator !== "undefined" && navigator.onLine === false;
         const isPageHiding = typeof document !== "undefined" && document.visibilityState === "hidden";
-        // /api/auth/me is a non-critical guest/auth probe; network drops shouldn't be logged as server errors
-        const isNonCriticalAuth = url.includes("/api/auth/me");
+        // /api/auth/me and /api/challenges/ are non-critical background queries; drops on navigation shouldn't be logged as server errors
+        const isNonCriticalBackground = url.includes("/api/auth/me") || url.includes("/api/challenges/");
 
         if (
           url.includes("/api/") &&
           !url.includes("/api/analytics/") &&
           !isAbort &&
+          !isSafariCancelled &&
+          !isChromeCancelled &&
           !isOffline &&
           !isPageHiding &&
-          !isNonCriticalAuth
+          !isNonCriticalBackground
         ) {
           trackError(err || `Network Fetch Failure: ${url}`, {
             errorType: "network",

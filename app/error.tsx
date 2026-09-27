@@ -27,12 +27,50 @@ export default function Error({
     // Log privately to console
     console.error("OpenLabs System Log:", error);
 
-    // Automatically record to MongoDB error diagnostics
+    const msg = error?.message || "";
+    const isChunkError = msg.includes("Loading chunk") || error?.name === "ChunkLoadError";
+    const isTranslationDomError =
+      msg.includes("removeChild") ||
+      msg.includes("insertBefore") ||
+      msg.includes("not a child of this node") ||
+      msg.includes("The object can not be found here") ||
+      msg.includes("parallelRoutes.get") ||
+      (msg.includes("Cannot read properties of null (reading 'get')") && typeof document !== "undefined" && Boolean(document.querySelector("font")));
+
+    // 1. Auto-reload on stale deployment chunk load failures
+    if (isChunkError && typeof window !== "undefined") {
+      try {
+        const reloadKey = "openlabs_chunk_reload";
+        const lastReload = sessionStorage.getItem(reloadKey);
+        if (lastReload !== window.location.href) {
+          sessionStorage.setItem(reloadKey, window.location.href);
+          window.location.reload();
+          return;
+        }
+      } catch {}
+    }
+
+    // 2. Auto-recover from browser translation DOM mutations
+    if (isTranslationDomError && typeof window !== "undefined") {
+      try {
+        const recoverKey = "openlabs_translate_recover";
+        const lastRecover = sessionStorage.getItem(recoverKey);
+        const now = Date.now();
+        if (!lastRecover || now - Number(lastRecover) > 8000) {
+          sessionStorage.setItem(recoverKey, String(now));
+          reset();
+          return;
+        }
+      } catch {}
+      return;
+    }
+
+    // Automatically record true application errors to MongoDB diagnostics
     trackError(error, {
       errorType: "boundary",
       digest: error.digest,
     });
-  }, [error]);
+  }, [error, reset]);
 
   return (
     // High Z-index and Fixed position ensures this covers the screen entirely

@@ -1,0 +1,258 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="100%" height="100%">
+  <defs>
+    <radialGradient id="bgGlow" cx="65%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.30"/>
+      <stop offset="50%" stop-color="#059669" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#030712" stop-opacity="1"/>
+    </radialGradient>
+    <radialGradient id="cellGlow1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.25"/>
+      <stop offset="80%" stop-color="#1d4ed8" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#030712" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="cellGlow2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ec4899" stop-opacity="0.25"/>
+      <stop offset="80%" stop-color="#be185d" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#030712" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="chromBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="chromRed" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f472b6"/>
+      <stop offset="100%" stop-color="#db2777"/>
+    </linearGradient>
+    <linearGradient id="spindleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.8"/>
+      <stop offset="50%" stop-color="#38bdf8" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0.8"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.95"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="540" fill="#030712"/>
+  <rect width="960" height="540" fill="url(#bgGlow)"/>
+
+  <!-- Technical Coordinate Grid -->
+  <g opacity="0.12" stroke="#10b981" stroke-width="1">
+    <line x1="0" y1="0" x2="0" y2="540"/>
+    <line x1="64" y1="0" x2="64" y2="540"/>
+    <line x1="128" y1="0" x2="128" y2="540"/>
+    <line x1="192" y1="0" x2="192" y2="540"/>
+    <line x1="256" y1="0" x2="256" y2="540"/>
+    <line x1="320" y1="0" x2="320" y2="540"/>
+    <line x1="384" y1="0" x2="384" y2="540"/>
+    <line x1="448" y1="0" x2="448" y2="540"/>
+    <line x1="512" y1="0" x2="512" y2="540"/>
+    <line x1="576" y1="0" x2="576" y2="540"/>
+    <line x1="640" y1="0" x2="640" y2="540"/>
+    <line x1="704" y1="0" x2="704" y2="540"/>
+    <line x1="768" y1="0" x2="768" y2="540"/>
+    <line x1="832" y1="0" x2="832" y2="540"/>
+    <line x1="896" y1="0" x2="896" y2="540"/>
+    <line x1="960" y1="0" x2="960" y2="540"/>
+    <line x1="0" y1="0" x2="960" y2="0"/>
+    <line x1="0" y1="60" x2="960" y2="60"/>
+    <line x1="0" y1="120" x2="960" y2="120"/>
+    <line x1="0" y1="180" x2="960" y2="180"/>
+    <line x1="0" y1="240" x2="960" y2="240"/>
+    <line x1="0" y1="300" x2="960" y2="300"/>
+    <line x1="0" y1="360" x2="960" y2="360"/>
+    <line x1="0" y1="420" x2="960" y2="420"/>
+    <line x1="0" y1="480" x2="960" y2="480"/>
+    <line x1="0" y1="540" x2="960" y2="540"/>
+  </g>
+
+  <!-- Left: Mitosis Cellular Apparatus (Equatorial Metaphase / Anaphase Separation) -->
+  <g id="mitosis-apparatus" transform="translate(260, 260)">
+    <!-- Cellular Envelope Halo -->
+    <ellipse cx="0" cy="0" rx="190" ry="150" fill="url(#cellGlow1)"/>
+    <ellipse cx="0" cy="0" rx="190" ry="150" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-dasharray="8 6" opacity="0.6"/>
+
+    <!-- Left Centrosome & Aster -->
+    <g transform="translate(-160, 0)">
+      <circle cx="0" cy="0" r="10" fill="#fbbf24" filter="url(#glow)"/>
+      <circle cx="0" cy="0" r="5" fill="#ffffff"/>
+      <!-- Aster Rays -->
+      <line x1="0" y1="0" x2="-25" y2="-20" stroke="#fbbf24" stroke-width="1.5" opacity="0.6"/>
+      <line x1="0" y1="0" x2="-25" y2="20" stroke="#fbbf24" stroke-width="1.5" opacity="0.6"/>
+      <line x1="0" y1="0" x2="-30" y2="0" stroke="#fbbf24" stroke-width="1.5" opacity="0.6"/>
+      <line x1="0" y1="0" x2="-10" y2="-30" stroke="#fbbf24" stroke-width="1.5" opacity="0.6"/>
+      <line x1="0" y1="0" x2="-10" y2="30" stroke="#fbbf24" stroke-width="1.5" opacity="0.6"/>
+    </g>
+
+    <!-- Right Centrosome & Aster -->
+    <g transform="translate(160, 0)">
+      <circle cx="0" cy="0" r="10" fill="#fbbf24" filter="url(#glow)"/>
+      <circle cx="0" cy="0" r="5" fill="#ffffff"/>
+      <!-- Aster Rays -->
+      <line x1="0" y1="0" x2="25" y2="-20" stroke="#fbbf24" stroke-width="1.5" opacity="0.6"/>
+      <line x1="0" y1="0" x2="25" y2="20" stroke="#fbbf24" stroke-width="1.5" opacity="0.6"/>
+      <line x1="0" y1="0" x2="30" y2="0" stroke="#fbbf24" stroke-width="1.5" opacity="0.6"/>
+      <line x1="0" y1="0" x2="10" y2="-30" stroke="#fbbf24" stroke-width="1.5" opacity="0.6"/>
+      <line x1="0" y1="0" x2="10" y2="30" stroke="#fbbf24" stroke-width="1.5" opacity="0.6"/>
+    </g>
+
+    <!-- Spindle Microtubules converging on Kinetochores -->
+    <!-- Top Chromosome Fibers -->
+    <path d="M -160,0 C -80,-50 -40,-60 -25,-60" fill="none" stroke="url(#spindleGrad)" stroke-width="1.5" opacity="0.7"/>
+    <path d="M 160,0 C 80,-50 40,-60 25,-60" fill="none" stroke="url(#spindleGrad)" stroke-width="1.5" opacity="0.7"/>
+    <!-- Mid-Upper Fibers -->
+    <path d="M -160,0 C -80,-25 -40,-25 -20,-20" fill="none" stroke="url(#spindleGrad)" stroke-width="1.5" opacity="0.8"/>
+    <path d="M 160,0 C 80,-25 40,-25 20,-20" fill="none" stroke="url(#spindleGrad)" stroke-width="1.5" opacity="0.8"/>
+    <!-- Mid-Lower Fibers -->
+    <path d="M -160,0 C -80,25 -40,25 -20,20" fill="none" stroke="url(#spindleGrad)" stroke-width="1.5" opacity="0.8"/>
+    <path d="M 160,0 C 80,25 40,25 20,20" fill="none" stroke="url(#spindleGrad)" stroke-width="1.5" opacity="0.8"/>
+    <!-- Bottom Fibers -->
+    <path d="M -160,0 C -80,50 -40,60 -25,60" fill="none" stroke="url(#spindleGrad)" stroke-width="1.5" opacity="0.7"/>
+    <path d="M 160,0 C 80,50 40,60 25,60" fill="none" stroke="url(#spindleGrad)" stroke-width="1.5" opacity="0.7"/>
+    <!-- Continuous Polar Microtubules -->
+    <path d="M -160,0 C -70,-90 70,-90 160,0" fill="none" stroke="#38bdf8" stroke-width="1" stroke-dasharray="4 4" opacity="0.35"/>
+    <path d="M -160,0 C -70,90 70,90 160,0" fill="none" stroke="#38bdf8" stroke-width="1" stroke-dasharray="4 4" opacity="0.35"/>
+
+    <!-- Separating Sister Chromatids (Anaphase V-Shapes) -->
+    <!-- Left Pole Set (Maternal / Paternal Mix) -->
+    <g transform="translate(-30, -60) rotate(15)">
+      <!-- V Chromatid 1 -->
+      <path d="M -18,-18 Q 0,0 -18,18" fill="none" stroke="url(#chromBlue)" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="0" cy="0" r="4" fill="#fbbf24"/>
+    </g>
+    <g transform="translate(30, -60) rotate(-15)">
+      <!-- V Chromatid 1 Sister -->
+      <path d="M 18,-18 Q 0,0 18,18" fill="none" stroke="url(#chromBlue)" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="0" cy="0" r="4" fill="#fbbf24"/>
+    </g>
+
+    <g transform="translate(-25, -20) rotate(10)">
+      <path d="M -20,-16 Q 0,0 -20,16" fill="none" stroke="url(#chromRed)" stroke-width="9" stroke-linecap="round"/>
+      <circle cx="0" cy="0" r="4.5" fill="#fbbf24"/>
+    </g>
+    <g transform="translate(25, -20) rotate(-10)">
+      <path d="M 20,-16 Q 0,0 20,16" fill="none" stroke="url(#chromRed)" stroke-width="9" stroke-linecap="round"/>
+      <circle cx="0" cy="0" r="4.5" fill="#fbbf24"/>
+    </g>
+
+    <g transform="translate(-25, 20) rotate(10)">
+      <path d="M -20,-16 Q 0,0 -20,16" fill="none" stroke="url(#chromBlue)" stroke-width="9" stroke-linecap="round"/>
+      <circle cx="0" cy="0" r="4.5" fill="#fbbf24"/>
+    </g>
+    <g transform="translate(25, 20) rotate(-10)">
+      <path d="M 20,-16 Q 0,0 20,16" fill="none" stroke="url(#chromBlue)" stroke-width="9" stroke-linecap="round"/>
+      <circle cx="0" cy="0" r="4.5" fill="#fbbf24"/>
+    </g>
+
+    <g transform="translate(-30, 60) rotate(15)">
+      <path d="M -18,-18 Q 0,0 -18,18" fill="none" stroke="url(#chromRed)" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="0" cy="0" r="4" fill="#fbbf24"/>
+    </g>
+    <g transform="translate(30, 60) rotate(-15)">
+      <path d="M 18,-18 Q 0,0 18,18" fill="none" stroke="url(#chromRed)" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="0" cy="0" r="4" fill="#fbbf24"/>
+    </g>
+
+    <!-- Metaphase Plate Indicator Line -->
+    <line x1="0" y1="-135" x2="0" y2="135" stroke="#10b981" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.7"/>
+    <text x="0" y="148" fill="#10b981" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle" letter-spacing="1.5">METAPHASE PLATE</text>
+  </g>
+
+  <!-- Right: Meiosis Crossing-Over & Chiasmata Detail Matrix -->
+  <g id="meiosis-crossing-over" transform="translate(710, 240)">
+    <!-- Cellular Envelope Halo -->
+    <ellipse cx="0" cy="0" rx="170" ry="140" fill="url(#cellGlow2)"/>
+    <ellipse cx="0" cy="0" rx="170" ry="140" fill="none" stroke="#ec4899" stroke-width="2.5" stroke-dasharray="8 6" opacity="0.6"/>
+
+    <!-- Homologous Tetrad Pair (Synaptonemal Complex / Crossing Over) -->
+    <!-- Homolog 1 (Blue with Red recombinant tip) -->
+    <g transform="translate(-25, 0)">
+      <!-- Left Chromatid -->
+      <path d="M -16,-90 C -16,-30 -8,-10 -8,0 C -8,10 -16,30 -16,90" fill="none" stroke="url(#chromBlue)" stroke-width="11" stroke-linecap="round"/>
+      <!-- Right Inner Chromatid (Crossing Over at middle) -->
+      <path d="M 8,-90 C 8,-35 12,-15 18,0" fill="none" stroke="url(#chromBlue)" stroke-width="11" stroke-linecap="round"/>
+      <!-- Recombinant Swapped Segment (Crossed into red) -->
+      <path d="M 18,0 C 22,20 18,45 22,90" fill="none" stroke="url(#chromRed)" stroke-width="11" stroke-linecap="round"/>
+      <circle cx="0" cy="0" r="5" fill="#facc15" filter="url(#glow)"/>
+    </g>
+
+    <!-- Homolog 2 (Red with Blue recombinant tip) -->
+    <g transform="translate(25, 0)">
+      <!-- Right Chromatid -->
+      <path d="M 16,-90 C 16,-30 8,-10 8,0 C 8,10 16,30 16,90" fill="none" stroke="url(#chromRed)" stroke-width="11" stroke-linecap="round"/>
+      <!-- Left Inner Chromatid (Crossing Over at middle) -->
+      <path d="M -8,-90 C -8,-35 -12,-15 -18,0" fill="none" stroke="url(#chromRed)" stroke-width="11" stroke-linecap="round"/>
+      <!-- Recombinant Swapped Segment (Crossed into blue) -->
+      <path d="M -18,0 C -22,20 -18,45 -22,90" fill="none" stroke="url(#chromBlue)" stroke-width="11" stroke-linecap="round"/>
+      <circle cx="0" cy="0" r="5" fill="#facc15" filter="url(#glow)"/>
+    </g>
+
+    <!-- Chiasma Crossing Point Glow Indicator -->
+    <circle cx="0" cy="0" r="14" fill="#a855f7" opacity="0.4" filter="url(#glow)"/>
+    <circle cx="0" cy="0" r="3" fill="#ffffff"/>
+
+    <!-- Chiasmata Annotation -->
+    <line x1="0" y1="0" x2="65" y2="-40" stroke="#f472b6" stroke-width="1.5"/>
+    <rect x="70" y="-55" width="85" height="24" rx="6" fill="#1e1b4b" stroke="#818cf8" stroke-width="1"/>
+    <text x="112" y="-39" fill="#e0e7ff" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">CHIASMA</text>
+
+    <!-- 4 Recombinant Gametes Output Icons -->
+    <g transform="translate(-90, 115)">
+      <circle cx="0" cy="0" r="16" fill="#0f172a" stroke="#60a5fa" stroke-width="2"/>
+      <text x="0" y="4" fill="#93c5fd" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle">1n</text>
+    </g>
+    <g transform="translate(-30, 115)">
+      <circle cx="0" cy="0" r="16" fill="#0f172a" stroke="#a855f7" stroke-width="2"/>
+      <text x="0" y="4" fill="#d8b4fe" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle">1n*</text>
+    </g>
+    <g transform="translate(30, 115)">
+      <circle cx="0" cy="0" r="16" fill="#0f172a" stroke="#a855f7" stroke-width="2"/>
+      <text x="0" y="4" fill="#d8b4fe" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle">1n*</text>
+    </g>
+    <g transform="translate(90, 115)">
+      <circle cx="0" cy="0" r="16" fill="#0f172a" stroke="#f472b6" stroke-width="2"/>
+      <text x="0" y="4" fill="#fbcfe8" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle">1n</text>
+    </g>
+  </g>
+
+  <!-- Title & Metadata Badges -->
+  <!-- Top Header Banner -->
+  <g transform="translate(60, 50)">
+    <rect x="0" y="0" width="165" height="26" rx="13" fill="#10b981" fill-opacity="0.15" stroke="#10b981" stroke-width="1"/>
+    <circle cx="14" cy="13" r="4" fill="#10b981"/>
+    <text x="26" y="17" fill="#34d399" font-family="sans-serif" font-size="11" font-weight="900" letter-spacing="1.5">CELLULAR BIOLOGY</text>
+
+    <text x="0" y="52" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="26" font-weight="900" letter-spacing="-0.5">
+      MITOSIS, MEIOSIS &amp; CELL DIVISION
+    </text>
+    <text x="0" y="74" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="500">
+      Karyokinesis • Spindle Assembly Checkpoint • Homologous Crossing-Over
+    </text>
+  </g>
+
+  <!-- Stage Comparison Footer Badges -->
+  <g transform="translate(60, 475)">
+    <!-- Mitosis Pill -->
+    <rect x="0" y="0" width="200" height="34" rx="10" fill="url(#cardGrad)" stroke="#3b82f6" stroke-width="1.5"/>
+    <circle cx="16" cy="17" r="5" fill="#3b82f6"/>
+    <text x="32" y="21" fill="#f8fafc" font-family="sans-serif" font-size="12" font-weight="bold">Mitosis: 2n → 2 x 2n Clones</text>
+  </g>
+
+  <g transform="translate(680, 475)">
+    <!-- Meiosis Pill -->
+    <rect x="0" y="0" width="220" height="34" rx="10" fill="url(#cardGrad)" stroke="#ec4899" stroke-width="1.5"/>
+    <circle cx="16" cy="17" r="5" fill="#ec4899"/>
+    <text x="32" y="21" fill="#f8fafc" font-family="sans-serif" font-size="12" font-weight="bold">Meiosis: 2n → 4 x 1n Gametes</text>
+  </g>
+
+  <!-- OpenLabs Watermark -->
+  <g transform="translate(860, 45)">
+    <text x="0" y="0" fill="#ffffff" font-family="monospace" font-size="11" font-weight="900" opacity="0.4" text-anchor="end">OPENLABS // STEM</text>
+  </g>
+</svg>

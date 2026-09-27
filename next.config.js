@@ -26,6 +26,11 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/virtual-science-labs',
+        destination: '/tracks',
+        permanent: true,
+      },
+      {
         source: '/:path*',
         has: [{ type: 'host', value: 'openlabs.org.in' }],
         destination: 'https://www.openlabs.org.in/:path*',

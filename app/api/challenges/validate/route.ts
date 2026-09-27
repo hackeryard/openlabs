@@ -34,8 +34,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    if (!Array.isArray(user.dailyChallenges)) user.dailyChallenges = [];
+    if (!Array.isArray(user.subjectProgress)) user.subjectProgress = [];
+    if (!Array.isArray(user.activityLog)) user.activityLog = [];
+    if (!Array.isArray(user.badges)) user.badges = [];
+
     const existingAttempt = user.dailyChallenges.find(
-      (dc: any) => dc.labId === labId && new Date(dc.date).getTime() === challengeDate.getTime()
+      (dc: any) => dc && dc.labId === labId && dc.date && new Date(dc.date).getTime() === challengeDate.getTime()
     );
 
     if (existingAttempt && existingAttempt.completed) {

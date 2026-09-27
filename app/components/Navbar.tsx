@@ -170,7 +170,12 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [labsOpen, setLabsOpen] = useState(false);
   const [mobileLabsOpen, setMobileLabsOpen] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
   const { user } = useAuth();
+
+  useEffect(() => {
+    setAvatarError(false);
+  }, [user?.avatar]);
 
   const pathname = usePathname();
   const labsRef = useRef<HTMLLIElement>(null);
@@ -545,13 +550,14 @@ export default function Navbar() {
                   "
                   title={`${user.name || "User"} Profile`}
                 >
-                  {user.avatar ? (
+                  {user.avatar && !avatarError ? (
                     <Image
                       src={user.avatar}
                       alt="User profile"
                       width={32}
                       height={32}
                       className="w-8 h-8 rounded-full object-cover border border-border"
+                      onError={() => setAvatarError(true)}
                     />
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center font-bold text-xs border border-primary/20">
@@ -742,13 +748,14 @@ export default function Navbar() {
                       onClick={() => setMobileOpen(false)}
                       className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-accent transition"
                     >
-                      {user.avatar ? (
+                      {user.avatar && !avatarError ? (
                         <Image
                           src={user.avatar}
                           alt=""
                           width={28}
                           height={28}
                           className="w-7 h-7 rounded-full object-cover border border-border"
+                          onError={() => setAvatarError(true)}
                         />
                       ) : (
                         <div className="w-7 h-7 rounded-full bg-primary/15 text-primary flex items-center justify-center font-bold text-xs border border-primary/20">

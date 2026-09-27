@@ -8,6 +8,7 @@ import { OrbitControls, Sphere } from "@react-three/drei";
 import { useChat } from "@/app/components/ChatContext";
 import { useLab } from "@/app/hooks/useXP";
 import DailyChallengeCard from "@/app/components/DailyChallengeCard";
+import WebGLErrorBoundary from "@/app/components/WebGLErrorBoundary";
 import { 
   ArrowLeft, 
   Activity, 
@@ -35,6 +36,19 @@ function Electron3D({ position }) {
     </Sphere>
   );
 }
+
+const onCanvasCreated = (state: any) => {
+  const canvas = state.gl?.domElement;
+  if (canvas) {
+    canvas.addEventListener(
+      "webglcontextlost",
+      (e: Event) => {
+        e.preventDefault();
+      },
+      false
+    );
+  }
+};
 
 /* ====================== MAIN COMPONENT ====================== */
 export default function ChemicalBondsLabPage() {
@@ -198,13 +212,15 @@ export default function ChemicalBondsLabPage() {
                   </div>
 
                   <div className="h-56 bg-slate-950 relative overflow-hidden flex items-center justify-center shadow-inner">
-                    <Canvas camera={{ position: [0, 0, 4.5] }}>
-                      <ambientLight intensity={1.5} />
-                      <pointLight position={[5, 5, 5]} intensity={1.5} />
-                      <Atom3D position={[-1, 0, 0]} color="#f97316" size={0.32} /> {/* Na Cation */}
-                      <Atom3D position={[1, 0, 0]} color="#22c55e" size={0.45} /> {/* Cl Anion */}
-                      <OrbitControls enableZoom={false} />
-                    </Canvas>
+                    <WebGLErrorBoundary title="Ionic Model Unavailable" className="bg-transparent border-0">
+                      <Canvas camera={{ position: [0, 0, 4.5] }} onCreated={onCanvasCreated}>
+                        <ambientLight intensity={1.5} />
+                        <pointLight position={[5, 5, 5]} intensity={1.5} />
+                        <Atom3D position={[-1, 0, 0]} color="#f97316" size={0.32} /> {/* Na Cation */}
+                        <Atom3D position={[1, 0, 0]} color="#22c55e" size={0.45} /> {/* Cl Anion */}
+                        <OrbitControls enableZoom={false} />
+                      </Canvas>
+                    </WebGLErrorBoundary>
                     <div className="absolute bottom-2.5 right-2.5 text-[8px] font-mono text-muted-foreground">NaCl lattice</div>
                   </div>
 
@@ -221,14 +237,16 @@ export default function ChemicalBondsLabPage() {
                   </div>
 
                   <div className="h-56 bg-slate-950 relative overflow-hidden flex items-center justify-center shadow-inner">
-                    <Canvas camera={{ position: [0, 0, 4.5] }}>
-                      <ambientLight intensity={1.5} />
-                      <pointLight position={[5, 5, 5]} intensity={1.5} />
-                      <Atom3D position={[0, 0, 0]} color="#ef4444" size={0.4} /> {/* O Nucleus */}
-                      <Electron3D position={[-0.6, 0.2, 0]} />
-                      <Electron3D position={[0.6, -0.2, 0]} />
-                      <OrbitControls enableZoom={false} />
-                    </Canvas>
+                    <WebGLErrorBoundary title="Covalent Model Unavailable" className="bg-transparent border-0">
+                      <Canvas camera={{ position: [0, 0, 4.5] }} onCreated={onCanvasCreated}>
+                        <ambientLight intensity={1.5} />
+                        <pointLight position={[5, 5, 5]} intensity={1.5} />
+                        <Atom3D position={[0, 0, 0]} color="#ef4444" size={0.4} /> {/* O Nucleus */}
+                        <Electron3D position={[-0.6, 0.2, 0]} />
+                        <Electron3D position={[0.6, -0.2, 0]} />
+                        <OrbitControls enableZoom={false} />
+                      </Canvas>
+                    </WebGLErrorBoundary>
                     <div className="absolute bottom-2.5 right-2.5 text-[8px] font-mono text-muted-foreground">Shared spins</div>
                   </div>
 
@@ -245,15 +263,17 @@ export default function ChemicalBondsLabPage() {
                   </div>
 
                   <div className="h-56 bg-slate-950 relative overflow-hidden flex items-center justify-center shadow-inner">
-                    <Canvas camera={{ position: [0, 0, 4.5] }}>
-                      <ambientLight intensity={1.5} />
-                      <pointLight position={[5, 5, 5]} intensity={1.5} />
-                      <Atom3D position={[-1, 0, 0]} color="#64748b" size={0.35} /> {/* Metal ion */}
-                      <Atom3D position={[1, 0, 0]} color="#64748b" size={0.35} /> {/* Metal ion */}
-                      <Electron3D position={[0, 0.6, 0.2]} />
-                      <Electron3D position={[0, -0.6, -0.2]} />
-                      <OrbitControls enableZoom={false} />
-                    </Canvas>
+                    <WebGLErrorBoundary title="Metallic Model Unavailable" className="bg-transparent border-0">
+                      <Canvas camera={{ position: [0, 0, 4.5] }} onCreated={onCanvasCreated}>
+                        <ambientLight intensity={1.5} />
+                        <pointLight position={[5, 5, 5]} intensity={1.5} />
+                        <Atom3D position={[-1, 0, 0]} color="#64748b" size={0.35} /> {/* Metal ion */}
+                        <Atom3D position={[1, 0, 0]} color="#64748b" size={0.35} /> {/* Metal ion */}
+                        <Electron3D position={[0, 0.6, 0.2]} />
+                        <Electron3D position={[0, -0.6, -0.2]} />
+                        <OrbitControls enableZoom={false} />
+                      </Canvas>
+                    </WebGLErrorBoundary>
                     <div className="absolute bottom-2.5 right-2.5 text-[8px] font-mono text-muted-foreground">Delocalized sea</div>
                   </div>
 
