@@ -23,7 +23,7 @@ yarn dev            # next dev, http://localhost:3000
 yarn build           # next build
 yarn start           # next start (serve a production build)
 yarn lint             # next lint (uses eslint-config-next + .eslintignore, NOT eslint.config.js — see Linting below)
-yarn test:seo         # run automated technical SEO & indexing regression suite (43 checks)
+yarn test:seo         # run automated technical SEO & indexing regression suite (48 checks)
 ```
 
 - **Testing**: Technical SEO, route classification, sitemap purity, and metadata standards are validated via `yarn test:seo` (`scripts/seo-regression-test.cjs`). General unit test runner is not present, so do not assume `yarn test` works.
@@ -80,7 +80,7 @@ Every subject/lab has **two separate route trees that both must exist**, plus a 
 6. **Central Registry Entry** — Add to `LABS` in `app/lib/labs.ts` (`id`, `name`, `subject`, `type`, `challengeEnabled`, `challengeParams`).
 7. **Curriculum Tracks Progression** — Map to appropriate track in `app/lib/tracks.ts` with difficulty, duration, and XP reward.
 8. **Navigation & Catalogs** — Add to `app/components/Navbar.tsx`, `app/components/Hero.tsx`, and `app/<subject>/page.tsx`.
-9. **Sitemap & Verification** — Add to `app/sitemap.ts`, run `npx tsc --noEmit` + `yarn lint`, and update `CHANGELOG.md`.
+9. **Sitemap & Verification** — Add to `app/sitemap.ts`, run `npx tsc --noEmit` + `yarn lint` + `yarn test:seo`, and update `CHANGELOG.md` + companion docs.
 
 ### Directory map (non-obvious bits only — the tree is large, this highlights what's easy to miss)
 

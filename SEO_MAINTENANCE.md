@@ -78,12 +78,15 @@ All indexable pages must specify:
 
 ## 6. Internal Linking & Subtopic Continuity
 
-To prevent "Only one internal link" and "Low text-to-HTML ratio" crawl anomalies, all subtopic landing templates implement reciprocal cross-linking:
+To prevent "Only one internal link" and "Low text-to-HTML ratio" crawl anomalies, all subtopic landing templates and standalone topic hubs implement reciprocal cross-linking:
 
 - [`DsaLanding.tsx`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/computer-science/dsa/DsaLanding.tsx): Cross-links to sibling DSA topics with time complexity and category badges.
 - [`LogicGateLanding.tsx`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/computer-science/logic-gates/LogicGateLanding.tsx): Cross-links to sibling logic gates and combinational circuits with Boolean expressions.
 - [`NetworkingLanding.tsx`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/computer-science/networking/NetworkingLanding.tsx): Cross-links to sibling network architecture and protocol simulations.
 - [`AiProblemLanding.tsx`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/computer-science/ai-problem/AiProblemLanding.tsx): Cross-links to sibling heuristic search, state space, and neural network simulations.
+- **Genetics Experiment Sibling Grid:** All 4 Genetics experiment landing pages (`dihybrid`, `monohybrid`, `pedigree`, `transcription-translation`) cross-link to each other via `relatedExperiments` in `components/STEMExperimentLanding.tsx`.
+- **Computer Science Standalone Labs:** `blockchain`, `data-analyzer`, `data-science`, and `git-simulator` link reciprocally to companion algorithm and data visualizers.
+- **Subtopic Curriculum Discovery:** [`SubtopicHubLayout.tsx`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/components/SubtopicHubLayout.tsx) includes direct navigational pathways to discipline root hubs (`/${subjectSlug}`) and curriculum tracks (`/tracks`).
 
 ---
 
@@ -91,12 +94,14 @@ To prevent "Only one internal link" and "Low text-to-HTML ratio" crawl anomalies
 
 OpenLabs uses valid, clean JSON-LD structured data without conflicting inline HTML microdata:
 
+- **Root EducationalOrganization (`app/layout.tsx`):** Declares institutional identity, logo, sameAs socials, and curriculum catalog. Must use Schema.org compliant `hasOfferCatalog` with `OfferCatalog` and `itemListElement` containing `Offer` items with `itemOffered: Course`. Never attach `Course`-specific properties (`teaches`, `educationalCredentialAwarded`, `hasEducationalUse`, `learningResourceType`) directly to `Organization` or place `Course` directly in `offers`.
 - **Experiment Landing Pages:** `LearningResource`, `BreadcrumbList`, and `FAQPage`.
 - **Blog Articles:** `BlogPosting`, `BreadcrumbList`, and `FAQPage` (when FAQs exist).
 - **Subtopic & Discipline Hubs:** `CollectionPage`, `ItemList`, `BreadcrumbList`.
+- **Contact Page:** `ContactPage`, `FAQPage`, and `BreadcrumbList`.
 
 > [!NOTE]
-> OpenLabs strictly avoids misleading schema types. Never add `Product`, `Offer`, `AggregateRating`, or `FactCheck` schema to educational landing pages unless actual e-commerce transactions or third-party claim verifications are being conducted.
+> OpenLabs strictly avoids misleading schema types. Never add `Product`, `AggregateRating`, or `FactCheck` schema to educational landing pages unless actual e-commerce transactions or third-party claim verifications are being conducted.
 
 ---
 
@@ -133,5 +138,8 @@ The test script ([`scripts/seo-regression-test.cjs`](file:///c:/Users/rahul/OneD
 - Subtopic cross-linking across DSA, Logic Gates, Networking, and AI problems.
 - Microdata purity (0 residual HTML microdata tags).
 - Negative security invariants.
+- Schema.org organization compliance (verifying valid `hasOfferCatalog` rather than naked courses in `offers`).
+- Sitemap route unauthenticated reachability (verifying `/leaderboard` in `publicPaths`).
+- Absolute canonical URL enforcement on `/contact` and blog title length constraints ($\le 65$ characters).
 
 In CI (`.github/workflows/guard.yml`), `yarn test:seo` runs automatically on every pull request and push to `main`.

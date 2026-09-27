@@ -79,10 +79,13 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 ### 2.7 SEO, Crawling & Discovery Architecture
 - FR-28: The platform shall implement a centralized SEO route classification policy (`app/lib/seoRoutePolicy.ts`) distinguishing public indexable pages, non-indexable interactive lab runtimes (`/labs/*`), private routes, and permanent redirects.
 - FR-28a: The system shall enforce a 3-layer defensive shield around all interactive lab simulations (`app/labs/layout.tsx` `robots: noindex, nofollow`, `middleware.ts` header `X-Robots-Tag: noindex, nofollow, noarchive`, and sitemap purity filter) while maintaining complete indexability of public educational landing pages (`/<subject>/<slug>`).
-- FR-28b: Subtopic landing pages across DSA, Logic Gates, Networking, and AI problems shall provide reciprocal sibling cross-linking to ensure search crawler discovery and eliminate single-internal-link crawl warnings.
+- FR-28b: Subtopic landing pages across DSA, Logic Gates, Networking, AI problems, Genetics experiments, and standalone CS labs shall provide reciprocal sibling cross-linking to ensure search crawler discovery and eliminate single-internal-link crawl warnings.
 - FR-28c: The blog engine shall statically pre-render all published articles (`generateStaticParams`) with query deduplication (`React.cache()`), keeping Edge response latency under 100ms and eliminating serverless cold-start bottlenecks.
 - FR-28d: The platform shall expose dynamic `sitemap.xml` and `robots.txt` reflecting only eligible public routes (0 lab or private routes) and validating all URLs through `isSitemapEligible()`.
-- FR-28e: Automated technical SEO regression testing (`yarn test:seo` / `scripts/seo-regression-test.cjs`) shall validate route existence, sitemap purity, canonical standards, and negative invariants in local development and GitHub Actions CI.
+- FR-28e: Automated technical SEO regression testing (`yarn test:seo` / `scripts/seo-regression-test.cjs`) shall validate route existence, sitemap purity, canonical standards, Schema.org validity, and negative invariants in local development and GitHub Actions CI.
+- FR-28f: Root layout shall provide Schema.org compliant structured data for `EducationalOrganization` utilizing `hasOfferCatalog` with `OfferCatalog` and `itemListElement` containing `Offer` items (`itemOffered: Course`), strictly avoiding invalid Organization property leaks.
+- FR-28g: Public routes advertised in `sitemap.xml` (such as `/leaderboard`) shall be accessible unauthenticated without 307 temporary redirects, returning HTTP 200 to search crawlers.
+- FR-28h: Blog and educational pages shall bound meta title lengths to $\le 65$ characters to prevent search snippet truncation.
 
 ### 2.8 Theming
 - FR-29: Users shall be able to switch between light, dark, and system-matched appearance via a toggle in the navigation bar; the choice shall persist across sessions and avoid a flash-of-wrong-theme on load.

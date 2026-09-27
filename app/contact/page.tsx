@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   description:
     "Contact the OpenLabs team for support, bug reports, simulation feature requests, school partnerships, and virtual STEM lab assistance.",
   alternates: {
-    canonical: "/contact",
+    canonical: "https://www.openlabs.org.in/contact",
   },
   openGraph: {
     title: "Contact OpenLabs - Support, Bug Reports, and Partnerships",
@@ -129,6 +129,53 @@ const breadcrumbSchema = {
   ],
 };
 
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Are OpenLabs virtual science laboratories free for students and schools?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. OpenLabs is committed to democratizing STEM education worldwide. All core virtual laboratories, interactive physics engines, chemical titration sandboxes, biological cytology models, and computer science visualizers are freely accessible for individual learners, teachers, and non-commercial educational institutions.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How can educators and academic institutions integrate OpenLabs into their curricula?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Teachers can link directly to specific simulation launch routes or assign step-by-step learning tracks via our Guided Curriculum Tracks (/tracks). Simulations feature built-in telemetry, daily challenge parameter goals, and Socratic AI tutor guidance aligned with CBSE, NCERT, AP Physics, and undergraduate STEM coursework.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How should I format a technical bug report or simulation feedback?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "To help our engineering team reproduce and resolve simulation issues swiftly, please specify the exact experiment URL, your operating system and web browser version, whether hardware acceleration is enabled, and any relevant console diagnostics or screenshots.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can universities or schools collaborate on custom laboratory modules?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "We actively collaborate with department heads, curriculum directors, and scientific researchers to build domain-specific simulations. Contact our institutional outreach team via the message form with your syllabus specifications and target learning objectives.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is the typical response time for support and partnership requests?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Our support engineering desk monitors transmissions Monday through Saturday and typically responds to inquiries within 24 business hours. Critical simulation bugs affecting live classroom sessions receive prioritized triage.",
+      },
+    },
+  ],
+};
+
 export default function ContactPage() {
   return (
     <main className="min-h-screen bg-background text-foreground selection:bg-primary/20 selection:text-primary">
@@ -140,6 +187,10 @@ export default function ContactPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* ─── HERO SECTION ─── */}
@@ -291,6 +342,71 @@ export default function ContactPage() {
               </p>
             </div>
           </aside>
+        </div>
+      </section>
+
+      {/* ─── FREQUENTLY ASKED QUESTIONS SECTION ─── */}
+      <section className="border-t border-border bg-card/40 px-6 py-16 sm:py-20 sm:px-8" aria-label="Support and Partnership FAQs">
+        <div className="mx-auto max-w-4xl space-y-10">
+          <div className="text-center space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-black uppercase tracking-widest">
+              <Sparkles size={13} />
+              <span>Common Inquiries</span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-foreground">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
+              Clear answers regarding student access, institutional classroom deployments, technical support, and simulation partnerships.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-border bg-card p-6 space-y-2">
+              <h3 className="text-base font-bold text-foreground">
+                Are OpenLabs virtual science laboratories free for students and schools?
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Yes. OpenLabs is committed to democratizing STEM education worldwide. All core virtual laboratories, interactive physics engines, chemical titration sandboxes, biological cytology models, and computer science visualizers are freely accessible for individual learners, teachers, and non-commercial educational institutions.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-6 space-y-2">
+              <h3 className="text-base font-bold text-foreground">
+                How can educators and academic institutions integrate OpenLabs into their curricula?
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Teachers can link directly to specific simulation launch routes or assign step-by-step learning tracks via our Guided Curriculum Tracks (/tracks). Simulations feature built-in telemetry, daily challenge parameter goals, and Socratic AI tutor guidance aligned with CBSE, NCERT, AP Physics, and undergraduate STEM coursework.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-6 space-y-2">
+              <h3 className="text-base font-bold text-foreground">
+                How should I format a technical bug report or simulation feedback?
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                To help our engineering team reproduce and resolve simulation issues swiftly, please specify the exact experiment URL, your operating system and web browser version, whether hardware acceleration is enabled, and any relevant console diagnostics or screenshots.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-6 space-y-2">
+              <h3 className="text-base font-bold text-foreground">
+                Can universities or schools collaborate on custom laboratory modules?
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                We actively collaborate with department heads, curriculum directors, and scientific researchers to build domain-specific simulations. Contact our institutional outreach team via the message form above with your syllabus specifications and target learning objectives.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-border bg-card p-6 space-y-2">
+              <h3 className="text-base font-bold text-foreground">
+                What is the typical response time for support and partnership requests?
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Our support engineering desk monitors transmissions Monday through Saturday and typically responds to inquiries within 24 business hours. Critical simulation bugs affecting live classroom sessions receive prioritized triage.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
     </main>

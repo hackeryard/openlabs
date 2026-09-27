@@ -80,6 +80,23 @@ export default function TranscriptionTranslationLandingPage() {
             "A missense mutation alters a single nucleotide resulting in a codon that specifies a different amino acid (e.g., GAG to GUG in Sickle Cell Anemia). A nonsense mutation changes an amino acid codon into a premature STOP codon (UAA, UAG, UGA), truncating the protein.",
         },
       ]}
+      relatedExperiments={[
+        {
+          title: "Monohybrid Cross & Punnett Square",
+          href: "/biology/genetics/monohybrid",
+          description: "Mendelian single-gene allele segregation and 3:1 phenotypic ratios.",
+        },
+        {
+          title: "Dihybrid Cross & Independent Assortment",
+          href: "/biology/genetics/dihybrid",
+          description: "Two-trait inheritance, 16-cell Punnett matrix, and 9:3:3:1 phenotypic ratios.",
+        },
+        {
+          title: "Pedigree Tree & Inheritance Patterns",
+          href: "/biology/genetics/pedigree",
+          description: "Autosomal dominant, recessive, and sex-linked genealogical analysis.",
+        },
+      ]}
     />
   );
 }

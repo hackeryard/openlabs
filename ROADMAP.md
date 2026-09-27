@@ -209,3 +209,17 @@ Transform the platform from an unstructured catalog of 94 separate labs into a g
 - **Native Touch & Mobile Gestures**:
   - Multi-touch pinch-to-zoom for 3D molecular structures and circuit board panning.
   - Haptic feedback on physical component snaps and switch toggles.
+
+---
+
+## 9. Technical SEO & Schema.org Architecture [SHIPPED ✅] 🌐
+
+- **Compliant EducationalOrganization & Catalog Schema (`app/layout.tsx`) [SHIPPED ✅]**:
+  - Replaced naked course offers on `EducationalOrganization` with Schema.org compliant `hasOfferCatalog` -> `OfferCatalog` -> `itemListElement` -> `Offer` (with `itemOffered: Course`), eliminating 330 markup errors.
+- **Unauthenticated Sitemap Route Reachability (`middleware.ts`, `Navbar.tsx`) [SHIPPED ✅]**:
+  - Added `/leaderboard` to `publicPaths` in `middleware.ts`, ensuring crawlers receive HTTP 200 rather than 307 temporary redirects.
+  - Placed `/leaderboard` unconditionally in top-level navigation, providing 100+ inbound crawl links across all site pages.
+- **Reciprocal Subtopic & Sibling Cross-Linking [SHIPPED ✅]**:
+  - Wired reciprocal sibling links across Genetics (`components/STEMExperimentLanding.tsx`), Computer Science standalone modules (`blockchain`, `data-analyzer`, `data-science`, `git-simulator`), and subtopic discovery hubs (`SubtopicHubLayout.tsx`).
+- **Automated Technical SEO Regression Suite (`scripts/seo-regression-test.cjs`) [SHIPPED ✅]**:
+  - 48 automated test assertions in CI validating route policy, 3-layer lab exclusion shield, sitemap purity, blog static generation, Schema.org validity, and canonical URL invariants.

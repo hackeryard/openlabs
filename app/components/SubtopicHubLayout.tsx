@@ -116,6 +116,16 @@ export default function SubtopicHubLayout({
     blue: "bg-blue-500/5",
   };
 
+  const themeBgMap: Record<string, string> = {
+    indigo: "bg-indigo-600 hover:bg-indigo-700",
+    purple: "bg-purple-600 hover:bg-purple-700",
+    emerald: "bg-emerald-600 hover:bg-emerald-700",
+    rose: "bg-rose-600 hover:bg-rose-700",
+    amber: "bg-amber-600 hover:bg-amber-700",
+    teal: "bg-teal-600 hover:bg-teal-700",
+    blue: "bg-blue-600 hover:bg-blue-700",
+  };
+
   const collectionSchema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -489,6 +499,33 @@ export default function SubtopicHubLayout({
                   ))}
                 </div>
               </div>
+            </div>
+          </section>
+
+          {/* Curriculum Discovery Section */}
+          <section className="mb-14 rounded-3xl border border-border/80 bg-card p-6 sm:p-8 text-center sm:text-left sm:flex sm:items-center sm:justify-between shadow-sm" aria-label="Explore other labs">
+            <div>
+              <span className={`text-xs font-black uppercase tracking-wider ${themeTextMap[themeColor]}`}>Curriculum Discovery</span>
+              <h3 className="text-xl font-bold text-foreground mt-1">Explore More {subjectName} Laboratories</h3>
+              <p className="text-sm text-muted-foreground mt-1 max-w-xl">
+                Browse our complete catalog of {subjectName.toLowerCase()} simulations or follow structured learning tracks with interactive milestones and XP rewards.
+              </p>
+            </div>
+            <div className="mt-5 sm:mt-0 flex flex-wrap gap-3 justify-center sm:justify-end">
+              <Link
+                href={`/${subjectSlug}`}
+                className={`inline-flex items-center gap-2 rounded-xl text-white ${themeBgMap[themeColor]} px-5 py-2.5 text-xs font-bold shadow-sm transition hover:opacity-90`}
+              >
+                All {subjectName} Labs
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+              <Link
+                href="/tracks"
+                className="inline-flex items-center gap-2 rounded-xl border border-border bg-muted/60 px-5 py-2.5 text-xs font-bold text-foreground transition hover:bg-muted"
+              >
+                Curriculum Tracks
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
             </div>
           </section>
 

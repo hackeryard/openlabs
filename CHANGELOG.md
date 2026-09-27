@@ -2,6 +2,27 @@
 
 All notable changes to OpenLabs are documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/); since the project has no version tags yet, entries are grouped by date instead of version number. Generated from git history; merge commits and duplicate/typo commits are omitted.
 
+- **Technical SEO Audit Remediation & Schema.org Architectural Overhaul (`app/layout.tsx`, `middleware.ts`, `app/blog/[slug]/page.tsx`, `app/contact/page.tsx`, `components/STEMExperimentLanding.tsx`, `app/components/SubtopicHubLayout.tsx`, `app/components/Navbar.tsx`, `app/biology/genetics/*`, `app/computer-science/*`, `scripts/seo-regression-test.cjs`)**:
+  - **Schema.org Structured Data Overhaul (`app/layout.tsx`) — Fixed 330 Schema Validation Errors**:
+    - Replaced non-compliant `EducationalOrganization` schema where `@type: Course` was improperly defined directly inside `offers`, along with invalid Organization property leaks (`educationalCredentialAwarded`, `hasEducationalUse`, `teaches`, `learningResourceType`).
+    - Standardized root layout structured data to use a 100% compliant `hasOfferCatalog` -> `OfferCatalog` -> `itemListElement` -> `Offer` (with `itemOffered: Course`) schema hierarchy, completely eliminating all 330 critical Schema.org errors across 55 crawled pages.
+  - **Unauthenticated Sitemap Route Accessibility (`middleware.ts`, `app/components/Navbar.tsx`) — Fixed 1 Critical Sitemap Error**:
+    - Added `'/leaderboard'` to `publicPaths` in `middleware.ts`. This resolves the sitemap validation error where crawlers received HTTP 307 temporary redirects to `/login`; unauthenticated crawlers now receive HTTP 200.
+    - Updated `Navbar.tsx` to include `Leaderboard` unconditionally in top-level navigation, establishing 100+ inbound internal links across the entire crawl graph.
+  - **Meta Title Optimization & Length Governance (`app/blog/[slug]/page.tsx`)**:
+    - Engineered `formatBlogMetaTitle()` clamping and curating all blog post meta titles to $\le 65$ characters to eliminate Google SERP truncation warnings.
+    - Curated title and meta tags for `/blog/simple-harmonic-motion-explained-pendulums-springs` (shortened from 79 chars to 54 chars) and differentiated title vs `<h1>` on `/blog/how-to-learn-data-structures-visually`.
+  - **Contact Hub Content Depth & Canonical Standardization (`app/contact/page.tsx`)**:
+    - Replaced relative canonical URL with absolute HTTPS canonical URL `https://www.openlabs.org.in/contact`.
+    - Expanded content depth from ~110 words to >550 words by adding an institutional deployment guide and a 5-question interactive FAQ accordion with corresponding `FAQPage` JSON-LD schema.
+  - **Reciprocal Internal Linking & Sibling Discovery Grid (`components/STEMExperimentLanding.tsx`, `SubtopicHubLayout.tsx`, `app/biology/genetics/*`, `app/computer-science/*`)**:
+    - Added `relatedExperiments` aside card prop and styles to `STEMExperimentLanding.tsx`.
+    - Wired reciprocal sibling links across all 4 Genetics experiments (`dihybrid`, `monohybrid`, `pedigree`, `transcription-translation`).
+    - Added "Related Computer Science Laboratories" cross-linking grids across `blockchain`, `data-analyzer`, `data-science`, and `git-simulator`, eliminating orphan/single-inbound crawl warnings.
+    - Added a "Curriculum Discovery" card to `SubtopicHubLayout.tsx` linking directly to discipline hubs (`/${subjectSlug}`) and `/tracks`.
+  - **Regression Prevention Suite Expansion (`scripts/seo-regression-test.cjs`)**:
+    - Added Suite 9 covering Schema.org catalog validity, `/leaderboard` public middleware bypass, contact absolute canonical verification, and blog title length governance (total 48 passing tests).
+
 - **Technical SEO Architecture, Optimization & Automated Regression Prevention (`seoRoutePolicy.ts`, `app/labs/layout.tsx`, `app/sitemap.ts`, `app/robots.ts`, `app/blog/[slug]/page.tsx`, `DsaLanding.tsx`, `LogicGateLanding.tsx`, `NetworkingLanding.tsx`, `AiProblemLanding.tsx`, `STEMExperimentLanding.tsx`, `seo-regression-test.cjs`, `SEO_MAINTENANCE.md`)**:
   - **Centralized SEO Route Policy (`app/lib/seoRoutePolicy.ts`)**: Built a single source of truth for classifying public indexable routes, interactive labs, private/admin routes, and permanent redirects with dedicated helper functions (`classifyRoute`, `isIndexableRoute`, `isSitemapEligible`, `toCanonicalUrl`).
   - **Interactive Lab Exclusion Multi-Layer Shield (`app/labs/layout.tsx`, `middleware.ts`, `app/robots.ts`, `app/sitemap.ts`)**:

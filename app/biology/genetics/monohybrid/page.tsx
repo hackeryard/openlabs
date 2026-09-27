@@ -79,6 +79,23 @@ export default function MonohybridLandingPage() {
             "Each fertilization is an independent statistical event with a 75% probability of a dominant phenotype and 25% probability of a recessive phenotype. Small sample sizes exhibit statistical fluctuation; only large populations (hundreds of offspring) converge closely to theoretical 3:1 ratios.",
         },
       ]}
+      relatedExperiments={[
+        {
+          title: "Dihybrid Cross & Independent Assortment",
+          href: "/biology/genetics/dihybrid",
+          description: "Two-trait inheritance, 16-cell Punnett matrix, and 9:3:3:1 phenotypic ratios.",
+        },
+        {
+          title: "Pedigree Tree & Inheritance Patterns",
+          href: "/biology/genetics/pedigree",
+          description: "Autosomal dominant, recessive, and sex-linked genealogical analysis.",
+        },
+        {
+          title: "DNA Transcription & Translation",
+          href: "/biology/genetics/transcription-translation",
+          description: "Central dogma molecular synthesis from mRNA codon to peptide chain.",
+        },
+      ]}
     />
   );
 }
