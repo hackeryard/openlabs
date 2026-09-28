@@ -200,6 +200,8 @@ export default function OpenLabsTracker() {
             lowerSrc.includes("openanalytics") ||
             lowerSrc.includes("googleadservices") ||
             lowerSrc.includes("googleusercontent.com") ||
+            lowerSrc.includes("disregardpervertmural") ||
+            lowerSrc.includes("adsterra") ||
             lowerSrc.includes("extension://") ||
             lowerSrc.includes("chrome-extension://") ||
             lowerSrc.includes("moz-extension://") ||

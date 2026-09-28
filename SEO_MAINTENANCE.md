@@ -143,3 +143,13 @@ The test script ([`scripts/seo-regression-test.cjs`](file:///c:/Users/rahul/OneD
 - Absolute canonical URL enforcement on `/contact` and blog title length constraints ($\le 65$ characters).
 
 In CI (`.github/workflows/guard.yml`), `yarn test:seo` runs automatically on every pull request and push to `main`.
+
+---
+
+## 10. Advertising & Monetization Crawler Hygiene
+
+OpenLabs maintains strict separation between monetization scripts and educational simulation runtimes:
+- **Display & Popunder Script Hygiene**: Google AdSense and Adsterra Anti-Adblock tags ([`app/layout.tsx`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/layout.tsx), [`app/lib/ads.ts`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/lib/ads.ts)) are declared on public pages for verification and monetization.
+- **Interactive Simulation & Admin Hard-Exclusion**: Popunders, overlays, and display ad units are strictly suppressed on all `/labs/*` and `/admin/*` routes via [`AdsterraPopunder.tsx`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/components/AdsterraPopunder.tsx), [`GoogleAdSense.tsx`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/components/GoogleAdSense.tsx), `window.open` guards, and [`app/globals.css`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/globals.css).
+- **Search Quality Compliance**: Guarantees compliance with Google Search Essentials and Page Experience criteria by preventing intrusive popups or layout shifts within interactive educational tools.
+

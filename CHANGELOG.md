@@ -2,6 +2,16 @@
 
 All notable changes to OpenLabs are documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/); since the project has no version tags yet, entries are grouped by date instead of version number. Generated from git history; merge commits and duplicate/typo commits are omitted.
 
+- **Adsterra Popunder & Smartlink Integration with Lab Exclusion Shield (`app/lib/ads.ts`, `app/components/AdsterraPopunder.tsx`, `app/layout.tsx`, `app/globals.css`, `app/components/GoogleAdSense.tsx`, `app/components/OpenLabsTracker.tsx`)**:
+  - **Adsterra Anti-Adblock JS Sync Tag Integration**: Integrated the official Adsterra anti-adblock popunder script tag (`https://disregardpervertmural.com/08/e6/db/08e6dbca5d9532e90ba54ed38592f7b0.js`) in `<head>` of `app/layout.tsx` for `openlabs.org.in` publisher verification and public route monetization.
+  - **Adsterra Direct Smartlink Configuration (`app/lib/ads.ts`)**: Centralized `ADSTERRA_SMARTLINK_URL` (`https://disregardpervertmural.com/nq14cn3uq9?key=c81181fb15ae3c289e31602fa7849d41`) in the platform advertising configuration registry.
+  - **Interactive Simulation & Admin Exclusion Shield (`AdsterraPopunder.tsx`, `app/globals.css`, `GoogleAdSense.tsx`)**:
+    - Created `AdsterraPopunder.tsx` client guard component that detects route changes into interactive labs (`/labs/*`) or administrative screens (`/admin/*`).
+    - Protected `window.open` calls from triggering adsterra popunders during interactive simulation usage.
+    - Set up an active `MutationObserver` and initial cleanup sweep to instantly purge any dynamic Adsterra overlay elements or hidden click-traps.
+    - Added CSS hard-suppression in `app/globals.css` ensuring Adsterra iframes and elements have `display: none !important`, `pointer-events: none !important`, and zero opacity on `body[data-no-ads="true"]` and `[data-ol-lab-container]`.
+  - **Telemetry Filtering (`OpenLabsTracker.tsx`)**: Added `disregardpervertmural` and `adsterra` to the adblocker resource failure ignore list, preventing false-positive error telemetry reports when users browse with uBlock Origin or Brave ad blockers.
+
 - **Technical SEO Audit Remediation & Schema.org Architectural Overhaul (`app/layout.tsx`, `middleware.ts`, `app/blog/[slug]/page.tsx`, `app/contact/page.tsx`, `components/STEMExperimentLanding.tsx`, `app/components/SubtopicHubLayout.tsx`, `app/components/Navbar.tsx`, `app/biology/genetics/*`, `app/computer-science/*`, `scripts/seo-regression-test.cjs`)**:
   - **Schema.org Structured Data Overhaul (`app/layout.tsx`) — Fixed 330 Schema Validation Errors**:
     - Replaced non-compliant `EducationalOrganization` schema where `@type: Course` was improperly defined directly inside `offers`, along with invalid Organization property leaks (`educationalCredentialAwarded`, `hasEducationalUse`, `teaches`, `learningResourceType`).

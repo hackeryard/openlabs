@@ -95,6 +95,7 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 - FR-31: The platform shall deploy a client-side Translation Guard (`TranslationGuard.tsx`) to intercept browser auto-translation DOM mutations (`removeChild`, `insertBefore`) from Chrome/Safari translation engines, preventing React VDOM reconciliation crashes.
 - FR-32: All 3D WebGL simulation canvases shall handle `webglcontextlost` and `webglcontextrestored` events gracefully and wrap renders in `WebGLErrorBoundary.tsx`.
 - FR-33: Google AdSense script integration shall strictly suppress ad scripts and elements on all interactive lab routes (`/labs/*`) and administrative routes (`/admin/*`) via route listeners, body attributes (`data-no-ads`), and CSS hard-blocks.
+- FR-34: Adsterra advertising tags (Popunder anti-adblock script and Direct Smartlink) shall be supported on public routes while popunder triggers, overlays, and `window.open` ad invocations are strictly suppressed within interactive simulation workspaces (`/labs/*`) and administrative views (`/admin/*`).
 
 ## 3. Non-functional requirements
 

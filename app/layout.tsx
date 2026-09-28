@@ -9,6 +9,7 @@ import FloatingLabFeedback from './components/FloatingLabFeedback'
 import { ChatProvider } from './components/ChatContext'
 import AppAnalytics from './components/AppAnalytics'
 import GoogleAdSense from './components/GoogleAdSense'
+import AdsterraPopunder from './components/AdsterraPopunder'
 import ThemeProvider from '@/components/ThemeProvider'
 import AmbientBackground from '@/components/ui/AmbientBackground'
 import StructuredData from './components/seo/StructuredData'
@@ -117,6 +118,10 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4121707034074280"
           crossOrigin="anonymous"
         />
+        {/* Adsterra Anti-Adblock Popunder JS Sync Tag */}
+        <script
+          src="https://disregardpervertmural.com/08/e6/db/08e6dbca5d9532e90ba54ed38592f7b0.js"
+        />
       </head>
       <body className="bg-background text-foreground">
         <TranslationGuard />
@@ -135,6 +140,8 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
                     <AppAnalytics />
                     {/* Google AdSense script integration with automatic lab page exclusions */}
                     <GoogleAdSense />
+                    {/* Adsterra popunder integration with automatic lab page exclusions */}
+                    <AdsterraPopunder />
                   </ChatProvider>
                 </div>
               </div>

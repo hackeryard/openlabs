@@ -123,17 +123,25 @@ body[data-no-ads="true"] iframe[id^="aswift_"],
 body[data-no-ads="true"] #google_esf,
 body[data-no-ads="true"] [id^="google_ads_iframe"],
 body[data-no-ads="true"] .adsbygoogle-noablate,
+body[data-no-ads="true"] iframe[src*="disregardpervertmural"],
+body[data-no-ads="true"] a[href*="disregardpervertmural"],
+body[data-no-ads="true"] div[id*="disregardpervertmural"],
 body[data-is-lab-page="true"] .google-auto-placed,
 body[data-is-lab-page="true"] ins.adsbygoogle,
 body[data-is-lab-page="true"] iframe[id^="aswift_"],
 body[data-is-lab-page="true"] #google_esf,
 body[data-is-lab-page="true"] [id^="google_ads_iframe"],
 body[data-is-lab-page="true"] .adsbygoogle-noablate,
+body[data-is-lab-page="true"] iframe[src*="disregardpervertmural"],
+body[data-is-lab-page="true"] a[href*="disregardpervertmural"],
+body[data-is-lab-page="true"] div[id*="disregardpervertmural"],
 [data-ol-lab-container] .google-auto-placed,
 [data-ol-lab-container] ins.adsbygoogle,
 [data-ol-lab-container] iframe[id^="aswift_"],
+[data-ol-lab-container] iframe[src*="disregardpervertmural"],
 .lab-workspace .google-auto-placed,
-.lab-workspace ins.adsbygoogle {
+.lab-workspace ins.adsbygoogle,
+.lab-workspace iframe[src*="disregardpervertmural"] {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
