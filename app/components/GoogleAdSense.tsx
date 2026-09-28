@@ -42,6 +42,9 @@ function purgeAdElements(): void {
     "#google_esf",
     "[id^='google_ads_iframe']",
     ".adsbygoogle-noablate",
+    "iframe[src*='disregardpervertmural']",
+    "a[href*='disregardpervertmural']",
+    "div[id*='disregardpervertmural']",
   ];
   const adNodes = document.querySelectorAll(selectors.join(", "));
   adNodes.forEach((node) => {

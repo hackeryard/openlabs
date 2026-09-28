@@ -181,7 +181,7 @@ yarn test:seo
 ### Browser Translation & WebGL Resilience 🛡️
 - 🛡️ **Translation DOM Conflict Shield (`TranslationGuard.tsx`)** — Client-side patch intercepting `Node.prototype.removeChild` and `Node.prototype.insertBefore`, safely rescuing detached or mutated nodes wrapped in `<font>` tags by Chrome/Safari translation engines to prevent React VDOM reconciliation crashes.
 - 🛡️ **WebGL Context Loss Recovery (`WebGLErrorBoundary.tsx`)** — Automatic recovery via `webglcontextlost` and `webglcontextrestored` event handlers across all 3D canvases, preventing crashes during mobile tab switching or GPU memory exhaustion.
-- 🛡️ **Google AdSense Strict Lab Exclusions** — Dynamic script suppression, body attribute tagging (`data-no-ads`), and CSS isolation ensuring ads never render on interactive simulation lab pages (`/labs/*`) or administrative contexts (`/admin/*`).
+- 🛡️ **Advertising Isolation & Lab Exclusions (Google AdSense & Adsterra)** — Dynamic script suppression, body attribute tagging (`data-no-ads`), `window.open` ad guards, and CSS isolation ensuring popunders and display ads never render on interactive simulation lab pages (`/labs/*`) or administrative contexts (`/admin/*`).
 - 🌐 **Technical SEO & Schema.org Compliance** — Centralized route classification policy (`app/lib/seoRoutePolicy.ts`), 100% Schema.org compliant `EducationalOrganization` with catalog hierarchy, 3-layer defensive shield on `/labs/*` (0 lab routes in sitemap), unauthenticated crawler access for public sitemap routes (`/leaderboard`), and automated 48-point CI regression suite (`yarn test:seo`).
 
 ### AI & Chat Features

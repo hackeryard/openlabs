@@ -223,3 +223,14 @@ Transform the platform from an unstructured catalog of 94 separate labs into a g
   - Wired reciprocal sibling links across Genetics (`components/STEMExperimentLanding.tsx`), Computer Science standalone modules (`blockchain`, `data-analyzer`, `data-science`, `git-simulator`), and subtopic discovery hubs (`SubtopicHubLayout.tsx`).
 - **Automated Technical SEO Regression Suite (`scripts/seo-regression-test.cjs`) [SHIPPED ✅]**:
   - 48 automated test assertions in CI validating route policy, 3-layer lab exclusion shield, sitemap purity, blog static generation, Schema.org validity, and canonical URL invariants.
+
+---
+
+## 10. Multi-Network Advertising & Lab Route Isolation [SHIPPED ✅] 💰
+
+- **Google AdSense & Adsterra Dual Network Integration [SHIPPED ✅]**:
+  - Integrated Google AdSense display advertising (`ca-pub-4121707034074280`) and Adsterra anti-adblock popunder (`08e6dbca5d9532e90ba54ed38592f7b0.js`) with centralized smartlink configuration (`app/lib/ads.ts`).
+- **Interactive Simulation & Admin Hard-Isolation [SHIPPED ✅]**:
+  - Multi-layer guard (`GoogleAdSense.tsx`, `AdsterraPopunder.tsx`, `app/globals.css`) guarantees 0 popunders, 0 ad overlays, and suppressed `window.open` ad invocations on all `/labs/*` and `/admin/*` views.
+- **Adblocker Telemetry Filtering [SHIPPED ✅]**:
+  - Suppressed ad-blocker network rejections from polluting telemetry dashboards in `OpenLabsTracker.tsx`.
