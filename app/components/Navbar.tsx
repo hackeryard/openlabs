@@ -92,15 +92,15 @@ const labCategories: LabCategory[] = [
   {
     label: "Physics",
     path: "/physics",
-    count: "16 Labs",
+    count: "17 Labs",
     description: "Mechanics, circuits, optics & waves",
     icon: Atom,
     colorClass: "text-blue-600 dark:text-blue-400 group-hover/cat:text-blue-700 dark:group-hover/cat:text-blue-300",
     iconBgClass: "bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover/cat:bg-blue-500 group-hover/cat:text-white",
     highlights: [
+      { name: "General Relativity", path: "/physics/general-relativity" },
       { name: "Doppler Effect", path: "/physics/doppler-effect" },
       { name: "Kepler Orbit", path: "/physics/kepler-orbit" },
-      { name: "Free Fall", path: "/physics/freefall" },
       { name: "Faraday's Law", path: "/physics/faradays-law" },
     ],
   },

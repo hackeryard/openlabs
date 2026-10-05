@@ -40,13 +40,16 @@ OpenLabs deliberately separates **public educational landing pages** from **inte
 
 ---
 
-## 3. Robots.txt Configuration
+## 3. Robots.txt Configuration & Root Meta Endpoints
 
 The dynamic robots file is implemented in [`app/robots.ts`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/robots.ts):
 
-- **Allowed Prefixes:** `/`, `/physics`, `/chemistry`, `/biology`, `/computer-science`, `/mathematics`, `/tracks`, `/leaderboard`, `/blog`, `/about`, `/contact`, `/llms.txt`, `/llms-full.txt`.
+- **Mediapartners-Google Rule:** Explicitly grants Google AdSense crawler (`User-agent: Mediapartners-Google`) full access (`allow: ["/"]`) for ad verification and contextual analysis.
+- **Allowed Prefixes:** `/`, `/ads.txt`, `/robots.txt`, `/sitemap.xml`, `/physics`, `/chemistry`, `/biology`, `/computer-science`, `/mathematics`, `/tracks`, `/leaderboard`, `/blog`, `/about`, `/contact`, `/llms.txt`, `/llms-full.txt`.
 - **Disallowed Prefixes:** `/admin/`, `/api/`, `/private/`, `/login`, `/signup`, `/forgotpassword`, `/reset-password`, `/verify-email`, `/setup-profile`, `/403`.
 - **Sitemap Declaration:** `https://www.openlabs.org.in/sitemap.xml`.
+- **Root Meta Headers (`next.config.js`):** `/ads.txt`, `/robots.txt`, and `/sitemap.xml` are exempt from blanket `X-Frame-Options: SAMEORIGIN` and `X-Robots-Tag: index, follow` headers, and are served with dedicated CORS (`Access-Control-Allow-Origin: *`) and explicit content types to guarantee unhindered crawler and ad validator access.
+- **Static Ads Entry (`public/ads.txt`):** Authorized publisher record `google.com, pub-4121707034074280, DIRECT, f08c47fec0942fa0` served as plain text with HTTP 200 at `https://www.openlabs.org.in/ads.txt`.
 
 ---
 

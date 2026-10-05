@@ -23,7 +23,7 @@ yarn dev            # next dev, http://localhost:3000
 yarn build           # next build
 yarn start           # next start (serve a production build)
 yarn lint             # next lint (uses eslint-config-next + .eslintignore, NOT eslint.config.js — see Linting below)
-yarn test:seo         # run automated technical SEO & indexing regression suite (48 checks)
+yarn test:seo         # run automated technical SEO & indexing regression suite (51 checks)
 ```
 
 - **Testing**: Technical SEO, route classification, sitemap purity, and metadata standards are validated via `yarn test:seo` (`scripts/seo-regression-test.cjs`). General unit test runner is not present, so do not assume `yarn test` works.
@@ -39,7 +39,7 @@ CI (`.github/workflows/guard.yml`) runs `yarn install --frozen-lockfile`, `node 
 
 ### next.config duplication
 
-`next.config.js` (ESM — `package.json` has `"type": "module"`) is the config Next.js actually loads: `reactStrictMode`, custom DNS servers, `allowedDevOrigins`, Cloudinary/Google image remote patterns, a security-headers block (`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, `X-Robots-Tag: index, follow`), and a `redirects()` that 308s the apex domain (`openlabs.org.in`) to `www.openlabs.org.in` (the canonical host every `alternates.canonical`/OG URL in the app already hardcodes) — added after Search Console data showed Google indexing both hosts separately. `next.config.cjs` is a near-empty CommonJS leftover (webpack alias for `three`, `experimental.appDir` — a Next 13 flag, no-op in Next 14) that Next.js does **not** load by default given a `next.config.js` exists. Don't edit `next.config.cjs` expecting it to take effect.
+`next.config.js` (ESM — `package.json` has `"type": "module"`) is the config Next.js actually loads: `reactStrictMode`, custom DNS servers, `allowedDevOrigins`, Cloudinary/Google image remote patterns, a security-headers block (`X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, `X-Robots-Tag: index, follow` exempting `/ads.txt`, `/robots.txt`, and `/sitemap.xml` which receive dedicated CORS headers), and a `redirects()` that 308s the apex domain (`openlabs.org.in`) to `www.openlabs.org.in` (the canonical host every `alternates.canonical`/OG URL in the app already hardcodes) — added after Search Console data showed Google indexing both hosts separately. `next.config.cjs` is a near-empty CommonJS leftover (webpack alias for `three`, `experimental.appDir` — a Next 13 flag, no-op in Next 14) that Next.js does **not** load by default given a `next.config.js` exists. Don't edit `next.config.cjs` expecting it to take effect.
 
 ## Architecture
 
@@ -56,7 +56,7 @@ Every subject/lab has **two separate route trees that both must exist**, plus a 
    Both variants take a `launchUrl` prop pointing at step 2.
 2. **Actual interactive lab route** — `app/labs/<subject>/<lab-slug>/page.tsx` (e.g. `app/labs/physics/freefall/page.tsx`). Thin wrapper that `dynamic()`-imports the real component with `ssr: false` (three.js/canvas/WebGL-heavy components generally can't SSR), with a `loading:` fallback rendering `app/components/UniversalLoader.tsx` (themed per-subject skeleton with rotating status/fact text — pass `subject` and optionally `customMessage`).
 3. **Component implementation** — `app/components/<subject>/<LabName>.jsx` (or `.tsx`) — the real interactive UI/logic. See [Per-subject implementation conventions](#per-subject-implementation-conventions) below.
-4. **Registry entry** — `app/lib/labs.ts`, the `LABS` array (94 lab routes registered): `{ id, name, subject: "physics"|"chemistry"|"biology"|"computerScience"|"mathematics", type: "simulation"|"exploration"|"editor", challengeParams: string[], challengeEnabled, description }`. `id` is the `<subject>/<lab-slug>` path segment used to key `DailyChallenge`/`Project`/XP records — **must match** the `labId` string passed to `useLab()`/`DailyChallengeCard` in the lab component. A lab isn't "wired up" for gamification until it's in here — see [Known drift](#known-drift--rough-edges) for labs that exist as routes but aren't registered.
+4. **Registry entry** — `app/lib/labs.ts`, the `LABS` array (99 lab routes registered): `{ id, name, subject: "physics"|"chemistry"|"biology"|"computerScience"|"mathematics", type: "simulation"|"exploration"|"editor", challengeParams: string[], challengeEnabled, description }`. `id` is the `<subject>/<lab-slug>` path segment used to key `DailyChallenge`/`Project`/XP records — **must match** the `labId` string passed to `useLab()`/`DailyChallengeCard` in the lab component. A lab isn't "wired up" for gamification until it's in here — see [Known drift](#known-drift--rough-edges) for labs that exist as routes but aren't registered.
 5. **Navigation** — `app/components/Navbar.tsx` (`labCategories`, hardcoded, does **not** read `labs.ts`) and `app/components/Hero.tsx` (`labsData`, also hardcoded, homepage's curated subset) both need manual updates; neither derives from the registry.
 6. Nothing else needs manual registration — `lib/llms.ts` (root) walks `app/` at request time to build `/llms.txt` and `/llms-full.txt`, so new pages show up there automatically; `app/sitemap.ts` needs a manual entry to appear in the XML sitemap, though.
 

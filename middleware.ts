@@ -61,8 +61,11 @@ export function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const host = request.headers.get('host') || '';
 
-  // Exclude _next and static assets from being intercepted
+  // Exclude _next, static assets, and root crawler meta files from being intercepted
   if (
+    pathname === '/ads.txt' ||
+    pathname === '/robots.txt' ||
+    pathname === '/sitemap.xml' ||
     pathname.startsWith('/_next') ||
     pathname.match(/\.(.*)$/) // like favicon.ico, .png, etc.
   ) {

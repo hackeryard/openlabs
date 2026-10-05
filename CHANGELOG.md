@@ -2,6 +2,37 @@
 
 All notable changes to OpenLabs are documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/); since the project has no version tags yet, entries are grouped by date instead of version number. Generated from git history; merge commits and duplicate/typo commits are omitted.
 
+- **Crawler Accessibility & Root Meta Endpoints Overhaul (`next.config.js`, `app/robots.ts`, `middleware.ts`, `scripts/seo-regression-test.cjs`, `SEO_MAINTENANCE.md`, `REQUIREMENTS.md`)**:
+  - **Exempt Root Discovery Endpoints from Restrictive Framing (`next.config.js`)**: Updated global headers source regex to `/((?!ads\\.txt|robots\\.txt|sitemap\\.xml).*)`, ensuring `X-Frame-Options: SAMEORIGIN` and `X-Robots-Tag: index, follow` are not applied to machine-readable protocol files.
+  - **Dedicated Root Meta Headers (`next.config.js`)**: Configured explicit `Content-Type: text/plain; charset=utf-8` and `Access-Control-Allow-Origin: *` with optimized Edge caching for `/ads.txt` and `/robots.txt`, and `Content-Type: application/xml; charset=utf-8` for `/sitemap.xml`.
+  - **Google AdSense & Robots.txt Directives (`app/robots.ts`)**: Added explicit `Mediapartners-Google` rule with `allow: ["/"]` for AdSense crawler verification and explicitly added `/ads.txt`, `/robots.txt`, and `/sitemap.xml` to the `allow` rules under `User-agent: *`.
+  - **Edge Middleware Multi-Shield Bypass (`middleware.ts`)**: Added root-level bypass for `/ads.txt`, `/robots.txt`, and `/sitemap.xml` at the entry of the middleware handler, guaranteeing unauthenticated HTTP 200 responses across all subdomains and edge conditions.
+  - **Automated Regression Testing (`scripts/seo-regression-test.cjs`)**: Added automated test assertions validating `public/ads.txt` existence, publisher ID authenticity (`google.com, pub-4121707034074280, DIRECT, f08c47fec0942fa0`), AdSense crawler rules, and explicit robots allow rules (Suite 2 passing 51/51).
+
+- **General Relativity & Spacetime Simulator (`app/components/physics/general-relativity/*`, `app/labs/physics/general-relativity/page.tsx`, `app/physics/general-relativity/page.tsx`, `app/lib/labs.ts`, `app/lib/tracks.ts`, `app/lib/pageKnowledge.ts`, `app/physics/page.tsx`, `app/components/Navbar.tsx`, `app/components/Hero.tsx`)**:
+  - **5 Interactive Astrophysical Simulation Modes (`GeneralRelativityLab.tsx`, `engine.ts`, `types.ts`)**:
+    - **Mode 1: 3D Schwarzschild & Kerr Spacetime Geodesic Orbits**: High-performance 60 FPS Canvas with mouse-drag elevation and azimuth rotation, Flamm's paraboloid isometric rubber-sheet mesh ($z(r) = - \frac{A \cdot M}{r}$), oblate rotating Kerr Ergosphere overlay ($r_E(\theta) = M + \sqrt{M^2 - a^2\cos^2\theta}$), Lense-Thirring frame dragging, and 4th-order Runge-Kutta (RK4) geodesic test particle integrator with the cubic GR effective potential correction term ($\vec{a} = -\frac{GM}{r^2}\hat{r}\cdot [1 + \frac{3L^2}{c^2 r^2}]$), reproducing Mercury's anomalous precession ($42.98''/\text{century}$) and sub-ISCO capture.
+    - **Mode 2: Ray-Traced Gravitational Lensing & Black Hole Shadow**: Optical deflection calculations ($\alpha = \frac{4GM}{c^2 b} = \frac{2r_s}{b}$), background starfield distortions, luminous photon sphere rings ($r = 1.5 r_s$), black hole shadow boundaries, and Doppler-beamed accretion disks.
+    - **Mode 3: Gravitational & Kinematic Time Dilation (Atomic Clocks & GPS Constellation)**: Synchronized triple atomic clocks comparing flat Minkowski spacetime ($t_\infty$), local dilated frames ($d\tau = dt_\infty \sqrt{1 - r_s/r}$), and real-world GPS orbits balancing $+45.9\,\mu\text{s/day}$ general relativistic speedup against $-7.2\,\mu\text{s/day}$ special relativistic kinematic dilation for net $+38.7\,\mu\text{s/day}$ drift.
+    - **Mode 4: Redshift Spectrometer & Minkowski Twin Paradox (`SpectrometerPanel.tsx`, `TwinParadoxPanel.tsx`)**: Atomic emission line analysis (Hydrogen-α, Sodium-D, Hydrogen-β, Mercury-green, Lyman-α) with visible spectrum color shift ($T_{\text{obs}} = T_{\text{emit}} / (1 + z)$) and interactive Minkowski spacetime diagram explaining astronaut aging across interstellar round trips.
+    - **Mode 5: Gravitational Waves Inspiral & Penrose Conformal Diagram (`GravitationalWavesPanel.tsx`)**: Real-time binary black hole coalescence simulation (inspiral, merger, and ringdown), strain waveform $h_+(t)$, chirp mass $\mathcal{M} = (m_1 m_2)^{3/5} / (m_1 + m_2)^{1/5}$ telemetry, peak GW power ($10^{49}\text{ W}$), interactive Web Audio frequency chirping synthesizer, and conformal Penrose-Carter diagram with an infalling astronaut proper time slider.
+  - **Metric Tensor & Curvature Inspector (`MetricTensorPanel.tsx`)**:
+    - Real-time $4\times 4$ metric tensor $[g_{\mu\nu}]$ matrix dynamically evaluated with probe radius and Kerr spin $a^*$.
+    - Kretschmann curvature scalar gauge ($K = \frac{48 G^2 M^2}{c^4 r^6}$) proving the horizon is a coordinate artifact while $r=0$ is a true physical singularity.
+    - Live equatorial Lense-Thirring frame-dragging angular velocity ($\Omega_{\text{drag}} = \frac{2GJ}{c^2 r^3}$) and non-zero Christoffel connection symbols ($\Gamma^\mu_{\alpha\beta}$).
+  - **5 Structured Historical Guided Investigations (`InvestigationGuidePanel.tsx`)**:
+    - Built comprehensive lab protocols with 1-click experiment parameter setups, step-by-step observational checklists, and theoretical debriefs:
+      1. *Mercury Perihelion Precession (1915 Einstein)*
+      2. *Eddington Solar Eclipse Light Deflection (1919 Dyson & Eddington)*
+      3. *GPS Relativistic Synthesis (+38.7 µs/day NRL & Parkinson)*
+      4. *Kerr Ergosphere & Penrose Process (1969 Penrose)*
+      5. *Tidal Spaghettification & Event Horizon Safe Passage (Hawking & Thorne)*
+  - **Comprehensive 6-Chapter Theory Handbook Modal (`TheoryModal.tsx`)**:
+    - Full-screen reference handbook with dedicated chapters on the Equivalence Principle, Einstein Field Equations, Schwarzschild Metric, Kerr Metric, Classic Empirical Tests, and Gravitational Waves.
+  - **Full Platform & Gamification Integration**:
+    - Registered in central lab registry (`app/lib/labs.ts`), added to Mechanics & Gravitation track in `app/lib/tracks.ts`, wired with `useLab()`, `<DailyChallengeCard />`, `<NextLabModal />`, and context-aware OpenLabs AI knowledge in `app/lib/pageKnowledge.ts`.
+    - Published public educational landing page (`app/physics/general-relativity/page.tsx`) with full Schema.org structured data, high-ranking GEO/AEO optimization, and updated physics discipline hubs and navigation.
+
 - **Adsterra Popunder & Smartlink Integration with Lab Exclusion Shield (`app/lib/ads.ts`, `app/components/AdsterraPopunder.tsx`, `app/layout.tsx`, `app/globals.css`, `app/components/GoogleAdSense.tsx`, `app/components/OpenLabsTracker.tsx`)**:
   - **Adsterra Anti-Adblock JS Sync Tag Integration**: Integrated the official Adsterra anti-adblock popunder script tag (`https://disregardpervertmural.com/08/e6/db/08e6dbca5d9532e90ba54ed38592f7b0.js`) in `<head>` of `app/layout.tsx` for `openlabs.org.in` publisher verification and public route monetization.
   - **Adsterra Direct Smartlink Configuration (`app/lib/ads.ts`)**: Centralized `ADSTERRA_SMARTLINK_URL` (`https://disregardpervertmural.com/nq14cn3uq9?key=c81181fb15ae3c289e31602fa7849d41`) in the platform advertising configuration registry.

@@ -647,6 +647,53 @@ const LAB_KNOWLEDGE: Record<string, PageKnowledge> = {
     ],
   },
 
+  "physics/general-relativity": {
+    title: "General Relativity & Spacetime Studio",
+    overview:
+      "Comprehensive astrophysical laboratory simulating Einstein's General Theory of Relativity. Features 5 operational modes: 3D Schwarzschild and Kerr Spacetime Geodesics, Ray-Traced Gravitational Lensing & Shadow, Gravitational Time Dilation & GPS Synchronization, Redshift Spectrometry & Twin Paradox, and Binary Black Hole Inspiral Gravitational Waves (LIGO/Virgo Chirp) & Penrose Conformal Diagrams. Includes live Metric Tensor (g_μν) matrix inspection, Kretschmann curvature scalar, Lense-Thirring frame dragging, and 5 structured historical lab investigations.",
+    howToUse: [
+      "Select an astrophysical preset (Sun, Sirius B, Vela Pulsar, Cygnus X-1, Sagittarius A*, or Gargantua) or customize central mass, Kerr spin a*, and probe distance.",
+      "Navigate between 5 primary modes: 3D Spacetime & Orbits, Lensing & Shadow, Time Dilation & GPS, Redshift & Twin Paradox, and Gravitational Waves & Penrose.",
+      "In Spacetime Curvature mode, drag the 3D canvas to rotate perspective, toggle the oblate Ergosphere, and launch test probes on Precession or Zoom-Whirl orbits.",
+      "In Lensing & Shadow mode, adjust impact parameter b to observe light deflection angles, Einstein rings, and photon sphere orbits at 1.5 r_s.",
+      "In Time Dilation mode, compare synchronized clocks showing gravitational dilation dτ = dt_∞ √(1 - r_s/r) and explore the +38.7 μs/day relativistic correction required for GPS satellites.",
+      "In Redshift & Twin Paradox mode, select reference atomic emission lines (Hydrogen-α, Sodium-D, Lyman-α) to observe gravitational wavelength elongation (z) and calculate astronaut aging across interstellar round trips.",
+      "In Gravitational Waves & Penrose mode, simulate binary black hole coalescence, inspect the strain waveform h(t), listen to the audio chirp synthesizer, and toggle the conformal Penrose-Carter diagram.",
+      "Explore the console tabs: Presets, Guided Investigations (5 step-by-step experiment protocols), Metric g_μν (live 4x4 matrix and Christoffel symbols), Theory (with full 6-chapter handbook modal), and Trial Data notebook.",
+    ],
+    controls: [
+      "Mode Tabs: 3D Spacetime & Orbits, Lensing & Shadow, Time Dilation & GPS, Redshift & Twin Paradox, Gravitational Waves & Penrose",
+      "Console Tabs: Presets, Investigations, Metric g_μν, Theory, Trials Notebook",
+      "Central Mass (M) slider: 0.5 M☉ to 50 M☉ (or up to 100M M☉ via presets)",
+      "Probe Radius (r / r_s) slider: 1.05 r_s to 10.0 r_s",
+      "Kerr Spin (a*) slider: 0.0 to 0.998 (Schwarzschild to extreme Kerr rotation)",
+      "Impact Parameter (b / r_s) slider: 1.8 r_s to 10.0 r_s",
+      "Binary Masses (m₁, m₂) sliders in Gravitational Waves mode (1 to 70 M☉)",
+      "Infalling Astronaut Proper Time (τ) slider on the Penrose Conformal Diagram",
+      "Time Warp Rate slider: 0.2x to 3.0x",
+      "Precession & Zoom-Whirl Launch buttons, Ergosphere toggle, Spectrometer line selector, and Log Data Point button",
+    ],
+    keyConcepts: [
+      "Einstein Field Equations: G_μν + Λ g_μν = (8πG / c⁴) T_μν, stating that spacetime geometry tells matter how to move, and matter-energy tells spacetime how to curve.",
+      "Schwarzschild & Kerr Metrics: Static spherical black holes possess an event horizon at r_s = 2GM/c². Spinning black holes have an outer horizon r_+ and an oblate Ergosphere boundary where spacetime itself is dragged into superluminal corotation (Penrose process).",
+      "Metric Tensor Matrix [g_μν]: Line element ds² = g_00 c²dt² + g_11 dr² + g_22 dθ² + g_33 dφ², with Ricci-flat vacuum curvature (R = 0) and non-zero Kretschmann curvature invariant K = 48G²M²/(c⁴r⁶).",
+      "Photon Sphere: At r_ph = 1.5 r_s, gravity is so intense that light photons can travel in unstable circular orbits around the mass.",
+      "Innermost Stable Circular Orbit (ISCO): At r_isco = 3.0 r_s, any test particle orbiting closer spirals into the event horizon.",
+      "Gravitational Waves & Chirp Mass: Binary coalescences radiate quadrupole gravitational waves with strain amplitude h(t) and frequency evolution f_GW ∝ (t_merger - t)^(-3/8), governed by chirp mass ℳ = (m₁m₂)^(3/5)/(m₁+m₂)^(1/5).",
+      "Spaghettification & Tidal Forces: Differential stretching acceleration across a human body Δa = 2GM·Δr / r³ scales as 1/M² at the event horizon, meaning supermassive black holes (Sagittarius A*) permit harmless crossing while stellar black holes (Cygnus X-1) rip matter apart.",
+      "Gravitational Time Dilation: Clocks in deeper gravitational potentials tick slower relative to a distant observer: dτ = dt_∞ √(1 - r_s / r).",
+      "Gravitational Redshift: Photons climbing out of a gravity well lose energy and elongate: λ_obs = λ_emit (1 + z) = λ_emit / √(1 - r_s / r).",
+      "Penrose-Carter Conformal Diagrams: Map infinite spacetime into a finite diamond with light rays fixed at 45°, revealing future null infinity (ℐ⁺), spatial infinity (i⁰), the event horizon, and the spacelike singularity at r = 0.",
+    ],
+    whatToTry: [
+      "Select 'Sun' preset and inspect Mercury's perihelion precession (42.98 arcsec/century) and light deflection (1.75 arcsec).",
+      "Switch to 'Investigations' tab and apply 'GPS Relativistic Synthesis' to explore the +38.7 μs/day net drift.",
+      "Switch to 'Gravitational Waves & Penrose' mode, load the GW150914 preset (36 + 29 M☉), and listen to the audio chirp synthesizer as the binary inspirals into merger.",
+      "Select 'Penrose Conformal Diagram' and drag the astronaut proper time slider past the horizon: observe how future light cones tilt inward toward the horizontal singularity line.",
+      "Open the 'Metric g_μν' tab and vary the probe distance to watch g_rr diverge toward infinity at the horizon, while the Kretschmann scalar remains finite.",
+    ],
+  },
+
   // ────────────────── CHEMISTRY LABS ──────────────────
   "chemistry/periodictable": {
     title: "Interactive Periodic Table Explorer",

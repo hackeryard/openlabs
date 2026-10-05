@@ -70,10 +70,12 @@ Transform the platform from an unstructured catalog of 94 separate labs into a g
 ## 2. Interactive Science & Math Labs 🔬
 
 ### A. Advanced Physics, Quantum & Astrophysics
-- **Special & General Relativity Simulator**:
-  - Spacetime curvature fabric with mass warping (rubber sheet metric).
-  - Gravitational lensing & black hole event horizon photon ray tracing.
-  - Relativistic time dilation ($t' = \frac{t}{\sqrt{1 - v^2/c^2}}$) and length contraction visualizer with moving reference frames and Twin Paradox clock graphs.
+- **Special & General Relativity Simulator [SHIPPED ✅]**:
+  - Live at [`/labs/physics/general-relativity`](/labs/physics/general-relativity) and [`/physics/general-relativity`](/physics/general-relativity).
+  - 5 simulation modes: 3D Spacetime Curvature & Geodesic Orbits (with Kerr ergosphere & frame dragging), Ray-Traced Gravitational Lensing & Shadow, Gravitational Time Dilation & GPS Synchronization (+38.7 µs/day), Visible Spectrum Redshift Spectrometer & Minkowski Twin Paradox calculator, and Binary Black Hole Gravitational Waves (LIGO inspiral chirp audio synthesizer) with Penrose-Carter conformal diagrams.
+  - Metric Tensor ($g_{\mu\nu}$) Inspector displaying live 4x4 metric components, Kretschmann curvature scalar ($K = 48G^2M^2/(c^4r^6)$), and Christoffel symbols.
+  - 5 Structured Historical & Relativistic Guided Investigations (Mercury Perihelion Precession 1915, Eddington Solar Eclipse 1919, GPS Relativistic Synthesis, Kerr Ergosphere & Penrose Process 1969, and Spaghettification Thresholds).
+  - Full-screen 6-chapter Theory Handbook modal covering mathematical physics derivations, history, and tensor calculus.
 - **Quantum Double-Slit & Wave-Particle Duality**:
   - Single-particle (photons/electrons) stochastic emitter with accumulation of interference fringes.
   - Measurement detector interaction simulating quantum state collapse (Copenhagen vs. Many-Worlds representation).
