@@ -9,6 +9,8 @@ import SubtopicHubLayout, {
 } from "@/app/components/SubtopicHubLayout";
 import { KeyRound, Gauge, LineChart, GraduationCap } from "lucide-react";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Classical & Modern Cryptography Virtual Labs | OpenLabs",
   description: "Explore interactive cryptography virtual labs including Caesar cipher wheels, Vigenère matrix lookup, WWII Enigma machine simulations, Diffie-Hellman key exchanges, and SHA-256 Bitcoin mining.",

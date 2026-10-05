@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Osmosis, Diffusion & Cell Tonicity Virtual Lab | OpenLabs",
   description: "Simulate osmosis, selective membrane permeability, Van 't Hoff osmotic pressure, red blood cell hemolysis and crenation, and plant turgor pressure online.",

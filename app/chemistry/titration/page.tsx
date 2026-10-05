@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Titration Simulation Online - Virtual Titration Lab | OpenLabs",
   description: "Experience an interactive acid base titration calculator and virtual titration lab. Plot live pH curves and master volumetric analysis.",

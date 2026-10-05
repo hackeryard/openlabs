@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import ContactForm from "./ContactForm";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Contact OpenLabs - Support & Feedback",
   description:

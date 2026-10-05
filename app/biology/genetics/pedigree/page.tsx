@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Pedigree Tree & Inheritance Patterns Studio | OpenLabs",
   description: "Explore 3-generation human pedigree trees, Autosomal Dominant, Autosomal Recessive, and X-Linked Recessive inheritance patterns with disease risk calculators.",

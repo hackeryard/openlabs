@@ -3,6 +3,8 @@ import EducationalLandingLayout from "@/components/EducationalLandingLayout";
 import { EducationalContent } from "@/types/education";
 import { Metadata } from "next";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "WWII Enigma Machine Simulator - Interactive Computer Science Lab | OpenLabs",
   description: "Explore the WWII Wehrmacht Enigma rotor machine. Step through 3 rotors, Reflector UKW-B, Steckerbrett plugboard, and glowing lampboards.",

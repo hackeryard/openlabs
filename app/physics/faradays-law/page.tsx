@@ -6,6 +6,8 @@ import { createLabMetadata } from "@/app/lib/seo/metadata";
 const PAGE_TITLE = "Electromagnetic Induction & Faraday's Law Simulator";
 const PAGE_DESCRIPTION = "Explore Faraday's Law (ε = -N dΦ/dt), magnetic flux linkage, Lenz's law, AC dynamo generator induction, and live sinusoidal oscilloscope waveforms online.";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = createLabMetadata({
   title: PAGE_TITLE,
   description: PAGE_DESCRIPTION,

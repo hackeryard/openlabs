@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "3D Molecular Geometry & VSEPR Theory Virtual Lab | OpenLabs",
   description: "Explore Valence Shell Electron Pair Repulsion (VSEPR) theory, 3D molecular shapes (linear, trigonal planar, tetrahedral, octahedral), lone pair distortions, and hybridization online.",

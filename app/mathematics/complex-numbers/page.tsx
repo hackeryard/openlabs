@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Complex Numbers & Mandelbrot Fractals Explorer | OpenLabs",
   description: "Master complex numbers and fractal geometry. Explore the Argand plane, rotation-dilation multiplication, Euler's formula, roots of unity, and Mandelbrot/Julia sets.",

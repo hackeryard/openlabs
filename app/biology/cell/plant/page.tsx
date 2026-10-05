@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Plant Cell Simulation | Interactive Botany Lab | OpenLabs",
   description: "Interactive plant cell explorer with 3D visualization of chloroplasts, central vacuoles, cellulose cell walls, plasmodesmata, and specialized botanical organelles.",

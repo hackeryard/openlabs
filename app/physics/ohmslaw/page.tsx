@@ -6,6 +6,8 @@ import { createLabMetadata } from "@/app/lib/seo/metadata";
 const PAGE_TITLE = "Ohm's Law Simulator & DC Circuit Analysis";
 const PAGE_DESCRIPTION = "Explore Ohm's Law (V = I * R) with an interactive virtual circuit simulator for voltage, current, resistance, and V-I behavior.";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = createLabMetadata({
   title: PAGE_TITLE,
   description: PAGE_DESCRIPTION,

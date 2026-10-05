@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { sendTelemetryBeacon, trackError, trackWebVital, trackUxSignal, addBreadcrumb } from "@/app/lib/tracker";
+import { sendTelemetryBeacon, trackError, trackUxSignal, addBreadcrumb } from "@/app/lib/tracker";
 
 // ── Client Environment Detectors ───────────────────────────────────────
 function getClientTech() {
@@ -523,11 +523,6 @@ export default function OpenLabsTracker() {
           if (entry.name === "first-contentful-paint") {
             const val = Math.round(entry.startTime);
             vitals.fcp = val;
-            trackWebVital({
-              name: "FCP",
-              value: val,
-              rating: val <= 1800 ? "good" : val <= 3000 ? "needs-improvement" : "poor",
-            });
           }
         }
       });
@@ -543,11 +538,6 @@ export default function OpenLabsTracker() {
         if (lastEntry) {
           const val = Math.round(lastEntry.startTime);
           vitals.lcp = val;
-          trackWebVital({
-            name: "LCP",
-            value: val,
-            rating: val <= 2500 ? "good" : val <= 4000 ? "needs-improvement" : "poor",
-          });
         }
       });
       lcpObserver.observe({ type: "largest-contentful-paint", buffered: true });
@@ -578,11 +568,6 @@ export default function OpenLabsTracker() {
           );
           if (duration > (vitals.inp || 0)) {
             vitals.inp = duration;
-            trackWebVital({
-              name: "INP",
-              value: duration,
-              rating: duration <= 200 ? "good" : duration <= 500 ? "needs-improvement" : "poor",
-            });
           }
         }
       });
@@ -913,12 +898,19 @@ export default function OpenLabsTracker() {
       });
     };
 
-    // Send heartbeat periodically (every 25 seconds) while page remains open
+    // Capture early engagement milestone at 30 seconds (distinguishing bounce vs engaged)
+    const earlyEngagementTimer = setTimeout(() => {
+      if (typeof document !== "undefined" && document.visibilityState === "visible") {
+        sendHeartbeatUpdate();
+      }
+    }, 30000);
+
+    // Send ongoing heartbeat periodically (every 120 seconds) while page remains open
     const periodicHeartbeat = setInterval(() => {
       if (typeof document !== "undefined" && document.visibilityState === "visible") {
         sendHeartbeatUpdate();
       }
-    }, 25000);
+    }, 120000);
 
     // Send heartbeat when tab is hidden or page is closed
     const handleVisibilityChange = () => {
@@ -931,6 +923,7 @@ export default function OpenLabsTracker() {
     window.addEventListener("pagehide", sendHeartbeatUpdate);
 
     return () => {
+      clearTimeout(earlyEngagementTimer);
       clearInterval(periodicHeartbeat);
       sendHeartbeatUpdate();
       window.removeEventListener("visibilitychange", handleVisibilityChange);

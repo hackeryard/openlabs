@@ -3,6 +3,8 @@ import EducationalLandingLayout from "@/components/EducationalLandingLayout";
 import { EducationalContent } from "@/types/education";
 import { Metadata } from "next";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Caesar Cipher & Rotating Wheel - Interactive Computer Science Lab | OpenLabs",
   description: "Explore the Caesar shift substitution cipher, rotating cipher wheels, live letter-by-letter transformation cards, and Chi-squared auto-cracking.",

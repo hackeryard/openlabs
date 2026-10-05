@@ -16,6 +16,8 @@ import {
   FileSpreadsheet,
 } from "lucide-react";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Chemistry Virtual Labs & Interactive Chemical Simulations",
   description: "Explore interactive chemistry experiments including real-time periodic table, chemical bonding, reaction kinetics, gas laws, titration, and atomic flame spectroscopy.",

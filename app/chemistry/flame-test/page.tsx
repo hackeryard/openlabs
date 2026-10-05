@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Flame Test Simulation & Atomic Emission Spectrometry Virtual Lab | OpenLabs",
   description: "Explore flame excitation of metal cations (Na+, K+, Cu2+, Sr2+, Ba2+, Li+, Ca2+), Bohr orbital electron jumps, photon release, and discrete emission line spectrographs online.",

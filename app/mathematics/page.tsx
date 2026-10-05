@@ -15,6 +15,8 @@ import {
   FileSpreadsheet,
 } from "lucide-react";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Mathematics Virtual Labs & Interactive Function Grapher",
   description: "Explore interactive mathematics simulations including real-time 2D/3D function graphing, calculus derivatives & integrals, linear algebra matrices, Fourier series, and trigonometry.",

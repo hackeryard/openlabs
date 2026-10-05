@@ -9,6 +9,8 @@ import SubtopicHubLayout, {
 } from "@/app/components/SubtopicHubLayout";
 import { Dna, Gauge, LineChart, GraduationCap } from "lucide-react";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Genetics & Heredity Virtual Labs | Biology | OpenLabs",
   description: "Explore interactive genetics virtual labs: Monohybrid Punnett Squares, Dihybrid 16-cell crosses, DNA Transcription & Translation, and 3-generation Pedigree Trees.",

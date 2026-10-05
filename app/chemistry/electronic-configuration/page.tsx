@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Electronic Configuration & Aufbau Principle Virtual Lab | OpenLabs",
   description: "Explore atomic orbitals (s, p, d, f), Pauli Exclusion Principle, Hund's Rule, and Aufbau electron orbital filling simulations online.",

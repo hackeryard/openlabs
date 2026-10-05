@@ -25,6 +25,8 @@ const breadcrumbs = [
   { label: "Data Analyzer", href: "/computer-science/data-analyzer" },
 ];
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Data Analyzer Lab - Network Analysis Tool | OpenLabs",
   description:

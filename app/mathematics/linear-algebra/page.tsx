@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Linear Algebra & Matrix Transformations | OpenLabs",
   description: "Master linear algebra with our interactive 2D grid transformation sandbox. Visualize basis vectors î and ĵ, determinant area scaling, and eigenvectors (Av = λv).",

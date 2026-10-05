@@ -3,6 +3,8 @@ import EducationalLandingLayout from "@/components/EducationalLandingLayout";
 import { EducationalContent } from "@/types/education";
 import { Metadata } from "next";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Blockchain & Cryptography - Interactive Simulation | OpenLabs",
   description: "Explore blockchain technology, distributed ledgers, and cryptographic principles through interactive visualization and simulation.",

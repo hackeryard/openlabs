@@ -26,6 +26,8 @@ const breadcrumbs = [
   { label: "Data Science", href: "/computer-science/data-science" },
 ];
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Data Science Anomaly Detection Lab | OpenLabs",
   description:

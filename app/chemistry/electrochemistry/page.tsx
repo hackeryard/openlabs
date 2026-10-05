@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Electrochemical Galvanic & Electrolytic Cells Virtual Lab | OpenLabs",
   description: "Simulate galvanic voltaic cells, electrolytic cells, standard electrode reduction potentials, Nernst equation concentration shifts, and salt bridge ion flow online.",

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "3D Brain Neuron & Action Potential Virtual Lab | OpenLabs",
   description: "Understand neural networks, neuron anatomy, voltage-gated ion channels, synaptic transmission, and action potential propagation online.",

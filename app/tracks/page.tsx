@@ -3,6 +3,8 @@ import Link from "next/link";
 import CurriculumTracksExplorer from "@/app/components/CurriculumTracksExplorer";
 import { Compass, ArrowRight, Sparkles, BookOpen, GraduationCap, CheckCircle2 } from "lucide-react";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Guided Curriculum Tracks & Structured Science Pathways | OpenLabs",
   description: "Master science and mathematics step-by-step with 13 guided curriculum tracks spanning Physics, Chemistry, Biology, Computer Science, and Mathematics.",

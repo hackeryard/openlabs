@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Interactive Periodic Table | Chemistry Lab | OpenLabs",
   description: "Explore all 118 chemical elements with interactive guides covering atomic properties, orbital blocks, periodic trends, electronegativity, and 3D electron configurations.",

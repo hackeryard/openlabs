@@ -9,6 +9,8 @@ import SubtopicHubLayout, {
 } from "@/app/components/SubtopicHubLayout";
 import { Code, Gauge, LineChart, GraduationCap } from "lucide-react";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Interactive Code Lab & Execution Visualizer | OpenLabs",
   description: "Write, run, and step through HTML, CSS, JavaScript, and Python code with live call stack, heap memory variables, and execution trace visualization.",

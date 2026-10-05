@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Cellular Respiration & Mitochondrial Electron Transport Virtual Lab | OpenLabs",
   description: "Simulate cellular respiration, mitochondrial cristae electron transport chain (Complexes I-IV), proton gradient pumping, rotary ATP Synthase, and metabolic poisons online.",

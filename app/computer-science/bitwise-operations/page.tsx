@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import EducationalLandingLayout from "@/components/EducationalLandingLayout";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Binary & Bitwise Operations Digital Logic Virtual Lab | OpenLabs",
   description: "Explore 8-bit binary registers, Boolean logic gates (AND, OR, XOR, NOT, NAND, NOR, XNOR), bit shifts, circular rotations, Two's complement conversion, and bit twiddling hacks online.",

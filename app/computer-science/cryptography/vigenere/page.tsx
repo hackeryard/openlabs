@@ -3,6 +3,8 @@ import EducationalLandingLayout from "@/components/EducationalLandingLayout";
 import { EducationalContent } from "@/types/education";
 import { Metadata } from "next";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Vigenère Cipher & Tabula Recta - Interactive Computer Science Lab | OpenLabs",
   description: "Explore the polyalphabetic Vigenère cipher, repeating keystreams, live 26x26 Tabula Recta matrix lookup, and letter-by-letter live encryption.",

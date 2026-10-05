@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Dihybrid Cross & Independent Assortment Studio | OpenLabs",
   description: "Explore Mendel's Law of Independent Assortment with a 16-cell interactive Punnett matrix and live 9:3:3:1 phenotype ratio visualizations.",

@@ -62,6 +62,7 @@ The sitemap is generated dynamically by [`app/sitemap.ts`](file:///c:/Users/rahu
 3. **Public Lab Landing Pages:** Every lab registered in [`app/lib/labs.ts`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/lib/labs.ts) maps to its public landing route (`/${lab.id}`), NOT `/labs/${lab.id}`.
 4. **Dynamic Blog Posts:** All published articles from MongoDB (`/blog/${post.slug}`) with genuine `updatedAt` / `date` modification timestamps.
 5. **Policy Verification:** Every route is verified with `isSitemapEligible(path)` before emission.
+6. **Comprehensive Edge CDN ISR Caching (`revalidate = 86400`):** 100% of all public educational routes — all 5 discipline hubs (`/physics`, `/chemistry`, `/biology`, `/mathematics`, `/computer-science`), all 98 individual STEM experiment landing pages (`/<subject>/<slug>`), all 118 periodic table element atom pages (`/chemistry/periodictable/atom/[1..118]`), all 10 subtopic discovery hubs, curriculum tracks (`/tracks`), the `/leaderboard` shell (`revalidate = 3600`), info pages (`/about`, `/contact`), and machine-readable LLM indexes (`/llms.txt`, `/llms-full.txt`) carry 24-hour Edge CDN caching to offload search crawlers and AI bots completely from serverless compute.
 
 ---
 

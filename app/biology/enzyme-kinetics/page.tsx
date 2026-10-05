@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Enzyme Kinetics & Catalysis Simulation Virtual Lab | OpenLabs",
   description: "Explore Michaelis-Menten enzyme kinetics, Lineweaver-Burk double reciprocal plots, competitive and allosteric inhibitors, and thermal/pH denaturation online.",

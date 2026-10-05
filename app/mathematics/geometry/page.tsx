@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Interactive Geometry & Triangle Centers | OpenLabs",
   description: "Master Euclidean geometry and geometric constructions with our interactive virtual mathematics laboratory. Explore triangle centers, the Euler line, inscribed circle theorems, and 2D transformations.",

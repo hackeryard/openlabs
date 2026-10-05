@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Human Anatomy & Body Systems Virtual Lab | OpenLabs",
   description: "Explore human body systems, organ histology, circulatory loops, nervous pathways, respiratory gas exchange, and anatomical homeostatic regulation online.",

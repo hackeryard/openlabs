@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Animal Cell Organelles & Cytology Virtual Lab | OpenLabs",
   description: "Interactive animal cell explorer with 3D visualization of eukaryotic organelles, nucleus, mitochondria, endoplasmic reticulum, Golgi apparatus, and lysosomes.",

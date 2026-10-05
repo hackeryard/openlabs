@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import EducationalLandingLayout from "@/components/EducationalLandingLayout";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Intel 8085 & SAP-1 Microprocessor Architecture Virtual Lab | OpenLabs",
   description: "Explore the Intel 8085 & SAP-1 8-bit microprocessor hardware datapath, ALU, register array (A, B, C, D, E, H, L, SP, PC), timing control signals, flags, and assembly opcode execution online.",

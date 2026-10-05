@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Probability & Statistics Sandbox | OpenLabs",
   description: "Master probability and mathematical statistics with our interactive simulation laboratory. Explore the Galton Board, Central Limit Theorem, probability distributions, and Ordinary Least Squares (OLS) regression.",

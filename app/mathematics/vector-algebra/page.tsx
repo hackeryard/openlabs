@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Vector Algebra & 3D Space Projections | OpenLabs",
   description: "Master Vector Algebra, dot and cross products, orthogonal projections, and 3D space with our interactive virtual mathematics laboratory. Explore the Parallelogram Law, Right-Hand Rule, and Parallelepiped volumes.",

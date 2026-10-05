@@ -16,6 +16,8 @@ import {
   FileSpreadsheet,
 } from "lucide-react";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Physics Virtual Labs & Interactive Online Experiments",
   description: "Explore free interactive physics virtual labs covering mechanics, circuits, wave optics, electromagnetism, and quantum physics. Grounded in exact differential equation numerical solvers.",

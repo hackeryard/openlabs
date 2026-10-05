@@ -4,6 +4,8 @@ import { createNetworkingMetadata, networkingContent } from "../networkingConten
 
 const content = networkingContent["topology-builder"];
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata = createNetworkingMetadata(content);
 
 export default function Page() {

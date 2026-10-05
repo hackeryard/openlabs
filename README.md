@@ -71,7 +71,7 @@ yarn build
 # Start production server
 yarn start
 
-# Run automated technical SEO & indexing regression suite (43 checks)
+# Run automated technical SEO & indexing regression suite (51 checks)
 yarn test:seo
 ```
 
@@ -166,13 +166,15 @@ yarn test:seo
 - 📊 **Behavioral UX & Frustration Radar** — Rapid click detection ($\ge 3$ clicks in 500ms, $< 40$px) with DOM element selectors, desktop exit-intent tracking, reading depth milestones (`25%`, `50%`, `75%`, `90%`, `100%`), and outbound external link clicks.
 - 📊 **STEM Lab Intelligence & Learning Funnel** — Granular telemetry capturing simulation starts, experiment completions, completion rate %, parameter sliders, and quiz attempts.
 - 📊 **Returning Users & Loyalty Directory** — Persistent visitor lifecycle tracking identifying returning students, lifetime visit counts, total dwell time, and profile linking for registered members.
+- 📊 **Serverless Compute Governance & Telemetry Throttling** — Dwell-time telemetry heartbeats throttled to 120s intervals with an initial 30s milestone, Web Vitals consolidated directly into the `PageView.webVitals` beacon, user session checks cached for 60s in `AuthProvider`, and geolocation database writes throttled to $\le 1$ update per 24 hours in `/api/auth/me` to strictly govern serverless function invocations and Fluid Active CPU usage.
 
 ### Enterprise Technical SEO & Educational Knowledge Graph 🌐
 - 🌐 **Centralized Route Classification Policy** — Single source of truth in `app/lib/seoRoutePolicy.ts` distinguishing public indexable landing pages, non-indexable interactive labs (`/labs/*`), private routes, and redirects.
 - 🌐 **Multi-Layer Interactive Lab Shield** — Strict separation of 101 interactive lab canvases from public search indexes using `robots: { index: false, follow: false, nocache: true }` in `app/labs/layout.tsx`, Edge HTTP headers (`X-Robots-Tag: noindex, nofollow, noarchive`) in `middleware.ts`, and sitemap purity filters in `app/sitemap.ts`.
+- 🌐 **Comprehensive Edge CDN Incremental Static Regeneration (ISR)** — 100% of public educational routes — all 5 discipline hubs (`/physics`, `/chemistry`, `/biology`, `/mathematics`, `/computer-science`), all 98 individual STEM experiment landing pages (`/<subject>/<slug>`), all 118 periodic table element atom pages (`/chemistry/periodictable/atom/[1..118]`), all 10 subtopic discovery hubs, curriculum pathways (`/tracks`), the `/leaderboard` shell (`revalidate = 3600`), info pages (`/about`, `/contact`), and text manifests (`/llms.txt`, `/llms-full.txt`) — export `revalidate = 86400` to serve public and crawler traffic directly from Vercel Edge CDN with zero serverless function invocations.
 - 🌐 **Subtopic Reciprocal Cross-Linking** — Dynamic "Related Concepts & Sibling Experiments" grids across DSA, Logic Gates, Networking, and AI Problem templates, eliminating single-internal-link crawl warnings and boosting horizontal PageRank.
 - 🌐 **Blog Engine Performance (SSG + Cache)** — Build-time Static Site Generation (`generateStaticParams`) and React `cache()` query deduplication in `app/blog/[slug]/page.tsx`, reducing response latency from 4.056s to <100ms.
-- 🌐 **Automated SEO Regression Suite (`yarn test:seo`)** — 43 automated invariants validating sitemap purity, route existence, canonical standards, and negative security constraints in local development and CI (`.github/workflows/guard.yml`). See [`SEO_MAINTENANCE.md`](SEO_MAINTENANCE.md).
+- 🌐 **Automated SEO Regression Suite (`yarn test:seo`)** — 51 automated invariants validating sitemap purity, route existence, canonical standards, and negative security constraints in local development and CI (`.github/workflows/guard.yml`). See [`SEO_MAINTENANCE.md`](SEO_MAINTENANCE.md).
 - 🌐 **Modular Knowledge Graph** — Domain-driven STEM concept registries (`app/lib/knowledge/concepts/`), sequential learning paths (`paths/`), and formula registries (`formulas/`) mapping prerequisites, next steps, and related labs.
 - 🌐 **Focused SEO Utilities & Metadata Creators** — Standardized metadata builders (`app/lib/seo/metadata/`) for labs, subjects, and articles preventing title brand template duplication (`%s | OpenLabs`).
 - 🌐 **Canonical URL Normalizer** — Automatic absolute canonical generator enforcing HTTPS, lowercase paths, removing trailing slashes, and stripping tracking parameters (`utm_*`, `gclid`, `fbclid`).

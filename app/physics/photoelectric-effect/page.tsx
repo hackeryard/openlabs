@@ -6,6 +6,8 @@ import { createLabMetadata } from "@/app/lib/seo/metadata";
 const PAGE_TITLE = "Photoelectric Effect Simulator & Quantum Photon Lab";
 const PAGE_DESCRIPTION = "Explore Einstein's photoelectric effect equation (K_max = hf - Φ), cathode metal work functions, threshold frequencies, stopping potentials, and discrete photon quantization online.";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = createLabMetadata({
   title: PAGE_TITLE,
   description: PAGE_DESCRIPTION,

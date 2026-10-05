@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Blood Transfusion & ABO Blood Groups Virtual Lab | OpenLabs",
   description: "Examine human blood components, ABO and Rh antigen-antibody agglutination reactions, and clinical transfusion compatibility online.",

@@ -26,6 +26,8 @@ import {
   Activity,
 } from "lucide-react";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "About OpenLabs - Free Interactive STEM Virtual Labs",
   description:

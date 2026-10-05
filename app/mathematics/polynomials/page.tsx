@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Quadratic & Polynomial Explorer | OpenLabs",
   description: "Master quadratic equations, parabolic geometry, discriminant analysis (Δ = b² - 4ac), higher-degree polynomials, and synthetic division online.",

@@ -29,12 +29,15 @@ import { usePathname } from "next/navigation";
 import { getPageKnowledgeText } from "@/app/lib/pageKnowledge";
 import { analyticsService } from "@/lib/analytics";
 
+import { useAuth } from "@/components/AuthProvider";
+
 // Routes where the chatbot is never shown, regardless of auth status
 const HIDDEN_ROUTES = ["/login", "/signup", "/forgot"];
 
 export default function OpenLabsAI() {
   const { experimentData } = useChat();
   const pathname = usePathname();
+  const { user, authState } = useAuth();
 
   // --- Auth-aware visibility ---
   const [isAuthed, setIsAuthed] = useState<boolean | null>(null); // null = loading
@@ -56,38 +59,16 @@ export default function OpenLabsAI() {
   const lastSnapshotRef = useRef<string>("");
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch(`/api/auth/me?t=${Date.now()}`, {
-          cache: "no-store",
-          headers: {
-            "Cache-Control": "no-cache",
-            Pragma: "no-cache",
-          },
-        });
-        if (!res.ok) {
-          if (!cancelled) setIsAuthed(false);
-          return;
-        }
-        const data = await res.json();
-        if (!cancelled) {
-          setIsAuthed(!!data.user);
-          if (data.user) {
-            const todayStr = new Date().toISOString().split("T")[0];
-            const hasQueriedToday = data.user.lastAiQueryDate === todayStr;
-            const count = hasQueriedToday ? data.user.aiQueriesCount ?? 0 : 0;
-            setRemainingQueries(Math.max(0, 10 - count));
-          }
-        }
-      } catch {
-        if (!cancelled) setIsAuthed(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [pathname]);
+    if (authState === "AUTHENTICATED" && user) {
+      setIsAuthed(true);
+      const todayStr = new Date().toISOString().split("T")[0];
+      const hasQueriedToday = (user as any).lastAiQueryDate === todayStr;
+      const count = hasQueriedToday ? ((user as any).aiQueriesCount ?? 0) : 0;
+      setRemainingQueries(Math.max(0, 10 - count));
+    } else if (authState === "UNAUTHENTICATED") {
+      setIsAuthed(false);
+    }
+  }, [user, authState]);
 
   // Track if user manually scrolled up
   const userScrolledUpRef = useRef(false);

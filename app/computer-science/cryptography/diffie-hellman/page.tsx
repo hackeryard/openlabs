@@ -3,6 +3,8 @@ import EducationalLandingLayout from "@/components/EducationalLandingLayout";
 import { EducationalContent } from "@/types/education";
 import { Metadata } from "next";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Diffie-Hellman Key Exchange - Interactive Computer Science Lab | OpenLabs",
   description: "Explore asymmetric Diffie-Hellman key exchange. Visualize paint color mixing, discrete logarithms, and eavesdropper security.",

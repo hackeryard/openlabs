@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Set Theory & Boolean Algebra | OpenLabs",
   description: "Master set theory, Venn diagrams, and Boolean logic with our interactive virtual mathematics laboratory. Explore set operations, De Morgan's laws, Principle of Inclusion-Exclusion, and function mappings.",

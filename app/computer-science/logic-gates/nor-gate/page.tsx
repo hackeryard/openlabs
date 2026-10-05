@@ -4,6 +4,8 @@ import { createLogicGateMetadata, gateContent } from "../gateContent";
 
 const gate = gateContent["nor-gate"];
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata = createLogicGateMetadata(gate);
 
 export default function Page() {

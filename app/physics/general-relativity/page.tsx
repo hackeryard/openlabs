@@ -2,6 +2,8 @@
 import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "General Relativity & Spacetime Simulator | Physics Lab | OpenLabs",
   description:

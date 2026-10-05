@@ -25,6 +25,8 @@ const breadcrumbs = [
   { label: "Git Simulator", href: "/computer-science/git-simulator" },
 ];
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Git Simulator - Learn Version Control Visually | OpenLabs",
   description:
