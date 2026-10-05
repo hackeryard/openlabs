@@ -156,3 +156,12 @@ OpenLabs maintains strict separation between monetization scripts and educationa
 - **Interactive Simulation & Admin Hard-Exclusion**: Popunders, overlays, and display ad units are strictly suppressed on all `/labs/*` and `/admin/*` routes via [`AdsterraPopunder.tsx`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/components/AdsterraPopunder.tsx), [`GoogleAdSense.tsx`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/components/GoogleAdSense.tsx), `window.open` guards, and [`app/globals.css`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/globals.css).
 - **Search Quality Compliance**: Guarantees compliance with Google Search Essentials and Page Experience criteria by preventing intrusive popups or layout shifts within interactive educational tools.
 
+---
+
+## 11. Edge 308 URL Canonicalization & Broken Path Recovery
+
+To maintain search engine crawl efficiency, conserve crawl budget, and prevent 404 broken routes from entering telemetry or search logs:
+- **Case Sensitivity & Lowercase Normalization**: Edge middleware ([`middleware.ts`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/middleware.ts)) intercepts any non-lowercase URLs (e.g. `/LABS/CHEMISTRY/FLAME-TEST`) and permanently redirects (HTTP 308) to the canonical lowercase equivalent (`/labs/chemistry/flame-test`).
+- **Whitespace & Encoding Cleanup**: Any pathnames containing `%20`, spaces, or double slashes (e.g. `/labs/computer%20-science/ai-%20problem/%20forward%20-backward`) are stripped of whitespace and redirected via HTTP 308 to their canonical destination.
+- **Typo Recovery & Subject Hub Mapping**: Common path typos (`conputer-science` &rarr; `computer-science`, `al-problem` &rarr; `ai-problem`, `forward-backwardrnn` &rarr; `forward-backward`) and bare `/labs/<subject>` requests automatically redirect via HTTP 308 to their canonical public landing hubs (`/<subject>`).
+

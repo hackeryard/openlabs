@@ -118,6 +118,7 @@ export default function OpenLabsAI() {
   // speech recognition
   const [listening, setListening] = useState(false);
   const recognitionRef = useRef<any>(null);
+  const sendMessageWithTextRef = useRef<((text: string) => Promise<void>) | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -142,7 +143,7 @@ export default function OpenLabsAI() {
       setInput(transcript);
 
       setTimeout(() => {
-        sendMessageWithText(transcript);
+        sendMessageWithTextRef.current?.(transcript);
       }, 200);
     };
 
@@ -249,13 +250,6 @@ export default function OpenLabsAI() {
   const contextInfo = getContextBadge();
   const ContextIcon = contextInfo.icon;
 
-  const isHiddenRoute = HIDDEN_ROUTES.some(
-    (r) => pathname === r || pathname.startsWith(r + "/")
-  );
-  const shouldHide = isHiddenRoute || !isAuthed;
-
-  if (shouldHide) return null;
-
   const sendMessage = async () => {
     await sendMessageWithText(input);
     setInput("");
@@ -337,6 +331,7 @@ export default function OpenLabsAI() {
       setLoading(false);
     }
   };
+  sendMessageWithTextRef.current = sendMessageWithText;
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -355,6 +350,13 @@ export default function OpenLabsAI() {
     setMessages([]);
     setStreamingText("");
   };
+
+  const isHiddenRoute = HIDDEN_ROUTES.some(
+    (r) => pathname === r || pathname.startsWith(r + "/")
+  );
+  const shouldHide = isHiddenRoute || !isAuthed;
+
+  if (shouldHide) return null;
 
   return (
     <>

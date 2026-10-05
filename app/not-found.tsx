@@ -21,13 +21,25 @@ export default function NotFound() {
     if (typeof window !== "undefined") {
       const currentPath = window.location.pathname;
       const ref = typeof document !== "undefined" ? document.referrer : "";
-      trackError(`404 Not Found (Broken Page Route: ${currentPath})`, {
-        errorType: "not_found",
-        extra: {
-          requestedPath: currentPath,
-          referrer: ref || "Direct Navigation",
-        },
-      });
+
+      // Ignore automated crawler vulnerability probes & bot scans
+      const isScannerProbe =
+        currentPath.includes("wp-") ||
+        currentPath.includes(".php") ||
+        currentPath.includes(".env") ||
+        currentPath.includes("xmlrpc") ||
+        currentPath.includes(".git") ||
+        currentPath.includes("cgi-bin");
+
+      if (!isScannerProbe) {
+        trackError(`404 Not Found (Broken Page Route: ${currentPath})`, {
+          errorType: "not_found",
+          extra: {
+            requestedPath: currentPath,
+            referrer: ref || "Direct Navigation",
+          },
+        });
+      }
     }
   }, []);
 

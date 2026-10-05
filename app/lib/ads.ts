@@ -39,3 +39,29 @@ export function isAdExcludedRoute(pathname: string | null): boolean {
   }
   return false;
 }
+
+/**
+ * Known third-party ad networks, anti-adblock fallback domains, and rotated Adsterra sources.
+ */
+export const AD_HOST_PATTERNS = [
+  "disregardpervertmural",
+  "portalfluently",
+  "sfp.js",
+  "adsterra",
+  "googleads",
+  "doubleclick",
+  "googlesyndication",
+  "pagead",
+  "adsbygoogle",
+  "adtrafficquality",
+  "sodar",
+];
+
+/**
+ * Checks if a given URL or host belongs to external advertising scripts.
+ */
+export function isAdOrTrackerUrl(url: string): boolean {
+  if (!url) return false;
+  const lower = url.toLowerCase();
+  return AD_HOST_PATTERNS.some((pattern) => lower.includes(pattern));
+}
