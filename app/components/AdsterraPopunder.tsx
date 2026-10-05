@@ -22,6 +22,9 @@ function purgeAdsterraElements(): void {
     "iframe[src*='disregardpervertmural']",
     "a[href*='disregardpervertmural']",
     "div[id*='disregardpervertmural']",
+    "iframe[src*='portalfluently']",
+    "a[href*='portalfluently']",
+    "div[id*='portalfluently']",
     "[data-adsterra]",
   ];
   const nodes = document.querySelectorAll(selectors.join(", "));
@@ -62,6 +65,7 @@ export default function AdsterraPopunder() {
         const urlStr = typeof url === "string" ? url : url?.toString() || "";
         if (
           urlStr.includes("disregardpervertmural") ||
+          urlStr.includes("portalfluently") ||
           urlStr.includes("adsterra")
         ) {
           return null;
@@ -81,7 +85,9 @@ export default function AdsterraPopunder() {
               if (
                 src.includes("disregardpervertmural") ||
                 href.includes("disregardpervertmural") ||
-                (tag === "iframe" && src.includes("disregard"))
+                src.includes("portalfluently") ||
+                href.includes("portalfluently") ||
+                (tag === "iframe" && (src.includes("disregard") || src.includes("fluently")))
               ) {
                 detected = true;
                 break;

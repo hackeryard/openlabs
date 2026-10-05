@@ -159,8 +159,15 @@ export const LABS: Lab[] = [
     challengeEnabled: true,
     description: "Moving wave sources, wavefront compression, sonic barrier shock waves, and supersonic Mach cone envelopes",
   },
-
-
+  {
+    id: "physics/general-relativity",
+    name: "General Relativity & Spacetime Curvature",
+    subject: "physics",
+    type: "simulation",
+    challengeParams: ["schwarzschildRadiusKm", "timeDilationFactor", "deflectionAngleArcsec", "escapeVelocityC"],
+    challengeEnabled: true,
+    description: "3D curved spacetime metric, Schwarzschild black holes, ray-traced gravitational lensing, and relativistic time dilation",
+  },
 
   // ─── CHEMISTRY ─────────────────────────────────────────
   {

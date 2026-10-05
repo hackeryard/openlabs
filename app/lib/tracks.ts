@@ -107,6 +107,14 @@ export const CURRICULUM_TRACKS: CurriculumTrack[] = [
         simRoute: "/labs/physics/kepler-orbit",
         landingRoute: "/physics/kepler-orbit",
       },
+      {
+        labId: "physics/general-relativity",
+        title: "General Relativity & Spacetime Curvature",
+        description: "3D curved spacetime metric, Schwarzschild black holes, ray-traced gravitational lensing, and relativistic time dilation.",
+        estimatedMinutes: 20,
+        simRoute: "/labs/physics/general-relativity",
+        landingRoute: "/physics/general-relativity",
+      },
     ],
   },
   {

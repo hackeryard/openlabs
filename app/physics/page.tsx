@@ -182,6 +182,15 @@ const experiments: PhysicsExperiment[] = [
     difficulty: "Intermediate",
     duration: "16 min",
   },
+  {
+    href: "/physics/general-relativity",
+    title: "General Relativity & Spacetime Curvature",
+    desc: "3D curved spacetime metric, Schwarzschild black holes, ray-traced gravitational lensing, and relativistic time dilation.",
+    formula: "G_{\\mu\\nu} = \\frac{8\\pi G}{c^4} T_{\\mu\\nu} \\quad r_s = \\frac{2GM}{c^2}",
+    category: "Quantum Physics",
+    difficulty: "Advanced",
+    duration: "20 min",
+  },
 ];
 
 const faqs = [
@@ -260,6 +269,12 @@ const scientificPrinciples = [
     laws: "First & Second Laws of Thermodynamics, Carnot Efficiency",
     formulas: "PV = nRT, η = 1 - (T_C / T_H), ΔS ≥ 0",
     solver: "Equation of State (EOS) & Closed-Loop Cycle Integrals",
+  },
+  {
+    domain: "General Relativity & Astrophysics",
+    laws: "Einstein Field Equations, Schwarzschild Metric, Equivalence Principle",
+    formulas: "G_μν = (8πG/c⁴)T_μν, r_s = 2GM/c², dτ = dt_∞√(1 - r_s/r)",
+    solver: "Geodesic RK4 Integrator & Schwarzschild Ray-Tracing",
   },
 ];
 

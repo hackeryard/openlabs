@@ -110,8 +110,25 @@ if (fs.existsSync(robotsPath)) {
     'app/robots.ts disallows private /admin/ and /api/ paths'
   );
   assert(
-    robotsContent.includes('sitemap: `'),
-    'app/robots.ts advertises canonical sitemap.xml URL'
+    robotsContent.includes('"/ads.txt"') &&
+      robotsContent.includes('"/robots.txt"') &&
+      robotsContent.includes('"/sitemap.xml"'),
+    'app/robots.ts explicitly allows /ads.txt, /robots.txt, and /sitemap.xml'
+  );
+  assert(
+    robotsContent.includes('"Mediapartners-Google"'),
+    'app/robots.ts explicitly configures Mediapartners-Google for Google AdSense'
+  );
+}
+
+// 2D: ads.txt verification
+const adsTxtPath = path.join(ROOT_DIR, 'public', 'ads.txt');
+assert(fs.existsSync(adsTxtPath), 'public/ads.txt exists');
+if (fs.existsSync(adsTxtPath)) {
+  const adsTxtContent = fs.readFileSync(adsTxtPath, 'utf8').trim();
+  assert(
+    adsTxtContent.includes('google.com, pub-4121707034074280, DIRECT, f08c47fec0942fa0'),
+    'public/ads.txt contains valid Google AdSense publisher record'
   );
 }
 

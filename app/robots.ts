@@ -7,9 +7,16 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       {
+        userAgent: "Mediapartners-Google",
+        allow: ["/"],
+      },
+      {
         userAgent: "*",
         allow: [
           "/",
+          "/ads.txt",
+          "/robots.txt",
+          "/sitemap.xml",
           "/physics",
           "/physics/",
           "/chemistry",

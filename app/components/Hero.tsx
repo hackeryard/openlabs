@@ -19,15 +19,15 @@ import AnimatedCard from "@/components/ui/AnimatedCard";
 
 const labsData = {
   Physics: {
-    count: "16 Labs",
+    count: "17 Labs",
     color: "from-blue-600 to-cyan-500",
     badge: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
     icon: <Atom className="w-5 h-5" aria-hidden="true" />,
     path: "/physics",
     items: [
+      { name: "General Relativity & Spacetime", path: "/physics/general-relativity" },
       { name: "Doppler Effect & Sonic Boom", path: "/physics/doppler-effect" },
       { name: "Kepler Orbit Dynamics", path: "/physics/kepler-orbit" },
-      { name: "Free Fall Motion", path: "/physics/freefall" },
       { name: "Faraday's Law", path: "/physics/faradays-law" },
     ],
   },

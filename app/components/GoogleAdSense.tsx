@@ -45,6 +45,9 @@ function purgeAdElements(): void {
     "iframe[src*='disregardpervertmural']",
     "a[href*='disregardpervertmural']",
     "div[id*='disregardpervertmural']",
+    "iframe[src*='portalfluently']",
+    "a[href*='portalfluently']",
+    "div[id*='portalfluently']",
   ];
   const adNodes = document.querySelectorAll(selectors.join(", "));
   adNodes.forEach((node) => {

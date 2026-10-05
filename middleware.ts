@@ -61,12 +61,68 @@ export function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const host = request.headers.get('host') || '';
 
-  // Exclude _next and static assets from being intercepted
+  // Exclude _next, static assets, and root crawler meta files from being intercepted
   if (
+    pathname === '/ads.txt' ||
+    pathname === '/robots.txt' ||
+    pathname === '/sitemap.xml' ||
     pathname.startsWith('/_next') ||
     pathname.match(/\.(.*)$/) // like favicon.ico, .png, etc.
   ) {
     return NextResponse.next();
+  }
+
+  // ── 0. CANONICAL URL NORMALIZATION & TYPO AUTO-RECOVERY ──────────────
+  let normalizedPath = pathname;
+
+  // A. Lowercase canonicalization (e.g. /LABS/CHEMISTRY/FLAME-TEST -> /labs/chemistry/flame-test)
+  if (normalizedPath !== normalizedPath.toLowerCase()) {
+    normalizedPath = normalizedPath.toLowerCase();
+  }
+
+  // B. URL whitespace and encoded %20 cleanup
+  // (e.g. /labs/computer%20-science/ai-%20problem/%20forward%20-backward -> /labs/computer-science/ai-problem/forward-backward)
+  if (normalizedPath.includes('%20') || normalizedPath.includes(' ') || normalizedPath.includes('+')) {
+    try {
+      normalizedPath = decodeURIComponent(normalizedPath);
+    } catch {}
+    normalizedPath = normalizedPath.replace(/\s+/g, '').replace(/\/+/g, '/');
+  }
+
+  // C. Common typos & truncated routes auto-correction
+  if (normalizedPath.includes('conputer-science')) {
+    normalizedPath = normalizedPath.replace('conputer-science', 'computer-science');
+  }
+  if (normalizedPath.includes('/al-problem')) {
+    normalizedPath = normalizedPath.replace('/al-problem', '/ai-problem');
+  }
+  if (normalizedPath.includes('forward-backwardrnn')) {
+    normalizedPath = normalizedPath.replace('forward-backwardrnn', 'forward-backward');
+  }
+  if (
+    normalizedPath === '/labs/computer-scien' ||
+    normalizedPath === '/computer-scien' ||
+    normalizedPath === '/labs/computer-science'
+  ) {
+    normalizedPath = '/computer-science';
+  }
+
+  // D. Subject hub redirects (/labs/<subject> -> /<subject>)
+  const subjectHubRedirects: Record<string, string> = {
+    '/labs/physics': '/physics',
+    '/labs/chemistry': '/chemistry',
+    '/labs/biology': '/biology',
+    '/labs/mathematics': '/mathematics',
+  };
+  if (subjectHubRedirects[normalizedPath]) {
+    normalizedPath = subjectHubRedirects[normalizedPath];
+  }
+
+  // If normalized path differs, redirect cleanly to canonical destination
+  if (normalizedPath !== pathname) {
+    const canonicalUrl = request.nextUrl.clone();
+    canonicalUrl.pathname = normalizedPath;
+    return NextResponse.redirect(canonicalUrl, 308);
   }
 
   const isLocalDev =

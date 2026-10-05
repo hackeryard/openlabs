@@ -201,6 +201,8 @@ export default function OpenLabsTracker() {
             lowerSrc.includes("googleadservices") ||
             lowerSrc.includes("googleusercontent.com") ||
             lowerSrc.includes("disregardpervertmural") ||
+            lowerSrc.includes("portalfluently") ||
+            lowerSrc.includes("sfp.js") ||
             lowerSrc.includes("adsterra") ||
             lowerSrc.includes("extension://") ||
             lowerSrc.includes("chrome-extension://") ||
@@ -297,7 +299,10 @@ export default function OpenLabsTracker() {
         return;
       }
 
-      // Ignore benign / extension errors / network aborts / Safari translation artifacts
+      // Ignore benign / extension errors / network aborts / Safari translation artifacts / third-party ad rejections
+      const reasonStack = typeof reason === "object" && reason !== null ? String(reason.stack || reason.message || "") : String(reason || "");
+      const lowerReasonStack = reasonStack.toLowerCase();
+
       if (
         message === "La" ||
         message.includes("ResizeObserver loop") ||
@@ -307,7 +312,22 @@ export default function OpenLabsTracker() {
         message.includes("metamask") ||
         message.includes("Failed to connect to MetaMask") ||
         message.includes("clarity") ||
-        message.includes("_vercel")
+        message.includes("_vercel") ||
+        lowerReasonStack.includes("chrome-extension://") ||
+        lowerReasonStack.includes("moz-extension://") ||
+        lowerReasonStack.includes("safari-extension://") ||
+        lowerReasonStack.includes("extension://") ||
+        lowerReasonStack.includes("disregardpervertmural") ||
+        lowerReasonStack.includes("portalfluently") ||
+        lowerReasonStack.includes("adsterra") ||
+        lowerReasonStack.includes("openanalytics") ||
+        (message.includes("Failed to fetch") && (
+          lowerReasonStack.includes("chrome-extension") ||
+          lowerReasonStack.includes("disregardpervertmural") ||
+          lowerReasonStack.includes("portalfluently") ||
+          lowerReasonStack.includes("openanalytics") ||
+          lowerReasonStack.includes("injectscript")
+        ))
       ) {
         return;
       }
@@ -340,6 +360,21 @@ export default function OpenLabsTracker() {
           // Normal expected client state & quota responses:
           // /api/auth/me returning 401 (guest) or 403 (unverified email) is normal status response
           if (url.includes("/api/auth/me") && (response.status === 401 || response.status === 403)) {
+            return response;
+          }
+
+          // /api/auth/login and /api/auth/signup expected credential validation & verification status:
+          // 400 (missing fields), 401 (invalid credentials), 403 (unverified email requiring OTP), 409 (user exists)
+          if (
+            url.includes("/api/auth/login") &&
+            (response.status === 400 || response.status === 401 || response.status === 403)
+          ) {
+            return response;
+          }
+          if (
+            url.includes("/api/auth/signup") &&
+            (response.status === 400 || response.status === 409)
+          ) {
             return response;
           }
 

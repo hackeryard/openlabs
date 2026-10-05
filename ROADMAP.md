@@ -70,10 +70,12 @@ Transform the platform from an unstructured catalog of 94 separate labs into a g
 ## 2. Interactive Science & Math Labs 🔬
 
 ### A. Advanced Physics, Quantum & Astrophysics
-- **Special & General Relativity Simulator**:
-  - Spacetime curvature fabric with mass warping (rubber sheet metric).
-  - Gravitational lensing & black hole event horizon photon ray tracing.
-  - Relativistic time dilation ($t' = \frac{t}{\sqrt{1 - v^2/c^2}}$) and length contraction visualizer with moving reference frames and Twin Paradox clock graphs.
+- **Special & General Relativity Simulator [SHIPPED ✅]**:
+  - Live at [`/labs/physics/general-relativity`](/labs/physics/general-relativity) and [`/physics/general-relativity`](/physics/general-relativity).
+  - 5 simulation modes: 3D Spacetime Curvature & Geodesic Orbits (with Kerr ergosphere & frame dragging), Ray-Traced Gravitational Lensing & Shadow, Gravitational Time Dilation & GPS Synchronization (+38.7 µs/day), Visible Spectrum Redshift Spectrometer & Minkowski Twin Paradox calculator, and Binary Black Hole Gravitational Waves (LIGO inspiral chirp audio synthesizer) with Penrose-Carter conformal diagrams.
+  - Metric Tensor ($g_{\mu\nu}$) Inspector displaying live 4x4 metric components, Kretschmann curvature scalar ($K = 48G^2M^2/(c^4r^6)$), and Christoffel symbols.
+  - 5 Structured Historical & Relativistic Guided Investigations (Mercury Perihelion Precession 1915, Eddington Solar Eclipse 1919, GPS Relativistic Synthesis, Kerr Ergosphere & Penrose Process 1969, and Spaghettification Thresholds).
+  - Full-screen 6-chapter Theory Handbook modal covering mathematical physics derivations, history, and tensor calculus.
 - **Quantum Double-Slit & Wave-Particle Duality**:
   - Single-particle (photons/electrons) stochastic emitter with accumulation of interference fringes.
   - Measurement detector interaction simulating quantum state collapse (Copenhagen vs. Many-Worlds representation).
@@ -234,3 +236,20 @@ Transform the platform from an unstructured catalog of 94 separate labs into a g
   - Multi-layer guard (`GoogleAdSense.tsx`, `AdsterraPopunder.tsx`, `app/globals.css`) guarantees 0 popunders, 0 ad overlays, and suppressed `window.open` ad invocations on all `/labs/*` and `/admin/*` views.
 - **Adblocker Telemetry Filtering [SHIPPED ✅]**:
   - Suppressed ad-blocker network rejections from polluting telemetry dashboards in `OpenLabsTracker.tsx`.
+
+---
+
+## 11. Automated Error Triage & Platform Resilience Overhaul [SHIPPED ✅] 🛡️
+
+- **Adblocker False-Positive Resource Filtering [SHIPPED ✅]**:
+  - Eliminated false-positive error tracking for rotated Adsterra secondary domains (`portalfluently.com/sfp.js`) across `OpenLabsTracker.tsx`, `app/lib/ads.ts`, `AdsterraPopunder.tsx`, `GoogleAdSense.tsx`, and `app/globals.css`.
+- **Expected Authentication Status Filtering [SHIPPED ✅]**:
+  - Filtered expected client credential validation codes (400, 401 invalid credentials, 403 unverified email requiring OTP, 409 user exists) on `/api/auth/login` and `/api/auth/signup` from error reporting in `OpenLabsTracker.tsx`.
+- **AI Science Tutor Web Speech Resilience & TDZ Prevention [SHIPPED ✅]**:
+  - Wrapped speech recognition callbacks in `sendMessageWithTextRef` and relocated early returns in `OpenLabsAI.tsx`, resolving `ReferenceError: Cannot access 'es' before initialization`.
+- **Unhandled Rejection Extension & Ad Filtering [SHIPPED ✅]**:
+  - Suppressed unhandled promise rejections originating from third-party browser extensions (`chrome-extension://`) and ad networks in `OpenLabsTracker.tsx`.
+- **Edge URL Normalization & Typo Auto-Recovery [SHIPPED ✅]**:
+  - Implemented 308 permanent redirect canonicalization in `middleware.ts` for uppercase URLs, encoded whitespace (`%20`), common route typos (`conputer-science`, `al-problem`, `forward-backwardrnn`), truncated URLs, and `/labs/<subject>` hub redirects.
+- **Scanner Probe Suppression in 404 Logging [SHIPPED ✅]**:
+  - Suppressed automated crawler vulnerability probe tracking (`.php`, `wp-`, `.env`, `.git`) in `app/not-found.tsx`.

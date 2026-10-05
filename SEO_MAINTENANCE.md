@@ -40,13 +40,16 @@ OpenLabs deliberately separates **public educational landing pages** from **inte
 
 ---
 
-## 3. Robots.txt Configuration
+## 3. Robots.txt Configuration & Root Meta Endpoints
 
 The dynamic robots file is implemented in [`app/robots.ts`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/robots.ts):
 
-- **Allowed Prefixes:** `/`, `/physics`, `/chemistry`, `/biology`, `/computer-science`, `/mathematics`, `/tracks`, `/leaderboard`, `/blog`, `/about`, `/contact`, `/llms.txt`, `/llms-full.txt`.
+- **Mediapartners-Google Rule:** Explicitly grants Google AdSense crawler (`User-agent: Mediapartners-Google`) full access (`allow: ["/"]`) for ad verification and contextual analysis.
+- **Allowed Prefixes:** `/`, `/ads.txt`, `/robots.txt`, `/sitemap.xml`, `/physics`, `/chemistry`, `/biology`, `/computer-science`, `/mathematics`, `/tracks`, `/leaderboard`, `/blog`, `/about`, `/contact`, `/llms.txt`, `/llms-full.txt`.
 - **Disallowed Prefixes:** `/admin/`, `/api/`, `/private/`, `/login`, `/signup`, `/forgotpassword`, `/reset-password`, `/verify-email`, `/setup-profile`, `/403`.
 - **Sitemap Declaration:** `https://www.openlabs.org.in/sitemap.xml`.
+- **Root Meta Headers (`next.config.js`):** `/ads.txt`, `/robots.txt`, and `/sitemap.xml` are exempt from blanket `X-Frame-Options: SAMEORIGIN` and `X-Robots-Tag: index, follow` headers, and are served with dedicated CORS (`Access-Control-Allow-Origin: *`) and explicit content types to guarantee unhindered crawler and ad validator access.
+- **Static Ads Entry (`public/ads.txt`):** Authorized publisher record `google.com, pub-4121707034074280, DIRECT, f08c47fec0942fa0` served as plain text with HTTP 200 at `https://www.openlabs.org.in/ads.txt`.
 
 ---
 
@@ -152,4 +155,13 @@ OpenLabs maintains strict separation between monetization scripts and educationa
 - **Display & Popunder Script Hygiene**: Google AdSense and Adsterra Anti-Adblock tags ([`app/layout.tsx`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/layout.tsx), [`app/lib/ads.ts`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/lib/ads.ts)) are declared on public pages for verification and monetization.
 - **Interactive Simulation & Admin Hard-Exclusion**: Popunders, overlays, and display ad units are strictly suppressed on all `/labs/*` and `/admin/*` routes via [`AdsterraPopunder.tsx`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/components/AdsterraPopunder.tsx), [`GoogleAdSense.tsx`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/components/GoogleAdSense.tsx), `window.open` guards, and [`app/globals.css`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/globals.css).
 - **Search Quality Compliance**: Guarantees compliance with Google Search Essentials and Page Experience criteria by preventing intrusive popups or layout shifts within interactive educational tools.
+
+---
+
+## 11. Edge 308 URL Canonicalization & Broken Path Recovery
+
+To maintain search engine crawl efficiency, conserve crawl budget, and prevent 404 broken routes from entering telemetry or search logs:
+- **Case Sensitivity & Lowercase Normalization**: Edge middleware ([`middleware.ts`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/middleware.ts)) intercepts any non-lowercase URLs (e.g. `/LABS/CHEMISTRY/FLAME-TEST`) and permanently redirects (HTTP 308) to the canonical lowercase equivalent (`/labs/chemistry/flame-test`).
+- **Whitespace & Encoding Cleanup**: Any pathnames containing `%20`, spaces, or double slashes (e.g. `/labs/computer%20-science/ai-%20problem/%20forward%20-backward`) are stripped of whitespace and redirected via HTTP 308 to their canonical destination.
+- **Typo Recovery & Subject Hub Mapping**: Common path typos (`conputer-science` &rarr; `computer-science`, `al-problem` &rarr; `ai-problem`, `forward-backwardrnn` &rarr; `forward-backward`) and bare `/labs/<subject>` requests automatically redirect via HTTP 308 to their canonical public landing hubs (`/<subject>`).
 

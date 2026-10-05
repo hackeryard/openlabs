@@ -89,11 +89,12 @@ yarn test:seo
 - **Water Quality Assessor** — Interactive water-quality parameter explorer
 
 ### Physics Labs
-- **Mechanics** — Free Fall, Projectile Motion, Uniform Motion simulations
-- **Waves & Optics** — Wave Optics, Speed of Light, Optical Lenses experiments
-- **Oscillations** — Simple Pendulum with adjustable parameters and real-time visualization
-- **Energy & Forces** — Hooke's Law, Energy Conservation experiments
-- **Electronics** — RC Circuit simulator with interactive component controls and analysis
+- **General Relativity & Spacetime Curvature Studio** — 5-mode interactive Einstein relativity simulation: 3D Schwarzschild & Kerr spacetime embedding with Lense-Thirring frame dragging, ray-traced gravitational lensing & black hole shadow, synchronized atomic clocks & GPS drift (+38.7 µs/day), visible spectrum redshift spectrometer & Twin Paradox calculator, and binary black hole gravitational waves (LIGO chirp audio synthesizer) with Penrose-Carter conformal spacetime diagrams. Includes live 4x4 Metric Tensor inspector ($g_{\mu\nu}$) and 5 structured historical guided investigations.
+- **Mechanics & Gravitation** — Kepler Orbit dynamics, Free Fall, Projectile Motion, Uniform Motion simulations
+- **Electromagnetism & Circuits** — Faraday's Law of Induction, Ohm's Law, and RC Circuit transient analyzer
+- **Waves & Optics** — Doppler Effect & Sonic Boom, Wave Optics, Speed of Light, Optical Lenses experiments
+- **Quantum & Thermal** — Photoelectric Effect & Photon emission, Thermodynamic Heat Engines (Carnot cycle)
+- **Oscillations & Forces** — Simple Pendulum and Hooke's Law spring systems
 
 ### Biology Labs
 - **Mitosis, Meiosis & Microscopic Cell Division Studio** — Somatic mitosis with physical sister chromatid disjunction, meiotic Prophase I synapsis with reciprocal non-sister chromatid chiasmata crossing-over, Metaphase I independent assortment with pole flips, and an interactive 4-gamete inspector detailing ploidy ($n=2$) and parental vs recombinant genotypes ($A-B-c$, $a-b-C$)
@@ -458,6 +459,12 @@ Supports optional `?next=/path` query parameter to redirect users to their inten
 | `/physics/uniformmotionlab` | Uniform motion visualizations |
 | `/physics/waveoptics` | Wave optics and diffraction |
 | `/physics/opticslens` | Optical lens experiments |
+| `/physics/faradays-law` | Electromagnetic induction & Faraday's Law |
+| `/physics/photoelectric-effect` | Photoelectric effect and quantum photons |
+| `/physics/thermodynamics` | Thermodynamic heat engines and Carnot cycle |
+| `/physics/kepler-orbit` | Kepler orbit and gravitational mechanics |
+| `/physics/doppler-effect` | Doppler effect and sonic boom simulation |
+| `/physics/general-relativity` | General Relativity, 3D spacetime curvature, and black hole lensing |
 
 ### Biology Labs
 
@@ -1242,18 +1249,36 @@ public/images/twitter-image.svg  → public/images/twitter-image.jpg (1200×600p
 
 **Current Configuration** (`app/robots.ts`):
 ```
-Allow all paths except:
-- /api/*            (API endpoints)
-- /admin/*          (Admin routes)
-- /private/*        (Private routes)
-- /_next/*          (Next.js internals)
-- /auth/*           (Auth pages from crawling)
+User-agent: Mediapartners-Google
+Allow: /
 
-Sitemap: /sitemap.xml
+User-agent: *
+Allow:
+- /
+- /ads.txt
+- /robots.txt
+- /sitemap.xml
+- /physics, /chemistry, /biology, /computer-science, /mathematics
+- /tracks, /leaderboard, /blog, /about, /contact, /llms.txt, /llms-full.txt
+
+Disallow:
+- /admin/           (Admin routes)
+- /api/             (API endpoints)
+- /private/         (Private routes)
+- /login, /signup, /forgotpassword, /reset-password, /verify-email, /setup-profile, /403
+
+Sitemap: https://www.openlabs.org.in/sitemap.xml
 ```
 
-**Modification:**
-Edit `app/robots.ts` to adjust crawling rules as needed.
+### Ads.txt & Monetization Verification
+
+**Location:** `public/ads.txt`
+**Verified Content:**
+```
+google.com, pub-4121707034074280, DIRECT, f08c47fec0942fa0
+```
+- Served as plain text (`text/plain; charset=utf-8`) with HTTP 200 at `https://www.openlabs.org.in/ads.txt`.
+- Exempt from `X-Frame-Options: SAMEORIGIN` and `X-Robots-Tag: index, follow` headers in `next.config.js` to guarantee automated crawler and validator accessibility.
 
 ### XML Sitemap
 
