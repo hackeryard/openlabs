@@ -9,6 +9,8 @@ import SubtopicHubLayout, {
 } from "@/app/components/SubtopicHubLayout";
 import { BrainCircuit, Gauge, LineChart, GraduationCap } from "lucide-react";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "AI Search Problems & Machine Learning Visualizers | OpenLabs",
   description: "Explore interactive AI problem solvers including Q-Learning mazes, neural networks, constraint satisfaction, hill climbing, and state-space heuristics.",

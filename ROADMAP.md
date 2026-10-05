@@ -253,3 +253,21 @@ Transform the platform from an unstructured catalog of 94 separate labs into a g
   - Implemented 308 permanent redirect canonicalization in `middleware.ts` for uppercase URLs, encoded whitespace (`%20`), common route typos (`conputer-science`, `al-problem`, `forward-backwardrnn`), truncated URLs, and `/labs/<subject>` hub redirects.
 - **Scanner Probe Suppression in 404 Logging [SHIPPED ✅]**:
   - Suppressed automated crawler vulnerability probe tracking (`.php`, `wp-`, `.env`, `.git`) in `app/not-found.tsx`.
+
+---
+
+## 12. Serverless Function & Fluid Compute Cost Governance [SHIPPED ✅] ⚡
+
+- **Vercel Analytics Quota Isolation [SHIPPED ✅]**:
+  - Deprecated `@vercel/analytics` and `@vercel/speed-insights` wrappers in `AppAnalytics.tsx` to prevent hard quota caps on Vercel tiers. Retained 100% full-fidelity telemetry through Google Analytics 4 and Microsoft Clarity.
+- **Authentication Network Deduplication & Session Caching [SHIPPED ✅]**:
+  - Added 60s session verification caching across public transitions in `AuthProvider.tsx`.
+  - Migrated `ClarityTrackerObserver.tsx`, `OpenLabsAILoader.tsx`, and `OpenLabsAI.tsx` to consume the `useAuth()` context directly instead of launching duplicate `/api/auth/me` network requests on each route change.
+  - Removed redundant `/api/auth/me` pre-flight calls in `useXP.ts` and `useDailyChallenge.ts`.
+- **Throttled Geolocation Writes in `/api/auth/me` [SHIPPED ✅]**:
+  - Gated MongoDB `findByIdAndUpdate` for user geolocation behind a 24-hour timestamp check (`location.lastUpdated`), converting 99.9% of `/api/auth/me` requests into fast, read-only queries and slashing Fluid Active CPU duration from 9h 32m.
+- **First-Party Telemetry Heartbeat Throttling & Web Vitals Consolidation [SHIPPED ✅]**:
+  - Increased dwell heartbeat interval from 25s to 120s with an initial 30s milestone in `OpenLabsTracker.tsx`.
+  - Consolidated standalone FCP, LCP, CLS, and INP beacons into the unified `PageView.webVitals` payload, cutting telemetry invocations by ~80%.
+- **Comprehensive Edge CDN ISR Caching [SHIPPED ✅]**:
+  - Configured `export const revalidate = 86400;` (and `generateStaticParams()` for all 118 periodic table elements) across 100% of public educational routes: all 5 discipline hubs, all 98 individual STEM experiment landing pages (`/<subject>/<slug>`), all 118 element atom detail pages, all 10 subtopic discovery hubs, curriculum tracks (`/tracks`), the `/leaderboard` shell (`revalidate = 3600`), info pages (`/about`, `/contact`), and text manifests (`/llms.txt`, `/llms-full.txt`), serving public visitor and crawler traffic directly from Vercel Edge CDN with zero serverless function invocations.

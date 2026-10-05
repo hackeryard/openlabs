@@ -9,6 +9,8 @@ import SubtopicHubLayout, {
 } from "@/app/components/SubtopicHubLayout";
 import { Cpu, Gauge, LineChart, GraduationCap } from "lucide-react";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Logic Gates & Digital Circuits Simulator | OpenLabs",
   description: "Explore interactive digital logic gates including AND, OR, NOT, NAND, NOR, XOR, and XNOR through real-time truth tables, boolean algebra, and circuit wiring.",

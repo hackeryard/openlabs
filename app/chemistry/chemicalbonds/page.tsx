@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Chemical Bonds - Interactive Chemistry Lab | OpenLabs",
   description: "Explore ionic, covalent, and metallic bonds in an interactive lab. Build molecules, compare bond types, electronegativity differences, and molecular geometry.",

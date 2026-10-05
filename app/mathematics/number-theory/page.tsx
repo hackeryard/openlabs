@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Number Theory & Cryptography | OpenLabs",
   description: "Master prime numbers, Sieve of Eratosthenes, Euclidean algorithm, Bézout's identity, modular arithmetic, Euler's totient, RSA cryptography, and the Collatz conjecture online.",

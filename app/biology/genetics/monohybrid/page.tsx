@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Monohybrid Punnett Square & Creature Breeder | OpenLabs",
   description: "Master Mendelian monohybrid crosses with live creature avatars, animated gamete fertilizations, genotype/phenotype ratios, and 100-offspring batch drops.",

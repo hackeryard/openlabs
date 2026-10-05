@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Water Quality Testing & Environmental Chemistry Virtual Lab | OpenLabs",
   description: "Measure and analyze water quality metrics including pH, Turbidity, Total Dissolved Solids (TDS), Dissolved Oxygen (DO), and heavy metal contaminants online.",

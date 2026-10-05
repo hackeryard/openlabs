@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Ideal Gas Laws & Maxwell-Boltzmann Kinetic Theory Virtual Lab | OpenLabs",
   description: "Simulate Boyle's Law, Charles's Law, Gay-Lussac's Law, and Maxwell-Boltzmann molecular speed distributions with interactive 2D elastic particle collision physics online.",

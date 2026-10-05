@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Function Grapher & Curve Transformations | OpenLabs",
   description: "Plot mathematical functions in real time, explore curve transformations, inspect roots and extrema, calculate tangents, and approximate integrals.",

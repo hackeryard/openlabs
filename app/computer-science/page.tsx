@@ -15,6 +15,8 @@ import {
   FileSpreadsheet,
 } from "lucide-react";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Computer Science Virtual Labs & Interactive Programming Tools",
   description: "Explore interactive computer science experiments including real-time code visualization, logic gates simulator, network packet routing, AI algorithms, blockchain, and data structures.",

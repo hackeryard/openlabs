@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Reaction Simulator & Chemical Kinetics Virtual Lab | OpenLabs",
   description: "Simulate chemical reaction kinetics, Arrhenius activation energies, collision theory, stoichiometry, and chemical equilibrium online.",

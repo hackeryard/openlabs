@@ -9,6 +9,8 @@ import SubtopicHubLayout, {
 } from "@/app/components/SubtopicHubLayout";
 import { Microscope, Gauge, LineChart, GraduationCap } from "lucide-react";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Cell Structure & Cytology Virtual Labs | Biology | OpenLabs",
   description: "Interactive plant and animal cell explorer with 3D organelle visualization, membrane permeability, and cellular cytology analysis.",

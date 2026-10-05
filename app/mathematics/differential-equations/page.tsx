@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Differential Equations & Dynamical Chaos | OpenLabs",
   description: "Master ordinary differential equations (ODEs), slope fields, Runge-Kutta numerical methods, 2D phase plane portraits, Lotka-Volterra predator-prey systems, and the 3D Lorenz strange attractor online.",

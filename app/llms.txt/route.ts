@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { SITE_METADATA, SUBJECTS } from "@/app/lib/constants/subjects";
 import { LABS } from "@/app/lib/labs";
 
+export const revalidate = 86400; // Cache on CDN for 24 hours
+
 export async function GET() {
   const lines: string[] = [];
 

@@ -6,6 +6,8 @@ import { createLabMetadata } from "@/app/lib/seo/metadata";
 const PAGE_TITLE = "Thermodynamic Heat Engines & Carnot Cycle Simulator";
 const PAGE_DESCRIPTION = "Explore Carnot, Otto, and Diesel engine cycles, P-V and T-S indicator diagrams, mechanical flywheel crankshafts, and thermodynamic efficiency limits online.";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = createLabMetadata({
   title: PAGE_TITLE,
   description: PAGE_DESCRIPTION,

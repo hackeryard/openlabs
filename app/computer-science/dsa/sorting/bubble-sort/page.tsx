@@ -4,6 +4,8 @@ import { createDsaMetadata, dsaContent } from "../../dsaContent";
 
 const content = dsaContent["bubble-sort"];
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata = createDsaMetadata(content);
 
 export default function Page() {

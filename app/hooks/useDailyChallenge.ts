@@ -48,9 +48,6 @@ export function useDailyChallenge(labId: string) {
 
   const validateChallenge = useCallback(async (achievedValue: number, targetParam: string) => {
     try {
-      const authCheck = await fetch("/api/auth/me");
-      if (!authCheck.ok) return;
-
       const dateStr = new Date().toISOString();
       const res = await fetch("/api/challenges/validate", {
         method: "POST",

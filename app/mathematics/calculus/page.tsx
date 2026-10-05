@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Calculus, Derivatives & Riemann Integrals | OpenLabs",
   description: "Master differential and integral calculus with our interactive laboratory. Visualize secant-to-tangent limits (h → 0), difference quotients, Riemann sums, and optimization extrema.",

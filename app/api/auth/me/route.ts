@@ -19,10 +19,14 @@ export async function GET(req: Request) {
       return Response.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Silently update user location in background if needed
+    // Silently update user location in background if needed (throttled to at most once every 24 hours)
     try {
       const geo = extractGeoLocation(req);
-      if (geo.country !== "Unknown" || geo.city) {
+      const now = Date.now();
+      const lastGeoUpdate = user.location?.lastUpdated ? new Date(user.location.lastUpdated).getTime() : 0;
+      const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+      if ((geo.country !== "Unknown" || geo.city) && (now - lastGeoUpdate > ONE_DAY_MS)) {
         await (User as any).findByIdAndUpdate(payload.id, {
           $set: {
             "location.ip": geo.ip,

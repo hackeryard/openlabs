@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Combinatorics & Discrete Counting | OpenLabs",
   description: "Master combinatorics, permutations, combinations, Pascal's triangle, binomial theorem expansions, and Dirichlet's pigeonhole principle online.",

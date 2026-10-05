@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Trigonometry & Unit Circle Dynamics | OpenLabs",
   description: "Master trigonometry with our interactive unit circle and wave unfolding sandbox. Explore sine, cosine, tangent geometric projections, verify Pythagorean identities, and manipulate wave harmonics.",

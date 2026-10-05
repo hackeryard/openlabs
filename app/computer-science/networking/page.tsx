@@ -9,6 +9,8 @@ import SubtopicHubLayout, {
 } from "@/app/components/SubtopicHubLayout";
 import { Network, Gauge, LineChart, GraduationCap } from "lucide-react";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Computer Networking Virtual Lab & Packet Routing Simulator",
   description: "Explore computer networking experiments including packet switching, circuit switching, OSI 7-layer stack, and network topology simulation.",

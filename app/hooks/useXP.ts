@@ -78,9 +78,6 @@ export function useLab(labId: string, subject: string, type: "simulation" | "exp
     calledRef.current = true;
 
     try {
-      const authCheck = await fetch("/api/auth/me");
-      if (!authCheck.ok) return;
-
       const res = await fetch("/api/xp/complete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

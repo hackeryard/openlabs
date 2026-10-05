@@ -3,6 +3,8 @@ import EducationalLandingLayout from "@/components/EducationalLandingLayout";
 import { EducationalContent } from "@/types/education";
 import { Metadata } from "next";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "SHA-256 Hashing & Bitcoin Mining - Interactive Computer Science Lab | OpenLabs",
   description: "Explore the SHA-256 cryptographic hash function, bit-level Avalanche Effect, and real-time Proof-of-Work Bitcoin mining.",

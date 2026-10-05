@@ -9,6 +9,8 @@ import SubtopicHubLayout, {
 } from "@/app/components/SubtopicHubLayout";
 import { ArrowDownUp, Gauge, LineChart, GraduationCap } from "lucide-react";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Sorting Algorithm Visualizer & Complexity Comparator | OpenLabs",
   description: "Step-by-step interactive visualizer for Merge Sort, Quick Sort, Bubble Sort, Heap Sort, Insertion Sort, and Selection Sort with comparison and swap metrics.",

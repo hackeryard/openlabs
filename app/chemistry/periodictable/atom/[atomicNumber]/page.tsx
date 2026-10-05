@@ -34,6 +34,14 @@ interface PageProps {
   };
 }
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
+export function generateStaticParams() {
+  return elements.map((el) => ({
+    atomicNumber: String(el.number),
+  }));
+}
+
 // 1. Dynamic Category Coloring System for Light & Dark Theme Support
 const categoryMap: Record<
   string,

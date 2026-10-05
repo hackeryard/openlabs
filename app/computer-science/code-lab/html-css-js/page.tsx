@@ -25,6 +25,8 @@ const breadcrumbs = [
   { label: "HTML CSS JS", href: "/computer-science/code-lab/html-css-js" },
 ];
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "HTML CSS JavaScript Code Lab - Live Web Editor | OpenLabs",
   description:

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import PhysicsExperimentLanding from "@/components/PhysicsExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Simple Pendulum & Harmonic Motion Simulator | Physics Lab | OpenLabs",
   description:

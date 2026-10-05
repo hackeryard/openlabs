@@ -15,6 +15,8 @@ import {
   FileSpreadsheet,
 } from "lucide-react";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Biology Virtual Labs & Interactive Life Science Experiments",
   description: "Explore interactive biology experiments covering 3D cell structure, Mendelian genetics, human anatomy, cellular respiration, enzyme kinetics, osmosis, photosynthesis, blood transfusion, and neuron action potentials.",

@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Script from "next/script";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import OpenLabsTracker from "./OpenLabsTracker";
 import ClarityProvider from "@/components/ClarityProvider";
 import ClarityTrackerObserver from "@/components/ClarityTrackerObserver";
@@ -73,10 +71,6 @@ export default function AppAnalytics() {
           gtag('config', 'G-7XW8JGG3BD');
         `}
       </Script>
-
-      {/* Vercel Analytics & Speed Insights */}
-      <Analytics />
-      <SpeedInsights />
 
       {/* First-Party Telemetry & Microsoft Clarity */}
       <OpenLabsTracker />

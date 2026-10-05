@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "DNA Transcription & Ribosomal Translation Virtual Lab | OpenLabs",
   description: "Experience the Central Dogma of biology with interactive DNA unzipping, complementary mRNA transcription, tRNA ribosome translation, and mutation testing.",

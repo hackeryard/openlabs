@@ -9,6 +9,8 @@ import SubtopicHubLayout, {
 } from "@/app/components/SubtopicHubLayout";
 import { Binary, Gauge, LineChart, GraduationCap } from "lucide-react";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Data Structures & Algorithms Visualizer | OpenLabs",
   description: "Interactive DSA visualizers for sorting algorithms, stacks, queues, linked lists, and graph algorithms — step through memory states and Big-O asymptotic growth in real time.",

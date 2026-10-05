@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import STEMExperimentLanding from "@/components/STEMExperimentLanding";
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   title: "Photosynthesis Simulator - Light & Dark Reactions Virtual Lab | OpenLabs",
   description: "Explore how Light Intensity, CO2 Concentration, Temperature, and Wavelength interact to determine the photosynthetic rate and master Blackman's Law of Limiting Factors.",

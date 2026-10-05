@@ -26,6 +26,8 @@ const breadcrumbs = [
   { label: "JavaScript", href: "/computer-science/code-lab/js" },
 ];
 
+export const revalidate = 86400; // 24 hours ISR Edge CDN cache
+
 export const metadata: Metadata = {
   // Front-load "JavaScript Visualizer" — GSC shows real search volume for
   // that exact short phrase (171 impressions, 0.58% CTR at position ~7.5)

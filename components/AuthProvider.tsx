@@ -48,19 +48,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
 
+  const lastAuthCheckRef = React.useRef<number>(0);
+
   const logout = useCallback(async () => {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
     } catch (e) {
       console.error("Logout error:", e);
     } finally {
+      lastAuthCheckRef.current = 0;
       setUser(null);
       setAuthState("UNAUTHENTICATED");
     }
   }, []);
 
-  const checkAuth = useCallback(async () => {
+  const checkAuth = useCallback(async (force = false) => {
+    const isProtected = protectedPrefixes.some(p => pathname.startsWith(p));
+    const now = Date.now();
+
+    // Cache auth state for 60 seconds on public routes to avoid invoking serverless functions on every link click
+    if (!force && !isProtected && lastAuthCheckRef.current && (now - lastAuthCheckRef.current < 60000)) {
+      return;
+    }
+
     try {
+      lastAuthCheckRef.current = now;
       const res = await fetch("/api/auth/me", {
         cache: "no-store",
         headers: { "Pragma": "no-cache" }
@@ -75,7 +87,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(null);
         setAuthState("AUTHENTICATED_BUT_UNVERIFIED");
 
-        const isProtected = protectedPrefixes.some(p => pathname.startsWith(p));
         if (isProtected) {
           const emailParam = data.email ? `?email=${encodeURIComponent(data.email)}` : "";
           router.push(`/verify-email${emailParam}`);
