@@ -1,7 +1,7 @@
 import { connectDB } from "@/app/lib/mongodb";
 import User from "@/app/models/User";
 import { getUserFromToken } from "@/app/lib/getUserFromToken";
-import { generateToken } from "@/app/lib/auth";
+import { generateToken, getAuthCookieDomain } from "@/app/lib/auth";
 import { extractGeoLocation } from "@/app/lib/geolocation";
 import { serialize } from "cookie";
 
@@ -109,11 +109,11 @@ export async function GET(req: Request) {
     // If role in DB has changed since token was minted, auto-refresh JWT cookie
     if (user.role && user.role !== payload.role) {
       const refreshedToken = generateToken(user);
-      const isProd = process.env.NODE_ENV === "production";
+      const cookieDomain = getAuthCookieDomain(req);
       responseHeaders["Set-Cookie"] = serialize("auth-token", refreshedToken, {
         httpOnly: true,
         path: "/",
-        domain: isProd ? ".openlabs.org.in" : undefined,
+        domain: cookieDomain,
         maxAge: 60 * 60 * 24,
       });
     }

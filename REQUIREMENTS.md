@@ -34,6 +34,8 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 - FR-6: New accounts shall verify their email via a one-time 6-digit code (OTP), expiring after a fixed window.
 - FR-7: Users shall be able to reset a forgotten password via an emailed OTP.
 - FR-8: Users shall be able to sign in with OAuth (Google, GitHub, or Azure AD); a first-time OAuth sign-in shall provision an account automatically with the email pre-verified.
+- FR-8a: The OAuth integration shall support reverse-proxy origin detection (`AUTH_TRUST_HOST=true`) and runtime `NEXTAUTH_URL` fallback, preventing localhost redirection traps when deployed on Render, Docker, or multi-cloud hosting environments.
+- FR-8b: The authentication cookie subsystem shall dynamically resolve cookie domains via `getAuthCookieDomain()`, setting wildcard cross-subdomain cookies (`.openlabs.org.in`) strictly when on `openlabs.org.in`, and host-only cookies on alternative deployment domains (e.g. Render `*.onrender.com` or localhost) to prevent browser rejection.
 - FR-9: Regardless of sign-in method, an authenticated session shall be represented by a single JWT stored in an httpOnly cookie.
 - FR-10: Unauthenticated users shall be redirected to login when accessing any lab simulation (`/labs/*`) or admin (`/admin/*`) route; subject landing pages, the blog, and marketing pages shall remain public.
 - FR-10a: The system shall enforce Role-Based Access Control (RBAC) with `user`, `moderator`, and `admin` roles. Regular users (`role: "user"`) visiting `/admin/*` or `admin.openlabs.org.in` shall receive an in-place soft 403 Access Restricted screen without showing admin navigation or footer chrome.

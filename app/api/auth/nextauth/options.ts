@@ -5,6 +5,31 @@ import { NextAuthOptions } from "next-auth";
 import { connectDB } from "@/app/lib/mongodb";
 import User from "@/app/models/User";
 
+// Ensure NextAuth trusts reverse proxy headers (Render, Vercel, Cloudflare)
+if (!process.env.AUTH_TRUST_HOST) {
+  process.env.AUTH_TRUST_HOST = "true";
+}
+
+// Auto-configure NEXTAUTH_URL if missing or pointing to localhost in production/Render
+if (
+  process.env.NODE_ENV === "production" ||
+  process.env.RENDER ||
+  process.env.VERCEL
+) {
+  if (
+    !process.env.NEXTAUTH_URL ||
+    process.env.NEXTAUTH_URL.includes("localhost") ||
+    process.env.NEXTAUTH_URL.includes("127.0.0.1")
+  ) {
+    const fallbackUrl =
+      process.env.RENDER_EXTERNAL_URL ||
+      process.env.WEBSITE_URL ||
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      "https://www.openlabs.org.in";
+    process.env.NEXTAUTH_URL = fallbackUrl;
+  }
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -69,8 +94,50 @@ export const authOptions: NextAuthOptions = {
       if (url && url.includes("/api/auth/nextauth/sync")) {
         return url;
       }
-      const dest = url.startsWith("/") ? `${baseUrl}${url}` : url;
-      return `/api/auth/nextauth/sync?next=${encodeURIComponent(String(dest || baseUrl || "/"))}`;
+
+      // Do NOT prepend baseUrl if url is a relative path (e.g. "/" or "/labs").
+      // Prepending baseUrl would attach "http://localhost:3000" when NEXTAUTH_URL defaults to localhost,
+      // which causes production users on Render to be redirected to localhost.
+      let dest = "/";
+      if (url) {
+        if (url.startsWith("/")) {
+          dest = url;
+        } else {
+          try {
+            const parsed = new URL(url);
+            // If the URL points to localhost or 127.0.0.1, strip origin and retain relative path
+            if (
+              parsed.hostname === "localhost" ||
+              parsed.hostname === "127.0.0.1"
+            ) {
+              dest = `${parsed.pathname}${parsed.search}${parsed.hash}` || "/";
+            } else {
+              dest = url;
+            }
+          } catch {
+            dest = "/";
+          }
+        }
+      }
+
+      // Avoid using a baseUrl that points to localhost when running in production/Render
+      const isBaseLocal = baseUrl && (baseUrl.includes("localhost") || baseUrl.includes("127.0.0.1"));
+      const isProd = process.env.NODE_ENV === "production" || !!process.env.RENDER;
+
+      if (isProd && isBaseLocal) {
+        const prodBase =
+          process.env.RENDER_EXTERNAL_URL ||
+          process.env.WEBSITE_URL ||
+          process.env.NEXT_PUBLIC_SITE_URL ||
+          "https://www.openlabs.org.in";
+        return `${prodBase}/api/auth/nextauth/sync?next=${encodeURIComponent(dest)}`;
+      }
+
+      if (baseUrl && !isBaseLocal) {
+        return `${baseUrl}/api/auth/nextauth/sync?next=${encodeURIComponent(dest)}`;
+      }
+
+      return `/api/auth/nextauth/sync?next=${encodeURIComponent(dest)}`;
     },
   },
 };

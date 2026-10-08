@@ -271,3 +271,14 @@ Transform the platform from an unstructured catalog of 94 separate labs into a g
   - Consolidated standalone FCP, LCP, CLS, and INP beacons into the unified `PageView.webVitals` payload, cutting telemetry invocations by ~80%.
 - **Comprehensive Edge CDN ISR Caching [SHIPPED ✅]**:
   - Configured `export const revalidate = 86400;` (and `generateStaticParams()` for all 118 periodic table elements) across 100% of public educational routes: all 5 discipline hubs, all 98 individual STEM experiment landing pages (`/<subject>/<slug>`), all 118 element atom detail pages, all 10 subtopic discovery hubs, curriculum tracks (`/tracks`), the `/leaderboard` shell (`revalidate = 3600`), info pages (`/about`, `/contact`), and text manifests (`/llms.txt`, `/llms-full.txt`), serving public visitor and crawler traffic directly from Vercel Edge CDN with zero serverless function invocations.
+
+---
+
+## 13. Multi-Cloud & Render Deployment OAuth Resilience [SHIPPED ✅] 🌐
+
+- **Reverse-Proxy Origin Detection & NEXTAUTH_URL Auto-Fallback [SHIPPED ✅]**:
+  - Enabled `AUTH_TRUST_HOST=true` and dynamic `NEXTAUTH_URL` fallbacks (`RENDER_EXTERNAL_URL`, `WEBSITE_URL`, `NEXT_PUBLIC_SITE_URL`) in `options.ts` and `[...nextauth]/route.ts`, preventing OAuth origin mismatch and localhost redirection bugs when deployed on Render, Docker, or alternative cloud runtimes.
+- **Localhost Redirection Sanitization [SHIPPED ✅]**:
+  - Sanitized NextAuth redirect callbacks in `options.ts` and `app/api/auth/nextauth/sync/route.ts` to preserve relative paths and rewrite any incoming localhost targets to the active live origin, preventing users from being redirected to localhost after signing in via Google.
+- **Dynamic Cross-Environment Cookie Domain Resolution [SHIPPED ✅]**:
+  - Implemented `getAuthCookieDomain(req)` to assign wildcard `.openlabs.org.in` cookies strictly when operating on `openlabs.org.in` and host-only cookies on Render (`*.onrender.com`) and localhost, eliminating browser cookie drop errors.
