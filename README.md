@@ -75,6 +75,13 @@ yarn start
 yarn test:seo
 ```
 
+### Deployment Configuration (Render & Multi-Cloud)
+
+When deploying to Render, Docker, or alternative cloud providers:
+- **`NEXTAUTH_URL`**: Set to your canonical application URL (e.g. `https://your-app.onrender.com` or `https://www.openlabs.org.in`). If omitted, OpenLabs automatically falls back to `RENDER_EXTERNAL_URL`, `WEBSITE_URL`, or `NEXT_PUBLIC_SITE_URL` with `AUTH_TRUST_HOST=true`.
+- **Google OAuth Redirect URI**: In Google Cloud Console, ensure your Authorized Redirect URIs include `https://<your-domain>/api/auth/callback/google`.
+- **Dynamic Cookie Domains**: The authentication system automatically scopes session cookies (`auth-token`) to the active host domain, eliminating browser cookie rejections on `*.onrender.com` and staging subdomains.
+
 ---
 
 ## Features ✨

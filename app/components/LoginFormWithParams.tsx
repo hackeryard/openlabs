@@ -15,7 +15,22 @@ type FormErrors = {
 export default function LoginFormWithParams() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const nextPath = searchParams?.get("next") || "/";
+  const rawNext = searchParams?.get("next") || "/";
+  let nextPath = "/";
+  try {
+    if (rawNext.startsWith("/")) {
+      nextPath = rawNext;
+    } else {
+      const parsed = new URL(rawNext, typeof window !== "undefined" ? window.location.origin : "http://localhost:3000");
+      if (parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1") {
+        nextPath = `${parsed.pathname}${parsed.search}${parsed.hash}` || "/";
+      } else {
+        nextPath = rawNext;
+      }
+    }
+  } catch {
+    nextPath = "/";
+  }
 
   // State
   const [email, setEmail] = useState("");

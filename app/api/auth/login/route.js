@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs"
 import User from "@/app/models/User"
 import { connectDB } from "@/app/lib/mongodb"
-import { generateToken } from "@/app/lib/auth"
+import { generateToken, getAuthCookieDomain } from "@/app/lib/auth"
 import { mockFindUser } from "@/app/lib/devMock"
 import { extractGeoLocation } from "@/app/lib/geolocation"
 import { serialize } from "cookie"
@@ -88,13 +88,14 @@ export async function POST(req) {
 
   const token = generateToken(user)
   const isProd = process.env.NODE_ENV === "production"
+  const cookieDomain = getAuthCookieDomain(req)
 
   return new Response(JSON.stringify({ message: "Login success", emailVerified: true }), {
     headers: {
       "Set-Cookie": serialize("auth-token", token, {
         httpOnly: true,
         path: "/",
-        domain: isProd ? ".openlabs.org.in" : undefined,
+        domain: cookieDomain,
         maxAge: 60 * 60 * 24,
       }),
     },

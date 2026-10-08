@@ -166,3 +166,10 @@ To maintain search engine crawl efficiency, conserve crawl budget, and prevent 4
 - **Whitespace & Encoding Cleanup**: Any pathnames containing `%20`, spaces, or double slashes (e.g. `/labs/computer%20-science/ai-%20problem/%20forward%20-backward`) are stripped of whitespace and redirected via HTTP 308 to their canonical destination.
 - **Typo Recovery & Subject Hub Mapping**: Common path typos (`conputer-science` &rarr; `computer-science`, `al-problem` &rarr; `ai-problem`, `forward-backwardrnn` &rarr; `forward-backward`) and bare `/labs/<subject>` requests automatically redirect via HTTP 308 to their canonical public landing hubs (`/<subject>`).
 
+---
+
+## 12. OAuth Redirection Canonicalization & Multi-Cloud Policy
+
+- **Origin-Preserving Auth Redirection**: OAuth sync endpoints (`/api/auth/nextauth/sync`) and redirection callbacks sanitize `next` parameters, ensuring redirects resolve against the canonical request origin rather than development endpoints (such as `localhost:3000`).
+- **Open Redirect Guarding**: Only relative paths or matching origin hostnames are permitted as post-authentication redirect targets, protecting learners and search crawlers against malicious external redirects.
+

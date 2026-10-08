@@ -1,7 +1,7 @@
 import OTP from "@/app/models/OTP"
 import User from "@/app/models/User"
 import { connectDB } from "@/app/lib/mongodb"
-import { generateToken } from "@/app/lib/auth"
+import { generateToken, getAuthCookieDomain } from "@/app/lib/auth"
 import { serialize } from "cookie"
 
 export async function POST(req) {
@@ -56,7 +56,7 @@ export async function POST(req) {
     // Delete the OTP record
     await OTP.deleteOne({ _id: otpRecord._id })
 
-    const isProd = process.env.NODE_ENV === "production";
+    const cookieDomain = getAuthCookieDomain(req);
 
     return new Response(
       JSON.stringify({
@@ -70,7 +70,7 @@ export async function POST(req) {
           "Set-Cookie": serialize("auth-token", token, {
             httpOnly: true,
             path: "/",
-            domain: isProd ? ".openlabs.org.in" : undefined,
+            domain: cookieDomain,
             maxAge: 60 * 60 * 24,
           }),
         },
