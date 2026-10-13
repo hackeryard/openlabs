@@ -2,7 +2,7 @@ import { connectDB } from "@/app/lib/mongodb";
 import User from "@/app/models/User";
 import { getUserFromToken } from "@/app/lib/getUserFromToken";
 import { generateToken, getAuthCookieDomain } from "@/app/lib/auth";
-import { extractGeoLocation } from "@/app/lib/geolocation";
+import { extractGeoLocation, resolveGeoLocation } from "@/app/lib/geolocation";
 import { serialize } from "cookie";
 
 export async function GET(req: Request) {
@@ -19,27 +19,46 @@ export async function GET(req: Request) {
       return Response.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Silently update user location in background if needed (throttled to at most once every 24 hours)
+    // Silently update user location in background if needed (throttled to at most once every 24 hours for users who already have location saved)
     try {
-      const geo = extractGeoLocation(req);
+      const geo = await resolveGeoLocation(req);
       const now = Date.now();
       const lastGeoUpdate = user.location?.lastUpdated ? new Date(user.location.lastUpdated).getTime() : 0;
       const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
-      if ((geo.country !== "Unknown" || geo.city) && (now - lastGeoUpdate > ONE_DAY_MS)) {
+      const hasValidLocation = Boolean(
+        user.location?.country &&
+        user.location.country !== "Unknown" &&
+        user.location.country.trim() !== ""
+      );
+      const isThrottled = hasValidLocation && (now - lastGeoUpdate <= ONE_DAY_MS);
+
+      if ((geo.country !== "Unknown" || geo.city) && !isThrottled) {
+        const updatedLocation = {
+          ip: geo.ip,
+          city: geo.city,
+          region: geo.region,
+          country: geo.country,
+          countryCode: geo.countryCode,
+          timezone: geo.timezone,
+          latitude: geo.latitude,
+          longitude: geo.longitude,
+          lastUpdated: new Date(),
+        };
         await (User as any).findByIdAndUpdate(payload.id, {
           $set: {
-            "location.ip": geo.ip,
-            "location.city": geo.city,
-            "location.region": geo.region,
-            "location.country": geo.country,
-            "location.countryCode": geo.countryCode,
-            "location.timezone": geo.timezone,
-            "location.latitude": geo.latitude,
-            "location.longitude": geo.longitude,
-            "location.lastUpdated": new Date(),
+            "location.ip": updatedLocation.ip,
+            "location.city": updatedLocation.city,
+            "location.region": updatedLocation.region,
+            "location.country": updatedLocation.country,
+            "location.countryCode": updatedLocation.countryCode,
+            "location.timezone": updatedLocation.timezone,
+            "location.latitude": updatedLocation.latitude,
+            "location.longitude": updatedLocation.longitude,
+            "location.lastUpdated": updatedLocation.lastUpdated,
           },
         });
+        user.location = updatedLocation;
       }
     } catch {}
 

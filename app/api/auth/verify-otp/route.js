@@ -2,6 +2,7 @@ import OTP from "@/app/models/OTP"
 import User from "@/app/models/User"
 import { connectDB } from "@/app/lib/mongodb"
 import { generateToken, getAuthCookieDomain } from "@/app/lib/auth"
+import { resolveGeoLocation } from "@/app/lib/geolocation"
 import { serialize } from "cookie"
 
 export async function POST(req) {
@@ -48,6 +49,34 @@ export async function POST(req) {
         { error: "User not found" },
         { status: 404 }
       )
+    }
+
+    // If user does not have a valid location yet, resolve and record it
+    const hasValidLocation = Boolean(
+      user.location?.country &&
+      user.location.country !== "Unknown" &&
+      user.location.country.trim() !== ""
+    );
+
+    if (!hasValidLocation) {
+      try {
+        const geo = await resolveGeoLocation(req);
+        if (geo.country !== "Unknown" || geo.city) {
+          await User.findByIdAndUpdate(user._id, {
+            $set: {
+              "location.ip": geo.ip,
+              "location.city": geo.city,
+              "location.region": geo.region,
+              "location.country": geo.country,
+              "location.countryCode": geo.countryCode,
+              "location.timezone": geo.timezone,
+              "location.latitude": geo.latitude,
+              "location.longitude": geo.longitude,
+              "location.lastUpdated": new Date(),
+            },
+          });
+        }
+      } catch {}
     }
 
     // Generate login token
