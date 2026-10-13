@@ -3,7 +3,7 @@ import User from "@/app/models/User"
 import { connectDB } from "@/app/lib/mongodb"
 import { generateToken, getAuthCookieDomain } from "@/app/lib/auth"
 import { mockFindUser } from "@/app/lib/devMock"
-import { extractGeoLocation } from "@/app/lib/geolocation"
+import { extractGeoLocation, resolveGeoLocation } from "@/app/lib/geolocation"
 import { serialize } from "cookie"
 
 const isDev = process.env.NODE_ENV === 'development'
@@ -38,21 +38,10 @@ export async function POST(req) {
 
   // Silently record location and login history without user interaction
   try {
-    const geo = extractGeoLocation(req)
+    const geo = await resolveGeoLocation(req)
     const userAgent = req.headers.get("user-agent") || ""
     
-    await User.findByIdAndUpdate(user._id, {
-      $set: {
-        "location.ip": geo.ip,
-        "location.city": geo.city,
-        "location.region": geo.region,
-        "location.country": geo.country,
-        "location.countryCode": geo.countryCode,
-        "location.timezone": geo.timezone,
-        "location.latitude": geo.latitude,
-        "location.longitude": geo.longitude,
-        "location.lastUpdated": new Date(),
-      },
+    const updateOps = {
       $push: {
         loginHistory: {
           $each: [
@@ -69,7 +58,23 @@ export async function POST(req) {
           $slice: -25, // Keep last 25 logins
         },
       },
-    })
+    }
+
+    if (geo.country !== "Unknown" || geo.city) {
+      updateOps.$set = {
+        "location.ip": geo.ip,
+        "location.city": geo.city,
+        "location.region": geo.region,
+        "location.country": geo.country,
+        "location.countryCode": geo.countryCode,
+        "location.timezone": geo.timezone,
+        "location.latitude": geo.latitude,
+        "location.longitude": geo.longitude,
+        "location.lastUpdated": new Date(),
+      }
+    }
+
+    await User.findByIdAndUpdate(user._id, updateOps)
   } catch (err) {
     console.error("Silent location tracking error:", err)
   }

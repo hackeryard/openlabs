@@ -282,3 +282,16 @@ Transform the platform from an unstructured catalog of 94 separate labs into a g
   - Sanitized NextAuth redirect callbacks in `options.ts` and `app/api/auth/nextauth/sync/route.ts` to preserve relative paths and rewrite any incoming localhost targets to the active live origin, preventing users from being redirected to localhost after signing in via Google.
 - **Dynamic Cross-Environment Cookie Domain Resolution [SHIPPED ✅]**:
   - Implemented `getAuthCookieDomain(req)` to assign wildcard `.openlabs.org.in` cookies strictly when operating on `openlabs.org.in` and host-only cookies on Render (`*.onrender.com`) and localhost, eliminating browser cookie drop errors.
+
+---
+
+## 14. Geolocation Architecture & Multi-Cloud Ingestion Resilience [SHIPPED ✅] 🌍
+
+- **Immediate Location Resolution for Unlocated Users [SHIPPED ✅]**:
+  - Refined `/api/auth/me` throttling so the 24-hour write gate applies strictly to users who already possess a valid saved location; newly registered users and accounts with missing or "Unknown" locations update immediately upon their next session.
+- **Full OAuth Location & Login History Telemetry Parity [SHIPPED ✅]**:
+  - Added complete geolocation resolution and `loginHistory` recording to `/api/auth/nextauth/sync`, ensuring Google, GitHub, and Azure OAuth signups and logins persist client location and audit logs identically to password authentication.
+- **Multi-Proxy CDN Header Recognition & Resilient IP Lookup Fallback [SHIPPED ✅]**:
+  - Implemented `resolveGeoLocation(req)` with support for Cloudflare (`cf-ipcountry`), Vercel (`x-vercel-ip-country`), AWS CloudFront (`cloudfront-viewer-country`), and standard proxy headers, alongside an asynchronous public IP lookup fallback (`ipwho.is` with a strict 1500ms timeout) for Render, Docker, and direct origin deployments.
+- **Safe Schema Timestamp Defaults [SHIPPED ✅]**:
+  - Updated `User.location.lastUpdated` default in `User.js` to `null` so unpopulated location records never falsely appear recently updated.

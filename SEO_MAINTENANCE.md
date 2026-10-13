@@ -172,4 +172,5 @@ To maintain search engine crawl efficiency, conserve crawl budget, and prevent 4
 
 - **Origin-Preserving Auth Redirection**: OAuth sync endpoints (`/api/auth/nextauth/sync`) and redirection callbacks sanitize `next` parameters, ensuring redirects resolve against the canonical request origin rather than development endpoints (such as `localhost:3000`).
 - **Open Redirect Guarding**: Only relative paths or matching origin hostnames are permitted as post-authentication redirect targets, protecting learners and search crawlers against malicious external redirects.
+- **Multi-Cloud Geolocation & Telemetry Sync**: NextAuth OAuth synchronization preserves origin canonicalization and captures client geolocation with IP lookup resilience without redirect interference.
 

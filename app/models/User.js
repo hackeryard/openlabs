@@ -100,7 +100,7 @@ const UserSchema = new mongoose.Schema({
     timezone: { type: String, default: "" },
     latitude: { type: Number, default: null },
     longitude: { type: Number, default: null },
-    lastUpdated: { type: Date, default: Date.now },
+    lastUpdated: { type: Date, default: null },
   },
   loginHistory: [
     {

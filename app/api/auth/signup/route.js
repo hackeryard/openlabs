@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs"
 import User from "@/app/models/User"
 import { connectDB } from "@/app/lib/mongodb"
-import { extractGeoLocation } from "@/app/lib/geolocation"
+import { extractGeoLocation, resolveGeoLocation } from "@/app/lib/geolocation"
 
 export async function POST(req) {
   try {
@@ -25,7 +25,7 @@ export async function POST(req) {
     }
 
     const hashed = await bcrypt.hash(password, 10)
-    const geo = extractGeoLocation(req)
+    const geo = await resolveGeoLocation(req)
     const userAgent = req.headers.get("user-agent") || ""
 
     const user = await User.create({
@@ -41,7 +41,7 @@ export async function POST(req) {
         timezone: geo.timezone,
         latitude: geo.latitude,
         longitude: geo.longitude,
-        lastUpdated: new Date(),
+        lastUpdated: (geo.country !== "Unknown" || geo.city) ? new Date() : null,
       },
       loginHistory: [
         {

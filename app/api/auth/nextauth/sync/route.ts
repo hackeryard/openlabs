@@ -4,6 +4,7 @@ import authOptions from "../options";
 import { connectDB } from "@/app/lib/mongodb";
 import User from "@/app/models/User";
 import { generateToken, getAuthCookieDomain } from "@/app/lib/auth";
+import { resolveGeoLocation } from "@/app/lib/geolocation";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,9 @@ export async function GET(req: Request) {
     const email = session.user.email as string;
     let user = await (User as any).findOne({ email });
 
+    const geo = await resolveGeoLocation(req);
+    const userAgent = req.headers.get("user-agent") || "";
+
     if (!user) {
       user = await (User as any).create({
         name: session.user.name || email.split("@")[0],
@@ -35,7 +39,64 @@ export async function GET(req: Request) {
         createdAt: new Date(),
         avatar: session.user.image || null,
         profileSetupComplete: false,
+        location: {
+          ip: geo.ip,
+          city: geo.city,
+          region: geo.region,
+          country: geo.country,
+          countryCode: geo.countryCode,
+          timezone: geo.timezone,
+          latitude: geo.latitude,
+          longitude: geo.longitude,
+          lastUpdated: (geo.country !== "Unknown" || geo.city) ? new Date() : null,
+        },
+        loginHistory: [
+          {
+            ip: geo.ip,
+            city: geo.city,
+            region: geo.region,
+            country: geo.country,
+            countryCode: geo.countryCode,
+            userAgent,
+            timestamp: new Date(),
+          },
+        ],
       });
+    } else {
+      const updateOps: any = {
+        $push: {
+          loginHistory: {
+            $each: [
+              {
+                ip: geo.ip,
+                city: geo.city,
+                region: geo.region,
+                country: geo.country,
+                countryCode: geo.countryCode,
+                userAgent,
+                timestamp: new Date(),
+              },
+            ],
+            $slice: -25,
+          },
+        },
+      };
+
+      if (geo.country !== "Unknown" || geo.city) {
+        updateOps.$set = {
+          "location.ip": geo.ip,
+          "location.city": geo.city,
+          "location.region": geo.region,
+          "location.country": geo.country,
+          "location.countryCode": geo.countryCode,
+          "location.timezone": geo.timezone,
+          "location.latitude": geo.latitude,
+          "location.longitude": geo.longitude,
+          "location.lastUpdated": new Date(),
+        };
+      }
+
+      await (User as any).findByIdAndUpdate(user._id, updateOps);
     }
 
     const token = generateToken(user);
