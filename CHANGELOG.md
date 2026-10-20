@@ -2,6 +2,26 @@
 
 All notable changes to OpenLabs are documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/); since the project has no version tags yet, entries are grouped by date instead of version number. Generated from git history; merge commits and duplicate/typo commits are omitted.
 
+- **Comprehensive Adsterra Multi-Format Monetization Architecture (`app/lib/ads.ts`, `app/components/AdsterraBanner.tsx`, `app/components/AdsterraNativeBanner.tsx`, `app/components/AdsterraPopunder.tsx`, `app/components/GoogleAdSense.tsx`, `app/components/OpenLabsTracker.tsx`, `app/globals.css`, `app/layout.tsx`, `app/page.tsx`, `app/components/Footer.tsx`, `app/components/blog/BlogPostInteractive.tsx`)**:
+  - **Integrated Complete Set of Adsterra Verified Ad Tags on `openlabs.org.in`**:
+    - **Popunder_1 (`abscloud.org/1/08e6dbca5d9532e90ba54ed38592f7b0`)**: Updated JS sync tag in `<head>` (`app/layout.tsx`) and `ADSTERRA_POPUNDER_SRC` in `app/lib/ads.ts`.
+    - **SocialBar_1 (`bauval.org/14/2959207fa624b60d669e6c0ca66a4f10`)**: Embedded JS sync tag in `<head>` (`app/layout.tsx`) and configured `ADSTERRA_SOCIALBAR_SRC` in `app/lib/ads.ts`.
+    - **Smartlink_1 (`araplhn.org/4/c81181fb15ae3c289e31602fa7849d41`)**: Configured direct smartlink in `app/lib/ads.ts`.
+    - **6 Display IFrame Sync Banner Units (`ADSTERRA_BANNERS`)**: Configured keys and endpoints for 160x300, 160x600, 300x250, 320x50, 468x60, and 728x90 units in `app/lib/ads.ts`.
+    - **Native Recommendations Banner (`bauval.org/21/8eb9029bb810ce5acaa5919fc62e556a`)**: Configured 4-tile native banner script and target container `container-8eb9029bb810ce5acaa5919fc62e556a`.
+  - **Component Engineering (`AdsterraBanner.tsx`, `AdsterraNativeBanner.tsx`)**:
+    - Built `<AdBanner />` using isolated child `iframe` writing (`doc.open()`, `doc.write()`, `doc.close()`) to avoid `document.write` runtime warnings on React parent DOM and eliminate `atOptions` global variable collisions across multiple banner placements.
+    - Implemented `format="responsive-leaderboard"` to dynamically adapt viewport sizes between 728x90 desktop, 468x60 tablet, and 320x50 mobile.
+    - Built `<AdsterraNativeBanner />` for safe asynchronous mounting and unmounting of the 4-tile recommendation widget.
+  - **Multi-Layer Lab Simulation & Auth Route Hard-Exclusion Shield**:
+    - Expanded `isAdExcludedRoute()` to strictly protect all interactive lab simulations (`/labs/*`), admin views (`/admin/*`), and authentication routes (`/login`, `/signup`).
+    - Expanded `purgeAdsterraElements()`, `window.open` interception, and `MutationObserver` in `AdsterraPopunder.tsx` and `GoogleAdSense.tsx` to detect and destroy `bauval.org`, `abscloud.org`, `araplhn.org`, and native recommendation containers.
+    - Extended CSS suppression in `app/globals.css` with `display: none !important` and zero-dimension styling under `body[data-no-ads="true"]`, `body[data-is-lab-page="true"]`, `[data-ol-lab-container]`, and `.lab-workspace`.
+  - **Telemetry False-Positive Protection (`OpenLabsTracker.tsx`)**:
+    - Shielded telemetry collectors from adblocker resource load failures and unhandled promise rejections involving `bauval`, `abscloud`, and `araplhn`.
+  - **Strategic Platform Placements**:
+    - Placed responsive leaderboard and native recommendation banners on the homepage (`app/page.tsx`), global footer (`Footer.tsx`), and blog articles with 300x250 sidebar placement (`BlogPostInteractive.tsx`).
+
 - **User Geolocation Ingestion Fix & Multi-Cloud Telemetry Resilience (`app/lib/geolocation.ts`, `app/api/auth/me/route.ts`, `app/api/auth/nextauth/sync/route.ts`, `app/api/auth/login/route.js`, `app/api/auth/signup/route.js`, `app/api/auth/verify-otp/route.js`, `app/models/User.js`)**:
   - **Resolved Missing User Geolocation Data Since October 6th**:
     - **Fixed Broken 24-Hour Write Throttle in `/api/auth/me`**: When users were created, `User.location.lastUpdated` defaulted to `Date.now()` while `country` was empty. When `/api/auth/me` ran on first load, `now - lastGeoUpdate > 24h` evaluated to false, locking new and unlocated users out of geolocation updates for 24 hours. Refined the gate to check `hasValidLocation`: unlocated users update immediately, while already-located users retain the 24-hour serverless write throttle.

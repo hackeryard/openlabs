@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 
 import AdminFooter from "./AdminFooter";
+import AdBanner from "./AdsterraBanner";
 import { useAuth } from "@/components/AuthProvider";
 
 const disciplineLinks = [
@@ -73,7 +74,8 @@ export default function Footer() {
 
   return (
     <footer className="border-t border-border bg-card/95 backdrop-blur-md text-foreground transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8 sm:pt-16 sm:pb-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-8 sm:pt-10 sm:pb-10">
+        <AdBanner format="responsive-leaderboard" showBadge className="mb-8" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-12 border-b border-border/70">
           {/* ─── COL 1: BRAND & MISSION (5 COLS) ─── */}
           <div className="lg:col-span-5 space-y-4">

@@ -25,6 +25,15 @@ function purgeAdsterraElements(): void {
     "iframe[src*='portalfluently']",
     "a[href*='portalfluently']",
     "div[id*='portalfluently']",
+    "iframe[src*='bauval.org']",
+    "a[href*='bauval.org']",
+    "div[id*='bauval']",
+    "iframe[src*='abscloud.org']",
+    "a[href*='abscloud.org']",
+    "div[id*='abscloud']",
+    "iframe[src*='araplhn.org']",
+    "a[href*='araplhn.org']",
+    "div[id*='container-8eb9029bb810ce5acaa5919fc62e556a']",
     "[data-adsterra]",
   ];
   const nodes = document.querySelectorAll(selectors.join(", "));
@@ -43,7 +52,7 @@ function purgeAdsterraElements(): void {
  * Works alongside the static anti-adblock script in <head> while enforcing
  * strict protection on interactive science simulations (/labs/*) and admin routes (/admin/*):
  * 1. Blocks window.open popunders when clicking inside simulation canvases or admin screens.
- * 2. Purges any dynamically injected transparent overlay click-traps or iframes.
+ * 2. Purges any dynamically injected transparent overlay click-traps, SocialBars, or iframes.
  * 3. Restores standard behavior on public discovery routes (landing pages, blog, tracks).
  */
 export default function AdsterraPopunder() {
@@ -66,7 +75,10 @@ export default function AdsterraPopunder() {
         if (
           urlStr.includes("disregardpervertmural") ||
           urlStr.includes("portalfluently") ||
-          urlStr.includes("adsterra")
+          urlStr.includes("adsterra") ||
+          urlStr.includes("bauval") ||
+          urlStr.includes("abscloud") ||
+          urlStr.includes("araplhn")
         ) {
           return null;
         }
@@ -87,7 +99,18 @@ export default function AdsterraPopunder() {
                 href.includes("disregardpervertmural") ||
                 src.includes("portalfluently") ||
                 href.includes("portalfluently") ||
-                (tag === "iframe" && (src.includes("disregard") || src.includes("fluently")))
+                src.includes("bauval") ||
+                href.includes("bauval") ||
+                src.includes("abscloud") ||
+                href.includes("abscloud") ||
+                src.includes("araplhn") ||
+                href.includes("araplhn") ||
+                (tag === "iframe" &&
+                  (src.includes("disregard") ||
+                    src.includes("fluently") ||
+                    src.includes("bauval") ||
+                    src.includes("abscloud") ||
+                    src.includes("araplhn")))
               ) {
                 detected = true;
                 break;

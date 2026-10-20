@@ -120,7 +120,13 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
         />
         {/* Adsterra Anti-Adblock Popunder JS Sync Tag */}
         <script
-          src="https://disregardpervertmural.com/08/e6/db/08e6dbca5d9532e90ba54ed38592f7b0.js"
+          data-cfasync="false"
+          src="https://abscloud.org/1/08e6dbca5d9532e90ba54ed38592f7b0"
+        />
+        {/* Adsterra SocialBar JS Sync Tag */}
+        <script
+          data-cfasync="false"
+          src="https://bauval.org/14/2959207fa624b60d669e6c0ca66a4f10"
         />
       </head>
       <body className="bg-background text-foreground">

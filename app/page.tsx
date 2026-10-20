@@ -22,6 +22,8 @@ import {
 import Hero from "./components/Hero";
 import ProfileSetupBannerClient from "../components/ProfileSetupBannerClient";
 import AnimatedCard from "../components/ui/AnimatedCard";
+import AdBanner from "./components/AdsterraBanner";
+import AdsterraNativeBanner from "./components/AdsterraNativeBanner";
 import { connectDB } from "@/app/lib/mongodb";
 import Blog from "@/app/models/Blog";
 
@@ -419,6 +421,11 @@ export default async function Home() {
         </section>
       )}
 
+      {/* Mid-Page Responsive Leaderboard Advertisement */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <AdBanner format="responsive-leaderboard" showBadge />
+      </div>
+
       {/* Frequently Asked Questions */}
       <section id="faqs" className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 border-t border-border bg-card/30">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start">
@@ -457,6 +464,11 @@ export default async function Home() {
             ))}
           </div>
         </div>
+      </section>
+
+      {/* Adsterra Native Recommendations Banner */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 border-t border-border/50">
+        <AdsterraNativeBanner showBadge />
       </section>
     </main>
   );
