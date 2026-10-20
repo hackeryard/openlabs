@@ -37,6 +37,8 @@ import {
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import AdBanner from "@/app/components/AdsterraBanner";
+import AdsterraNativeBanner from "@/app/components/AdsterraNativeBanner";
 
 interface FAQ {
   question: string;
@@ -678,8 +680,18 @@ export default function BlogPostInteractive({
                 </Link>
               </div>
             </div>
+
+            {/* Sidebar Ad Unit (300x250 Medium Rectangle) */}
+            <div className="rounded-2xl border border-border bg-card p-4 shadow-xs flex flex-col items-center">
+              <AdBanner format="300x250" showBadge />
+            </div>
           </aside>
         </div>
+
+        {/* ─── NATIVE RECOMMENDATIONS BANNER ─── */}
+        <section className="pt-8 border-t border-border">
+          <AdsterraNativeBanner showBadge />
+        </section>
 
         {/* ─── BOTTOM SECTION: RELATED PUBLICATIONS (3 COLS) ─── */}
         {relatedPosts && relatedPosts.length > 0 && (

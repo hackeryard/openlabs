@@ -214,6 +214,7 @@ When deploying to Render, Docker, or alternative cloud providers:
 - **Mobile-Optimized Dropdown** — Z-index fixed mobile menu stays above content
 - **Lab Discovery Hub** — Homepage "Explore All Labs" section with 16+ labs organized by category
 - **Branded Error Pages** — Custom 404, 500, and error boundaries with helpful navigation
+- **Monetization & Advertising Architecture** — Integrated Adsterra multi-format monetization (Popunder, SocialBar, Smartlink, Display IFrame Sync Banners [160x300, 160x600, 300x250, 320x50, 468x60, 728x90 via `<AdBanner />`], and 4-tile Native Recommendations via `<AdsterraNativeBanner />`) on public pages, paired with a strict 3-layer defensive shield that completely suppresses all ad scripts, floating bars, and popunders across interactive simulation workspaces (`/labs/*`), administrative views (`/admin/*`), and authentication screens (`/login`, `/signup`)
 
 ---
 

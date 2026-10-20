@@ -48,6 +48,15 @@ function purgeAdElements(): void {
     "iframe[src*='portalfluently']",
     "a[href*='portalfluently']",
     "div[id*='portalfluently']",
+    "iframe[src*='bauval.org']",
+    "a[href*='bauval.org']",
+    "div[id*='bauval']",
+    "iframe[src*='abscloud.org']",
+    "a[href*='abscloud.org']",
+    "div[id*='abscloud']",
+    "iframe[src*='araplhn.org']",
+    "a[href*='araplhn.org']",
+    "div[id*='container-8eb9029bb810ce5acaa5919fc62e556a']",
   ];
   const adNodes = document.querySelectorAll(selectors.join(", "));
   adNodes.forEach((node) => {

@@ -202,6 +202,9 @@ export default function OpenLabsTracker() {
             lowerSrc.includes("googleusercontent.com") ||
             lowerSrc.includes("disregardpervertmural") ||
             lowerSrc.includes("portalfluently") ||
+            lowerSrc.includes("bauval") ||
+            lowerSrc.includes("abscloud") ||
+            lowerSrc.includes("araplhn") ||
             lowerSrc.includes("sfp.js") ||
             lowerSrc.includes("adsterra") ||
             lowerSrc.includes("extension://") ||
@@ -319,12 +322,18 @@ export default function OpenLabsTracker() {
         lowerReasonStack.includes("extension://") ||
         lowerReasonStack.includes("disregardpervertmural") ||
         lowerReasonStack.includes("portalfluently") ||
+        lowerReasonStack.includes("bauval") ||
+        lowerReasonStack.includes("abscloud") ||
+        lowerReasonStack.includes("araplhn") ||
         lowerReasonStack.includes("adsterra") ||
         lowerReasonStack.includes("openanalytics") ||
         (message.includes("Failed to fetch") && (
           lowerReasonStack.includes("chrome-extension") ||
           lowerReasonStack.includes("disregardpervertmural") ||
           lowerReasonStack.includes("portalfluently") ||
+          lowerReasonStack.includes("bauval") ||
+          lowerReasonStack.includes("abscloud") ||
+          lowerReasonStack.includes("araplhn") ||
           lowerReasonStack.includes("openanalytics") ||
           lowerReasonStack.includes("injectscript")
         ))
