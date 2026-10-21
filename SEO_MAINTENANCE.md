@@ -12,7 +12,7 @@ Route classification is centralized in [`app/lib/seoRoutePolicy.ts`](file:///c:/
 
 | Route Classification | Path Pattern | Indexable? | In Sitemap? | Robots & Directives |
 | :--- | :--- | :---: | :---: | :--- |
-| **Public Indexable** | `/${subject}/*`, `/tracks`, `/leaderboard`, `/blog/*`, `/about`, `/contact`, `/` | **YES** | **YES** | `index: true, follow: true`, self-referential canonical URL |
+| **Public Indexable** | `/${subject}/*`, `/tracks`, `/leaderboard`, `/blog/*`, `/about`, `/contact`, `/privacy`, `/terms`, `/` | **YES** | **YES** | `index: true, follow: true`, self-referential canonical URL |
 | **Interactive Labs** | `/labs/*` (all 101 simulations) | **NO** | **NO** | `noindex, nofollow, noarchive` via `app/labs/layout.tsx` + `X-Robots-Tag` |
 | **Private / Auth** | `/admin/*`, `/api/*`, `/login`, `/signup`, `/forgotpassword`, `/reset-password`, `/verify-email`, `/setup-profile`, `/403` | **NO** | **NO** | Disallowed in `robots.ts`, redirected or 401/403 in `middleware.ts` |
 | **Permanent Redirects** | `/education` &rarr; `/tracks`, `/virtual-science-labs` &rarr; `/tracks` | **NO** | **NO** | HTTP 308 permanent redirect, internal links must point directly to target |
@@ -45,7 +45,7 @@ OpenLabs deliberately separates **public educational landing pages** from **inte
 The dynamic robots file is implemented in [`app/robots.ts`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/robots.ts):
 
 - **Mediapartners-Google Rule:** Explicitly grants Google AdSense crawler (`User-agent: Mediapartners-Google`) full access (`allow: ["/"]`) for ad verification and contextual analysis.
-- **Allowed Prefixes:** `/`, `/ads.txt`, `/robots.txt`, `/sitemap.xml`, `/physics`, `/chemistry`, `/biology`, `/computer-science`, `/mathematics`, `/tracks`, `/leaderboard`, `/blog`, `/about`, `/contact`, `/llms.txt`, `/llms-full.txt`.
+- **Allowed Prefixes:** `/`, `/ads.txt`, `/robots.txt`, `/sitemap.xml`, `/physics`, `/chemistry`, `/biology`, `/computer-science`, `/mathematics`, `/tracks`, `/leaderboard`, `/blog`, `/about`, `/contact`, `/privacy`, `/terms`, `/llms.txt`, `/llms-full.txt`.
 - **Disallowed Prefixes:** `/admin/`, `/api/`, `/private/`, `/login`, `/signup`, `/forgotpassword`, `/reset-password`, `/verify-email`, `/setup-profile`, `/403`.
 - **Sitemap Declaration:** `https://www.openlabs.org.in/sitemap.xml`.
 - **Root Meta Headers (`next.config.js`):** `/ads.txt`, `/robots.txt`, and `/sitemap.xml` are exempt from blanket `X-Frame-Options: SAMEORIGIN` and `X-Robots-Tag: index, follow` headers, and are served with dedicated CORS (`Access-Control-Allow-Origin: *`) and explicit content types to guarantee unhindered crawler and ad validator access.
@@ -57,12 +57,12 @@ The dynamic robots file is implemented in [`app/robots.ts`](file:///c:/Users/rah
 
 The sitemap is generated dynamically by [`app/sitemap.ts`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/sitemap.ts) with `revalidate = 43200` (12-hour cache):
 
-1. **Core Static Hubs:** Root (`/`), Curriculum Tracks (`/tracks`), Leaderboard (`/leaderboard`), Discipline Hubs (`/physics`, `/chemistry`, etc.), and 9 Subtopic Hubs.
+1. **Core Static Hubs:** Root (`/`), Curriculum Tracks (`/tracks`), Leaderboard (`/leaderboard`), Discipline Hubs (`/physics`, `/chemistry`, etc.), Info and Policy pages (`/about`, `/contact`, `/privacy`, `/terms`), and 9 Subtopic Hubs.
 2. **Periodic Table Elements:** All 118 element detail pages (`/chemistry/periodictable/atom/[1..118]`).
 3. **Public Lab Landing Pages:** Every lab registered in [`app/lib/labs.ts`](file:///c:/Users/rahul/OneDrive/Desktop/OpenLabs/openlabs/app/lib/labs.ts) maps to its public landing route (`/${lab.id}`), NOT `/labs/${lab.id}`.
 4. **Dynamic Blog Posts:** All published articles from MongoDB (`/blog/${post.slug}`) with genuine `updatedAt` / `date` modification timestamps.
 5. **Policy Verification:** Every route is verified with `isSitemapEligible(path)` before emission.
-6. **Comprehensive Edge CDN ISR Caching (`revalidate = 86400`):** 100% of all public educational routes — all 5 discipline hubs (`/physics`, `/chemistry`, `/biology`, `/mathematics`, `/computer-science`), all 98 individual STEM experiment landing pages (`/<subject>/<slug>`), all 118 periodic table element atom pages (`/chemistry/periodictable/atom/[1..118]`), all 10 subtopic discovery hubs, curriculum tracks (`/tracks`), the `/leaderboard` shell (`revalidate = 3600`), info pages (`/about`, `/contact`), and machine-readable LLM indexes (`/llms.txt`, `/llms-full.txt`) carry 24-hour Edge CDN caching to offload search crawlers and AI bots completely from serverless compute.
+6. **Comprehensive Edge CDN ISR Caching (`revalidate = 86400`):** 100% of all public educational routes — all 5 discipline hubs (`/physics`, `/chemistry`, `/biology`, `/mathematics`, `/computer-science`), all 98 individual STEM experiment landing pages (`/<subject>/<slug>`), all 118 periodic table element atom pages (`/chemistry/periodictable/atom/[1..118]`), all 10 subtopic discovery hubs, curriculum tracks (`/tracks`), the `/leaderboard` shell (`revalidate = 3600`), info and legal policy pages (`/about`, `/contact`, `/privacy`, `/terms`), and machine-readable LLM indexes (`/llms.txt`, `/llms-full.txt`) carry 24-hour Edge CDN caching to offload search crawlers and AI bots completely from serverless compute.
 
 ---
 
