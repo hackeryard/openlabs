@@ -1466,6 +1466,12 @@ The OpenLabs name, logo, visual identity, and branding are **protected intellect
 
 For licensing inquiries, please contact the maintainer.
 
+### Privacy Policy & Terms of Service
+
+OpenLabs maintains public, transparent privacy and legal policies in full compliance with Google Publisher Policies, Google AdSense requirements, GDPR, and CCPA:
+- **[Privacy Policy](https://www.openlabs.org.in/privacy)**: Details data collection, student privacy, Google AdSense & DoubleClick DART cookie disclosures, opt-out mechanisms (`adssettings.google.com`, `aboutads.info`), and user rights.
+- **[Terms of Service](https://www.openlabs.org.in/terms)**: Details STEM educational simulation disclaimers, continuous mathematical modeling representations, acceptable use, and intellectual property.
+
 ---
 
 ## Contact & Support 📬
@@ -1489,6 +1495,8 @@ Detailed changes are tracked in [CHANGELOG.md](CHANGELOG.md), generated from git
 ### Latest Updates
 
 **Most recent (see [CHANGELOG.md § Unreleased](CHANGELOG.md#unreleased) for the full list):**
+- ✅ **Google AdSense Approval & Legal Governance** — Public Privacy Policy (`/privacy`) and Terms of Service (`/terms`) with DoubleClick DART disclosures, opt-outs, and footer navigation
+- ✅ **Comprehensive Adsterra Multi-Format Monetization** — Display banner units, Popunder, SocialBar, and Native 4-tile recommendations with strict interactive lab and admin route shielding
 - ✅ **Virtual Titration Lab** — Interactive Chemistry lab (`/chemistry/titration`) with burette animation, live pH curves (Chart.js), stoichiometry calculations, and observation log exporter
 - ✅ **Admin User Telemetry Dashboard** — Secure admin management portal (`/admin/users`) featuring real-time search, multi-attribute filtering, column header sorting, telemetry detail drawer, and CSV data export
 - ✅ **Enterprise Technical SEO & Educational Knowledge Graph** — 29-concept STEM Knowledge Graph, breadcrumb navigation, formula tables, single-source JSON-LD schemas, Edge OG Image generator (`/api/og`), AI search discoverability (`/llms.txt`), and static build audit CLI (`scripts/seo-audit.ts`)

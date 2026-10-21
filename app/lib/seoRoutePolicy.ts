@@ -41,6 +41,8 @@ export const CORE_PUBLIC_PAGES: string[] = [
   "/blog",
   "/about",
   "/contact",
+  "/privacy",
+  "/terms",
 ];
 
 export const CORE_PUBLIC_ROUTES = CORE_PUBLIC_PAGES;

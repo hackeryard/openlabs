@@ -40,6 +40,8 @@ const platformLinks = [
   { label: "Global XP Leaderboard", url: "/leaderboard" },
   { label: "Research & Blog", url: "/blog" },
   { label: "About OpenLabs", url: "/about" },
+  { label: "Privacy Policy", url: "/privacy" },
+  { label: "Terms of Service", url: "/terms" },
   { label: "Contact & Bug Report", url: "/contact" },
 ];
 
@@ -166,13 +168,21 @@ export default function Footer() {
             <span>&copy; {currentYear} OpenLabs. Built for interactive science education.</span>
           </p>
 
-          <div className="flex items-center gap-4 text-[11px] font-medium">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium">
             <Link href="/about" className="hover:text-foreground transition-colors">
               About
             </Link>
             <span>&bull;</span>
             <Link href="/blog" className="hover:text-foreground transition-colors">
               Publications
+            </Link>
+            <span>&bull;</span>
+            <Link href="/privacy" className="hover:text-foreground transition-colors">
+              Privacy Policy
+            </Link>
+            <span>&bull;</span>
+            <Link href="/terms" className="hover:text-foreground transition-colors">
+              Terms of Service
             </Link>
             <span>&bull;</span>
             <Link href="/contact" className="hover:text-foreground transition-colors">

@@ -310,3 +310,20 @@ Transform the platform from an unstructured catalog of 94 separate labs into a g
   - Extended route-level exclusions (`isAdExcludedRoute()`), `AdsterraPopunder.tsx` (window.open interceptor & MutationObserver), `GoogleAdSense.tsx`, and CSS suppression in `app/globals.css` to comprehensively purge `bauval.org`, `abscloud.org`, `araplhn.org`, and native recommendation containers on all `/labs/*`, `/admin/*`, `/login`, and `/signup` routes.
 - **Telemetry False-Positive Filtering Parity [SHIPPED ✅]**:
   - Shielded `OpenLabsTracker.tsx` from adblocker resource blocks and unhandled rejections involving `bauval`, `abscloud`, and `araplhn`.
+
+---
+
+## 16. Google AdSense Approval Compliance & Legal Governance [SHIPPED ✅] ⚖️
+
+- **Comprehensive Privacy Policy (`/privacy`) [SHIPPED ✅]**:
+  - Deployed public, fully-indexed Privacy Policy with mandatory Google AdSense and DoubleClick DART advertising cookie disclosures.
+  - Included direct consumer opt-out mechanisms linking to `adssettings.google.com` and Network Advertising Initiative (`aboutads.info`).
+  - Implemented international regulatory clauses covering GDPR (Articles 15-21), California Consumer Privacy Act (CCPA), student data protection, telemetry governance, and children's privacy.
+- **Terms of Service & Simulation Disclaimers (`/terms`) [SHIPPED ✅]**:
+  - Authored comprehensive platform terms detailing theoretical STEM simulation disclaimers (continuous mathematical modeling vs physical hazard protocols).
+  - Defined acceptable use, account governance, intellectual property fair-use rights, and limitation of liability.
+- **Global Navigation & Footer Integration [SHIPPED ✅]**:
+  - Embedded `/privacy` and `/terms` links in `Footer.tsx` within both the platform links column and the responsive bottom legal bar.
+- **Route Policy & Middleware Crawler Accessibility [SHIPPED ✅]**:
+  - Registered `/privacy` and `/terms` into `CORE_PUBLIC_PAGES` (`app/lib/seoRoutePolicy.ts`), allowed prefixes in `app/robots.ts`, and `publicPaths` in `middleware.ts`.
+  - Guaranteed 100% unhindered, unauthenticated HTTP 200 responses to search engine bots, Google AdSense verification crawlers, and human visitors.

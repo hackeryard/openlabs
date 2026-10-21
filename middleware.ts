@@ -10,6 +10,8 @@ const publicPaths = [
   '/verify-email',
   '/about',
   '/contact',
+  '/privacy',
+  '/terms',
   '/tracks',
   '/leaderboard',
   '/403',

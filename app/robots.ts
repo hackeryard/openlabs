@@ -33,6 +33,8 @@ export default function robots(): MetadataRoute.Robots {
           "/blog/",
           "/about",
           "/contact",
+          "/privacy",
+          "/terms",
           "/llms.txt",
           "/llms-full.txt",
         ],
