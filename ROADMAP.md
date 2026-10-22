@@ -121,6 +121,14 @@ Transform the platform from an unstructured catalog of 94 separate labs into a g
   - Live at [`/labs/computer-science/dsa/pathfinding-astar`](/labs/computer-science/dsa/pathfinding-astar) and [`/computer-science/dsa/pathfinding-astar`](/computer-science/dsa/pathfinding-astar). Interactive grid with obstacle drawing, step-by-step visualizations and time/space complexity analysis for $A^*$ Search (Euclidean, Manhattan, Chebyshev heuristics), Dijkstra's, BFS, and DFS.
 - **Neural Network & Deep Learning from Scratch [SHIPPED ✅]**:
   - Live at [`/labs/computer-science/ai-problem/neural-network`](/labs/computer-science/ai-problem/neural-network) and [`/computer-science/ai-problem/neural-network`](/computer-science/ai-problem/neural-network). Multi-layer perceptron training, activation function toggles, forward propagation signal flow, and backpropagation gradient descent weight updates on 2D decision boundary datasets.
+- **Git Version Control & DAG Graph Simulator [SHIPPED ✅]**:
+  - Live at [`/labs/computer-science/git-simulator`](/labs/computer-science/git-simulator) and [`/computer-science/git-simulator`](/computer-science/git-simulator).
+  - Complete in-memory Git engine supporting branch creation, checkout/switch, fast-forward & 3-way merge with conflict markers (`<<<<<<< HEAD`), rebase, cherry-pick, stash, revert, reset (`--soft`, `--mixed`, `--hard`), tags, diff, log, and virtual file operations (`touch`, `echo`, `cat`, `rm`, `edit`).
+  - Interactive SVG Directed Acyclic Graph (DAG) commit visualizer with cubic Bezier curves, dynamic branch lanes, moving HEAD pointer, zoom/pan controls, and commit inspection modal (40-char SHA, tree entries, parent pointers, unified diffs).
+  - 3-Zone pipeline (Working Tree ➔ Staging Area ➔ Local Repository) with 1-click stage, unstage, and file editor modal.
+  - Live `.git` internal object database explorer (Blobs, Trees, Commits, Refs).
+  - 10 guided progressive missions with automated repository state validation.
+  - 6 preset sandboxes (Clean, Feature Branch, Merge Conflict, Detached HEAD, Rebase, Stash) and authentic terminal with Tab autocomplete.
 - **CPU Scheduling & Memory Management Visualizer**:
   - Interactive Gantt chart simulator for FCFS, SJF, SRTF, Round Robin (time quantum tuning), and Multilevel Feedback Queues.
   - Virtual memory page replacement algorithms (FIFO, LRU, Optimal, Clock/Second-Chance) with page fault counters.

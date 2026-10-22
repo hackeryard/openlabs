@@ -668,7 +668,7 @@ export const LABS: Lab[] = [
     name: "Git Simulator",
     subject: "computerScience",
     type: "simulation",
-    challengeParams: ["commandsRun", "branchesCreated"],
+    challengeParams: ["commandsRun", "branchesCreated", "commitsMade", "missionsCompleted"],
     challengeEnabled: true,
     description: "Interactive Git version control",
   },

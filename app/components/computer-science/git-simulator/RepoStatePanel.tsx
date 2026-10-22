@@ -1,20 +1,20 @@
 "use client";
 
 import { RepoState } from "@/app/types/gitSimualtor";
-import WorkingDirectory from "./WorkingDirectory";
-import StagingArea from "./StagingArea";
-import BranchInfo from "./BranchInfo";
+import GitZonesView from "./GitZonesView";
 
 type Props = {
   state: RepoState;
+  onRunCommand?: (command: string) => void;
+  onOpenFileEditor?: (filename: string, content: string, isConflict?: boolean) => void;
 };
 
-export default function RepoStatePanel({ state }: Props) {
+export default function RepoStatePanel({ state, onRunCommand, onOpenFileEditor }: Props) {
   return (
-    <div className="grid grid-cols-3 gap-6 mt-6">
-      <WorkingDirectory state={state} />
-      <StagingArea state={state} />
-      <BranchInfo state={state} />
-    </div>
+    <GitZonesView
+      state={state}
+      onRunCommand={onRunCommand || (() => {})}
+      onOpenFileEditor={onOpenFileEditor || (() => {})}
+    />
   );
-}
+}

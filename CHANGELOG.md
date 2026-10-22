@@ -1,6 +1,39 @@
 # Changelog
 
 All notable changes to OpenLabs are documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/); since the project has no version tags yet, entries are grouped by date instead of version number. Generated from git history; merge commits and duplicate/typo commits are omitted.
+- **Interactive Git Version Control & DAG Graph Simulator Overhaul (`app/labs/computer-science/git-simulator/*`, `app/components/computer-science/git-simulator/*`, `app/types/gitSimualtor.ts`, `app/lib/labs.ts`, `REQUIREMENTS.md`, `ROADMAP.md`, `CLAUDE.md`, `AGENTS.md`, `README.md`)**:
+  - **Interactive Commit DAG Visualizer (`CommitGraph.tsx`, `CommitDetailsModal.tsx`)**:
+    - Re-engineered the commit history visualizer with dynamic multi-branch lanes, animated SVG cubic Bezier curves, merge indicators, clickable commit nodes, moving branch pills, and a floating HEAD pointer badge.
+    - Implemented `CommitDetailsModal` allowing students to inspect any commit's complete internal state: full 40-character SHA-1 hash, author, timestamp, parent references, tree entries with file modes and blob SHAs, and color-coded unified diff view (`+` insertions / `-` deletions).
+    - Integrated pan and zoom controls (`10%` to `200%`, reset) and auto-centering on the active HEAD commit.
+  - **Full In-Memory Git Execution Engine (`executeCommand.ts`)**:
+    - Implemented a complete virtual Git runtime featuring Lowest Common Ancestor (LCA) graph traversal for Fast-Forward and true 3-Way merges.
+    - Built-in merge conflict engine: generates standard Git conflict markers (`<<<<<<< HEAD`, `=======`, `>>>>>>> <branch>`) in working directory files and tracks merge-in-progress state until resolved and committed.
+    - Full support for branching and navigation (`git branch`, `git branch -d`, `git checkout`, `git checkout -b`, `git switch`, `git switch -c`).
+    - Stash management (`git stash`, `git stash pop`, `git stash list`, `git stash drop`).
+    - Rebase engine (`git rebase <target>`) with linear commit replays and ancestor detection.
+    - Cherry-pick engine (`git cherry-pick <commit>`) applying isolated patch deltas.
+    - Revert engine (`git revert <commit>`) creating inverse patch commits.
+    - Reset engine (`git reset --soft`, `--mixed`, `--hard`).
+    - Tagging support (`git tag <name>`, `git tag -d`).
+    - Inspection commands (`git status`, `git log`, `git diff`, `git show <commit>`).
+    - Virtual file system operations: `touch`, `echo "text" > file`, `echo "text" >> file`, `cat`, `ls`, `rm`, and `edit <file>`.
+  - **3-Zone Working Tree / Staging / Local Repo Pipeline (`GitZonesView.tsx`, `RepoStatePanel.tsx`)**:
+    - Built visual representation of Git's three primary areas: Working Directory, Staging Area (Index), and Local Repository (`.git/objects`).
+    - Interactive 1-click controls: Stage File (`git add`), Stage All (`git add .`), Unstage File (`git restore --staged`), and Discard Changes (`git restore`).
+    - In-browser file editor (`FileEditorModal.tsx`) for live content editing and conflict resolution.
+  - **`.git` Internal Object Database Inspector (`GitObjectsView.tsx`)**:
+    - Live explorer inspecting Git's content-addressable object store (`.git/objects/`): Blobs (file content hashes), Trees (directories and file manifests), Commits (tree pointers and metadata), and References (`refs/heads/*`, `refs/tags/*`, `HEAD`).
+  - **10 Guided Progressive Quests & Curriculum (`missions.ts`, `GitMissionsView.tsx`)**:
+    - Created structured missions from beginner to advanced: First Commit, Branching Out, Fast-Forward Merge, 3-Way Merge, Merge Conflict Resolution, Detached HEAD, Undoing History with Revert, Linear History with Rebase, Git Stash, and Cherry-Pick.
+    - Live automated state validation engine verifying branch names, commit graphs, staged files, tags, and working directory state.
+  - **6 Preset Sandbox Scenarios (`presets.ts`)**:
+    - Quick-switch presets: Clean Working State, Feature Branch, Merge Conflict, Detached HEAD, Rebase Ready, and Stash Demo.
+  - **Glassmorphic Interactive Terminal (`GitTerminal.tsx`)**:
+    - Authentic command prompt displaying active user, repo name, branch, and dirty status (`openlabs@repo (branch)* ➜`).
+    - Command history navigation (Up/Down arrow keys), Tab autocomplete for commands, flags, and file names, quick action command pills, and cheatsheet modal.
+  - **Gamification & Daily Challenges (`app/lib/labs.ts`, `app/labs/computer-science/git-simulator/page.tsx`)**:
+    - Wired `commitsMade` and `missionsCompleted` challenge parameters into `LABS` registry and connected `DailyChallengeCard` and `useLab()` XP hooks.
 
 - **Google AdSense Approval Compliance & Legal Governance Architecture (`app/privacy/page.tsx`, `app/terms/page.tsx`, `app/components/Footer.tsx`, `middleware.ts`, `app/lib/seoRoutePolicy.ts`, `app/robots.ts`, `AGENTS.md`, `CLAUDE.md`, `REQUIREMENTS.md`, `ROADMAP.md`, `SEO_MAINTENANCE.md`)**:
   - **Resolved Root Causes of Google AdSense "Low Value Content" Disapproval**:
