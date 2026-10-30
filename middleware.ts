@@ -161,7 +161,8 @@ export function middleware(request: NextRequest) {
     pathname.startsWith('/api/auth') ||
     pathname.startsWith('/api/challenges/generate') ||
     pathname.startsWith('/api/contact') ||
-    pathname.startsWith('/api/blogs')
+    pathname.startsWith('/api/blogs') ||
+    pathname.startsWith('/api/ads')
   ) {
     return NextResponse.next();
   }

@@ -8,6 +8,7 @@ import {
   AdBannerFormat,
   AdBannerSize,
 } from "@/app/lib/ads";
+import { useAdSettings } from "./AdController";
 
 interface AdsterraBannerProps {
   format: AdBannerFormat;
@@ -26,7 +27,7 @@ function isAdminHost(): boolean {
  * 
  * Safely mounts Adsterra IFrame Sync ad units within an isolated iframe execution
  * context, protecting parent React DOM from document.write collisions and variable leakage.
- * Automatically respects lab simulation (/labs/*) and admin (/admin/*) hard exclusion shields.
+ * Automatically respects lab simulation (/labs/*), admin (/admin/*), and admin panel master ad switches.
  */
 export default function AdsterraBanner({
   format,
@@ -34,6 +35,7 @@ export default function AdsterraBanner({
   showBadge = false,
 }: AdsterraBannerProps) {
   const pathname = usePathname();
+  const adSettings = useAdSettings();
   const containerRef = useRef<HTMLDivElement>(null);
   const [resolvedSize, setResolvedSize] = useState<AdBannerSize>(() => {
     if (format !== "responsive-leaderboard") return format;
@@ -44,7 +46,11 @@ export default function AdsterraBanner({
     return "728x90";
   });
 
-  const shouldExclude = isAdExcludedRoute(pathname) || isAdminHost();
+  const shouldExclude =
+    isAdExcludedRoute(pathname) ||
+    isAdminHost() ||
+    !adSettings.allowed ||
+    !adSettings.networks.adsterraBanners;
 
   // Responsive size listener for responsive-leaderboard
   useEffect(() => {

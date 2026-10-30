@@ -21,6 +21,7 @@ import {
   X,
   User as UserIcon,
   Lock,
+  Megaphone,
 } from "lucide-react";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import { useAuth } from "@/components/AuthProvider";
@@ -39,6 +40,7 @@ const navItems: AdminNavItem[] = [
   { label: "Blogs", href: "/admin/blogs", icon: FileText },
   { label: "Feedback", href: "/admin/feedback", icon: MessageSquare },
   { label: "Contacts", href: "/admin/contacts", icon: Mail },
+  { label: "Ads", href: "/admin/ads", icon: Megaphone },
   { label: "SEO Graph", href: "/admin/seo-dashboard", icon: Network },
 ];
 

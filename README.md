@@ -214,7 +214,7 @@ When deploying to Render, Docker, or alternative cloud providers:
 - **Mobile-Optimized Dropdown** — Z-index fixed mobile menu stays above content
 - **Lab Discovery Hub** — Homepage "Explore All Labs" section with 16+ labs organized by category
 - **Branded Error Pages** — Custom 404, 500, and error boundaries with helpful navigation
-- **Monetization & Advertising Architecture** — Integrated Adsterra multi-format monetization (Popunder, SocialBar, Smartlink, Display IFrame Sync Banners [160x300, 160x600, 300x250, 320x50, 468x60, 728x90 via `<AdBanner />`], and 4-tile Native Recommendations via `<AdsterraNativeBanner />`) on public pages, paired with a strict 3-layer defensive shield that completely suppresses all ad scripts, floating bars, and popunders across interactive simulation workspaces (`/labs/*`), administrative views (`/admin/*`), and authentication screens (`/login`, `/signup`)
+- **Monetization & Advertising Architecture** — Integrated Adsterra multi-format monetization (Popunder, Smartlink, Display IFrame Sync Banners [160x300, 160x600, 300x250, 320x50, 468x60, 728x90 via `<AdBanner />`], and 4-tile Native Recommendations via `<AdsterraNativeBanner />`) with an **Admin Ad Operations Console** (`/admin/ads`) providing a global master kill switch, scheduled timed snoozing (15m to 7 days), and granular network toggles. Backed by a strict multi-layer defensive shield ensuring **0 ads are ever loaded or executed on the Admin Panel (`/admin/*`, `admin.*`)**, interactive simulation workspaces (`/labs/*`), or authentication screens (`/login`, `/signup`).
 
 ---
 
@@ -1495,8 +1495,9 @@ Detailed changes are tracked in [CHANGELOG.md](CHANGELOG.md), generated from git
 ### Latest Updates
 
 **Most recent (see [CHANGELOG.md § Unreleased](CHANGELOG.md#unreleased) for the full list):**
+- ✅ **Admin Ad Operations Console & Zero-Ad Panel Shield** — Centralized admin management console (`/admin/ads`) with global master kill switch, scheduled timed snoozing (15m to 7d) with live countdowns, granular network toggles, and guaranteed 0-ad isolation across the Admin Console and all 101 lab simulations
 - ✅ **Google AdSense Approval & Legal Governance** — Public Privacy Policy (`/privacy`) and Terms of Service (`/terms`) with DoubleClick DART disclosures, opt-outs, and footer navigation
-- ✅ **Comprehensive Adsterra Multi-Format Monetization** — Display banner units, Popunder, SocialBar, and Native 4-tile recommendations with strict interactive lab and admin route shielding
+- ✅ **Comprehensive Adsterra Multi-Format Monetization** — Display banner units, Popunder, and Native 4-tile recommendations with strict interactive lab and admin route shielding
 - ✅ **Virtual Titration Lab** — Interactive Chemistry lab (`/chemistry/titration`) with burette animation, live pH curves (Chart.js), stoichiometry calculations, and observation log exporter
 - ✅ **Admin User Telemetry Dashboard** — Secure admin management portal (`/admin/users`) featuring real-time search, multi-attribute filtering, column header sorting, telemetry detail drawer, and CSV data export
 - ✅ **Enterprise Technical SEO & Educational Knowledge Graph** — 29-concept STEM Knowledge Graph, breadcrumb navigation, formula tables, single-source JSON-LD schemas, Edge OG Image generator (`/api/og`), AI search discoverability (`/llms.txt`), and static build audit CLI (`scripts/seo-audit.ts`)

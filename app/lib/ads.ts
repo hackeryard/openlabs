@@ -15,13 +15,6 @@ export const ADSTERRA_POPUNDER_SRC =
   "https://abscloud.org/1/08e6dbca5d9532e90ba54ed38592f7b0";
 
 /**
- * Adsterra SocialBar JS Sync Source
- * Unit: SocialBar_1 on openlabs.org.in
- */
-export const ADSTERRA_SOCIALBAR_SRC =
-  "https://bauval.org/14/2959207fa624b60d669e6c0ca66a4f10";
-
-/**
  * Adsterra Direct Smartlink URL
  * Unit: Smartlink_1 on openlabs.org.in
  */
@@ -85,6 +78,35 @@ export type AdBannerSize = "160x300" | "160x600" | "300x250" | "320x50" | "468x6
 export type AdBannerFormat = AdBannerSize | "responsive-leaderboard";
 
 /**
+ * Returns true if the current environment or route is within the Admin Console
+ * (subdomain admin.*, path /admin, or 403 screen).
+ */
+export function isAdminContext(pathname?: string | null): boolean {
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname;
+    const path = pathname || window.location.pathname;
+    if (
+      host.startsWith("admin.") ||
+      host.startsWith("admin.localhost") ||
+      path === "/admin" ||
+      path.startsWith("/admin/") ||
+      path === "/403"
+    ) {
+      return true;
+    }
+  } else if (pathname) {
+    if (
+      pathname === "/admin" ||
+      pathname.startsWith("/admin/") ||
+      pathname === "/403"
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
  * Returns true if the pathname is an interactive simulation lab or administrative panel
  * that must be protected from all advertisements.
  */
@@ -92,12 +114,8 @@ export function isAdExcludedRoute(pathname: string | null): boolean {
   if (!pathname) return false;
   // Exclude all interactive simulation labs under /labs or /labs/*
   if (pathname === "/labs" || pathname.startsWith("/labs/")) return true;
-  // Exclude administrative dashboards and access restricted screens
-  if (
-    pathname === "/admin" ||
-    pathname.startsWith("/admin/") ||
-    pathname === "/403"
-  ) {
+  // Exclude administrative dashboards, admin subdomains, and access restricted screens
+  if (isAdminContext(pathname)) {
     return true;
   }
   // Exclude login and signup forms for security and friction-free auth
