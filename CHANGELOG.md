@@ -1,6 +1,23 @@
 # Changelog
 
 All notable changes to OpenLabs are documented in this file. Format loosely follows [Keep a Changelog](https://keepachangelog.com/); since the project has no version tags yet, entries are grouped by date instead of version number. Generated from git history; merge commits and duplicate/typo commits are omitted.
+
+- **Admin Panel Ad Control & Zero-Ad Shield Architecture (`app/admin/ads/page.tsx`, `app/models/AdSettings.ts`, `app/api/ads/status/route.ts`, `app/api/admin/ads/route.ts`, `app/components/AdController.tsx`, `app/components/AdsterraBanner.tsx`, `app/components/AdsterraNativeBanner.tsx`, `app/components/Footer.tsx`, `app/components/AdminNavbar.tsx`, `app/admin/page.tsx`, `app/globals.css`, `app/layout.tsx`, `app/lib/ads.ts`, `middleware.ts`)**:
+  - **Zero-Ad Admin Panel Guarantee**: Eliminated all advertisements on the Admin Console (`/admin/*`, `admin.openlabs.org.in`, `admin.localhost`, `/403`). Removed hardcoded static script tags from `<head>` in `app/layout.tsx`, delegating injection to `AdController` which strictly never executes in admin contexts. Reinforced with CSS hard-blocks under `body[data-is-admin="true"]` in `app/globals.css`, `window.open` ad click-trap neutralization, and DOM mutation observers.
+  - **Centralized Admin Monetization Console (`app/admin/ads/page.tsx`)**: Built a full-featured admin management console allowing administrators to:
+    - Toggle a Global Master Kill Switch (instantly enable or disable all ads site-wide with 1 click).
+    - Schedule timed pauses / snoozes (presets for 15m, 30m, 1h, 6h, 12h, 24h/1d, 3d, 7d, or custom durations) with live remaining-time countdown timers and automatic resumption when the snooze expires.
+    - Toggle individual network tags independently (Google AdSense Auto Ads, Adsterra Anti-Adblock Popunder, and Adsterra Display & Native Banners).
+    - Instant 1-click "Resume All Ads Now" reactivation.
+  - **Ad Settings Data Model & APIs (`AdSettings.ts`, `/api/ads/status`, `/api/admin/ads`)**: Created Mongoose model for persistent ad settings and snooze periods, backed by a fast public status endpoint (`/api/ads/status`) with edge caching and RBAC-protected management endpoint (`/api/admin/ads`).
+  - **Navigation & Portal Hub Integration (`AdminNavbar.tsx`, `app/admin/page.tsx`)**: Added "Ads" navigation tab to `AdminNavbar` and an Ad Monetization summary card to the Admin Portal Home.
+  - **Banner & Footer Safety**: Connected `AdsterraBanner.tsx` and `AdsterraNativeBanner.tsx` to `useAdSettings()`, ensuring banners automatically suppress when paused or in admin contexts. Reinforced `Footer.tsx` so admin contexts strictly suppress public footer banners.
+
+- **Decommissioned & Removed Adsterra SocialBar_1 Unit (`app/layout.tsx`, `app/lib/ads.ts`, `README.md`, `CLAUDE.md`, `AGENTS.md`, `REQUIREMENTS.md`, `ROADMAP.md`, `SEO_MAINTENANCE.md`)**:
+  - **Removed Global SocialBar Script**: Removed the Adsterra SocialBar JS sync script (`bauval.org/14/2959207fa624b60d669e6c0ca66a4f10`, Adsterra Placement ID: `31451685`, unit `SocialBar_1` on `openlabs.org.in`) from `<head>` in `app/layout.tsx`.
+  - **Decommissioned Ad Config Constant**: Removed `ADSTERRA_SOCIALBAR_SRC` from `app/lib/ads.ts`.
+  - **Cleaned Advertising Surface**: Eliminated intrusive floating social notifications/chat dialog overlays across the entire platform, while continuing to support isolated banner placements, anti-adblock popunders, and native recommendations on public discovery routes with strict lab simulation isolation.
+
 - **Interactive Git Version Control & DAG Graph Simulator Overhaul (`app/labs/computer-science/git-simulator/*`, `app/components/computer-science/git-simulator/*`, `app/types/gitSimualtor.ts`, `app/lib/labs.ts`, `REQUIREMENTS.md`, `ROADMAP.md`, `CLAUDE.md`, `AGENTS.md`, `README.md`)**:
   - **Interactive Commit DAG Visualizer (`CommitGraph.tsx`, `CommitDetailsModal.tsx`)**:
     - Re-engineered the commit history visualizer with dynamic multi-branch lanes, animated SVG cubic Bezier curves, merge indicators, clickable commit nodes, moving branch pills, and a floating HEAD pointer badge.

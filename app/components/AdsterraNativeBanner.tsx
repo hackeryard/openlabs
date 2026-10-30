@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { isAdExcludedRoute, ADSTERRA_BANNERS } from "@/app/lib/ads";
+import { useAdSettings } from "./AdController";
 
 interface AdsterraNativeBannerProps {
   className?: string;
@@ -20,15 +21,20 @@ function isAdminHost(): boolean {
  * 
  * Safely renders Adsterra's 4-tile Native Recommendation Banner widget
  * on public educational landing pages, blog publications, and discipline hubs.
- * Automatically respects lab simulation (/labs/*) and admin (/admin/*) hard exclusion shields.
+ * Automatically respects lab simulation (/labs/*), admin (/admin/*), and admin panel master ad switches.
  */
 export default function AdsterraNativeBanner({
   className = "",
   showBadge = false,
 }: AdsterraNativeBannerProps) {
   const pathname = usePathname();
+  const adSettings = useAdSettings();
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const shouldExclude = isAdExcludedRoute(pathname) || isAdminHost();
+  const shouldExclude =
+    isAdExcludedRoute(pathname) ||
+    isAdminHost() ||
+    !adSettings.allowed ||
+    !adSettings.networks.adsterraBanners;
 
   useEffect(() => {
     if (shouldExclude || !wrapperRef.current) return;

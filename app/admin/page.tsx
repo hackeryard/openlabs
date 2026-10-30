@@ -34,6 +34,7 @@ import {
   Layers,
   Lock,
   User as UserIcon,
+  Megaphone,
 } from "lucide-react";
 
 interface AdminSummaryData {
@@ -693,6 +694,50 @@ export default function AdminPortalHomePage() {
               className="inline-flex items-center justify-between w-full py-2.5 px-3 rounded-xl bg-muted/60 hover:bg-accent border border-border/70 text-xs font-bold text-foreground transition group"
             >
               <span>Explore SEO Audit Graph</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+
+          {/* 7. Ad Monetization & Timed Pause Governance */}
+          <div className="p-5 rounded-3xl bg-card/90 border border-border/80 shadow-xs flex flex-col justify-between space-y-4 hover:border-border transition-all">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary border border-primary/20 flex items-center justify-center">
+                    <Megaphone className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-bold text-foreground">Ad Monetization Control</h2>
+                    <span className="text-[10px] text-muted-foreground">Master switch &amp; timed pause</span>
+                  </div>
+                </div>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                  0 Admin Ads
+                </span>
+              </div>
+
+              {/* Status details */}
+              <div className="space-y-1.5 pt-1 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Admin Console Status</span>
+                  <span className="font-bold text-emerald-500">100% Shielded</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Snooze Scheduler</span>
+                  <span className="font-bold text-primary">15m to 7 Days</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Network Tag Governance</span>
+                  <span className="font-bold text-foreground">Granular</span>
+                </div>
+              </div>
+            </div>
+
+            <Link
+              href={getRoute("/admin/ads")}
+              className="inline-flex items-center justify-between w-full py-2.5 px-3 rounded-xl bg-muted/60 hover:bg-accent border border-border/70 text-xs font-bold text-foreground transition group"
+            >
+              <span>Manage Ad Operations</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>

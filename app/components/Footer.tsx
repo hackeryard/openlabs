@@ -25,6 +25,7 @@ import {
 import AdminFooter from "./AdminFooter";
 import AdBanner from "./AdsterraBanner";
 import { useAuth } from "@/components/AuthProvider";
+import { isAdminContext } from "@/app/lib/ads";
 
 const disciplineLinks = [
   { label: "Physics Suite (16)", url: "/physics", icon: Atom, color: "text-indigo-500" },
@@ -54,17 +55,15 @@ export default function Footer() {
     setMounted(true);
   }, []);
 
-  const isSubdomain = mounted && typeof window !== "undefined" && window.location.hostname.startsWith("admin.");
-  const hasAdminOrModRole = mounted && (user?.role === "admin" || user?.role === "moderator");
-  const isAdminRoute = mounted && (pathname.startsWith("/admin") || isSubdomain) && pathname !== "/403" && hasAdminOrModRole;
+  const inAdmin = isAdminContext(pathname);
+  const isSubdomain = typeof window !== "undefined" && window.location.hostname.startsWith("admin.");
+  const hasAdminOrModRole = user?.role === "admin" || user?.role === "moderator";
 
-  if (isAdminRoute) {
+  if (inAdmin || isSubdomain) {
+    if (pathname === "/403" || !hasAdminOrModRole) {
+      return null;
+    }
     return <AdminFooter />;
-  }
-
-  // If on 403 page on admin subdomain, hide footer entirely
-  if (mounted && pathname === "/403" && isSubdomain) {
-    return null;
   }
 
   // Hide footer on focused auth screens

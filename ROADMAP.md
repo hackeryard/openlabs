@@ -309,7 +309,7 @@ Transform the platform from an unstructured catalog of 94 separate labs into a g
 ## 15. Comprehensive Adsterra Multi-Format Monetization Architecture [SHIPPED ✅] 💰
 
 - **Full Multi-Unit Adsterra Monetization Suite Integration [SHIPPED ✅]**:
-  - Activated verified ad tags across `openlabs.org.in`: Popunder_1 (`abscloud.org/1/08e6dbca5d9532e90ba54ed38592f7b0`), SocialBar_1 (`bauval.org/14/2959207fa624b60d669e6c0ca66a4f10`), Smartlink_1 (`araplhn.org/4/c81181fb15ae3c289e31602fa7849d41`), 4-tile Native Recommendation Banner (`bauval.org/21/8eb9029bb810ce5acaa5919fc62e556a`), and 6 IFrame Sync Display Units (160x300, 160x600, 300x250, 320x50, 468x60, 728x90) in `app/lib/ads.ts`.
+  - Activated verified ad tags across `openlabs.org.in`: Popunder_1 (`abscloud.org/1/08e6dbca5d9532e90ba54ed38592f7b0`), Smartlink_1 (`araplhn.org/4/c81181fb15ae3c289e31602fa7849d41`), 4-tile Native Recommendation Banner (`bauval.org/21/8eb9029bb810ce5acaa5919fc62e556a`), and 6 IFrame Sync Display Units (160x300, 160x600, 300x250, 320x50, 468x60, 728x90) in `app/lib/ads.ts` (SocialBar_1 `31451685` decommissioned).
 - **Isolated Iframe Display & Native Banner Components [SHIPPED ✅]**:
   - Engineered `<AdBanner />` to encapsulate synchronous iframe sync ad tags inside isolated iframe contexts (`doc.open()`, `doc.write()`, `doc.close()`), eliminating `document.write` React warnings and preventing `atOptions` global variable collisions.
   - Implemented automatic viewport responsiveness (`responsive-leaderboard` dynamically selects 728x90 on desktop, 468x60 on tablet, and 320x50 on mobile).
@@ -335,3 +335,20 @@ Transform the platform from an unstructured catalog of 94 separate labs into a g
 - **Route Policy & Middleware Crawler Accessibility [SHIPPED ✅]**:
   - Registered `/privacy` and `/terms` into `CORE_PUBLIC_PAGES` (`app/lib/seoRoutePolicy.ts`), allowed prefixes in `app/robots.ts`, and `publicPaths` in `middleware.ts`.
   - Guaranteed 100% unhindered, unauthenticated HTTP 200 responses to search engine bots, Google AdSense verification crawlers, and human visitors.
+
+---
+
+## 17. Admin Monetization Control Console & Zero-Ad Panel Shield [SHIPPED ✅] 🛡️
+
+- **Guaranteed 0-Ad Admin Console Isolation [SHIPPED ✅]**:
+  - Removed all hardcoded static ad script tags from root layout `<head>`, eliminating ad injection on admin routes (`/admin/*`), admin subdomains (`admin.*`), and login/signup views.
+  - Reinforced multi-layered defenses: `body[data-is-admin="true"]` CSS suppression in `app/globals.css`, dynamic script detachment, DOM mutation observer, and `window.open` ad neutralization.
+- **Centralized Admin Monetization Console (`/admin/ads`) [SHIPPED ✅]**:
+  - Engineered an administrative control console accessible from `AdminNavbar` and overview dashboard.
+  - Interactive Global Master Kill Switch to instantly enable/disable all ads site-wide with 1 click.
+  - Timed Pause / Snooze scheduler with preset quick-durations (15m, 30m, 1h, 6h, 12h, 24h, 3d, 7d) or custom inputs, featuring live countdown timers and automatic resumption.
+  - Granular toggles for Google AdSense Auto Ads, Adsterra Popunder, and Adsterra Display & Native Banners.
+- **Dynamic Script Controller & State Architecture [SHIPPED ✅]**:
+  - Built `AdController.tsx` client wrapper providing `useAdSettings()` hook, polling `/api/ads/status` with 5s edge caching, and mounting ad tags only on eligible public routes.
+  - Persisted ad states in MongoDB via `AdSettings.ts` model, protected by RBAC endpoint `/api/admin/ads`.
+

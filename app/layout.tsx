@@ -8,8 +8,7 @@ import OpenLabsAILoader from './components/OpenLabsAILoader'
 import FloatingLabFeedback from './components/FloatingLabFeedback'
 import { ChatProvider } from './components/ChatContext'
 import AppAnalytics from './components/AppAnalytics'
-import GoogleAdSense from './components/GoogleAdSense'
-import AdsterraPopunder from './components/AdsterraPopunder'
+import AdController from './components/AdController'
 import ThemeProvider from '@/components/ThemeProvider'
 import AmbientBackground from '@/components/ui/AmbientBackground'
 import StructuredData from './components/seo/StructuredData'
@@ -113,21 +112,6 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
           src="https://api.openanalytics.org.in/open.js"
           data-project-id="OA-7E5FC8DC2298918A"
         />
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4121707034074280"
-          crossOrigin="anonymous"
-        />
-        {/* Adsterra Anti-Adblock Popunder JS Sync Tag */}
-        <script
-          data-cfasync="false"
-          src="https://abscloud.org/1/08e6dbca5d9532e90ba54ed38592f7b0"
-        />
-        {/* Adsterra SocialBar JS Sync Tag */}
-        <script
-          data-cfasync="false"
-          src="https://bauval.org/14/2959207fa624b60d669e6c0ca66a4f10"
-        />
       </head>
       <body className="bg-background text-foreground">
         <TranslationGuard />
@@ -135,23 +119,21 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
           <AdminSecretProvider>
             <ThemeProvider>
               <AmbientBackground />
-              <Navbar />
-              <div className="mx-auto">
-                <div data-ol-page-root>
-                  <ChatProvider>
-                    {children}
-                    <OpenLabsAILoader />
-                    <FloatingLabFeedback />
-                    {/* Analytics conditionally initialized only on live production domain (never localhost or yarn start) */}
-                    <AppAnalytics />
-                    {/* Google AdSense script integration with automatic lab page exclusions */}
-                    <GoogleAdSense />
-                    {/* Adsterra popunder integration with automatic lab page exclusions */}
-                    <AdsterraPopunder />
-                  </ChatProvider>
+              <AdController>
+                <Navbar />
+                <div className="mx-auto">
+                  <div data-ol-page-root>
+                    <ChatProvider>
+                      {children}
+                      <OpenLabsAILoader />
+                      <FloatingLabFeedback />
+                      {/* Analytics conditionally initialized only on live production domain (never localhost or yarn start) */}
+                      <AppAnalytics />
+                    </ChatProvider>
+                  </div>
                 </div>
-              </div>
-              <Footer />
+                <Footer />
+              </AdController>
             </ThemeProvider>
           </AdminSecretProvider>
         </AuthProvider>

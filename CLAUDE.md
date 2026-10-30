@@ -181,17 +181,21 @@ Admin-only CRUD (`x-admin-secret` header, no JWT) at `/api/admin/blogs*`. Two-st
 - **Centralized Ad Network Configuration (`app/lib/ads.ts`)**:
   - Houses Google AdSense (`ca-pub-4121707034074280`) client IDs and verified publisher records (`public/ads.txt`).
   - Adsterra Anti-Adblock Popunder (`abscloud.org/1/08e6dbca5d9532e90ba54ed38592f7b0`).
-  - Adsterra SocialBar (`bauval.org/14/2959207fa624b60d669e6c0ca66a4f10`).
   - Adsterra Direct Smartlink (`araplhn.org/4/c81181fb15ae3c289e31602fa7849d41`).
-  - Adsterra Display IFrame Banners (`ADSTERRA_BANNERS`: 160x300, 160x600, 300x250, 320x50, 468x60, 728x90) and 4-tile Native Recommendation unit (`bauval.org/21/8eb9029bb810ce5acaa5919fc62e556a`).
+  - Adsterra Display IFrame Banners (`ADSTERRA_BANNERS`: 160x300, 160x600, 300x250, 320x50, 468x60, 728x90) and 4-tile Native Recommendation unit (`bauval.org/21/8eb9029bb810ce5acaa5919fc62e556a`). (Note: SocialBar_1 was decommissioned).
+- **Admin Ad Operations & Dynamic Controller (`app/components/AdController.tsx`, `app/admin/ads/page.tsx`, `app/models/AdSettings.ts`, `/api/ads/status`, `/api/admin/ads`)**:
+  - `AdController`: Dynamically governs script injection and suppression. Polls `/api/ads/status`, dynamically mounting Google AdSense and Adsterra Popunder only on eligible public discovery routes when ads are active and not snoozed. Provides `useAdSettings()` hook to banner components.
+  - `Admin Ad Console` (`/admin/ads`): Accessible to administrators from `AdminNavbar` and overview hub. Allows 1-click Global Master Kill Switch, timed pauses / snoozes (15m, 30m, 1h, 6h, 12h, 24h, 3d, 7d, custom duration) with live countdowns, granular network toggles, and instant "Resume All Ads Now" reactivation.
+  - Data model `AdSettings.ts` stores global enabled status, snooze expiry, and network toggles, backed by `/api/ads/status` (public, edge-cached) and `/api/admin/ads` (RBAC protected).
 - **Display & Native Banner Components (`AdsterraBanner.tsx`, `AdsterraNativeBanner.tsx`)**:
-  - `AdsterraBanner`: Safely encapsulates synchronous iframe ad scripts inside an isolated child `iframe` context via `doc.open()`, `doc.write()`, and `doc.close()`, eliminating `document.write` runtime warnings on React parent DOM and avoiding global `atOptions` collisions across multiple ad slots. Supports responsive viewports (`responsive-leaderboard` automatically adapts between 728x90 desktop, 468x60 tablet, and 320x50 mobile).
-  - `AdsterraNativeBanner`: Dynamically loads the async 4-tile native recommendation widget into targeted container `container-8eb9029bb810ce5acaa5919fc62e556a`.
+  - `AdsterraBanner`: Safely encapsulates synchronous iframe ad scripts inside an isolated child `iframe` context via `doc.open()`, `doc.write()`, and `doc.close()`, eliminating `document.write` runtime warnings on React parent DOM and avoiding global `atOptions` collisions across multiple ad slots. Automatically subscribes to `useAdSettings()` to hide when ads are paused/disabled.
+  - `AdsterraNativeBanner`: Dynamically loads the async 4-tile native recommendation widget into targeted container `container-8eb9029bb810ce5acaa5919fc62e556a` only when permitted.
 - **Multi-Layer Interactive Lab & Admin Shield**:
-  - All advertisements, floating bars, popunders, and overlays are strictly excluded from `/labs/*`, `/admin/*`, `/login`, and `/signup` via `isAdExcludedRoute()`, `AdsterraPopunder.tsx` (window.open neutralization and active MutationObserver), `GoogleAdSense.tsx`, and CSS hard-blocks in `app/globals.css`.
+  - Guaranteed 0 ADS across Admin Console (`/admin/*`, `admin.openlabs.org.in`, `admin.localhost`), all 101 interactive labs (`/labs/*`), and auth routes (`/login`, `/signup`). Enforced via `isAdminContext()`, `isAdExcludedRoute()`, `AdController` script exclusion, `window.open` ad neutralization, DOM `MutationObserver`, and CSS hard-suppression (`body[data-is-admin="true"]`, `body[data-no-ads="true"]`) in `app/globals.css`.
 
 ### Data models (`app/models/`)
 
+- **`AdSettings.ts`** — site monetization configuration (`key: "default", globalAdsEnabled, snoozeUntil, snoozeReason, networks: { googleAdSense, adsterraPopunder, adsterraBanners }, lastUpdatedBy, updatedAt`), exposes static `getEffectiveSettings()`.
 - **`User.js`** — auth fields (`name, email, password, role: "user"|"admin"|"moderator", emailVerified, createdAt`), profile (`username, avatar, bio, profileSetupComplete`), gamification (`xp, level, streak, lastActiveDate, badges[], completedExperiments[], subjectProgress[], activityLog[], dailyChallenges[]`), AI rate-limiting (`aiQueriesCount, lastAiQueryDate`). No `timestamps: true` (only the explicit `createdAt`, no `updatedAt`).
 - **`PageView.js`** — pageview telemetry records (`pathname, title, labId, visitorId, sessionId, userId, isReturning, visitCount, referrerDomain, utmSource, device, browser, os, screen, country, city, duration, activeDuration, idleDuration, focusCount, scrollDepth, scrollMilestones, webVitals, hardware, network, isBounce, exitIntent`), indexed on `createdAt`, `isBounce`, `webVitals.lcp`, and `(visitorId, createdAt)`.
 - **`AnalyticsEvent.js`** — custom interaction and learning telemetry records (`eventName, category, labId, pathname, properties, value, visitorId, sessionId, userId`), indexed on `(category, createdAt)` and `(eventName, labId, createdAt)`.
