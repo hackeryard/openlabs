@@ -114,6 +114,8 @@ export function isAdExcludedRoute(pathname: string | null): boolean {
   if (!pathname) return false;
   // Exclude all interactive simulation labs under /labs or /labs/*
   if (pathname === "/labs" || pathname.startsWith("/labs/")) return true;
+  // Exclude institutional iframe embeds
+  if (pathname.startsWith("/embed")) return true;
   // Exclude administrative dashboards, admin subdomains, and access restricted screens
   if (isAdminContext(pathname)) {
     return true;

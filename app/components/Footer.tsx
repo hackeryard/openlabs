@@ -67,7 +67,7 @@ export default function Footer() {
   }
 
   // Hide footer on focused auth screens
-  if (pathname === "/login" || pathname === "/signup") {
+  if (pathname === "/login" || pathname === "/signup" || pathname.startsWith("/embed")) {
     return null;
   }
 

@@ -1,7 +1,7 @@
 import { connectDB } from "@/app/lib/mongodb";
 import User from "@/app/models/User";
 import { getUserFromToken } from "@/app/lib/getUserFromToken";
-import { generateToken, getAuthCookieDomain } from "@/app/lib/auth";
+import { generateToken, getAuthCookieOptions } from "@/app/lib/auth";
 import { extractGeoLocation, resolveGeoLocation } from "@/app/lib/geolocation";
 import { serialize } from "cookie";
 
@@ -9,7 +9,7 @@ export async function GET(req: Request) {
   try {
     await connectDB();
 
-    const payload = getUserFromToken();
+    const payload = getUserFromToken(req);
     if (!payload) {
       return Response.json({ error: "Not authenticated" }, { status: 401 });
     }
@@ -100,7 +100,6 @@ export async function GET(req: Request) {
       }
     } catch {}
 
-
     if (!user.emailVerified) {
       return Response.json(
         { 
@@ -125,16 +124,11 @@ export async function GET(req: Request) {
       "Expires": "0",
     };
 
-    // If role in DB has changed since token was minted, auto-refresh JWT cookie
+    // If role in DB has changed since token was minted, auto-refresh JWT cookie with hardened options
     if (user.role && user.role !== payload.role) {
       const refreshedToken = generateToken(user);
-      const cookieDomain = getAuthCookieDomain(req);
-      responseHeaders["Set-Cookie"] = serialize("auth-token", refreshedToken, {
-        httpOnly: true,
-        path: "/",
-        domain: cookieDomain,
-        maxAge: 60 * 60 * 24,
-      });
+      const cookieOptions = getAuthCookieOptions(req);
+      responseHeaders["Set-Cookie"] = serialize("auth-token", refreshedToken, cookieOptions as any);
     }
 
     return Response.json(
@@ -148,4 +142,3 @@ export async function GET(req: Request) {
     return Response.json({ error: "Server error" }, { status: 500 });
   }
 }
-

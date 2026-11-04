@@ -41,6 +41,10 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 - FR-9: Regardless of sign-in method, an authenticated session shall be represented by a single JWT stored in an httpOnly cookie.
 - FR-10: Unauthenticated users shall be redirected to login when accessing any lab simulation (`/labs/*`) or admin (`/admin/*`) route; subject landing pages, the blog, and marketing pages shall remain public.
 - FR-10a: The system shall enforce Role-Based Access Control (RBAC) with `user`, `moderator`, and `admin` roles. Regular users (`role: "user"`) visiting `/admin/*` or `admin.openlabs.org.in` shall receive an in-place soft 403 Access Restricted screen without showing admin navigation or footer chrome.
+- FR-10c: Edge middleware (`middleware.ts`) shall cryptographically verify HMAC-SHA256 JWT signatures using native Web Crypto API with strict HS256 algorithm enforcement before trusting any identity or routing claims. Unsigned, tampered, expired, or `alg: "none"` tokens shall be rejected immediately.
+- FR-10d: The system shall eliminate all hardcoded JWT secret fallbacks. Production environments shall strictly require valid `JWT_SECRET` or `NEXTAUTH_SECRET` environment configuration.
+- FR-10e: High-sensitivity administrative mutations and role changes (`/api/admin/*`) shall verify user roles and status directly against MongoDB via `verifyAdminAccessWithDb`, ensuring revoked or demoted permissions take effect immediately regardless of unexpired client tokens.
+- FR-10f: Authentication cookies shall strictly enforce `httpOnly: true`, `sameSite: "lax"`, and `secure: true` in production environments.
 - FR-10b: The authentication system shall automatically synchronize and refresh the user's `auth-token` session cookie whenever database role changes are detected during `/api/auth/me` verification.
 - FR-11: Users shall complete a one-time profile setup (unique username, avatar, bio) after account creation.
 
@@ -109,6 +113,23 @@ OpenLabs is a web platform providing free, in-browser, interactive science labs 
 - FR-38: Legal, Privacy & Publisher Compliance: The platform shall provide public, SEO-indexed, crawler-accessible Privacy Policy (`/privacy`) and Terms of Service (`/terms`) pages with comprehensive disclosures regarding Google AdSense, DoubleClick DART cookies, cookie management links (`adssettings.google.com`, `aboutads.info`), GDPR/CCPA consumer rights, and educational simulation disclaimers, linked from all site footers. Both routes shall be declared in `middleware.ts`'s `publicPaths` to ensure direct HTTP 200 responses to unauthenticated visitors and compliance review crawlers.
 - FR-39: Zero-Ad Administrative Console Guarantee: The platform shall guarantee that zero advertisements, third-party ad scripts, floating overlays, popunders, or iframe banners are ever executed or mounted on the Admin Console (`/admin/*`, `admin.*` subdomain, `admin.localhost`, `/403`). All static script tags shall be excluded from server-rendered head templates and dynamically controlled via `AdController.tsx`, reinforced by CSS hard blocks (`body[data-is-admin="true"]`), DOM mutation observers, and `window.open` ad neutralization.
 - FR-40: Centralized Admin Monetization Console & Timed Snoozing (`/admin/ads`): The platform shall provide an administrative ad management interface allowing authorized administrators to execute a global master kill switch, configure timed ad pauses / snoozes (from 15 minutes to 7 days, or custom durations) with automated state resumption, and toggle individual network tags independently via persistent MongoDB configuration (`AdSettings.ts`), public edge-cached status endpoint (`/api/ads/status`), and RBAC-authenticated management API (`/api/admin/ads`).
+
+
+### 2.6 Institutional Integrations, SaaS Partners & Embedding
+- FR-18: The system shall provide an Institutional Integration Platform backed by a dedicated Organization schema (`Organization.ts`) and Member schema (`OrganizationMember.ts`), supporting multi-tier plans (pilot, institutional, enterprise), licensing timeframes (`validUntil`), subject discipline permissions, and iframe origin allow-lists (`allowedOrigins`).
+- FR-18a: The system shall generate cryptographically secure API keys (`ApiKey.ts`) with `ol_live_<secret>` format. The raw secret key shall be shown to the user only once upon creation; the database shall store only a deterministic SHA-256 hash.
+- FR-18b: The system shall provide versioned REST API endpoints under `/api/v1/*` (`health`, `subjects`, `labs`, `labs/:slug`, `usage`, `organizations`) authenticated via API key and protected by scope authorization (`labs:read`, `embed:create`, `usage:read`, `organizations:read`).
+- FR-18c: The integration platform shall enforce sliding token-bucket rate limiting based on the organization's plan (`requestsPerMinute`) and track monthly quota consumption (`maxMonthlyRequests`) via `ApiUsage.ts`.
+- FR-19: The system shall provide a dedicated simulation embedding route (`/embed/[labSlug]`) delivering interactive experiments in a distraction-free, full-viewport shell for LMS iframe integrations (Canvas, Blackboard, Moodle).
+- FR-19a: The embed route shall require signed, short-lived (15-minute) embed authorization tokens generated via `POST /api/v1/embed/authorize`. Permanent API keys shall never be exposed to browser code or iframes.
+- FR-19b: The embedding route shall configure scoped Content Security Policy (`frame-ancestors 'self' *` or allowed partner origins) in `next.config.js` while preserving global `X-Frame-Options: SAMEORIGIN` across all standard discovery pages.
+- FR-19c: The embedding route shall automatically suppress global navigation, footers, AI tutor chat dialogs, and all third-party advertising scripts, and shall be excluded from search indexing and sitemaps.
+- FR-20: The system shall provide an Admin Integrations Management Portal (`/admin/integrations`, `/api/admin/integrations/*`) supporting:
+  - FR-20a: Full partner lifecycle operations (create, update, activate, suspend, delete).
+  - FR-20b: Configurable licensing agreement management (Pilot, Single-Institution, Multi-Institution SaaS, White-Label, Custom Enterprise) with customizable monthly request quotas, RPM limits, and expiration dates.
+  - FR-20c: Billing readiness tracking with manual invoicing, invoice references, and payment statuses (`trial`, `paid`, `pending`, `waived`).
+  - FR-20d: API Key generation modal presenting secret credentials once with copy-to-clipboard, key revocation toggles, and permanent deletion.
+  - FR-20e: Operational telemetry cards tracking 30-day API requests, 429 rate limit violations, error rates, and real-time audit event logging (`IntegrationEvent.ts`).
 
 ## 3. Non-functional requirements
 

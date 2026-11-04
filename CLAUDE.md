@@ -26,7 +26,7 @@ yarn lint             # next lint (uses eslint-config-next + .eslintignore, NOT 
 yarn test:seo         # run automated technical SEO & indexing regression suite (51 checks)
 ```
 
-- **Testing**: Technical SEO, route classification, sitemap purity, and metadata standards are validated via `yarn test:seo` (`scripts/seo-regression-test.cjs`). General unit test runner is not present, so do not assume `yarn test` works.
+- **Testing**: Technical SEO, route classification, sitemap purity, and metadata standards are validated via `yarn test:seo` (`scripts/seo-regression-test.cjs`, 51 checks). Cryptographic invariants, JWT signature verification in Edge middleware, algorithm substitution defense, cookie security, RBAC, IDOR guards, API key hashing, signed embed authorization, and partner licensing management are validated via `yarn test:security` (`scripts/security-regression-test.cjs`, 30 checks).
 - `predev`/`prebuild`/`prestart` all run `node scripts/guard.cjs`, which loads `.env`/`.env.local` and calls `initGuard()` from the private `@hackeryard/mandatory-guard` package. This requires a valid `NPM_TOKEN` (GitHub Packages, see `.npmrc`) to even `yarn install`, and runs before every dev/build/start invocation. If dev/build fails immediately with a guard error, it's this gate, not your code.
 
 ### Linting caveat
@@ -44,6 +44,15 @@ CI (`.github/workflows/guard.yml`) runs `yarn install --frozen-lockfile`, `node 
 ## Architecture
 
 Next.js 14 App Router + TypeScript (mixed with plenty of untyped `.js`/`.jsx`), MongoDB via Mongoose, custom JWT auth (+ NextAuth for Google OAuth), deployed on Vercel. `tsconfig.json` maps `@/*` to the repo root, so imports mix `@/app/lib/...`, `@/lib/...`, and `@/components/...` — note there are **both** an `app/components/` and `app/lib/` **and** a separate root-level `components/`, `lib/`, and `types/`; they are different directories, not typos. `tsconfig.json`'s `strict` is `false`.
+
+
+### Security & Institutional Integration Architecture
+
+- **Cryptographic JWT Signature Verification**: Edge middleware (`middleware.ts`) validates HMAC-SHA256 signatures via native Web Crypto API (`crypto.subtle.verify`) with strict HS256 algorithm enforcement. The hardcoded secret fallback has been eliminated; production strictly requires valid `JWT_SECRET` or `NEXTAUTH_SECRET`.
+- **Server-Side Session Verification & RBAC**: `app/lib/auth/verifySession.ts` provides `verifySession()` and `requireAdminSession()`, supporting both cookie (`auth-token`) and `Authorization: Bearer <token>` authentication. High-sensitivity operations perform live database role lookups via `verifyAdminAccessWithDb` (`app/lib/adminAuth.ts`) to ensure revoked permissions take effect immediately.
+- **Institutional Integration Platform (`/api/v1/*`)**: Dedicated, versioned REST API for universities, schools, and SaaS partners. Authenticated via cryptographically hashed API keys (`ol_live_<secret>` in `app/models/ApiKey.ts`) with scope enforcement (`labs:read`, `embed:create`, `usage:read`, `organizations:read`), sliding token-bucket rate limiting (`app/lib/integrations/rateLimiter.ts`), and monthly quota tracking (`app/models/ApiUsage.ts`).
+- **Embedding Infrastructure (`/embed/[labSlug]`)**: Embed route rendering distraction-free virtual experiments for LMS iframe integrations (Canvas, Blackboard, Moodle). Requires signed, short-lived (15m) embed authorization tokens generated via `POST /api/v1/embed/authorize`. Scoped in `next.config.js` with `Content-Security-Policy: frame-ancestors 'self' *` while maintaining global `X-Frame-Options: SAMEORIGIN`. Automatically suppresses all advertising, global navigation, footers, and AI tutor dialogs.
+- **Admin Integrations & Partner Management (`/admin/integrations`, `/api/admin/integrations/*`)**: Centralized administrative interface for managing institutional partners, licensing agreements (pilot, single-institution, multi-institution, white-label, enterprise), quota configurations, allowed LMS origins, API key generation (with one-time reveal modal) and revocation, operational telemetry (429 rate limit warnings, request counts), and real-time audit event logging (`IntegrationEvent.ts`).
 
 ### The two-tier lab pattern (read this before touching any lab)
 

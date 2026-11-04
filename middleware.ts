@@ -25,7 +25,6 @@ const publicPaths = [
   '/labs/computer-science/dsa/pathfinding-astar',
 ];
 
-
 const publicPrefixes = [
   '/blog',
   '/tracks',
@@ -34,14 +33,28 @@ const publicPrefixes = [
   '/biology',
   '/computer-science',
   '/mathematics',
+  '/embed',
 ];
 
-function decodeJwtPayload(tokenString: string): any {
+function b64UrlToBytes(str: string): Uint8Array {
+  let base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+  while (base64.length % 4) {
+    base64 += '=';
+  }
+  const binaryString = atob(base64);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes;
+}
+
+function parseBase64UrlJson(str: string): any {
   try {
-    const parts = tokenString.split('.');
-    if (parts.length !== 3) return null;
-    const base64Url = parts[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    let base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+    while (base64.length % 4) {
+      base64 += '=';
+    }
     const jsonPayload = decodeURIComponent(
       atob(base64)
         .split('')
@@ -54,12 +67,68 @@ function decodeJwtPayload(tokenString: string): any {
   }
 }
 
-function isJwtExpired(payload: any): boolean {
-  if (!payload || !payload.exp) return true;
-  return Date.now() >= payload.exp * 1000;
+/**
+ * Edge-compatible cryptographic JWT signature verification using native Web Crypto API.
+ * Validates HMAC-SHA256 signature, HS256 algorithm enforcement, expiration, and essential claims.
+ */
+async function verifyJwtInEdge(
+  tokenString: string,
+  secret: string
+): Promise<{ valid: boolean; isExpired?: boolean; payload?: any }> {
+  if (!tokenString || typeof tokenString !== 'string' || !secret) {
+    return { valid: false };
+  }
+
+  const parts = tokenString.split('.');
+  if (parts.length !== 3) {
+    return { valid: false };
+  }
+
+  const [headerB64, payloadB64, signatureB64] = parts;
+
+  // 1. Decode and validate header (Strict HS256 only)
+  const header = parseBase64UrlJson(headerB64);
+  if (!header || header.alg !== 'HS256') {
+    return { valid: false };
+  }
+
+  // 2. Decode and validate payload
+  const payload = parseBase64UrlJson(payloadB64);
+  if (!payload || typeof payload !== 'object' || (!payload.id && !payload.sub)) {
+    return { valid: false };
+  }
+
+  // Check expiration
+  if (payload.exp && Date.now() >= payload.exp * 1000) {
+    return { valid: false, isExpired: true, payload };
+  }
+
+  // 3. Cryptographically verify signature
+  try {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(`${headerB64}.${payloadB64}`);
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(secret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['verify']
+    );
+
+    const sigBytes = b64UrlToBytes(signatureB64);
+    const isValid = await crypto.subtle.verify('HMAC', key, sigBytes as any, data);
+
+    if (!isValid) {
+      return { valid: false };
+    }
+
+    return { valid: true, payload };
+  } catch {
+    return { valid: false };
+  }
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const host = request.headers.get('host') || '';
 
@@ -138,19 +207,35 @@ export function middleware(request: NextRequest) {
     host.startsWith('admin.localhost') ||
     host.startsWith('admin.');
 
-  // Parse JWT token & Role
+  // Cryptographically verify JWT token & Role using Web Crypto API
+  const jwtSecret =
+    process.env.JWT_SECRET ||
+    process.env.NEXTAUTH_SECRET ||
+    (process.env.NODE_ENV === 'production'
+      ? ''
+      : process.env.DEV_JWT_SECRET || 'openlabs-dev-secret-do-not-use-in-production-min-32-chars');
+
   const rawCookie = request.cookies.get('auth-token')?.value;
-  const tokenPayload = rawCookie ? decodeJwtPayload(rawCookie) : null;
+  let authHeaderToken = '';
+  const authHeader = request.headers.get('authorization');
+  if (authHeader?.startsWith('Bearer ')) {
+    authHeaderToken = authHeader.substring(7).trim();
+  }
+  const tokenCandidate = rawCookie || authHeaderToken;
+
   let hasValidAuthToken = false;
   let isExpired = false;
   let userRole: string = 'user';
+  let tokenPayload: any = null;
 
-  if (tokenPayload) {
-    if (isJwtExpired(tokenPayload)) {
-      isExpired = true;
-    } else {
+  if (tokenCandidate) {
+    const verifyResult = await verifyJwtInEdge(tokenCandidate, jwtSecret);
+    if (verifyResult.valid && verifyResult.payload) {
       hasValidAuthToken = true;
+      tokenPayload = verifyResult.payload;
       userRole = tokenPayload.role || 'user';
+    } else if (verifyResult.isExpired) {
+      isExpired = true;
     }
   }
 
@@ -162,14 +247,15 @@ export function middleware(request: NextRequest) {
     pathname.startsWith('/api/challenges/generate') ||
     pathname.startsWith('/api/contact') ||
     pathname.startsWith('/api/blogs') ||
-    pathname.startsWith('/api/ads')
+    pathname.startsWith('/api/ads') ||
+    pathname.startsWith('/api/v1')
   ) {
     return NextResponse.next();
   }
 
   // ── 0. ADMIN API RBAC CHECK (/api/admin/*) ───────────────────────────
   if (pathname.startsWith('/api/admin')) {
-    // If logged in with admin or moderator role, allow to API handler
+    // If logged in with admin or moderator role and verified signature, allow to API handler
     if (hasValidAuthToken && hasAdminOrModRole) {
       return NextResponse.next();
     }
@@ -180,7 +266,7 @@ export function middleware(request: NextRequest) {
         { status: 403 }
       );
     }
-    // Unauthenticated: 401
+    // Unauthenticated or invalid token: 401
     return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
   }
 

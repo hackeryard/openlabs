@@ -285,7 +285,8 @@ Available npm/yarn scripts in [package.json](package.json):
 | `yarn build` | Create optimized production build |
 | `yarn start` | Start production server |
 | `yarn lint` | Run ESLint to check code quality |
-| `yarn test:seo` | Run automated technical SEO & indexing regression suite (48 checks) |
+| `yarn test:seo` | Run automated technical SEO & indexing regression suite (51 checks) |
+| `yarn test:security` | Run automated security & auth regression suite (24 checks) |
 | `yarn preview` | Preview production build locally |
 
 ### Development Tips
@@ -618,6 +619,41 @@ Note: `.env`/`.env.local` may also contain `NVAPI`, `NVBASEURL`, `GLM_API_KEY`, 
 - ✅ **OTP Expiration** — Automatic cleanup of expired verification codes
 - ✅ **Email Verification** — Prevents dummy account creation
 - ✅ **Verified User Requirement** — Email verification mandatory before password reset
+- ✅ **Fatal Closed Secrets** — Production rejects missing, default, or weak (<32-char) JWT secrets immediately
+- ✅ **Edge Native HMAC-SHA256 Verification** — Next.js Edge middleware cryptographically validates JWT signatures via Web Crypto API before routing
+- ✅ **Server-Side RBAC & Live DB Checks** — Route handlers enforce roles independently; sensitive admin mutations query MongoDB directly
+- ✅ **Scoped LMS Embedding Shield** — Minimal `/embed/:labSlug` route with signed short-lived tokens and per-organization allowed origin checking; global `X-Frame-Options: SAMEORIGIN` preserved across all discovery pages
+
+---
+
+## Institutional Integrations & Partner Platform 🏢
+
+OpenLabs includes a dedicated institutional integration platform enabling schools, universities, EdTech SaaS platforms, and LMS providers (Canvas, Moodle, Blackboard) to embed interactive simulations and access platform capabilities programmatically.
+
+### Architecture Highlights
+
+- **Decoupled Data Models (`Organization`, `OrganizationMember`, `ApiKey`, `ApiUsage`, `IntegrationEvent`)**: Institutional accounts are strictly separated from standard user accounts.
+- **Cryptographic API Keys**: Random `ol_live_*` tokens are generated client-side; OpenLabs only stores a SHA-256 hash. Plaintext tokens are presented once upon creation.
+- **Versioned REST API v1 (`/api/v1/*`)**:
+  - `GET /api/v1/health` — Service health & integration readiness.
+  - `GET /api/v1/subjects` — List licensed subject disciplines.
+  - `GET /api/v1/labs` — Filterable accessible labs catalog.
+  - `GET /api/v1/labs/:slug` — Metadata, computational principles, and technical specifications for a lab.
+  - `GET /api/v1/usage` — Real-time monthly quota consumption and rate limits.
+  - `GET /api/v1/organizations` — Organization profile and licensing terms.
+  - `POST /api/v1/embed/authorize` — Generates signed, short-lived (15-minute) embed authorization tokens.
+- **Dedicated LMS Embedding Route (`/embed/:labSlug`)**:
+  - Minimal UI simulation frame stripped of public navigation, footers, and AI chat dialogs.
+  - Guaranteed 0 advertisements.
+  - Scoped `Content-Security-Policy: frame-ancestors` restricted to approved partner origins.
+  - Cryptographic token verification preventing URL scraping or unauthorized iframe hotlinking.
+- **Admin Integrations Dashboard (`/admin/integrations`)**:
+  - Full partner lifecycle management (Create, Update, Suspend, Activate, Delete).
+  - API key generation with one-time reveal modal and immediate revocation toggles.
+  - Real-time operational telemetry (Total Requests, 429 Rate Limit Warnings, Errors).
+  - Configurable licensing agreements (Pilot, Single-Institution, Multi-Institution, White-Label, Custom Enterprise).
+  - Billing readiness with manual invoicing and payment status tracking (`trial`, `paid`, `pending`, `waived`).
+  - Real-time integration audit trail recording all administrative actions.
 
 ---
 

@@ -257,7 +257,7 @@ export default function Navbar() {
   }
 
   // If on 403 page on admin subdomain, hide navbar entirely
-  if (mounted && pathname === "/403" && isSubdomain) {
+  if (mounted && (pathname.startsWith("/embed") || (pathname === "/403" && isSubdomain))) {
     return null;
   }
 

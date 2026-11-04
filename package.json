@@ -15,7 +15,8 @@
     "start": "next start",
     "lint": "next lint",
     "preview": "next start",
-    "test:seo": "node scripts/seo-regression-test.cjs"
+    "test:seo": "node scripts/seo-regression-test.cjs",
+    "test:security": "node scripts/security-regression-test.cjs"
   },
   "dependencies": {
     "@babel/generator": "^7.29.1",

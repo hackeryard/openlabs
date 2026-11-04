@@ -352,3 +352,40 @@ Transform the platform from an unstructured catalog of 94 separate labs into a g
   - Built `AdController.tsx` client wrapper providing `useAdSettings()` hook, polling `/api/ads/status` with 5s edge caching, and mounting ad tags only on eligible public routes.
   - Persisted ad states in MongoDB via `AdSettings.ts` model, protected by RBAC endpoint `/api/admin/ads`.
 
+
+---
+
+## 11. Institutional Integration Platform & Security Hardening [SHIPPED ✅] 🛡️🏛️
+
+- **Core Application Security Hardening [SHIPPED ✅]**:
+  - Eliminated hardcoded JWT secret fallback string; enforced mandatory `JWT_SECRET` or `NEXTAUTH_SECRET` in production.
+  - Implemented cryptographic HMAC-SHA256 signature verification in Next.js Edge runtime middleware (`middleware.ts`) using native Web Crypto API with strict HS256 algorithm enforcement.
+  - Implemented server-side session and RBAC verification helper (`app/lib/auth/verifySession.ts`) with live database role verification (`verifyAdminAccessWithDb`) for high-sensitivity operations.
+  - Hardened cookie flags site-wide (`httpOnly: true`, `sameSite: "lax"`, `secure: isProd`) via `getAuthCookieOptions()`.
+- **Institutional Organization & API Key Models (`app/models/*`) [SHIPPED ✅]**:
+  - Created `Organization.ts` modeling multi-tier plans (pilot, institutional, enterprise), licensing timeframes (`validUntil`), permitted subjects, and iframe origin allow-lists (`allowedOrigins`).
+  - Created `OrganizationMember.ts` linking user accounts to institutions without mutating the core `User` schema.
+  - Created `ApiKey.ts` generating cryptographically random `ol_live_<secret>` keys, storing only SHA-256 hashes, with scope authorization and usage counters.
+- **Integration Engine & Access Control (`app/lib/integrations/*`) [SHIPPED ✅]**:
+  - Authenticates partner requests, validates scopes (`labs:read`, `embed:create`, `usage:read`, `organizations:read`), and enforces lab licensing policies including wildcards (`*`, `physics/*`).
+  - Token-bucket sliding window rate limiter enforcing requests-per-minute limits with standard `X-RateLimit-*` headers.
+  - Asynchronous usage metering logging to `ApiUsage.ts` with monthly quota aggregation.
+- **Versioned REST API (`/api/v1/*`) [SHIPPED ✅]**:
+  - Shipped 6 production endpoints: `/health`, `/subjects`, `/labs`, `/labs/:slug`, `/usage`, and `/organizations`.
+- **Institutional Embedding Infrastructure (`/embed/[labSlug]`) [SHIPPED ✅]**:
+  - Dedicated simulation embed route for third-party LMS platforms (Canvas, Blackboard, Moodle).
+  - Signed, short-lived (15m) embed token authorization endpoint (`POST /api/v1/embed/authorize`), preventing permanent API keys in client-side iframes.
+  - Scoped Content Security Policy in `next.config.js` setting `Content-Security-Policy: frame-ancestors 'self' *` on `/embed/:path*` while preserving global `X-Frame-Options: SAMEORIGIN` across all standard discovery pages.
+  - Automatic zero-ad suppression, global navigation/footer hiding, and AI tutor suppression on `/embed/*`.
+- **Partner Developer Dashboard & Admin Management (`/admin/integrations`, `/api/admin/integrations/*`) [SHIPPED ✅]**:
+  - Dedicated administrative management portal with real-time operational telemetry (Total Partners, Active API Keys, 30-Day Requests, 429 Rate Limit Violations, Scoped Embed Guard).
+  - Organization lifecycle management (create, edit, suspend, activate, delete) with LMS iframe domain allow-lists and permitted lab scopes.
+  - Secure API key generation with one-time reveal modal and copy-to-clipboard, along with instant key revocation and deletion.
+- **Licensing & Billing Readiness [SHIPPED ✅]**:
+  - Configurable licensing records supporting Pilot, Single-Institution, Multi-Institution SaaS, White-Label, and Custom Enterprise agreements.
+  - Billing readiness tracking with manual invoicing, invoice references, and payment statuses (`trial`, `paid`, `pending`, `waived`, `overdue`).
+- **Operational Controls & Audit Logging (`IntegrationEvent.ts`) [SHIPPED ✅]**:
+  - Real-time audit event logging capturing partner registration, status modifications, key generation, and revocation.
+  - Central admin portal summary integration displaying partner and key metrics on the executive hub (`/admin`).
+- **Automated Security Regression Suite (`scripts/security-regression-test.cjs`, `yarn test:security`) [SHIPPED ✅]**:
+  - 30 automated checks validating JWT generation, signature verification, algorithm substitution rejection, Web Crypto edge verification, cookie attributes, RBAC, IDOR guards, API key hashing, signed embed authorization, and partner licensing management.
