@@ -7,6 +7,8 @@ import Feedback from "@/app/models/Feedback";
 import Contact from "@/app/models/Contact";
 import PageView from "@/app/models/PageView";
 import ErrorLog from "@/app/models/ErrorLog";
+import Organization from "@/app/models/Organization";
+import ApiKey from "@/app/models/ApiKey";
 
 export async function GET(request: Request) {
   try {
@@ -24,7 +26,7 @@ export async function GET(request: Request) {
     const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-    // Parallel aggregate queries across all 6 portal services
+    // Parallel aggregate queries across all portal services
     const [
       // 1. Users & XP
       totalUsers,
@@ -56,6 +58,10 @@ export async function GET(request: Request) {
       totalContacts,
       pendingContacts,
       recentContacts,
+
+      // 6. Institutional Integrations
+      totalOrganizations,
+      activeApiKeys,
     ] = await Promise.all([
       // Users
       (User as any).countDocuments({}),
@@ -123,6 +129,10 @@ export async function GET(request: Request) {
         .limit(4)
         .select("name email subject status createdAt")
         .lean(),
+
+      // Integrations
+      (Organization as any).countDocuments({}),
+      (ApiKey as any).countDocuments({ status: "active" }),
     ]);
 
     const totalXp = xpAgg?.[0]?.totalXp || 0;
@@ -171,6 +181,11 @@ export async function GET(request: Request) {
           pending: pendingContacts,
           resolved: totalContacts - pendingContacts,
           recent: recentContacts,
+        },
+        integrations: {
+          totalOrganizations,
+          activeApiKeys,
+          status: "active",
         },
         seo: {
           totalLabs: 94,

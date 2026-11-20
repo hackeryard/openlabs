@@ -15,6 +15,7 @@ Route classification is centralized in [`app/lib/seoRoutePolicy.ts`](file:///c:/
 | **Public Indexable** | `/${subject}/*`, `/tracks`, `/leaderboard`, `/blog/*`, `/about`, `/contact`, `/privacy`, `/terms`, `/` | **YES** | **YES** | `index: true, follow: true`, self-referential canonical URL |
 | **Interactive Labs** | `/labs/*` (all 101 simulations) | **NO** | **NO** | `noindex, nofollow, noarchive` via `app/labs/layout.tsx` + `X-Robots-Tag` |
 | **Private / Auth** | `/admin/*`, `/api/*`, `/login`, `/signup`, `/forgotpassword`, `/reset-password`, `/verify-email`, `/setup-profile`, `/403` | **NO** | **NO** | Disallowed in `robots.ts`, redirected or 401/403 in `middleware.ts` |
+| **Embed Simulation Proxy** | `/embed/*` (institutional LMS iframe embeds) | **NO** | **NO** | `noindex, nofollow, noarchive` via `next.config.js` + `app/embed/[labSlug]/page.tsx`, excluded in `app/lib/seoRoutePolicy.ts` |
 | **Permanent Redirects** | `/education` &rarr; `/tracks`, `/virtual-science-labs` &rarr; `/tracks` | **NO** | **NO** | HTTP 308 permanent redirect, internal links must point directly to target |
 
 ---
@@ -39,6 +40,13 @@ OpenLabs deliberately separates **public educational landing pages** from **inte
 > Crawlers must be allowed to fetch `/labs/*` HTTP headers so they can discover the `X-Robots-Tag: noindex` directive and permanently purge the URLs from Google search results. For this reason, `robots.ts` does NOT disallow `/labs/` via robots.txt, avoiding "Indexed, though blocked by robots.txt" indexing errors.
 
 ---
+
+
+### 2.1 Institutional Embed Proxy Shield (/embed/*)
+Interactive simulation embed views served at `/embed/[labSlug]` for LMS integrations (Canvas, Blackboard, Moodle) are strictly isolated from search indexes and crawler sitemaps:
+- **Excluded from Sitemap:** `app/lib/seoRoutePolicy.ts` registers `"/embed"` in `PRIVATE_PREFIXES`, ensuring `isSitemapEligible()` returns false and 0 embed routes enter `sitemap.xml`.
+- **HTTP Header Directives:** `next.config.js` and `app/embed/[labSlug]/page.tsx` inject `X-Robots-Tag: noindex, nofollow, noarchive` on all `/embed/*` routes.
+- **Scoped Frame Policy:** `next.config.js` injects `Content-Security-Policy: frame-ancestors 'self' *` on `/embed/:path*` while preserving blanket `X-Frame-Options: SAMEORIGIN` on all standard discovery and landing pages.
 
 ## 3. Robots.txt Configuration & Root Meta Endpoints
 

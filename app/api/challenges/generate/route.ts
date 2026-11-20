@@ -11,10 +11,12 @@ export async function GET(req: Request) {
   try {
     const authHeader = req.headers.get("authorization");
     const xCronSecret = req.headers.get("x-cron-secret");
+    const cronSecret = process.env.CRON_SECRET;
     
+    // Strictly require a valid, non-empty CRON_SECRET configured in environment
     if (
-      authHeader !== `Bearer ${process.env.CRON_SECRET}` &&
-      xCronSecret !== process.env.CRON_SECRET
+      !cronSecret ||
+      (authHeader !== `Bearer ${cronSecret}` && xCronSecret !== cronSecret)
     ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

@@ -5,6 +5,7 @@
  * - Public indexable educational routes
  * - Non-indexable interactive lab simulation routes (/labs/*)
  * - Private / authenticated routes (/admin/*, /login, etc.)
+ * - Embed proxy routes (/embed/*)
  * - Canonical redirects
  */
 
@@ -79,6 +80,7 @@ export const PRIVATE_PREFIXES: string[] = [
   "/api",
   "/private",
   "/profile/",
+  "/embed",
 ];
 
 /**
@@ -112,7 +114,7 @@ export function classifyRoute(rawPath: string): RouteClassification {
     };
   }
 
-  // 3. Private / authenticated / admin routes
+  // 3. Private / authenticated / admin / embed routes
   if (
     PRIVATE_EXACT_ROUTES.includes(normalized) ||
     PRIVATE_PREFIXES.some((prefix) => normalized.startsWith(prefix))
@@ -123,7 +125,7 @@ export function classifyRoute(rawPath: string): RouteClassification {
       isIndexable: false,
       shouldIncludeInSitemap: false,
       canonicalUrl: `${BASE_URL}${normalized}`,
-      reason: "Private, authenticated, or administrative route",
+      reason: "Private, authenticated, administrative, or embed route",
     };
   }
 
@@ -138,31 +140,21 @@ export function classifyRoute(rawPath: string): RouteClassification {
   };
 }
 
-/** Helper: Normalize path */
-export function normalizePath(p: string): string {
-  if (!p) return "/";
-  // Remove protocol and domain if present
-  let clean = p.replace(/^https?:\/\/[^\/]+/, "");
-  // Remove query and hash
-  clean = clean.split("?")[0].split("#")[0];
-  // Remove trailing slashes (except root)
-  clean = clean.replace(/\/+$/, "");
-  return clean === "" ? "/" : clean;
+export function isIndexableRoute(path: string): boolean {
+  return classifyRoute(path).isIndexable;
 }
 
-/** Check if a route is indexable */
-export function isIndexableRoute(route: string): boolean {
-  return classifyRoute(route).isIndexable;
+export function isSitemapEligible(path: string): boolean {
+  return classifyRoute(path).shouldIncludeInSitemap;
 }
 
-/** Check if a route is eligible for the XML sitemap */
-export function isSitemapEligible(route: string): boolean {
-  return classifyRoute(route).shouldIncludeInSitemap;
+export function toCanonicalUrl(path: string): string {
+  return classifyRoute(path).canonicalUrl;
 }
 
-/** Generate an absolute canonical URL for a given route path */
-export function toCanonicalUrl(route: string): string {
-  const norm = normalizePath(route);
-  return `${BASE_URL}${norm === "/" ? "" : norm}`;
+function normalizePath(raw: string): string {
+  let p = raw.split("?")[0].split("#")[0].trim();
+  if (!p.startsWith("/")) p = "/" + p;
+  if (p.length > 1 && p.endsWith("/")) p = p.slice(0, -1);
+  return p.toLowerCase();
 }
-

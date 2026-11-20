@@ -8,7 +8,7 @@ const OpenLabsAI = dynamic(() => import("./OpenLabsAI"), {
   ssr: false,
 });
 
-const HIDDEN_ROUTES = ["/login", "/signup", "/forgot"];
+const HIDDEN_ROUTES = ["/login", "/signup", "/forgot", "/embed"];
 
 export default function OpenLabsAILoader() {
   const pathname = usePathname();

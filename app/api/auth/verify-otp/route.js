@@ -1,7 +1,7 @@
 import OTP from "@/app/models/OTP"
 import User from "@/app/models/User"
 import { connectDB } from "@/app/lib/mongodb"
-import { generateToken, getAuthCookieDomain } from "@/app/lib/auth"
+import { generateToken, getAuthCookieOptions } from "@/app/lib/auth"
 import { resolveGeoLocation } from "@/app/lib/geolocation"
 import { serialize } from "cookie"
 
@@ -85,7 +85,7 @@ export async function POST(req) {
     // Delete the OTP record
     await OTP.deleteOne({ _id: otpRecord._id })
 
-    const cookieDomain = getAuthCookieDomain(req);
+    const cookieOptions = getAuthCookieOptions(req);
 
     return new Response(
       JSON.stringify({
@@ -96,12 +96,7 @@ export async function POST(req) {
         status: 200,
         headers: {
           "Content-Type": "application/json",
-          "Set-Cookie": serialize("auth-token", token, {
-            httpOnly: true,
-            path: "/",
-            domain: cookieDomain,
-            maxAge: 60 * 60 * 24,
-          }),
+          "Set-Cookie": serialize("auth-token", token, cookieOptions),
         },
       }
     )

@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Dialog, Transition } from "@headlessui/react";
 
 type Protocol = "TCP" | "UDP";
 type Mode = "send" | "receive";
@@ -553,154 +552,136 @@ export default function OSIModel2D({ onComplete }: { onComplete?: () => void }) 
         </div>
       </div>
 
-      {/* Headless UI Modal for Layer Details */}
-      <Transition appear show={isModalOpen} as={typeof Fragment !== "undefined" ? Fragment : "div"}>
-        <Dialog as="div" className="relative z-50" onClose={() => setIsModalOpen(false)}>
-          <Transition.Child
-            as={typeof Fragment !== "undefined" ? Fragment : "div"}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black bg-opacity-75" />
-          </Transition.Child>
+      {/* Modal for Layer Details */}
+      <AnimatePresence>
+        {isModalOpen && selectedLayer && (
+          <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsModalOpen(false)}
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className="relative w-full max-w-2xl transform overflow-hidden rounded-2xl bg-slate-800 p-6 text-left shadow-2xl border border-slate-700 z-10"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-2xl font-bold leading-6 text-white flex items-center gap-3">
+                  <span className="text-4xl">{selectedLayer.icon}</span>
+                  <span>{selectedLayer.name} Layer</span>
+                </h3>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-slate-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-700"
+                  aria-label="Close modal"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
 
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={typeof Fragment !== "undefined" ? Fragment : "div"}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-slate-800 p-6 text-left align-middle shadow-xl transition-all border border-slate-700">
-                  {selectedLayer && (
-                    <>
-                      <div className="flex items-center justify-between mb-4">
-                        <Dialog.Title
-                          as="h3"
-                          className="text-2xl font-bold leading-6 text-white flex items-center gap-3"
-                        >
-                          <span className="text-4xl">{selectedLayer.icon}</span>
-                          <span>{selectedLayer.name} Layer</span>
-                        </Dialog.Title>
-                        <button
-                          onClick={() => setIsModalOpen(false)}
-                          className="text-slate-400 hover:text-white transition-colors"
-                        >
-                          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </button>
-                      </div>
+              <div className={`${selectedLayer.color} h-2 rounded-full mb-6`} />
 
-                      <div className={`${selectedLayer.color} h-2 rounded-full mb-6`} />
+              <div className="space-y-6 max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
+                {/* Basic Info */}
+                <div>
+                  <h4 className="text-sm font-semibold text-slate-400 mb-2">Description</h4>
+                  <p className="text-white">{selectedLayer.description}</p>
+                </div>
 
-                      <div className="space-y-6">
-                        {/* Basic Info */}
-                        <div>
-                          <h4 className="text-sm font-semibold text-slate-400 mb-2">Description</h4>
-                          <p className="text-white">{selectedLayer.description}</p>
-                        </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-3 bg-slate-700 rounded-lg">
+                    <span className="text-sm text-slate-400">Layer Number</span>
+                    <p className="text-2xl font-bold text-white">Layer {selectedLayer.id}</p>
+                  </div>
+                  <div className="p-3 bg-slate-700 rounded-lg">
+                    <span className="text-sm text-slate-400">PDU</span>
+                    <p className="text-2xl font-bold text-white">{selectedLayer.pdu}</p>
+                  </div>
+                </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="p-3 bg-slate-700 rounded-lg">
-                            <span className="text-sm text-slate-400">Layer Number</span>
-                            <p className="text-2xl font-bold text-white">Layer {selectedLayer.id}</p>
-                          </div>
-                          <div className="p-3 bg-slate-700 rounded-lg">
-                            <span className="text-sm text-slate-400">PDU</span>
-                            <p className="text-2xl font-bold text-white">{selectedLayer.pdu}</p>
-                          </div>
-                        </div>
+                {/* Function */}
+                <div>
+                  <h4 className="text-sm font-semibold text-slate-400 mb-2">Function</h4>
+                  <p className="text-white">{selectedLayer.details.function}</p>
+                </div>
 
-                        {/* Function */}
-                        <div>
-                          <h4 className="text-sm font-semibold text-slate-400 mb-2">Function</h4>
-                          <p className="text-white">{selectedLayer.details.function}</p>
-                        </div>
+                {/* Protocols */}
+                <div>
+                  <h4 className="text-sm font-semibold text-slate-400 mb-2">Common Protocols</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedLayer.details.protocols.map((proto) => (
+                      <span key={proto} className="px-3 py-1 bg-slate-700 rounded-full text-sm text-slate-300">
+                        {proto}
+                      </span>
+                    ))}
+                  </div>
+                </div>
 
-                        {/* Protocols */}
-                        <div>
-                          <h4 className="text-sm font-semibold text-slate-400 mb-2">Common Protocols</h4>
-                          <div className="flex flex-wrap gap-2">
-                            {selectedLayer.details.protocols.map((proto) => (
-                              <span key={proto} className="px-3 py-1 bg-slate-700 rounded-full text-sm text-slate-300">
-                                {proto}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
+                {/* Devices */}
+                <div>
+                  <h4 className="text-sm font-semibold text-slate-400 mb-2">Network Devices</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedLayer.details.devices.map((device) => (
+                      <span key={device} className="px-3 py-1 bg-slate-700 rounded-full text-sm text-slate-300">
+                        {device}
+                      </span>
+                    ))}
+                  </div>
+                </div>
 
-                        {/* Devices */}
-                        <div>
-                          <h4 className="text-sm font-semibold text-slate-400 mb-2">Network Devices</h4>
-                          <div className="flex flex-wrap gap-2">
-                            {selectedLayer.details.devices.map((device) => (
-                              <span key={device} className="px-3 py-1 bg-slate-700 rounded-full text-sm text-slate-300">
-                                {device}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
+                {/* Real-world Example */}
+                <div className="p-4 bg-slate-700 rounded-lg">
+                  <h4 className="text-sm font-semibold text-slate-400 mb-2">Real-world Example</h4>
+                  <p className="text-white">{selectedLayer.details.example}</p>
+                </div>
 
-                        {/* Real-world Example */}
-                        <div className="p-4 bg-slate-700 rounded-lg">
-                          <h4 className="text-sm font-semibold text-slate-400 mb-2">Real-world Example</h4>
-                          <p className="text-white">{selectedLayer.details.example}</p>
-                        </div>
+                {/* Quiz */}
+                <div className="p-4 bg-blue-900 bg-opacity-50 rounded-lg border border-blue-700">
+                  <h4 className="text-sm font-semibold text-blue-300 mb-2">📝 Quick Quiz</h4>
+                  <p className="text-white mb-3">{selectedLayer.details.quiz.question}</p>
+                  <details className="text-sm">
+                    <summary className="text-blue-400 cursor-pointer hover:text-blue-300 font-medium">Reveal Answer</summary>
+                    <p className="mt-2 text-blue-200">{selectedLayer.details.quiz.answer}</p>
+                  </details>
+                </div>
 
-                        {/* Quiz */}
-                        <div className="p-4 bg-blue-900 bg-opacity-50 rounded-lg border border-blue-700">
-                          <h4 className="text-sm font-semibold text-blue-300 mb-2">📝 Quick Quiz</h4>
-                          <p className="text-white mb-3">{selectedLayer.details.quiz.question}</p>
-                          <details className="text-sm">
-                            <summary className="text-blue-400 cursor-pointer hover:text-blue-300">Reveal Answer</summary>
-                            <p className="mt-2 text-blue-200">{selectedLayer.details.quiz.answer}</p>
-                          </details>
-                        </div>
+                {/* Layer Relationships */}
+                <div className="p-4 bg-slate-700 rounded-lg">
+                  <h4 className="text-sm font-semibold text-slate-400 mb-2">Layer Relationships</h4>
+                  <div className="space-y-2">
+                    {selectedLayer.id < 7 && (
+                      <p className="text-sm text-slate-300">
+                        ⬆️ Passes data to Layer {selectedLayer.id + 1} ({layers.find(l => l.id === selectedLayer.id + 1)?.name || ""})
+                      </p>
+                    )}
+                    {selectedLayer.id > 1 && (
+                      <p className="text-sm text-slate-300">
+                        ⬇️ Receives data from Layer {selectedLayer.id - 1} ({layers.find(l => l.id === selectedLayer.id - 1)?.name || ""})
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
 
-                        {/* Layer Relationships */}
-                        <div className="p-4 bg-slate-700 rounded-lg">
-                          <h4 className="text-sm font-semibold text-slate-400 mb-2">Layer Relationships</h4>
-                          <div className="space-y-2">
-                            {selectedLayer.id < 7 && (
-                              <p className="text-sm text-slate-300">
-                                ⬆️ Passes data to Layer {selectedLayer.id + 1} ({layers[7 - selectedLayer.id - 1].name})
-                              </p>
-                            )}
-                            {selectedLayer.id > 1 && (
-                              <p className="text-sm text-slate-300">
-                                ⬇️ Receives data from Layer {selectedLayer.id - 1} ({layers[7 - selectedLayer.id + 1].name})
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="mt-6 flex justify-end">
-                        <button
-                          type="button"
-                          className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 transition-colors"
-                          onClick={() => setIsModalOpen(false)}
-                        >
-                          Close
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
+              <div className="mt-6 flex justify-end">
+                <button
+                  type="button"
+                  className="inline-flex justify-center rounded-xl border border-transparent bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors shadow-lg shadow-blue-600/30"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
           </div>
-        </Dialog>
-      </Transition>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

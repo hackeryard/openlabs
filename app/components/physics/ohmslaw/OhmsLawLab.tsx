@@ -522,7 +522,7 @@ export default function OhmsLawLab() {
               <MousePointer size={11} className="text-primary" />
               Gestures:
             </span>
-            <span>Click &amp; drag on grid &bull; Double-click switch to toggle &bull; Right-click to delete</span>
+            <span>Click &amp; drag on grid &bull; Drag &amp; drop probe pins to terminals &bull; Double-click switch to toggle &bull; Right-click to delete</span>
           </div>
         </div>
 
@@ -606,9 +606,42 @@ export default function OhmsLawLab() {
             </div>
           </div>
           
+          <div className="grid grid-cols-2 gap-1.5 mt-2">
+            <button
+              type="button"
+              onClick={() => setSelectedTool('probe_red')}
+              className={`flex items-center justify-center gap-1 py-1 px-1.5 rounded-lg border text-[10px] font-bold transition ${
+                selectedTool === 'probe_red'
+                  ? 'bg-red-500 text-white border-red-400 ring-2 ring-red-400/50'
+                  : probeRedNodeId
+                    ? 'bg-red-950/60 text-red-300 border-red-800/80 hover:bg-red-900/60'
+                    : 'bg-slate-900 text-slate-300 border-slate-800 hover:bg-slate-800'
+              }`}
+              title="Click or drag Red Probe (+) to any circuit node"
+            >
+              <span className="w-2 h-2 rounded-full bg-red-500 inline-block" />
+              <span>Probe (+){probeRedNodeId ? ' ✓' : ''}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedTool('probe_black')}
+              className={`flex items-center justify-center gap-1 py-1 px-1.5 rounded-lg border text-[10px] font-bold transition ${
+                selectedTool === 'probe_black'
+                  ? 'bg-slate-200 text-black border-white ring-2 ring-white/50'
+                  : probeBlackNodeId
+                    ? 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
+                    : 'bg-slate-900 text-slate-300 border-slate-800 hover:bg-slate-800'
+              }`}
+              title="Click or drag Black Probe (-) to any circuit node"
+            >
+              <span className="w-2 h-2 rounded-full bg-slate-300 border border-black inline-block" />
+              <span>Probe (-){probeBlackNodeId ? ' ✓' : ''}</span>
+            </button>
+          </div>
+
           {(!probeRedNodeId || !probeBlackNodeId) ? (
             <div className="text-center mt-1.5 text-[9px] text-slate-400 font-medium">
-              Select Red (+) and Black (-) probes from left toolbox to measure
+              Click probe or drag probe pins directly on circuit
             </div>
           ) : (
             <button

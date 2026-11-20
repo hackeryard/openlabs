@@ -56,6 +56,10 @@ export default function TopologyBuilder({ onComplete }: { onComplete?: () => voi
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [isLinking, setIsLinking] = useState<string | null>(null);
     const [simulatingPath, setSimulatingPath] = useState<string[] | null>(null);
+    const [isBroadcasting, setIsBroadcasting] = useState(false);
+    const [simMode, setSimMode] = useState<'broadcast' | 'unicast'>('broadcast');
+    const [sourceId, setSourceId] = useState<string>('');
+    const [targetId, setTargetId] = useState<string>('');
 
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -68,6 +72,8 @@ export default function TopologyBuilder({ onComplete }: { onComplete?: () => voi
     const loadTemplate = (type: 'star' | 'bus' | 'ring') => {
         setDevices([]);
         setConnections([]);
+        setSimulatingPath(null);
+        setIsBroadcasting(false);
         const centerX = 400;
         const centerY = 200;
         const newDevices: Device[] = [];
@@ -86,6 +92,8 @@ export default function TopologyBuilder({ onComplete }: { onComplete?: () => voi
                 newDevices.push(pc);
                 newConns.push({ id: `c-${i}`, fromId: 'star-hub', toId: pc.id });
             }
+            setSourceId('pc-0');
+            setTargetId('pc-2');
         } else if (type === 'bus') {
             for (let i = 0; i < 5; i++) {
                 const pc: Device = {
@@ -96,6 +104,8 @@ export default function TopologyBuilder({ onComplete }: { onComplete?: () => voi
                 newDevices.push(pc);
                 if (i > 0) newConns.push({ id: `bc-${i}`, fromId: newDevices[i - 1].id, toId: pc.id });
             }
+            setSourceId('b-pc-0');
+            setTargetId('b-pc-4');
         } else if (type === 'ring') {
             for (let i = 0; i < 6; i++) {
                 const angle = (i * 2 * Math.PI) / 6;
@@ -107,6 +117,8 @@ export default function TopologyBuilder({ onComplete }: { onComplete?: () => voi
                 if (i > 0) newConns.push({ id: `rc-${i}`, fromId: newDevices[i - 1].id, toId: router.id });
             }
             newConns.push({ id: 'ring-close', fromId: newDevices[5].id, toId: newDevices[0].id });
+            setSourceId('r-node-0');
+            setTargetId('r-node-3');
         }
 
         setDevices(newDevices);
@@ -132,16 +144,29 @@ export default function TopologyBuilder({ onComplete }: { onComplete?: () => voi
 
     const simulateRouting = () => {
         if (devices.length < 2) return;
-        const startNode = devices[0].id;
-        const endNode = devices[devices.length - 1].id;
-        const queue: string[][] = [[startNode]];
+
+        if (simMode === 'broadcast') {
+            setIsBroadcasting(true);
+            setSimulatingPath(null);
+            if (onComplete) onComplete();
+            setTimeout(() => setIsBroadcasting(false), 5000);
+            return;
+        }
+
+        // Unicast multi-hop path
+        const start = sourceId || (devices[1]?.id ?? devices[0].id);
+        const end = targetId || devices[devices.length - 1].id;
+        if (start === end) return;
+
+        const queue: string[][] = [[start]];
         const visited = new Set();
 
         while (queue.length > 0) {
             const path = queue.shift()!;
             const node = path[path.length - 1];
-            if (node === endNode) {
+            if (node === end) {
                 setSimulatingPath(path);
+                setIsBroadcasting(false);
                 if (onComplete) onComplete();
                 setTimeout(() => setSimulatingPath(null), 5000);
                 return;
@@ -218,11 +243,75 @@ export default function TopologyBuilder({ onComplete }: { onComplete?: () => voi
                 </div>
 
                 <div className="p-6 border-t border-slate-800 space-y-3 bg-slate-900/50">
-                    <button onClick={simulateRouting} className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold text-sm transition-all shadow-lg flex items-center justify-center gap-2">
-                        <Play size={16} fill="currentColor" /> Test Routing
+                    <div className="space-y-2 mb-2">
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center justify-between">
+                            <span>Traffic Simulation</span>
+                            <span className="text-indigo-400 font-mono text-[9px]">{devices.length} Nodes</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800">
+                            <button
+                                onClick={() => { setSimMode('broadcast'); setSimulatingPath(null); }}
+                                className={`py-1.5 rounded-lg text-xs font-bold transition-all ${
+                                    simMode === 'broadcast'
+                                        ? 'bg-indigo-600 text-white shadow'
+                                        : 'text-slate-400 hover:text-slate-200'
+                                }`}
+                            >
+                                All Systems
+                            </button>
+                            <button
+                                onClick={() => { setSimMode('unicast'); setIsBroadcasting(false); }}
+                                className={`py-1.5 rounded-lg text-xs font-bold transition-all ${
+                                    simMode === 'unicast'
+                                        ? 'bg-indigo-600 text-white shadow'
+                                        : 'text-slate-400 hover:text-slate-200'
+                                }`}
+                            >
+                                P2P Route
+                            </button>
+                        </div>
+                    </div>
+
+                    {simMode === 'unicast' && devices.length >= 2 && (
+                        <div className="space-y-2 mb-2">
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                                <div>
+                                    <label className="text-[10px] text-slate-400 font-medium">Source</label>
+                                    <select
+                                        value={sourceId || devices[0]?.id}
+                                        onChange={(e) => setSourceId(e.target.value)}
+                                        className="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-xs text-white"
+                                    >
+                                        {devices.map(d => (
+                                            <option key={d.id} value={d.id}>{d.label}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="text-[10px] text-slate-400 font-medium">Target</label>
+                                    <select
+                                        value={targetId || devices[devices.length - 1]?.id}
+                                        onChange={(e) => setTargetId(e.target.value)}
+                                        className="w-full bg-slate-950 border border-slate-800 rounded-lg p-1.5 text-xs text-white"
+                                    >
+                                        {devices.map(d => (
+                                            <option key={d.id} value={d.id}>{d.label}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <button
+                        onClick={simulateRouting}
+                        disabled={devices.length < 2 || connections.length === 0}
+                        className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl font-bold text-sm transition-all shadow-lg flex items-center justify-center gap-2"
+                    >
+                        <Play size={16} fill="currentColor" /> {simMode === 'broadcast' ? 'Broadcast to All Systems' : 'Test P2P Routing'}
                     </button>
-                    <button onClick={() => { setDevices([]); setConnections([]); }} className="w-full py-3 bg-slate-800 hover:bg-red-900/20 text-slate-400 hover:text-red-400 rounded-xl font-bold text-sm transition-all">
-                        <RotateCcw size={16} className="inline mr-2" /> Clear Workspace
+                    <button onClick={() => { setDevices([]); setConnections([]); setSimulatingPath(null); setIsBroadcasting(false); }} className="w-full py-2.5 bg-slate-800 hover:bg-red-900/20 text-slate-400 hover:text-red-400 rounded-xl font-bold text-xs transition-all">
+                        <RotateCcw size={14} className="inline mr-2" /> Clear Workspace
                     </button>
                 </div>
             </aside>
@@ -242,10 +331,12 @@ export default function TopologyBuilder({ onComplete }: { onComplete?: () => voi
                         const to = devices.find(d => d.id === conn.toId);
                         if (!from || !to) return null;
 
+                        const isBroadcastActive = isBroadcasting;
                         const isPath = simulatingPath?.includes(from.id) && simulatingPath?.includes(to.id);
                         const pathIdxFrom = simulatingPath?.indexOf(from.id) ?? -1;
                         const pathIdxTo = simulatingPath?.indexOf(to.id) ?? -1;
                         const isSequential = Math.abs(pathIdxFrom - pathIdxTo) === 1;
+                        const isConnActive = isBroadcastActive || (isPath && isSequential);
 
                         return (
                             <g key={conn.id}>
@@ -257,11 +348,11 @@ export default function TopologyBuilder({ onComplete }: { onComplete?: () => voi
                                 <motion.line
                                     initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
                                     x1={from.x + 32} y1={from.y + 32} x2={to.x + 32} y2={to.y + 32}
-                                    stroke={isPath && isSequential ? "#818cf8" : "#334155"}
-                                    strokeWidth={isPath && isSequential ? 4 : 2}
-                                    strokeDasharray={isPath && isSequential ? "0" : "8,8"}
+                                    stroke={isConnActive ? "#818cf8" : "#334155"}
+                                    strokeWidth={isConnActive ? 4 : 2}
+                                    strokeDasharray={isConnActive ? "0" : "8,8"}
                                 />
-                                {isPath && isSequential && (
+                                {isConnActive && (
                                     <motion.circle
                                         r="5" fill="#818cf8"
                                         animate={{

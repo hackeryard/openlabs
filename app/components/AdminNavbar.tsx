@@ -22,6 +22,7 @@ import {
   User as UserIcon,
   Lock,
   Megaphone,
+  Building2,
 } from "lucide-react";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import { useAuth } from "@/components/AuthProvider";
@@ -42,6 +43,7 @@ const navItems: AdminNavItem[] = [
   { label: "Contacts", href: "/admin/contacts", icon: Mail },
   { label: "Ads", href: "/admin/ads", icon: Megaphone },
   { label: "SEO Graph", href: "/admin/seo-dashboard", icon: Network },
+  { label: "Integrations", href: "/admin/integrations", icon: Building2 },
 ];
 
 export default function AdminNavbar() {

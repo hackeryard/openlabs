@@ -34,6 +34,7 @@ import {
   Layers,
   Lock,
   User as UserIcon,
+  Building2,
   Megaphone,
 } from "lucide-react";
 
@@ -119,6 +120,11 @@ interface AdminSummaryData {
     coverage: string;
     sitemapStatus: string;
     schemaStatus: string;
+  };
+  integrations?: {
+    totalOrganizations: number;
+    activeApiKeys: number;
+    status: string;
   };
 }
 
@@ -738,6 +744,52 @@ export default function AdminPortalHomePage() {
               className="inline-flex items-center justify-between w-full py-2.5 px-3 rounded-xl bg-muted/60 hover:bg-accent border border-border/70 text-xs font-bold text-foreground transition group"
             >
               <span>Manage Ad Operations</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+
+          {/* 8. Institutional Integrations & API Licensing */}
+          <div className="p-5 rounded-3xl bg-card/90 border border-border/80 shadow-xs flex flex-col justify-between space-y-4 hover:border-border transition-all">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-500 border border-purple-500/20 flex items-center justify-center">
+                    <Building2 className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-bold text-foreground">Institutional Integrations</h2>
+                    <span className="text-[10px] text-muted-foreground">Partners, API Keys &amp; Licensing</span>
+                  </div>
+                </div>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/10 text-purple-500 border border-purple-500/20">
+                  {data?.integrations?.totalOrganizations || 0} Partners
+                </span>
+              </div>
+
+              {/* Status details */}
+              <div className="space-y-1.5 pt-1 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Active API Keys</span>
+                  <span className="font-bold text-foreground">
+                    {data?.integrations?.activeApiKeys ?? 0} Keys Active
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Versioned API Engine</span>
+                  <span className="font-bold text-emerald-500">v1 Production</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">LMS Iframe Embedding</span>
+                  <span className="font-bold text-primary">Scoped CSP Guard</span>
+                </div>
+              </div>
+            </div>
+
+            <Link
+              href={getRoute("/admin/integrations")}
+              className="inline-flex items-center justify-between w-full py-2.5 px-3 rounded-xl bg-muted/60 hover:bg-accent border border-border/70 text-xs font-bold text-foreground transition group"
+            >
+              <span>Manage Integrations &amp; Licenses</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>

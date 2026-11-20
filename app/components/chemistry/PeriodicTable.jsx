@@ -7,13 +7,15 @@ import ElementCard from "./ElementCard";
 import ElementModal from "./ElementModal";
 import SearchBar from "./SearchBar";
 import Filters from "./Filters";
-import { Atom, Download, RotateCcw, Table2, FlaskConical } from "lucide-react";
+import PeriodicTableActivities from "./PeriodicTableActivities";
+import { Atom, Download, RotateCcw, Table2, FlaskConical, BookOpen } from "lucide-react";
 
 export default function PeriodicTable({ onComplete }) {
   const [selected, setSelected] = useState(null);
   const [activeCategories, setActiveCategories] = useState(new Set());
   const [querySelected, setQuerySelected] = useState(null);
   const [explored, setExplored] = useState(new Set());
+  const [showActivities, setShowActivities] = useState(false);
 
   useEffect(() => {
     if (selected) {
@@ -261,6 +263,13 @@ export default function PeriodicTable({ onComplete }) {
 
           <div className="flex gap-2">
             <button
+              onClick={() => setShowActivities(true)}
+              className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 hover:bg-indigo-500 px-4 py-2 text-xs font-black text-white shadow-sm transition shadow-indigo-600/20"
+            >
+              <BookOpen className="h-3.5 w-3.5" />
+              Lab Activities
+            </button>
+            <button
               onClick={() => {
                 setQuerySelected(null);
                 setActiveCategories(new Set());
@@ -348,6 +357,13 @@ export default function PeriodicTable({ onComplete }) {
           <ElementModal element={selected} onClose={() => setSelected(null)} />
         )}
       </AnimatePresence>
+
+      <PeriodicTableActivities
+        isOpen={showActivities}
+        onClose={() => setShowActivities(false)}
+        elements={elements}
+        onSelectElement={setSelected}
+      />
     </section>
   );
 }

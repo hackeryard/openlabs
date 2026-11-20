@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs"
 import User from "@/app/models/User"
 import { connectDB } from "@/app/lib/mongodb"
-import { generateToken, getAuthCookieDomain } from "@/app/lib/auth"
+import { generateToken, getAuthCookieOptions } from "@/app/lib/auth"
 import { mockFindUser } from "@/app/lib/devMock"
 import { extractGeoLocation, resolveGeoLocation } from "@/app/lib/geolocation"
 import { serialize } from "cookie"
@@ -11,7 +11,15 @@ const isDev = process.env.NODE_ENV === 'development'
 export async function POST(req) {
   await connectDB()
 
-  const { email, password } = await req.json()
+  let email = ""
+  let password = ""
+  try {
+    const body = await req.json()
+    email = (body.email || "").trim().toLowerCase()
+    password = body.password || ""
+  } catch {
+    return Response.json({ error: "Invalid JSON request body" }, { status: 400 })
+  }
 
   if (!email || !password) {
     return Response.json({ error: "Email and password are required" }, { status: 400 })
@@ -92,18 +100,13 @@ export async function POST(req) {
   }
 
   const token = generateToken(user)
-  const isProd = process.env.NODE_ENV === "production"
-  const cookieDomain = getAuthCookieDomain(req)
+  const cookieOptions = getAuthCookieOptions(req)
 
   return new Response(JSON.stringify({ message: "Login success", emailVerified: true }), {
+    status: 200,
     headers: {
-      "Set-Cookie": serialize("auth-token", token, {
-        httpOnly: true,
-        path: "/",
-        domain: cookieDomain,
-        maxAge: 60 * 60 * 24,
-      }),
+      "Content-Type": "application/json",
+      "Set-Cookie": serialize("auth-token", token, cookieOptions),
     },
   })
 }
-

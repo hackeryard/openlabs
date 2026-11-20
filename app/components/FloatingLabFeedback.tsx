@@ -62,6 +62,8 @@ export default function FloatingLabFeedback() {
   const labId = isLabPage ? resolveLabIdFromPath(pathname || "") : null;
   const labMeta = labId ? getLabById(labId) : null;
   const labTitle = labMeta?.name || labId?.split("/").pop() || "this simulation";
+  // Elevate pill if current lab has a pinned bottom playback scrubber or toolbar (e.g. Code Lab)
+  const hasBottomBar = Boolean(pathname?.includes("/code-lab/"));
 
   const { submitting, submitDeep, submitPulse } = useFeedback(labId || "");
 
@@ -272,7 +274,7 @@ export default function FloatingLabFeedback() {
   return (
     <>
       {/* ── Dynamic Island Morphing Feedback Pill ── */}
-      <div className="fixed bottom-6 left-6 z-40 select-none">
+      <div className={`fixed ${hasBottomBar ? "bottom-20 left-6 sm:bottom-22 sm:left-6" : "bottom-6 left-6"} z-40 select-none transition-all duration-300`}>
         <motion.button
           layout
           initial={{ opacity: 0, scale: 0.8, y: 15 }}

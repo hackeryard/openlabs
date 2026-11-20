@@ -113,30 +113,47 @@ export function calculatePotential(params: TitrationParams, titrantAdded: number
 export function getIndicatorColor(indicator: IndicatorType, pH: number, type: TitrationType, titrantAdded: number, eqVolume: number): string {
   if (type === 'redox') {
     // KMnO4 acts as its own indicator
-    if (titrantAdded < eqVolume) return 'rgba(255, 255, 255, 0.1)'; // Colorless / very pale
-    if (titrantAdded >= eqVolume && titrantAdded < eqVolume + 0.5) return 'rgba(200, 150, 255, 0.4)'; // Pale purple
-    return 'rgba(150, 50, 200, 0.7)'; // Deep purple
+    if (titrantAdded < eqVolume) return 'rgba(224, 242, 254, 0.25)'; // Colorless / very pale aqueous
+    if (titrantAdded >= eqVolume && titrantAdded < eqVolume + 0.5) return 'rgba(216, 180, 254, 0.75)'; // Distinct pale purple / pink endpoint
+    return 'rgba(147, 51, 234, 0.85)'; // Deep purple
   }
 
   if (indicator === 'phenolphthalein') {
-    if (pH < 8.2) return 'rgba(255, 255, 255, 0.1)'; // Colorless
-    if (pH < 10.0) return 'rgba(255, 105, 180, 0.3)'; // Pale pink
-    return 'rgba(255, 20, 147, 0.6)'; // Bright pink
+    // For acid analyte titrated with strong base (strong-acid-strong-base or weak-acid-strong-base)
+    if (type === 'strong-acid-strong-base' || type === 'weak-acid-strong-base') {
+      if (titrantAdded < eqVolume && pH < 8.2) {
+        return 'rgba(224, 242, 254, 0.25)'; // Clear aqueous solution
+      }
+      if (titrantAdded >= eqVolume && titrantAdded < eqVolume + 0.5) {
+        return 'rgba(244, 114, 182, 0.75)'; // Distinct, beautiful pale pink endpoint at equivalence!
+      }
+      return 'rgba(219, 39, 119, 0.88)'; // Vivid fuchsia/magenta for excess base
+    } else {
+      // Analyte is base (e.g. strong-acid-weak-base)
+      if (pH > 10.0 || titrantAdded < eqVolume - 0.5) {
+        return 'rgba(219, 39, 119, 0.88)'; // Vivid magenta initially
+      }
+      if (pH >= 8.2 || (titrantAdded >= eqVolume - 0.5 && titrantAdded <= eqVolume)) {
+        return 'rgba(244, 114, 182, 0.75)'; // Fading pale pink endpoint
+      }
+      return 'rgba(224, 242, 254, 0.25)'; // Clear when acidified
+    }
   }
   
   if (indicator === 'methyl-orange') {
-    if (pH < 3.1) return 'rgba(255, 0, 0, 0.5)'; // Red
-    if (pH < 4.4) return 'rgba(255, 140, 0, 0.5)'; // Orange
-    return 'rgba(255, 215, 0, 0.5)'; // Yellow
+    if (pH < 3.1) return 'rgba(239, 68, 68, 0.8)'; // Red
+    if (pH <= 4.4) return 'rgba(249, 115, 22, 0.8)'; // Orange
+    return 'rgba(234, 179, 8, 0.8)'; // Yellow
   }
 
   if (indicator === 'universal') {
-    if (pH < 3) return 'rgba(255, 0, 0, 0.5)'; // Red
-    if (pH < 6) return 'rgba(255, 165, 0, 0.5)'; // Orange
-    if (pH < 8) return 'rgba(0, 255, 0, 0.5)'; // Green
-    if (pH < 11) return 'rgba(0, 0, 255, 0.5)'; // Blue
-    return 'rgba(128, 0, 128, 0.5)'; // Purple
+    if (pH < 3) return 'rgba(239, 68, 68, 0.8)'; // Red
+    if (pH < 6) return 'rgba(249, 115, 22, 0.8)'; // Orange
+    if (pH < 7.5) return 'rgba(132, 204, 22, 0.8)'; // Yellow-Green
+    if (pH < 8.5) return 'rgba(34, 197, 94, 0.8)'; // Green
+    if (pH < 11) return 'rgba(59, 130, 246, 0.8)'; // Blue
+    return 'rgba(168, 85, 247, 0.85)'; // Purple
   }
 
-  return 'rgba(255, 255, 255, 0.1)';
+  return 'rgba(224, 242, 254, 0.25)';
 }

@@ -76,6 +76,28 @@ const ORGAN_DATA: Record<string, OrganInfo> = {
     ],
     icon: <Activity className="h-5 w-5" />,
   },
+  Kidneys: {
+    description:
+      "The kidneys are a pair of bean-shaped organs that filter waste products, excess ions, and toxins from the blood to produce urine, maintaining fluid and electrolyte homeostasis.",
+    system: "Urinary / Excretory System",
+    facts: [
+      "Filter about 120–150 quarts of blood every single day.",
+      "Contain roughly 1 million functioning filter units called nephrons each.",
+      "Regulate blood pressure by producing the hormone renin.",
+    ],
+    icon: <Droplets className="h-5 w-5" />,
+  },
+  Bladder: {
+    description:
+      "The urinary bladder is a flexible muscular sac in the pelvis that collects and stores urine from the kidneys before disposal by urination.",
+    system: "Urinary / Excretory System",
+    facts: [
+      "Can comfortably hold between 400–600 mL of urine.",
+      "Lined with specialized transitional epithelium that stretches easily.",
+      "Controlled by both involuntary and voluntary neural sphincters.",
+    ],
+    icon: <Activity className="h-5 w-5" />,
+  },
 }
 
 export default function InfoPanel({ organ }: { organ: string }) {

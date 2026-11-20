@@ -82,7 +82,28 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/((?!ads\\.txt|robots\\.txt|sitemap\\.xml).*)',
+        source: '/embed/:path*',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow, noarchive',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors 'self' *",
+          },
+        ],
+      },
+      {
+        source: '/((?!ads\\.txt|robots\\.txt|sitemap\\.xml|embed).*)',
         headers: [
           {
             key: 'X-Robots-Tag',

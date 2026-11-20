@@ -355,7 +355,6 @@ export default function Ultimate3DCell({
         <directionalLight position={[-10, -10, -5]} intensity={0.8} color="#818cf8" />
         <pointLight position={[0, 0, 5]} intensity={0.6} color="#38bdf8" />
         <hemisphereLight args={["#ffffff", "#020617", 0.6]} />
-        <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
 
         <group>
           {/* 1. Nucleus Complex */}
@@ -405,7 +404,7 @@ export default function Ultimate3DCell({
           <CellMembrane onSelect={() => setSelected("Membrane")} />
         </group>
 
-        <OrbitControls enablePan={false} minDistance={4} maxDistance={14} autoRotate={!selected} autoRotateSpeed={0.5} />
+        <OrbitControls enablePan={false} minDistance={4} maxDistance={14} autoRotate={false} />
         </Canvas>
       </WebGLErrorBoundary>
 

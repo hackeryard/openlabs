@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/app/lib/mongodb";
 import User from "@/app/models/User";
-import { verifyAdminAccess } from "@/app/lib/adminAuth";
+import { verifyAdminAccess, verifyAdminAccessWithDb } from "@/app/lib/adminAuth";
 
 export async function GET(
   request: Request,
@@ -36,7 +36,8 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    const auth = verifyAdminAccess(request);
+    // Database-backed verification to ensure live admin/moderator role
+    const auth = await verifyAdminAccessWithDb(request);
     if (!auth.authorized) {
       return NextResponse.json({ error: auth.error || "Unauthorized" }, { status: auth.status });
     }
@@ -93,7 +94,8 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const auth = verifyAdminAccess(request);
+    // Database-backed verification strictly requiring live admin role in MongoDB
+    const auth = await verifyAdminAccessWithDb(request);
     if (!auth.authorized) {
       return NextResponse.json({ error: auth.error || "Unauthorized" }, { status: auth.status });
     }
