@@ -99,7 +99,7 @@ When deploying to Render, Docker, or alternative cloud providers:
 ### Physics Labs
 - **General Relativity & Spacetime Curvature Studio** — 5-mode interactive Einstein relativity simulation: 3D Schwarzschild & Kerr spacetime embedding with Lense-Thirring frame dragging, ray-traced gravitational lensing & black hole shadow, synchronized atomic clocks & GPS drift (+38.7 µs/day), visible spectrum redshift spectrometer & Twin Paradox calculator, and binary black hole gravitational waves (LIGO chirp audio synthesizer) with Penrose-Carter conformal spacetime diagrams. Includes live 4x4 Metric Tensor inspector ($g_{\mu\nu}$) and 5 structured historical guided investigations.
 - **Mechanics & Gravitation** — Kepler Orbit dynamics, Free Fall, Projectile Motion, Uniform Motion simulations
-- **Electromagnetism & Circuits** — Faraday's Law of Induction, Ohm's Law, and RC Circuit transient analyzer
+- **Electromagnetism & Circuits** — Faraday's Law of Induction, Ohm's Law (with nodal matrix solver, interactive draggable multimeter probe test leads, dynamic guide wires, V-I parametric sweep, and real-time oscilloscope), and RC Circuit transient analyzer
 - **Waves & Optics** — Doppler Effect & Sonic Boom, Wave Optics, Speed of Light, Optical Lenses experiments
 - **Quantum & Thermal** — Photoelectric Effect & Photon emission, Thermodynamic Heat Engines (Carnot cycle)
 - **Oscillations & Forces** — Simple Pendulum and Hooke's Law spring systems
@@ -107,8 +107,8 @@ When deploying to Render, Docker, or alternative cloud providers:
 ### Biology Labs
 - **Mitosis, Meiosis & Microscopic Cell Division Studio** — Somatic mitosis with physical sister chromatid disjunction, meiotic Prophase I synapsis with reciprocal non-sister chromatid chiasmata crossing-over, Metaphase I independent assortment with pole flips, and an interactive 4-gamete inspector detailing ploidy ($n=2$) and parental vs recombinant genotypes ($A-B-c$, $a-b-C$)
 - **Cardiac Cycle, ECG & Heart Hemodynamics** — 4-chamber anatomical pump simulator, mechanical valve dynamics, Lead II ECG waveforms, Wiggers pressure diagram, and stethoscope auscultation
-- **3D Cell Visualization** — Interactive animal and plant cell models with organelle details
-- **Human Anatomy** — Anatomical structure explorer with biological information
+- **3D Cell Visualization** — Interactive, high-focus animal and plant cell models with organelle inspection, quiz mode, and cross-section slicing
+- **Human Anatomy** — 3D anatomical organ explorer with pulsing interactive 3D pins, organ filtering, and detailed clinical facts
 - **Photosynthesis Simulator** — Interactive Light/CO₂/Water/Temperature controls demonstrating Blackman's Law of Limiting Factors
 - **Brain & Neuron Signal Simulator** — 3D neuron visualization combined with signal/firing-rate analytics charts
 - **Blood Group Simulator** — Interactive blood-typing/compatibility explorer

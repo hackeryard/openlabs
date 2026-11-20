@@ -70,6 +70,9 @@ Transform the platform from an unstructured catalog of 94 separate labs into a g
 ## 2. Interactive Science & Math Labs 🔬
 
 ### A. Advanced Physics, Quantum & Astrophysics
+- **Ohm's Law & Circuit Analysis Simulator [SHIPPED & EXPANDED ✅]**:
+  - Live at [`/labs/physics/ohmslaw`](/labs/physics/ohmslaw) and [`/physics/ohmslaw`](/physics/ohmslaw).
+  - Nodal matrix solver for DC/AC circuits, animated electron flow, V-I parametric sweep analyzer, real-time oscilloscope overlay, explicit battery polarity (+/-), and draggable multimeter probe leads (+ Red V and - Black COM) with metallic needles, colored grips, guide wires, and node auto-snapping.
 - **Special & General Relativity Simulator [SHIPPED ✅]**:
   - Live at [`/labs/physics/general-relativity`](/labs/physics/general-relativity) and [`/physics/general-relativity`](/physics/general-relativity).
   - 5 simulation modes: 3D Spacetime Curvature & Geodesic Orbits (with Kerr ergosphere & frame dragging), Ray-Traced Gravitational Lensing & Shadow, Gravitational Time Dilation & GPS Synchronization (+38.7 µs/day), Visible Spectrum Redshift Spectrometer & Minkowski Twin Paradox calculator, and Binary Black Hole Gravitational Waves (LIGO inspiral chirp audio synthesizer) with Penrose-Carter conformal diagrams.
@@ -90,6 +93,15 @@ Transform the platform from an unstructured catalog of 94 separate labs into a g
   - Live synthesized audio tone demonstrating frequency shift ($f' = f \frac{v \pm v_o}{v \mp v_s}$).
 
 ### B. Chemistry & Molecular Dynamics
+- **Acid-Base & Redox Titration Laboratory [SHIPPED & HARDENED ✅]**:
+  - Live at [`/labs/chemistry/titration`](/labs/chemistry/titration) and [`/chemistry/titration`](/chemistry/titration).
+  - Stoichiometric equivalence point detection, calibrated phenolphthalein pink endpoint ($V \ge V_{eq}$) and excess-base magenta transition, Henderson-Hasselbalch buffer calculations, and practice challenges.
+- **Chemical Elements Periodic Table & Guided Activities [SHIPPED & EXPANDED ✅]**:
+  - Live at [`/labs/chemistry/periodictable`](/labs/chemistry/periodictable) and [`/chemistry/periodictable`](/chemistry/periodictable).
+  - Complete 118-element periodic matrix, family filtering, 3D atomic orbital links, and newly added **Student Guided Activities** with Pre-Lab conceptual check questions, comparative two-element trends analyzer (electronegativity difference $\Delta EN$, bonding predictions, shell shielding), and Post-Lab mastery evaluations.
+- **Water Quality Analysis & Laboratory Equipment Guide [SHIPPED & EXPANDED ✅]**:
+  - Live at [`/labs/chemistry/water-quality`](/labs/chemistry/water-quality) and [`/chemistry/water-quality`](/chemistry/water-quality).
+  - Multi-parameter water quality simulation (pH, turbidity, DO, TDS, nitrates, heavy metals) with WHO potability comparisons, WQI index computation, and newly added **Step-by-Step Equipment & Laboratory Protocol Guides** covering Van Dorn water samplers, combination glass electrodes, nephelometric turbidimeters, optical LDO sensors, 4-electrode conductivity cells, and spectrophotometers.
 - **Chemical Kinetics & Reaction Rates Studio**:
   - Maxwell-Boltzmann energy distribution curves with adjustable temperature.
   - Activation energy ($E_a$) threshold modification via heterogeneous and homogeneous catalysts.
@@ -103,6 +115,12 @@ Transform the platform from an unstructured catalog of 94 separate labs into a g
   - Energy profile reaction coordinate diagrams with transition state geometries.
 
 ### C. Biology & Biotechnology
+- **Cellular Biology Visualizer - Plant & Animal Cells [SHIPPED & HARDENED ✅]**:
+  - Live at [`/labs/biology/cell/animal`](/labs/biology/cell/animal) and [`/labs/biology/cell/plant`](/labs/biology/cell/plant).
+  - High-focus, distraction-free 3D cellular cytology with organelle inspection, quiz mode, cross-section slicing, and removal of background starfield disorientations.
+- **3D Human Anatomy & Organ Systems Exploration [SHIPPED & EXPANDED ✅]**:
+  - Live at [/labs/biology/human](/labs/biology/human) and [/biology/human](/biology/human).
+  - High-resolution 3D human and skeleton anatomical exploration with interactive 3D pulsing organ pins, coordinate-based raycasting, top organ directory filter bar, and detailed anatomical facts across Brain, Heart, Lungs, Liver, Stomach, Kidneys, Intestines, and Bladder.
 - **Mitosis, Meiosis & Microscopic Cell Division Studio [SHIPPED ✅]**:
   - Live at [`/labs/biology/mitosis-meiosis`](/labs/biology/mitosis-meiosis) and [`/biology/mitosis-meiosis`](/biology/mitosis-meiosis). Somatic mitosis with sister chromatid disjunction, meiotic Prophase I synapsis with reciprocal non-sister chromatid chiasmata crossing-over, Metaphase I independent assortment with pole flips, and an interactive 4-gamete inspector detailing ploidy and parental vs recombinant genotypes.
 - **Enzyme Kinetics & Michaelis-Menten Model**:
@@ -117,6 +135,15 @@ Transform the platform from an unstructured catalog of 94 separate labs into a g
   - Carrying capacity limits, invasive species perturbations, and biodiversity resilience metrics.
 
 ### D. Computer Science & Discrete Mathematics
+- **Network Packet Switching Simulation & Lifecycle Stepper [SHIPPED & EXPANDED ✅]**:
+  - Live at [/labs/computer-science/networking/packet-switching](/labs/computer-science/networking/packet-switching) and [/computer-science/networking/packet-switching](/computer-science/networking/packet-switching).
+  - Dynamic store-and-forward packet mesh with node outage toggles, congestion loss sliders, live IPv4/TCP packet header inspector, and interactive 4-step lifecycle guide (Message Fragmentation, Independent Routing, Queueing & Loss, Destination Reassembly).
+- **Network Topology Builder & Multi-System Traffic Simulator [SHIPPED & EXPANDED ✅]**:
+  - Live at [/labs/computer-science/networking/topology-builder](/labs/computer-science/networking/topology-builder) and [/computer-science/networking/topology-builder](/computer-science/networking/topology-builder).
+  - Drag-and-drop network topology designer (Star, Ring, Bus, Mesh) with multi-system Broadcast simulation and custom Point-to-Point (P2P) BFS routing between any selected host pair.
+- **OSI 7-Layer Model Interactive Simulator [SHIPPED & HARDENED ✅]**:
+  - Live at [/labs/computer-science/networking/osi-model](/labs/computer-science/networking/osi-model) and [/computer-science/networking/osi-model](/computer-science/networking/osi-model).
+  - 7-layer data encapsulation and decapsulation simulator, protocol-specific flow analysis (TCP vs UDP), and interactive modal inspection across Application, Presentation, Session, Transport, Network, Data Link, and Physical layers.
 - **Pathfinding & Graph Algorithms Studio [SHIPPED ✅]**:
   - Live at [`/labs/computer-science/dsa/pathfinding-astar`](/labs/computer-science/dsa/pathfinding-astar) and [`/computer-science/dsa/pathfinding-astar`](/computer-science/dsa/pathfinding-astar). Interactive grid with obstacle drawing, step-by-step visualizations and time/space complexity analysis for $A^*$ Search (Euclidean, Manhattan, Chebyshev heuristics), Dijkstra's, BFS, and DFS.
 - **Neural Network & Deep Learning from Scratch [SHIPPED ✅]**:

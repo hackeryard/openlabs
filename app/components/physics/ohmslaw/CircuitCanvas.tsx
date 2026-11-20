@@ -53,6 +53,8 @@ export default function CircuitCanvas({
   const [hoverPoint, setHoverPoint] = useState<{ x: number; y: number } | null>(null);
   
   const [draggingNodeId, setDraggingNodeId] = useState<string | null>(null);
+  const [draggingProbe, setDraggingProbe] = useState<'red' | 'black' | null>(null);
+  const [probeDragPos, setProbeDragPos] = useState<{ x: number; y: number } | null>(null);
 
   // Keyboard shortcut for deleting selected component
   useEffect(() => {
@@ -74,9 +76,27 @@ export default function CircuitCanvas({
     
     const snapped = snapToGrid(x, y);
 
+    // 1. Check if user grabbed an existing probe needle / pin on the canvas
+    const redNode = probeRedNodeId ? state.nodes[probeRedNodeId] : null;
+    const blackNode = probeBlackNodeId ? state.nodes[probeBlackNodeId] : null;
+
+    if (redNode && Math.hypot(redNode.x - x, redNode.y - y) < 26) {
+      setDraggingProbe('red');
+      setProbeDragPos({ x, y });
+      (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
+      return;
+    }
+
+    if (blackNode && Math.hypot(blackNode.x - x, blackNode.y - y) < 26) {
+      setDraggingProbe('black');
+      setProbeDragPos({ x, y });
+      (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
+      return;
+    }
+
     if (selectedTool === 'select' || selectedTool.startsWith('probe_')) {
       const clickedNode = Object.values(state.nodes).find(n => 
-        Math.hypot(n.x - snapped.x, n.y - snapped.y) < 15
+        Math.hypot(n.x - snapped.x, n.y - snapped.y) < 18
       );
       
       if (clickedNode) {
@@ -115,6 +135,11 @@ export default function CircuitCanvas({
     
     setHoverPoint(snapped);
 
+    if (draggingProbe) {
+      setProbeDragPos({ x, y });
+      return;
+    }
+
     if (draggingNodeId) {
       onMoveNode(draggingNodeId, snapped.x, snapped.y);
       return;
@@ -125,7 +150,24 @@ export default function CircuitCanvas({
     }
   };
 
-  const handlePointerUp = () => {
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (draggingProbe) {
+      if (svgRef.current) {
+        const rect = svgRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const targetNode = Object.values(state.nodes).find(n => 
+          Math.hypot(n.x - x, n.y - y) < 32
+        );
+        if (targetNode) {
+          onSetProbe?.(draggingProbe, targetNode.id);
+        }
+      }
+      setDraggingProbe(null);
+      setProbeDragPos(null);
+      return;
+    }
+
     if (draggingNodeId) {
       setDraggingNodeId(null);
       return;
@@ -274,6 +316,7 @@ export default function CircuitCanvas({
             <line x1={-5} y1={-12} x2={-5} y2={12} stroke="#38bdf8" strokeWidth={strokeWidth} />
             <line x1={5} y1={-6} x2={5} y2={6} stroke="#f43f5e" strokeWidth={strokeWidth * 1.8} />
             <text x={-12} y={-14} fontSize="9" fontWeight="bold" fill="#38bdf8" textAnchor="middle">+</text>
+            <text x={12} y={-14} fontSize="9" fontWeight="bold" fill="#f43f5e" textAnchor="middle">-</text>
             <text x={0} y={textYOffset} fontSize="11" fontWeight="bold" fill="currentColor" textAnchor="middle" transform={textTransform}>
               {comp.value}V
             </text>
@@ -478,6 +521,7 @@ export default function CircuitCanvas({
         {nodes.map(node => {
           const isRed = probeRedNodeId === node.id;
           const isBlack = probeBlackNodeId === node.id;
+          const isCandidate = draggingProbe && probeDragPos && Math.hypot(node.x - probeDragPos.x, node.y - probeDragPos.y) < 32;
           
           return (
             <g key={node.id}>
@@ -485,8 +529,11 @@ export default function CircuitCanvas({
               <circle
                 cx={node.x}
                 cy={node.y}
-                r={isRed || isBlack ? 7 : 5}
-                fill={isRed ? 'rgba(239, 68, 68, 0.4)' : isBlack ? 'rgba(15, 23, 42, 0.5)' : 'rgba(56, 189, 248, 0.25)'}
+                r={isCandidate ? 12 : (isRed || isBlack ? 7 : 5)}
+                fill={isCandidate ? 'rgba(56, 189, 248, 0.45)' : (isRed ? 'rgba(239, 68, 68, 0.4)' : isBlack ? 'rgba(15, 23, 42, 0.5)' : 'rgba(56, 189, 248, 0.25)')}
+                stroke={isCandidate ? '#38bdf8' : 'none'}
+                strokeWidth={isCandidate ? 2 : 0}
+                strokeDasharray={isCandidate ? '3 3' : 'none'}
               />
               {/* Core circle */}
               <circle 
@@ -501,6 +548,92 @@ export default function CircuitCanvas({
             </g>
           );
         })}
+
+        {/* ─── Draggable Multimeter Red Probe Pin ─── */}
+        {probeRedNodeId && state.nodes[probeRedNodeId] && draggingProbe !== 'red' && (() => {
+          const node = state.nodes[probeRedNodeId];
+          return (
+            <g 
+              transform={`translate(${node.x}, ${node.y})`}
+              className="cursor-grab active:cursor-grabbing select-none"
+              onPointerDown={(e) => {
+                e.stopPropagation();
+                setDraggingProbe('red');
+                setProbeDragPos({ x: node.x, y: node.y });
+                (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
+              }}
+            >
+              <title>Click or drag Red Probe (+) to any node</title>
+              {/* Metallic Tip */}
+              <line x1={0} y1={0} x2={-12} y2={-18} stroke="#e2e8f0" strokeWidth={2.5} strokeLinecap="round" />
+              {/* Probe Body */}
+              <line x1={-12} y1={-18} x2={-24} y2={-38} stroke="#ef4444" strokeWidth={5.5} strokeLinecap="round" />
+              <circle cx={-12} cy={-18} r={3.5} fill="#b91c1c" />
+              {/* Probe Badge */}
+              <g transform="translate(-56, -52)">
+                <rect width={44} height={16} rx={4} fill="#ef4444" stroke="#ffffff" strokeWidth={1} filter="drop-shadow(0 2px 4px rgba(0,0,0,0.3))" />
+                <text x={22} y={11.5} fontSize="9" fontWeight="900" fill="#ffffff" textAnchor="middle">
+                  + RED
+                </text>
+              </g>
+            </g>
+          );
+        })()}
+
+        {/* ─── Draggable Multimeter Black Probe Pin ─── */}
+        {probeBlackNodeId && state.nodes[probeBlackNodeId] && draggingProbe !== 'black' && (() => {
+          const node = state.nodes[probeBlackNodeId];
+          return (
+            <g 
+              transform={`translate(${node.x}, ${node.y})`}
+              className="cursor-grab active:cursor-grabbing select-none"
+              onPointerDown={(e) => {
+                e.stopPropagation();
+                setDraggingProbe('black');
+                setProbeDragPos({ x: node.x, y: node.y });
+                (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
+              }}
+            >
+              <title>Click or drag Black Probe (-) to any node</title>
+              {/* Metallic Tip */}
+              <line x1={0} y1={0} x2={12} y2={-18} stroke="#e2e8f0" strokeWidth={2.5} strokeLinecap="round" />
+              {/* Probe Body */}
+              <line x1={12} y1={-18} x2={24} y2={-38} stroke="#1e293b" strokeWidth={5.5} strokeLinecap="round" />
+              <circle cx={12} cy={-18} r={3.5} fill="#0f172a" />
+              {/* Probe Badge */}
+              <g transform="translate(14, -52)">
+                <rect width={44} height={16} rx={4} fill="#0f172a" stroke="#ffffff" strokeWidth={1} filter="drop-shadow(0 2px 4px rgba(0,0,0,0.3))" />
+                <text x={22} y={11.5} fontSize="9" fontWeight="900" fill="#ffffff" textAnchor="middle">
+                  - COM
+                </text>
+              </g>
+            </g>
+          );
+        })()}
+
+        {/* ─── Active Floating Probe While Dragging ─── */}
+        {draggingProbe && probeDragPos && (() => {
+          const isRed = draggingProbe === 'red';
+          const color = isRed ? '#ef4444' : '#0f172a';
+          const label = isRed ? '+ RED' : '- COM';
+          return (
+            <g 
+              transform={`translate(${probeDragPos.x}, ${probeDragPos.y})`}
+              className="pointer-events-none select-none"
+            >
+              {/* Probe Tip */}
+              <circle cx={0} cy={0} r={5} fill={color} stroke="#ffffff" strokeWidth={2} />
+              <line x1={0} y1={0} x2={isRed ? -12 : 12} y2={-18} stroke="#e2e8f0" strokeWidth={2.5} strokeLinecap="round" />
+              <line x1={isRed ? -12 : 12} y1={-18} x2={isRed ? -24 : 24} y2={-38} stroke={color} strokeWidth={5.5} strokeLinecap="round" />
+              <g transform={`translate(${isRed ? -56 : 14}, -52)`}>
+                <rect width={44} height={16} rx={4} fill={color} stroke="#ffffff" strokeWidth={1} filter="drop-shadow(0 2px 4px rgba(0,0,0,0.4))" />
+                <text x={22} y={11.5} fontSize="9" fontWeight="900" fill="#ffffff" textAnchor="middle">
+                  {label}
+                </text>
+              </g>
+            </g>
+          );
+        })()}
       </svg>
 
       {/* Real-Time Oscilloscope Overlay for selected component */}
