@@ -45,7 +45,7 @@ class ModelErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryStat
   }
 }
 
-const CanvasWrapper = ({ type, onSelect }: any) => {
+const CanvasWrapper = ({ type, selectedOrgan, onSelect }: any) => {
   const [useProcedural, setUseProcedural] = useState(false);
 
   if (useProcedural) {
@@ -106,7 +106,7 @@ const CanvasWrapper = ({ type, onSelect }: any) => {
           <directionalLight position={[5, 5, 5]} intensity={1} />
           <pointLight position={[-5, 5, 5]} intensity={0.5} />
 
-          <Model type={type} onSelect={onSelect} />
+          <Model type={type} selectedOrgan={selectedOrgan} onSelect={onSelect} />
 
           <OrbitControls
             enablePan={false}
@@ -121,10 +121,10 @@ const CanvasWrapper = ({ type, onSelect }: any) => {
   );
 };
 
-export default function AnatomyScene({ type, onSelect }: any) {
+export default function AnatomyScene({ type, selectedOrgan, onSelect }: any) {
   return (
     <div className="w-full h-full bg-black">
-      <CanvasWrapper type={type} onSelect={onSelect} />
+      <CanvasWrapper type={type} selectedOrgan={selectedOrgan} onSelect={onSelect} />
     </div>
   );
 }

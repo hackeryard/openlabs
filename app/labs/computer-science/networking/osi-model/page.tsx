@@ -32,12 +32,8 @@ export default function OSIPage() {
   }, [setExperimentData]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-6">
-      <h1 className="text-4xl font-bold mb-6 text-center">
-        OSI Model Interactive Visualization
-      </h1>
+    <div className="min-h-screen bg-slate-900 text-white">
       <DailyChallengeCard labId="computer-science/networking/osi-model" currentParams={{ protocolsExplored: 1 }} />
-      {/* <OSIModel /> */}
       <OSIModel2D />
     </div>
   );

@@ -24,7 +24,7 @@ export default function Flask({ color, isSwirling }: FlaskProps) {
         {/* Flask Body */}
         <path 
           d="M 45 0 L 75 0 L 75 40 L 100 130 A 20 20 0 0 1 80 150 L 40 150 A 20 20 0 0 1 20 130 L 45 40 Z" 
-          fill="rgba(255,255,255,0.1)" 
+          fill="rgba(255,255,255,0.08)" 
           stroke="#9ca3af" 
           strokeWidth="3"
           strokeLinejoin="round"
@@ -35,6 +35,14 @@ export default function Flask({ color, isSwirling }: FlaskProps) {
           d="M 33 80 L 87 80 L 98 128 A 18 18 0 0 1 80 148 L 40 148 A 18 18 0 0 1 22 128 Z" 
           fill={color} 
           className="transition-colors duration-500 ease-in-out"
+        />
+
+        {/* Liquid Surface Meniscus */}
+        <path
+          d="M 33 80 Q 60 83 87 80"
+          fill="none"
+          stroke="rgba(255, 255, 255, 0.45)"
+          strokeWidth="1.5"
         />
 
         {/* Glare/Reflection */}

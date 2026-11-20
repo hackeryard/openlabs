@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Play, RotateCcw, Zap, Globe, Activity, ShieldAlert, Power } from "lucide-react";
+import { Play, RotateCcw, Zap, Globe, Activity, ShieldAlert, Power, Layers, Split, ArrowRightLeft, CheckCircle2, Info } from "lucide-react";
 import { useChat } from "../../ChatContext";
 
 /* ---------------- Types & Constants ---------------- */
@@ -26,6 +26,41 @@ const THEME = {
     inactive: "#cbd5e1",
 };
 
+const PACKET_STEPS = [
+  {
+    step: 1,
+    title: "1. Message Fragmentation",
+    short: "Chunking",
+    icon: Split,
+    desc: "Large files cannot safely travel as a monolithic stream without blocking links or risking total loss on corruption. The application layer data is divided into discrete small packets (typically MTU = 1500 bytes). Each packet receives an IP header with source IP, destination IP, length, checksum, and an incremental sequence number.",
+    highlight: "Enables multi-user multiplexing without holding dedicated cables."
+  },
+  {
+    step: 2,
+    title: "2. Independent Dynamic Routing",
+    short: "Routing",
+    icon: ArrowRightLeft,
+    desc: "Unlike circuit switching where a fixed wire path is reserved, each packet is routed independently by intermediate routers (e.g., Alpha, Beta, Gamma, Delta). If one router or link fails or gets congested, packets automatically divert along alternate healthy routes to maintain connectivity.",
+    highlight: "Click any router in the simulation above to simulate a link failure and witness automatic rerouting!"
+  },
+  {
+    step: 3,
+    title: "3. Store-and-Forward & Queueing",
+    short: "Queuing",
+    icon: Layers,
+    desc: "Intermediate routers receive a packet completely, verify its checksum, inspect its routing table, and buffer it in memory queues before sending it to the next hop. If incoming packet burst exceeds link capacity (high traffic load), router queues overflow and packets are discarded/dropped.",
+    highlight: "Increase the Traffic Load slider to simulate queue saturation and packet loss."
+  },
+  {
+    step: 4,
+    title: "4. Destination Reassembly & ACK",
+    short: "Reassembly",
+    icon: CheckCircle2,
+    desc: "Because packets take different paths with variable latencies, they frequently arrive at the Destination (Server) out of sequence. The Transport Layer (TCP) reorders packets based on sequence numbers, requests retransmission for dropped packets, and assembles the intact original message.",
+    highlight: "Ensures 100% data integrity even across unpredictable, lossy networks."
+  }
+];
+
 export default function PacketSwitchingLab({ onComplete }: { onComplete?: () => void }) {
     // Chatbot 
     const { setExperimentData } = useChat();
@@ -44,6 +79,7 @@ export default function PacketSwitchingLab({ onComplete }: { onComplete?: () => 
     const [metrics, setMetrics] = useState({ delivered: 0, dropped: 0 });
     const [congestion, setCongestion] = useState(0.3);
     const [isSimulating, setIsSimulating] = useState(false);
+    const [activeStep, setActiveStep] = useState(0);
 
     const [nodes, setNodes] = useState<Record<string, NodePos>>({
         CLIENT: { id: 'CLIENT', x: 80, y: 200, label: "Source", type: 'client', active: true },
@@ -302,8 +338,104 @@ export default function PacketSwitchingLab({ onComplete }: { onComplete?: () => 
 
                     <div className="mt-6 flex justify-center gap-8">
                         <Legend dot={THEME.client} text="Source" />
-                        <Legend dot={THEME.router} text="Router" />
+                        <Legend dot={THEME.router} text="Router (Click to toggle)" />
                         <Legend dot={THEME.inactive} text="Failed Node" />
+                    </div>
+                </div>
+            </div>
+
+            {/* ── Step-by-Step Educational Guide for Packet Switching ── */}
+            <div className="mt-12 bg-card border border-border rounded-3xl p-6 md:p-8 shadow-sm">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-6 border-b border-border">
+                    <div>
+                        <div className="flex items-center gap-2 mb-1">
+                            <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-500 text-xs font-black uppercase tracking-wider">
+                                Step-by-Step Guide
+                            </span>
+                            <span className="text-xs text-muted-foreground font-medium">How Packet Switching Works</span>
+                        </div>
+                        <h2 className="text-2xl font-black text-foreground tracking-tight">The 4 Core Steps of Packet Switching</h2>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground bg-muted px-3.5 py-2 rounded-xl">
+                        <Info size={16} className="text-indigo-500 shrink-0" />
+                        <span>Click steps below to explore how data moves across the mesh</span>
+                    </div>
+                </div>
+
+                {/* Steps Tabs */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                    {PACKET_STEPS.map((stepItem, idx) => {
+                        const Icon = stepItem.icon;
+                        const isSelected = activeStep === idx;
+                        return (
+                            <button
+                                key={stepItem.step}
+                                onClick={() => setActiveStep(idx)}
+                                className={`flex items-center gap-3 p-3.5 rounded-2xl border text-left transition-all ${
+                                    isSelected
+                                        ? "bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-500/20"
+                                        : "bg-card border-border hover:border-border/80 hover:bg-muted/50 text-foreground"
+                                }`}
+                            >
+                                <div className={`p-2 rounded-xl shrink-0 ${isSelected ? "bg-white/20 text-white" : "bg-muted text-indigo-500"}`}>
+                                    <Icon size={18} />
+                                </div>
+                                <div>
+                                    <div className="text-[10px] font-black uppercase tracking-widest opacity-80">Step {stepItem.step}</div>
+                                    <div className="text-xs font-bold leading-tight">{stepItem.short}</div>
+                                </div>
+                            </button>
+                        );
+                    })}
+                </div>
+
+                {/* Active Step Content */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-muted/40 p-6 rounded-2xl border border-border">
+                    <div className="lg:col-span-8 space-y-3">
+                        <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+                            {PACKET_STEPS[activeStep].title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                            {PACKET_STEPS[activeStep].desc}
+                        </p>
+                        <div className="p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                            💡 {PACKET_STEPS[activeStep].highlight}
+                        </div>
+                    </div>
+
+                    {/* Interactive Packet Header Inspector */}
+                    <div className="lg:col-span-4 bg-card p-4 rounded-xl border border-border shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3 flex items-center justify-between">
+                                <span>Packet Header Inspector</span>
+                                <span className="text-[9px] bg-emerald-500/10 text-emerald-500 px-1.5 py-0.5 rounded font-mono font-bold">IPv4 / TCP</span>
+                            </div>
+                            <div className="space-y-1.5 font-mono text-[11px]">
+                                <div className="flex justify-between py-1 border-b border-border/50">
+                                    <span className="text-muted-foreground">Source IP:</span>
+                                    <span className="font-semibold text-foreground">192.168.1.45</span>
+                                </div>
+                                <div className="flex justify-between py-1 border-b border-border/50">
+                                    <span className="text-muted-foreground">Dest IP:</span>
+                                    <span className="font-semibold text-foreground">10.0.0.12</span>
+                                </div>
+                                <div className="flex justify-between py-1 border-b border-border/50">
+                                    <span className="text-muted-foreground">Sequence #:</span>
+                                    <span className="font-semibold text-indigo-500">#{(activeStep + 1) * 2} of 8</span>
+                                </div>
+                                <div className="flex justify-between py-1 border-b border-border/50">
+                                    <span className="text-muted-foreground">TTL (Hops):</span>
+                                    <span className="font-semibold text-foreground">64</span>
+                                </div>
+                                <div className="flex justify-between py-1">
+                                    <span className="text-muted-foreground">Payload Size:</span>
+                                    <span className="font-semibold text-foreground">1,460 Bytes</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-4 pt-3 border-t border-border text-[10px] text-muted-foreground text-center">
+                            Standard MTU Packet Frame
+                        </div>
                     </div>
                 </div>
             </div>

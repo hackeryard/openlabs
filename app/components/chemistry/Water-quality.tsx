@@ -115,6 +115,7 @@ export default function WaterQualityLab({ onComplete }: { onComplete?: () => voi
   const [contaminationSources, setContaminationSources] = useState<string[]>([]);
   const [labNotes, setLabNotes] = useState<string[]>([]);
   const [testResults, setTestResults] = useState<TestResult[]>([]);
+  const [showEquipmentDetails, setShowEquipmentDetails] = useState(true);
 
   // ==================== EXPERIMENT PROCEDURE STEPS ====================
   const experimentSteps: ExperimentStep[] = [
@@ -175,6 +176,90 @@ export default function WaterQualityLab({ onComplete }: { onComplete?: () => voi
       action: "Analyze Results"
     }
   ];
+
+  const equipmentGuides: Record<number, { equipmentName: string; principle: string; operationSteps: string[]; calibrationTips: string }> = {
+    1: {
+      equipmentName: "Sterile Kemmerer / Van Dorn Water Sampler",
+      principle: "Isokinetic fluid sampling preventing atmospheric gas contamination.",
+      operationSteps: [
+        "Lower the open sampler to the designated sampling depth.",
+        "Release the messenger weight down the cable to trip the spring-loaded end seals.",
+        "Transfer sample into pre-rinsed amber borosilicate bottles, filling to the brim with zero headspace for DO."
+      ],
+      calibrationTips: "Keep sample chilled at 4°C in a dark container to halt biological metabolism before testing."
+    },
+    2: {
+      equipmentName: "Multi-parameter Digital Probe & Standard Calibration Solutions",
+      principle: "Electrochemical potentiometric zero-offset and slope adjustment.",
+      operationSteps: [
+        "Rinse probe tip thoroughly with deionized (DI) water and blot gently with lint-free Kimwipes.",
+        "Submerge into pH 7.00 zero-point buffer solution, wait 60 seconds, and press CALIBRATE.",
+        "Rinse with DI water and immerse into second buffer (pH 4.01 for acidic, pH 10.01 for basic waters)."
+      ],
+      calibrationTips: "Electrode slope must measure between 95% and 102% of theoretical Nernstian slope (59.16 mV/pH at 25°C)."
+    },
+    3: {
+      equipmentName: "Combination Glass Electrode pH Meter",
+      principle: "Potential difference across thin hydrogen-selective glass bulb vs Ag/AgCl reference.",
+      operationSteps: [
+        "Connect Automatic Temperature Compensation (ATC) sensor alongside the pH probe.",
+        "Immerse electrode tip at least 3 cm beneath sample surface.",
+        "Stir sample gently at ~100 rpm; record pH reading once the stability indicator locks in."
+      ],
+      calibrationTips: "WHO Standard for drinking water is pH 6.5 – 8.5 to prevent distribution pipe corrosion and toxic metal leaching."
+    },
+    4: {
+      equipmentName: "Nephelometric Turbidimeter (ISO 7027 / EPA 180.1)",
+      principle: "Tungsten lamp beam (860 nm) scattered at 90° angle onto a photodiode detector.",
+      operationSteps: [
+        "Fill optical glass sample vial to the fill ring without introducing air bubbles.",
+        "Apply 1 drop of silicone indexing oil and wipe vial exterior with microfiber velvet cloth to eliminate micro-scratches.",
+        "Align vial index notch with the meter chamber mark and close light shield.",
+        "Read turbidity in NTU (Nephelometric Turbidity Units)."
+      ],
+      calibrationTips: "Calibrate with primary Formazin standards (0.1, 20, 100, 800 NTU). WHO requires < 1.0 NTU for potable water."
+    },
+    5: {
+      equipmentName: "Optical Luminescent Dissolved Oxygen (LDO) Sensor",
+      principle: "Luminescence quenching: blue LED excites ruthenium sensor dye; collision with O₂ quenches fluorescence lifetime.",
+      operationSteps: [
+        "Inspect the luminescent sensing cap membrane for biofouling, tears, or mineral scale.",
+        "Perform water-saturated air calibration in a 100% relative humidity calibration sleeve.",
+        "Submerge probe and stir gently; record DO in mg/L and percentage saturation."
+      ],
+      calibrationTips: "Healthy aquatic ecosystems require > 6.5 mg/L DO; < 4.0 mg/L causes hypoxia and organism mortality."
+    },
+    6: {
+      equipmentName: "4-Electrode Conductivity Cell & Spectrophotometer",
+      principle: "AC electrical conductance for Total Dissolved Solids; Beer-Lambert law absorption for Nitrates & Heavy Metals.",
+      operationSteps: [
+        "Immerse conductivity probe, ensure vent holes are free of bubbles, and record TDS in mg/L (ppm).",
+        "Pipette 10 mL sample into spectrophotometer cuvette, add NitraVer cadmium reduction reagent, and wait 5 minutes.",
+        "Zero spectrophotometer at 543 nm with reagent blank; insert sample and read Nitrate-Nitrogen concentration."
+      ],
+      calibrationTips: "WHO limits: TDS < 500 mg/L (palatability), Nitrates < 50 mg/L (prevents blue baby syndrome), Lead < 0.01 mg/L."
+    },
+    7: {
+      equipmentName: "Laboratory Information Management (LIMS) & QC Register",
+      principle: "Chain-of-custody tracking, duplicate sample deviation, and spike recovery validation.",
+      operationSteps: [
+        "Log duplicate analysis: relative percent difference (RPD) must remain under ±10%.",
+        "Cross-examine electrical conductivity vs total cation-anion ionic balance.",
+        "Generate regulatory conformance table comparing each metric with WHO drinking water directives."
+      ],
+      calibrationTips: "Flag any parameter in red that breaches national drinking water thresholds for immediate treatment."
+    },
+    8: {
+      equipmentName: "Automated Water Quality Index (WQI) AI Decision Engine",
+      principle: "Weighted arithmetic index aggregation: WQI = Σ(wi * qi) / Σwi.",
+      operationSteps: [
+        "Weights are assigned: Heavy Metals (5), Dissolved Oxygen (4), Turbidity (3), Nitrates (3), pH (2), TDS (1).",
+        "Review composite WQI score: 90-100 (Excellent), 70-89 (Good), 50-69 (Poor), <50 (Unfit for consumption).",
+        "Apply recommended treatment: Coagulation/Flocculation for turbidity, Activated Carbon + RO for heavy metals."
+      ],
+      calibrationTips: "Completed experiment: all sensors calibrated, physical tests recorded, and WHO compliance verified!"
+    }
+  };
 
   // ==================== WATER PARAMETER INFO ====================
   const parameterInfo: Record<ParameterKey, ParameterInfo> = {
@@ -734,12 +819,51 @@ const barOptions: ChartOptions<'bar'> = {
         <div className="left-col">
           {/* Current Step Details */}
           <div className="card step-card">
-            <h2 className="flex items-center gap-1.5">
-              <ClipboardList className="w-4 h-4 text-teal-600" />
-              Step {step}: {experimentSteps[step-1].title}
-            </h2>
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="flex items-center gap-1.5 m-0">
+                <ClipboardList className="w-4 h-4 text-teal-600" />
+                Step {step}: {experimentSteps[step-1].title}
+              </h2>
+              <button
+                type="button"
+                onClick={() => setShowEquipmentDetails(!showEquipmentDetails)}
+                className="text-[11px] font-bold text-teal-600 hover:text-teal-700 bg-teal-50 hover:bg-teal-100 px-2.5 py-1 rounded-lg transition border border-teal-200/60"
+              >
+                {showEquipmentDetails ? "Hide Equipment Guide" : "Show Equipment Guide"}
+              </button>
+            </div>
             <p className="step-description">{experimentSteps[step-1].description}</p>
-            <div className="step-controls">
+
+            {/* Interactive Equipment & Procedure Guide */}
+            {showEquipmentDetails && equipmentGuides[step] && (
+              <div className="mt-3 p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-border/80 text-xs space-y-2.5">
+                <div className="flex items-center justify-between border-b border-border/60 pb-2">
+                  <span className="font-black text-foreground flex items-center gap-1.5">
+                    🔬 {equipmentGuides[step].equipmentName}
+                  </span>
+                  <span className="text-[10px] font-mono text-teal-600 bg-teal-50 dark:bg-teal-950/40 px-2 py-0.5 rounded font-bold">
+                    Lab Protocol
+                  </span>
+                </div>
+                <div>
+                  <span className="font-bold text-muted-foreground block mb-0.5">Physical Principle:</span>
+                  <p className="text-foreground/90">{equipmentGuides[step].principle}</p>
+                </div>
+                <div>
+                  <span className="font-bold text-muted-foreground block mb-1">Standard Operating Procedure:</span>
+                  <ol className="list-decimal pl-4 space-y-1 text-foreground/90">
+                    {equipmentGuides[step].operationSteps.map((s, idx) => (
+                      <li key={idx}>{s}</li>
+                    ))}
+                  </ol>
+                </div>
+                <div className="p-2 bg-teal-500/10 border border-teal-500/20 rounded-lg text-teal-700 dark:text-teal-300 font-medium">
+                  💡 <strong>Calibration & Standards Tip:</strong> {equipmentGuides[step].calibrationTips}
+                </div>
+              </div>
+            )}
+
+            <div className="step-controls mt-4">
               <button 
                 className="action-btn flex items-center justify-center gap-1.5"
                 onClick={() => {

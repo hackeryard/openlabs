@@ -131,7 +131,13 @@ export default function TitrationLab() {
     }
   };
 
-  const currentColor = data.length > 0 ? data[data.length - 1].color : 'rgba(255,255,255,0.1)';
+  const currentColor = useMemo(() => {
+    const isRedox = params.type === 'redox';
+    const value = isRedox 
+      ? calculatePotential(params, volumeAdded) 
+      : calculatePH(params, volumeAdded);
+    return getIndicatorColor(indicator, value, params.type, volumeAdded, eqVolume);
+  }, [indicator, params, volumeAdded, eqVolume]);
 
   return (
     <div className="flex flex-col min-h-full lg:h-full w-full overflow-y-auto lg:overflow-hidden bg-background">

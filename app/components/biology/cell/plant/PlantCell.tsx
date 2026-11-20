@@ -333,7 +333,6 @@ export default function PlantCell({
         <directionalLight position={[-10, -10, -5]} intensity={0.8} color="#4ade80" />
         <pointLight position={[0, 0, 5]} intensity={0.6} color="#86efac" />
         <hemisphereLight args={["#ffffff", "#052e16", 0.6]} />
-        <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
 
         <group rotation={[0, -0.2, 0]}>
           
@@ -356,7 +355,7 @@ export default function PlantCell({
           <CellShell onSelect={(type) => setSelected(type as OrganelleType)} />
         </group>
 
-        <OrbitControls enablePan={false} minDistance={6} maxDistance={16} autoRotate={!selected} autoRotateSpeed={0.5} />
+        <OrbitControls enablePan={false} minDistance={6} maxDistance={16} autoRotate={false} />
         </Canvas>
       </WebGLErrorBoundary>
 
